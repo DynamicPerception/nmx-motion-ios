@@ -228,6 +228,13 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     
     appDelegate.isHome = NO;
     
+    if (self.appExecutive.isVideo == YES) {
+        
+        NSLog(@"isVideo");
+        
+        self.recordModeControl.selectedSegmentIndex = 1;
+    }
+    
     if (self.appExecutive.is3P == YES)
     {
         minimumDurationHeaderLbl.hidden = YES;
@@ -237,7 +244,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         videoModeControl.userInteractionEnabled = NO;
         [videoModeControl removeSegmentAtIndex:1 animated:NO];
     }
-    
+        
 //    NSLog(@"ms1: %i",self.appExecutive.microstep1);
 //    NSLog(@"ms2: %i",self.appExecutive.microstep2);
 //    NSLog(@"ms3: %i",self.appExecutive.microstep3);
@@ -251,16 +258,18 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 }
 
 - (void)showVoltageTimer {
+    
+    
 	
-    float voltage = self.appExecutive.voltage;
-    
-    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-    
-    float diff = self.appExecutive.voltageHigh - voltage;
-    
-    float per = diff/range;
-    
-    float per2 = voltage/self.appExecutive.voltageHigh;
+//    float voltage = self.appExecutive.voltage;
+//    
+//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
+//    
+//    float diff = self.appExecutive.voltageHigh - voltage;
+//    
+//    float per = diff/range;
+//    
+//    float per2 = voltage/self.appExecutive.voltageHigh;
     
     //per2 = .35;
     
@@ -296,9 +305,9 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     
     float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
     
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 7,
+    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
                                                          batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
-                                                         batteryIcon.frame.size.width * .5,
+                                                         batteryIcon.frame.size.width * .47,
                                                          batteryIcon.frame.size.height * per4)];
     
     v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
@@ -486,6 +495,8 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 	{
 		[self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
 	}
+    
+    
 }
 
 //------------------------------------------------------------------------------
@@ -589,6 +600,14 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 	NSInteger	index = sender.selectedSegmentIndex;
 	NSString *	title = [sender titleForSegmentAtIndex: index];
+    
+    if (index == 1) {
+        self.appExecutive.isVideo = YES;
+    }
+    else
+    {
+    self.appExecutive.isVideo = NO;
+    }
 
 	if ([title isEqualToString: kRecordModeTimelapse])
 	{
@@ -608,6 +627,8 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 	NSInteger	index = sender.selectedSegmentIndex;
 	NSString *	title = [sender titleForSegmentAtIndex: index];
+    
+    
 
 	if ([title isEqualToString: kTimelapseModeSMS])
 	{
@@ -624,9 +645,13 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 }
 
 - (IBAction) handleVideoModeControl: (UISegmentedControl *) sender {
+    
+    NSLog(@"handleVideoModeControl");
 
 	NSInteger	index = sender.selectedSegmentIndex;
 	NSString *	title = [sender titleForSegmentAtIndex: index];
+    
+    
 
 	if ([title isEqualToString: kVideoModeOneShot])
 	{

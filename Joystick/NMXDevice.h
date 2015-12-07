@@ -161,6 +161,8 @@ typedef enum : unsigned char {
 - (UInt32) queryKeyFrameProgramMaxTime;
 - (UInt32) queryKeyFramePercentComplete;
 - (bool) queryPowerCycle;
+- (void) motorSet: (int) motorNumber ContinuousSpeedAccelDecel: (float) speed;
+- (float) motorQueryContinuousAccelDecel: (int) motorNumber;
 
 @end
 

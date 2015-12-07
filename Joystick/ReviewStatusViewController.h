@@ -69,6 +69,8 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
     AppDelegate *appDelegate;
     int queryFPS;
     bool camClosed;
+    bool reconnecting3P;
+    int debugInd;
 }
 
 @property (strong, nonatomic) IBOutlet UIView *graphViewContainer;
@@ -94,6 +96,7 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
 @property (weak, nonatomic) IBOutlet UIButton *settingsButton;
 @property (weak, nonatomic) IBOutlet UIImageView *batteryIcon;
 @property (weak, nonatomic) IBOutlet UIView *contentBG;
+@property (weak, nonatomic) IBOutlet UITextView *debugTxt;
 
 - (IBAction)manageKeepAlive:(id)sender;
 - (IBAction)simulateDisconnect:(id)sender;

@@ -30,7 +30,7 @@
 	CGMutablePathRef	increasePath	= CGPathCreateMutable();
 	CGMutablePathRef	decreasePath	= CGPathCreateMutable();
 	CGContextRef 		currentContext	= UIGraphicsGetCurrentContext();
-	CGColorRef			lineColor		= [[UIColor whiteColor] CGColor];
+	CGColorRef			lineColor		= [[UIColor grayColor] CGColor];
 
 	CGPathMoveToPoint(increasePath, NULL, self.increaseStart.x, self.increaseStart.y);
 	CGPathAddLineToPoint(increasePath, NULL, self.increaseFinal.x, self.increaseFinal.y);

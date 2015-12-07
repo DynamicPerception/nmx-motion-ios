@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <QuartzCore/QuartzCore.h>
 #import "JoystickViewController.h"
 #import "NMXDevice.h"
 #import "AppDelegate.h"
@@ -106,6 +106,10 @@
 @property (weak, nonatomic) IBOutlet JoystickSlider *tiltSlider;
 @property (weak, nonatomic) IBOutlet UILabel *tiltSliderLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *batteryIcon;
+
+@property (strong, nonatomic) NSMutableArray *ar1;
+@property (strong, nonatomic) NSMutableArray *ar2;
+@property (strong, nonatomic) NSMutableArray *ar3;
 
 - (IBAction) unwindFromSetupViewController: (UIStoryboardSegue *) segue;
 - (IBAction) handleDominantAxisSwitch: (UISwitch *) sender;

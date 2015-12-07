@@ -112,7 +112,7 @@ ControllerState;
 @synthesize sendMotorsTimer;
 @synthesize statusTimer;
 
-@synthesize graphView, panGraph, tiltGraph, appExecutive, graphViewContainer, playhead, goBtn, cancelBtn, keepAliveView, startTimerBtn, keepAliveSwitch, timerContainer, timerLbl, disconnectStatusLbl, disconnectBtn,graph3P,dic,shareBtn,settingsButton,batteryIcon,contentBG,shareBtn2;
+@synthesize graphView, panGraph, tiltGraph, appExecutive, graphViewContainer, playhead, goBtn, cancelBtn, keepAliveView, startTimerBtn, keepAliveSwitch, timerContainer, timerLbl, disconnectStatusLbl, disconnectBtn,graph3P,dic,shareBtn,settingsButton,batteryIcon,contentBG,shareBtn2,debugTxt;
 
 #pragma mark Public Propery Methods
 
@@ -185,7 +185,7 @@ ControllerState;
 
     if (statusTimer == nil)
     {
-        statusTimer = [NSTimer scheduledTimerWithTimeInterval: 1.0
+        statusTimer = [NSTimer scheduledTimerWithTimeInterval: 2.0
                                                            target: self
                                                          selector: @selector(handleStatusTimer:)
                                                          userInfo: nil
@@ -236,9 +236,7 @@ ControllerState;
 
 
 - (void) viewDidLoad {
-    
-    NSLog(@"viewDidLoad");
-    
+        
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
     device = [AppExecutive sharedInstance].device;
@@ -263,6 +261,11 @@ ControllerState;
 	 selector:@selector(handleShotDurationNotification:)
 	 name:@"chooseReviewShotDuration" object:nil];
     
+    [[NSNotificationCenter defaultCenter]
+	 addObserver:self
+	 selector:@selector(handleAddKeyframeDebug:)
+	 name:@"debugKeyframePosition" object:nil];
+    
     timerContainer.hidden = YES;
     startTimerBtn.hidden = YES;
     keepAliveView.hidden = YES;
@@ -283,13 +286,6 @@ ControllerState;
 }
 
 - (void) setupIcons {
-
-    //    UIImage *a = [UIImage imageNamed: @"camera-icon.png"];
-    //
-    //    UIImage *tt = [self imageWithImage:a scaledToSize:CGSizeMake(a.size.width * .2,
-    //                                                                 a.size.height * .2)];
-    //
-    //    [shareBtn setImage: tt forState:UIControlStateNormal];
     
     [shareBtn setImageEdgeInsets:UIEdgeInsetsMake(0.0, -10.0, 0.0, 0.0)];
     [shareBtn setTitleEdgeInsets:UIEdgeInsetsMake(0.0, 60.0, 0.0, 0.0)];
@@ -323,6 +319,26 @@ ControllerState;
     [shareBtn2 setTitle:@"" forState:UIControlStateNormal];
     [shareBtn2 addSubview:igv3];
     [shareBtn2 addSubview:igv4];
+}
+
+- (void)handleAddKeyframeDebug:(NSNotification *)pNotification {
+    
+    NSNumber *n = pNotification.object;
+    
+    if (debugInd == 0) {
+        
+        debugTxt.text = [NSString stringWithFormat:@"%@\n start tilt out: %f",debugTxt.text,[n floatValue]];
+    }
+    else if (debugInd == 0) {
+        
+        debugTxt.text = [NSString stringWithFormat:@"%@\n mid tilt out: %f",debugTxt.text,[n floatValue]];
+    }
+    else {
+        
+        debugTxt.text = [NSString stringWithFormat:@"%@\n end tilt out: %f",debugTxt.text,[n floatValue]];
+    }
+    
+    debugInd++;
 }
 
 #pragma mark - Delay Timer Notification
@@ -506,6 +522,15 @@ ControllerState;
     }
 }
 
+- (void)startKeyframeTimer {
+
+    keyframeTimer = [NSTimer scheduledTimerWithTimeInterval:2.000
+                                                     target:self
+                                                   selector:@selector(handleKeyFrameStatusTimer:)
+                                                   userInfo:nil
+                                                    repeats:YES];
+}
+
 - (void)startProgram {
     
     NSLog(@"startProgram");
@@ -514,7 +539,7 @@ ControllerState;
     {
         [[AppExecutive sharedInstance].device startKeyFrameProgram];
         
-        keyframeTimer = [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(handleKeyFrameStatusTimer:) userInfo:nil repeats:YES];
+        [self startKeyframeTimer];
     }
     else
     {
@@ -578,13 +603,16 @@ ControllerState;
     switch (queryFPS)
     {
         case NMXFPS24:
+            
             self.fps = 24;
             break;
         case NMXFPS25:
+            
             self.fps = 25;
             break;
         default:
         case NMXFPS30:
+            
             self.fps = 30;
             break;
     }
@@ -700,11 +728,7 @@ ControllerState;
             
             self.totalRunTime = [device queryKeyFrameProgramMaxTime];
             
-            keyframeTimer = [NSTimer scheduledTimerWithTimeInterval:1.000
-                                     target:self
-                                     selector:@selector(handleKeyFrameStatusTimer:)
-                                     userInfo:nil
-                                     repeats:YES];
+            [self startKeyframeTimer];
         }
     }
     
@@ -719,7 +743,7 @@ ControllerState;
         if (runStatusKeyFrame != NMXKeyFrameRunStatusRunning &&
             runStatusKeyFrame != NMXKeyFrameRunStatusPaused && !camClosed)
         {
-            [self initKeyFrameValues3];
+            [self initKeyFrameValues];
         }
     }
     else
@@ -747,16 +771,16 @@ ControllerState;
     [self showVoltage];
 }
 
-- (void)initKeyFrameValues3 {
+- (void)initKeyFrameValues {
     
     //for shoot move, absicssa is multiple of 1000
     
     [appExecutive.device setCurrentKeyFrameAxis:0];
     [appExecutive.device setKeyFrameCount:3];
     
-    int sd = [self.appExecutive.shotDurationNumber intValue];
-        
-    NSLog(@"sd: %i",sd);
+//    int sd = [self.appExecutive.shotDurationNumber intValue];
+//        
+//    NSLog(@"sd: %i",sd);
     
     if (self.programMode == NMXProgramModeVideo)
     {
@@ -790,24 +814,26 @@ ControllerState;
     [appExecutive.device setKeyFrameAbscissa:val2]; //100
     [appExecutive.device setKeyFrameAbscissa:val3]; //250
     
-    if ((float)self.appExecutive.scaledStart3PSlideDistance != 0)
-    {
-        NSLog(@"use scaled Slide for keyframe");
-        
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledStart3PSlideDistance];
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledMid3PSlideDistance];
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledEnd3PSlideDistance];
-    }
-    else
-    {
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.start3PSlideDistance)];
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.mid3PSlideDistance)];
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PSlideDistance)];
-    }
+    NSLog(@"val1: %f",(float)val1);
+    NSLog(@"val2: %f",(float)val2);
+    NSLog(@"val3: %f",(float)val3);
+    
+    NSLog(@"appExecutive.microstep1: %f",(float)appExecutive.microstep1);
+
+    float conversionFactor = (float)appExecutive.microstep1 / 16;
+    
+    float startSlideOut = self.appExecutive.scaledStart3PSlideDistance * conversionFactor;
+    float midSlideOut = self.appExecutive.scaledMid3PSlideDistance * conversionFactor;
+    float endSlideOut = self.appExecutive.scaledEnd3PSlideDistance * conversionFactor;
+    
+    [appExecutive.device setKeyFramePosition:startSlideOut];
+    [appExecutive.device setKeyFramePosition:midSlideOut];
+    [appExecutive.device setKeyFramePosition:endSlideOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
     [appExecutive.device setKeyFrameVelocity:(float)0];
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    
     [appExecutive.device endKeyFrameTransmission];
     
     //pan motor
@@ -819,24 +845,22 @@ ControllerState;
     [appExecutive.device setKeyFrameAbscissa:val2]; //100
     [appExecutive.device setKeyFrameAbscissa:val3]; //250
     
-    if ((float)self.appExecutive.scaledStart3PPanDistance != 0)
-    {
-        NSLog(@"use scaled pan for keyframe");
-        
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledStart3PPanDistance];
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledMid3PPanDistance];
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledEnd3PPanDistance];
-    }
-    else
-    {
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.start3PPanDistance)];
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.mid3PPanDistance)];
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PPanDistance)];
-    }
+    NSLog(@"appExecutive.microstep2: %f",(float)appExecutive.microstep2);
+    
+    float conversionFactor2 = (float)appExecutive.microstep2 / 16;
+    
+    float startPanOut = self.appExecutive.scaledStart3PPanDistance * conversionFactor2;
+    float midPanOut = self.appExecutive.scaledMid3PPanDistance * conversionFactor2;
+    float endPanOut = self.appExecutive.scaledEnd3PPanDistance * conversionFactor2;
+    
+    [appExecutive.device setKeyFramePosition:startPanOut];
+    [appExecutive.device setKeyFramePosition:midPanOut];
+    [appExecutive.device setKeyFramePosition:endPanOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
     [appExecutive.device setKeyFrameVelocity:(float)0];
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    
     [appExecutive.device endKeyFrameTransmission];
     
     //tilt motor
@@ -848,24 +872,38 @@ ControllerState;
     [appExecutive.device setKeyFrameAbscissa:val2]; //100
     [appExecutive.device setKeyFrameAbscissa:val3]; //250
     
-    if ((float)self.appExecutive.scaledStart3PTiltDistance != 0)
-    {
-        NSLog(@"use scaled Tilt for keyframe");
-        
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledStart3PTiltDistance];
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledMid3PTiltDistance];
-        [appExecutive.device setKeyFramePosition:(float)self.appExecutive.scaledEnd3PTiltDistance];
-    }
-    else
-    {
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.start3PTiltDistance)];
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.mid3PTiltDistance)];
-        [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PTiltDistance)];
-    }
+    NSLog(@"appExecutive.microstep3: %f",(float)appExecutive.microstep3);
+    
+    float conversionFactor3 = (float)appExecutive.microstep3 / 16;
+    
+    float startTiltOut = self.appExecutive.scaledStart3PTiltDistance * conversionFactor3;
+    float midTiltOut = self.appExecutive.scaledMid3PTiltDistance * conversionFactor3;
+    float endTiltOut = self.appExecutive.scaledEnd3PTiltDistance * conversionFactor3;
+    
+    NSLog(@"startSlideOut: %f",startSlideOut);
+    NSLog(@"startPanOut: %f",startPanOut);
+    NSLog(@"startTiltOut: %f",startTiltOut);
+    
+    NSLog(@"midSlideOut: %f",midSlideOut);
+    NSLog(@"midPanOut: %f",midPanOut);
+    NSLog(@"midTiltOut: %f",midTiltOut);
+    
+    NSLog(@"endSlideOut: %f",endSlideOut);
+    NSLog(@"endPanOut: %f",endPanOut);
+    NSLog(@"endTiltOut: %f",endTiltOut);
+    
+    debugTxt.text = @"";
+    
+    debugTxt.text = [NSString stringWithFormat:@"%@\n start tilt in: %f\n mid tilt in: %f\n end tilt in: %f",debugTxt.text, startTiltOut,midTiltOut,endTiltOut];
+    
+    [appExecutive.device setKeyFramePosition:startTiltOut];
+    [appExecutive.device setKeyFramePosition:midTiltOut];
+    [appExecutive.device setKeyFramePosition:endTiltOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
     [appExecutive.device setKeyFrameVelocity:(float)0];
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    
     [appExecutive.device endKeyFrameTransmission];
         
     //    if (self.programMode == NMXProgramModeSMS)
@@ -881,70 +919,6 @@ ControllerState;
     float val1 = 1000.0 * floor((val/1000.0) + 0.5);
     
     return val1;
-}
-
-- (void)initKeyFrameValues {
-    
-    [appExecutive.device setCurrentKeyFrameAxis:0];
-    [appExecutive.device setKeyFrameCount:5];
-    [appExecutive.device setKeyFrameAbscissa:(float)0];
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal1 * 1000.0)]; //15
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal2 * 1000.0)]; //100
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal3 * 1000.0)]; //250
-    [appExecutive.device setKeyFrameAbscissa:masterFrameCount * 1000];
-    [appExecutive.device setKeyFramePosition:(float)0];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.start3PSlideDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.mid3PSlideDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PSlideDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PSlideDistance)];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device endKeyFrameTransmission];
-    
-    //pan motor
-    
-    [appExecutive.device setCurrentKeyFrameAxis:1];
-    [appExecutive.device setKeyFrameCount:5];
-    [appExecutive.device setKeyFrameAbscissa:(float)0];
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal1 * 1000.0)]; //15
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal2 * 1000.0)]; //100
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal3 * 1000.0)]; //250
-    [appExecutive.device setKeyFrameAbscissa:(float)(masterFrameCount * 1000.0)];
-    [appExecutive.device setKeyFramePosition:(float)0];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.start3PPanDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.mid3PPanDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PPanDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PPanDistance)];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device endKeyFrameTransmission];
-    
-    //tilt motor
-    
-    [appExecutive.device setCurrentKeyFrameAxis:2];
-    [appExecutive.device setKeyFrameCount:5];
-    [appExecutive.device setKeyFrameAbscissa:(float)0];
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal1 * 1000.0)]; //15
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal2 * 1000.0)]; //100
-    [appExecutive.device setKeyFrameAbscissa:(float)(self.appExecutive.slide3PVal3 * 1000.0)]; //250
-    [appExecutive.device setKeyFrameAbscissa:(float)(masterFrameCount * 1000)];
-    [appExecutive.device setKeyFramePosition:(float)0];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.start3PTiltDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.mid3PTiltDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PTiltDistance)];
-    [appExecutive.device setKeyFramePosition:(float)(self.appExecutive.end3PTiltDistance)];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device setKeyFrameVelocity:0];
-    [appExecutive.device endKeyFrameTransmission];
 }
 
 - (void)setupAfterConnection {
@@ -1194,7 +1168,7 @@ ControllerState;
 }
 
 - (IBAction) handleSendMotorsToStartButton: (JoyButton *) sender {
-
+    
 	//DDLogDebug(@"Send Motors To Start Button");
     
     //NSLog(@"keepAlive 0");
@@ -1212,7 +1186,7 @@ ControllerState;
 }
 
 - (IBAction) handleStartProgramButton: (JoyButton *) sender {
-
+    
 	DDLogDebug(@"Start Program Button");
     
     [device setDelayProgramStartTimer:0];
@@ -1258,7 +1232,7 @@ ControllerState;
     {
         [[AppExecutive sharedInstance].device startKeyFrameProgram];
         
-        keyframeTimer = [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(handleKeyFrameStatusTimer:) userInfo:nil repeats:YES];
+        [self startKeyframeTimer];
         
         //NSLog(@"resume keyframe pause");
     }
@@ -1302,6 +1276,11 @@ ControllerState;
     
     [AppExecutive sharedInstance].device.delegate = self;
     [[AppExecutive sharedInstance].device connect];
+    
+    if (self.appExecutive.is3P == YES)
+    {
+        [self startKeyframeTimer];
+    }
 }
 
 - (void) didConnect: (NMXDevice *) device1 {
@@ -1329,13 +1308,15 @@ ControllerState;
     
     disconnectStatusLbl.text = @"Did Disconnect Device Init";
     
-    [appExecutive.defaults setObject: @"yes" forKey: @"didDisconnect"];
-    [appExecutive.defaults synchronize];
+//    [appExecutive.defaults setObject: @"yes" forKey: @"didDisconnect"];
+//    [appExecutive.defaults synchronize];
     
     [appExecutive.defaults setObject: appExecutive.device.name forKey: @"deviceName"];
     [appExecutive.defaults synchronize];
 
     dispatch_async(dispatch_get_main_queue(), ^(void) {
+        
+        [keyframeTimer invalidate];
         
         self.statusTimer = nil;
         self.confirmPauseTimer = nil;
@@ -1423,19 +1404,20 @@ ControllerState;
     }
 }
 
-- (IBAction)simulateDisconnect:(id)sender {
+- (IBAction) simulateDisconnect:(id)sender {
     
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"showNotificationHost"
      object:self.restorationIdentifier];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+    //[[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         
         self.statusTimer = nil;
         self.confirmPauseTimer = nil;
         [self hideStateButtons];
+        [keyframeTimer invalidate];
         
         [self.reconnectButton setHidden: false];
         [self.disconnectedLabel setHidden: false];
@@ -2411,8 +2393,6 @@ ControllerState;
             break;
     }
     
-    //[self dismissViewControllerAnimated:YES];
-    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -2524,15 +2504,15 @@ ControllerState;
 
 - (void)showVoltageTimer {
     
-    float voltage = self.appExecutive.voltage;
-    
-    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-    
-    float diff = self.appExecutive.voltageHigh - voltage;
-    
-    float per = diff/range;
-    
-    float per2 = voltage/self.appExecutive.voltageHigh;
+//    float voltage = self.appExecutive.voltage;
+//    
+//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
+//    
+//    float diff = self.appExecutive.voltageHigh - voltage;
+//    
+//    float per = diff/range;
+//    
+//    float per2 = voltage/self.appExecutive.voltageHigh;
     
     //per2 = .35;
     
@@ -2568,10 +2548,15 @@ ControllerState;
     
     float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
     
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 7,
+    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
                                                          batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
-                                                         batteryIcon.frame.size.width * .5,
+                                                         batteryIcon.frame.size.width * .47,
                                                          batteryIcon.frame.size.height * per4)];
+    
+//    [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 7,
+//                                                         batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
+//                                                         batteryIcon.frame.size.width * .5,
+//                                                         batteryIcon.frame.size.height * per4)];
     
     v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
     

@@ -59,6 +59,7 @@ typedef enum : unsigned char {
     NMXCommandMotorSetBacklash = 5,
     NMXCommandMotorSetMicroStep = 6,
     NMXCommandMotorSetContinuousSpeed = 13,
+    NMXCommandMotorSetContinuousAccelDecelRate = 14, //Dampening
     NMXCommandMotorMoveSimple = 15,
     NMXCommandMotorSetProgramStartPoint = 16,
     NMXCommandMotorSetProgramStopPoint = 17,
@@ -76,6 +77,7 @@ typedef enum : unsigned char {
     
     NMXCommandMotorQueryCurrentPosition = 106,
     NMXCommandMotorQueryRunning = 107,
+    NMXCommandMotorQueryContinuousAccelDecel = 109,
     NMXCommandMotorQueryTravelShotsOrTravelTime = 113,
     NMXCommandMotorQueryLeadInShotsOrTime = 114,
     NMXCommandMotorQuerySleep = 117,
@@ -388,7 +390,14 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         if (waitForResponse)
         {
-            DDLogDebug(@"Waited for response and sending command %@ expect response", desc); //randall 8-17-15
+             DDLogDebug(@"Waited for response and sending command %@ expect response", desc); //randall 8-17-15
+            
+            if ([desc containsString:@"Set KeyFrame Position"]) {
+                
+                desc = [desc stringByReplacingOccurrencesOfString:@"Set KeyFrame Position " withString:@""];
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName: @"debugKeyframePosition" object: [NSNumber numberWithFloat:[desc floatValue]]];
+            }
         }
         else
         {
@@ -501,9 +510,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             
             [self sendCommand: self.myLastCommand WithDesc: @"Retrying last command" WaitForResponse: true WithTimeout: self.lastTimeout];
             
-            [self waitForResponse];
-            
-            
+            [self waitForResponse];            
         }
     }
     
@@ -1051,6 +1058,32 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     }
 }
 
+- (void) motorSet: (int) motorNumber ContinuousSpeedAccelDecel: (float) speed {
+        
+        unsigned char newDataBytes[16];
+        
+        [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorSetContinuousAccelDecelRate dataLength: 4];
+        
+        unsigned char * speedPtr = (unsigned char *)&speed;
+        
+        newDataBytes[10] = speedPtr[3];
+        newDataBytes[11] = speedPtr[2];
+        newDataBytes[12] = speedPtr[1];
+        newDataBytes[13] = speedPtr[0];
+        
+        NSData *newData = [NSData dataWithBytes: newDataBytes length: 14];
+        NSString *descString = [NSString stringWithFormat: @"Set Continuous Speed Dampening %f motor: %i", speed,motorNumber];
+        
+        [self sendCommand: newData WithDesc: descString WaitForResponse: false WithTimeout: 0.1];
+        
+        // Send the stop command twice just to be sure...
+        
+        if (0 == speed)
+        {
+            [self sendCommand: newData WithDesc: descString WaitForResponse: false WithTimeout: 0.1];
+        }
+}
+
 - (void) motorMove: (int) motorNumber Direction: (unsigned char) direction Steps: (UInt32) steps {
     
     if (false == disabled[motorNumber])
@@ -1297,6 +1330,39 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     return currentPosition;
 }
+
+- (float) motorQueryContinuousAccelDecel: (int) motorNumber {
+    
+    float    voltage;
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorQueryContinuousAccelDecel dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"Query ContinuousAccelDecel" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        voltage = [[self extractReturnedNumber] floatValue];
+    }
+    
+    return voltage;
+    
+//    UInt32    currentPosition;
+//    unsigned char newDataBytes[16];
+//    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorQueryContinuousAccelDecel dataLength: 0];
+//    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+//    
+//    [self sendCommand: newData WithDesc: @"ContinuousAccelDecel" WaitForResponse: true WithTimeout: 0.3];
+//    
+//    if ([self waitForResponse])
+//    {
+//        currentPosition = [[self extractReturnedNumber] UInt32Value];
+//    }
+//    
+//    return currentPosition;
+}
+
+
 
 - (UInt32) motorQueryLeadInShotsOrTime: (int) motorNumber {
 
@@ -1758,6 +1824,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 14];
     
+    //NSString *descString = [NSString stringWithFormat: @"Set KeyFrame Position %f", value];
     NSString *descString = [NSString stringWithFormat: @"Set KeyFrame Position %f", value];
     
     [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];

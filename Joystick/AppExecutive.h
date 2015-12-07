@@ -141,6 +141,11 @@
 @property float voltageLow;
 @property float voltageHigh;
 @property float voltage;
+@property bool isVideo;
+@property bool printTilt;
+@property float dampening1;
+@property float dampening2;
+@property float dampening3;
 
 #pragma mark Class Management
 

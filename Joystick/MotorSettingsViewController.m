@@ -55,25 +55,21 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 #pragma mark Private Propery Methods
 
-
-@synthesize leftBtn, rightBtn, okButton, appExecutive, distanceLbl, presetLbl, contentScroll,gearRatioLbl,rigRatioLbl,overallDistanceTxt,leftLbl,rightLbl,unitsLbl,scrollPositionView,unitsTxt,sensitivityValue,sensitivitySlider,joystickResponseLbl,siderealBtn,overallDistanceLbl,toggleJoystickSwitch;
+@synthesize leftBtn, rightBtn, okButton, appExecutive, distanceLbl, presetLbl, contentScroll,gearRatioLbl,rigRatioLbl,overallDistanceTxt,leftLbl,rightLbl,unitsLbl,scrollPositionView,unitsTxt,sensitivityValue,sensitivitySlider,joystickResponseLbl,siderealBtn,overallDistanceLbl,toggleJoystickSwitch,dampeningSlider;
 
 //------------------------------------------------------------------------------
 
 - (void)viewDidLoad {
     
-    //NSLog(@"R viewDidLoad");
-    
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     self.backlash = [self.appExecutive.device motorQueryBacklash: (int) self.motorNumber];
+    
     start = [self.appExecutive.device queryProgramStartPoint:(int)self.motorNumber];
     end = [self.appExecutive.device queryProgramEndPoint:(int)self.motorNumber];
     
     microstepSetting = [self.appExecutive.device motorQueryMicrostep: (int) self.motorNumber];
-    
-    lastMicrostep = microstepSetting;
-        
+            
     NSLog(@"start: %i",start);
     NSLog(@"end: %i",end);
     NSLog(@"viewdidload microstepSetting: %i", microstepSetting);
@@ -179,6 +175,45 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
     }
     
+    float maxAccel = 30000;
+    
+    float a;
+    float b;
+    
+    if ((int)self.motorNumber == 1)
+    {
+        //16192 = pow(x,2) * maxAccel;
+        //16192/maxAcel = x * x
+        //.53 = x * x
+        
+        //NSLog(@"appExecutive.dampening1: %f",appExecutive.dampening1);
+        
+        a = appExecutive.dampening1/maxAccel;
+    }
+    else if ((int)self.motorNumber == 2)
+    {
+//        float conv = pow((float)dampeningSlider.value,2) * maxAccel;
+//        
+//        dampeningSlider.value = self.appExecutive.dampening2;
+        
+        a = appExecutive.dampening2/maxAccel;
+    }
+    else  if ((int)self.motorNumber == 3)
+    {
+//        float conv = pow((float)dampeningSlider.value,2) * maxAccel;
+//        
+//        dampeningSlider.value = self.appExecutive.dampening3;
+
+        a = appExecutive.dampening3/maxAccel;
+    }
+    
+    b = sqrtf(a);
+    
+    dampeningSlider.value = b;
+    
+    NSLog(@"a: %f",a);
+    NSLog(@"b: %f",b);
+    
     [super viewDidLoad];
 }
 
@@ -188,6 +223,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     {
         NSLog(@"self.motorNumber: %i",(int)self.motorNumber);
         NSLog(@"self.appExecutive.defaults slideGear: %i",(int)[self.appExecutive.defaults integerForKey:@"slideGear"]);
+        NSLog(@"self.appExecutive.defaults slideMotor: %i",(int)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
+        
         
         if ([self.appExecutive.defaults integerForKey:@"slideGear"])
         {
@@ -225,7 +262,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             else if (self.appExecutive.slideMotor == 3)
             {
-                rigRatioLbl.text = @"Linear Custom";
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"]];
             }
         }
     }
@@ -263,7 +300,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             else if (self.appExecutive.panMotor == 3)
             {
-                rigRatioLbl.text = @"Linear Custom";
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"panMotorCustomValue"]];
             }
         }
     }
@@ -301,7 +338,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             else if (self.appExecutive.tiltMotor == 3)
             {
-                rigRatioLbl.text = @"Linear Custom";
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"]];
             }
         }
     }
@@ -419,6 +456,36 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         customLinearParam = [[preset objectForKey:@"val1"] floatValue];
         
         NSLog(@"customLinearParam: %.02f",customLinearParam);
+        
+        if (self.motorNumber == 1)
+        {
+            self.appExecutive.slideMotor = 3;
+            
+            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.slideMotor] forKey: @"slideMotor"];
+            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"slideMotorCustomValue"];
+            
+            NSLog(@"set slideMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
+        }
+        else if (self.motorNumber == 2)
+        {
+            self.appExecutive.panMotor = 3;
+            
+            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.panMotor] forKey: @"panMotor"];
+            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"panMotorCustomValue"];
+            
+            NSLog(@"set panMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"panMotor"]);
+        }
+        else if (self.motorNumber == 3)
+        {
+            self.appExecutive.tiltMotor = 3;
+            
+            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.tiltMotor] forKey: @"tiltMotor"];
+            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"tiltMotorCustomValue"];
+            
+            NSLog(@"set tiltMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltMotor"]);
+        }
+        
+        [self.appExecutive.defaults synchronize];
     }
     
     [self dismissViewControllerAnimated: YES completion: nil];
@@ -516,13 +583,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             {
                 self.appExecutive.slideMotor = 2;
             }
-            else if ([preset isEqualToString:@"Linear Custom"])
+            else if ([preset containsString:@"Linear Custom"])
             {
                 self.appExecutive.slideMotor = 3;
             }
             
             [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.slideMotor] forKey: @"slideMotor"];
-            [self.appExecutive.defaults synchronize];
             
             NSLog(@"set slideMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
         }
@@ -542,7 +608,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             
             [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.panMotor] forKey: @"panMotor"];
-            [self.appExecutive.defaults synchronize];
             
             NSLog(@"set panMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"panMotor"]);
         }
@@ -562,10 +627,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             
             [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.tiltMotor] forKey: @"tiltMotor"];
-            [self.appExecutive.defaults synchronize];
+            
             
             NSLog(@"set tiltMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltMotor"]);
         }
+        
+        [self.appExecutive.defaults synchronize];
     }
     
     [self getDistance];
@@ -578,7 +645,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     float microsteps;
     float reciprocal = 0;
     
-    //NSLog(@"getdistance microstepSetting: %i",microstepSetting);
+    NSLog(@"getdistance microstepSetting: %i",microstepSetting);
     
     if (microstepSetting == 4)
     {
@@ -621,10 +688,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     float rigRatio;
     
-//    NSLog(@"microsteps: %f",microsteps);
-//    NSLog(@"distance: %f",distance);
-//    NSLog(@"gearRatio: %f",gearRatio);
-//    NSLog(@"reciprocal: %f",reciprocal);
+    NSLog(@"microsteps: %f",microsteps);
+    NSLog(@"distance: %f",distance);
+    NSLog(@"gearRatio: %f",gearRatio);
+    NSLog(@"reciprocal: %f",reciprocal);
     
     if (([rigRatioLbl.text containsString:@"Stage R"] ||
          [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
@@ -663,7 +730,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             inches = ((distance/microsteps) * reciprocal) * customLinearParam;
         }
         {
-            inches = ((distance/microsteps) * reciprocal) * 3.54;
+            //inches = ((distance/microsteps) * reciprocal) * 3.54;
+            inches = ((distance/microsteps) * reciprocal) * 3.346;
         }
         
 //        float a1 = (distance/microsteps);
@@ -679,7 +747,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         //NSLog(@"inches: %f",inches);
     }
     
-    //NSLog(@"calculatedValue: %f",calculatedValue);
+    NSLog(@"calculatedValue: %f",calculatedValue);
     
     /*
         Motor steps - m (steps per rotation)
@@ -778,7 +846,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         //3/.184 = distance/1600;
         //16*1600 = distance;
         
-        float a4 = reciprocal * 3.54; //.184
+        //float a4 = reciprocal * 3.54; //.184
+        
+        float a4 = reciprocal * 3.346;
         
         NSLog(@"a4: %f",a4);
         
@@ -817,71 +887,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     
     [appExecutive.device motorSet:(int)self.motorNumber ProgramStopPoint:newPos];
-}
-
-- (void)recalculateOrig: (float)value {
-    
-    NSLog(@"recalculate: %f",value);
-
-    int motorsteps = 200;
-    
-    //float gearRatio = 0;
-    
-    if ([gearRatioLbl.text isEqualToString:@"19:1"])
-    {
-        gearRatio = 19.2032;
-    }
-    else if ([gearRatioLbl.text isEqualToString:@"27:1"])
-    {
-        gearRatio = 27;
-    }
-    else if ([gearRatioLbl.text isEqualToString:@"5:1"])
-    {
-        gearRatio = 5;
-    }
-    
-    float rigRatio;
-    
-    if (([rigRatioLbl.text containsString:@"Stage R"] ||
-         [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
-    {
-        rigRatio = 3.2727;
-    }
-    else
-    {
-        rigRatio = .2988;
-    }
-    
-    //-110.00 = (distance/(200 * 19.203199 * .2988)) * 16;
-    //-110.00 = (distance/1135.44) * 16;
-    //-110.00/16 = (distance/1135.44);
-    //-6.875 = distance/1135.44;
-    //-6.875*1135.44 = distance;
-    //-7806.15 = distance;
-    
-    float v4 = motorsteps * gearRatio * rigRatio; //1135.44
-    float v1 = value / microstepSetting; //-13.75
-    float v2 = v1 * v4; //-7806.15
-    
-//    NSLog(@"gearRatio: %f",gearRatio);
-//    NSLog(@"rigRatio: %f",rigRatio);
-//    NSLog(@"v4: %f",v4);
-//    NSLog(@"v1: %f",v1);
-    
-    //distance = value * ((motorsteps * gearRatio * rigRatio) * microstepSetting);
-    
-    NSLog(@"new distance: %f",v2);
-    
-    int distanceInt = abs((int)v2);
-    
-    overallDistanceTxt.text = [NSString stringWithFormat:@"%i",distanceInt];
-    
-    int n = (int)v2;
-    int ab = abs(n);
-    int newPos = start + ab;
-    NSLog(@"new end: %i",newPos);
-    
-    //[appExecutive.device motorSet:(int)self.motorNumber ProgramStopPoint:newPos];
 }
 
 - (void)jsTimer {
@@ -1055,6 +1060,39 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 //------------------------------------------------------------------------------
 
 #pragma mark - IBAction Methods
+
+- (IBAction) handleDampeningSlider: (UISlider *) sender {
+    
+    NSLog(@"val: %f",sender.value);
+    
+    [dampeningTimer invalidate];
+    
+    dampeningTimer = [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(timerName) userInfo:nil repeats:NO];
+}
+
+- (void)timerName {
+    
+    float maxAccel = 30000;
+    
+    float conv = pow((float)dampeningSlider.value,2) * maxAccel;
+    
+    NSLog(@"conv: %f",conv);
+    
+    if ((int)self.motorNumber == 1)
+    {
+        self.appExecutive.dampening1 = conv;
+    }
+    else if ((int)self.motorNumber == 2)
+    {
+        self.appExecutive.dampening2 = conv;
+    }
+    else
+    {
+        self.appExecutive.dampening3 = conv;
+    }
+	
+    [self.appExecutive.device motorSet: (int)self.motorNumber ContinuousSpeedAccelDecel: conv];
+}
 
 - (IBAction) handleSensitivitySlider: (UISlider *) sender {
 
@@ -1374,152 +1412,21 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     distance = start - end;
     
-    if (self.appExecutive.is3P == YES)
+    if ((int)self.motorNumber == 1)
     {
-        if (self.motorNumber == 1)
-        {
-            NSLog(@"start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
-            NSLog(@"mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
-            NSLog(@"end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
-            
-            NSLog(@"scale Slide motor microstep2: %i",self.appExecutive.microstep1);
-            
-            //564564 * 16/8 =
-            
-            float a1;
-            float a2;
-            float a3;
-            
-            float orig1 = self.appExecutive.start3PSlideDistance;
-            float orig2 = self.appExecutive.mid3PSlideDistance;
-            float orig3 = self.appExecutive.end3PSlideDistance;
-            
-            if (self.appExecutive.microstep1 < lastMicrostep)
-            {
-                NSLog(@"lt last - divide");
-                
-                a1 = orig1 / (16/(float)self.appExecutive.microstep1);
-                a2 = orig2 / (16/(float)self.appExecutive.microstep1);
-                a3 = orig3 / (16/(float)self.appExecutive.microstep1);
-            }
-            else
-            {
-                NSLog(@"gt last - multiply");
-                
-                a1 = orig1 * (16/(float)self.appExecutive.microstep1);
-                a2 = orig2 * (16/(float)self.appExecutive.microstep1);
-                a3 = orig3 * (16/(float)self.appExecutive.microstep1);
-            }
-            
-            NSLog(@"scaled start position: %f",a1);
-            NSLog(@"scaled mid position: %f",a2);
-            NSLog(@"scaled end position: %f",a3);
-            
-            self.appExecutive.scaledStart3PSlideDistance = a1;
-            self.appExecutive.scaledMid3PSlideDistance = a2;
-            self.appExecutive.scaledEnd3PSlideDistance = a3;
-            
-            self.appExecutive.start3PSlideDistance = a1;
-            self.appExecutive.mid3PSlideDistance = a2;
-            self.appExecutive.end3PSlideDistance = a3;
-        }
-        else if (self.motorNumber == 2)
-        {
-            NSLog(@"start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
-            NSLog(@"mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
-            NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
-            
-            NSLog(@"scale pan motor microstep2: %i",self.appExecutive.microstep2);
-            
-            //564564 * 16/8 =
-            
-            float a1;
-            float a2;
-            float a3;
-        
-            float orig1 = self.appExecutive.start3PPanDistance;
-            float orig2 = self.appExecutive.mid3PPanDistance;
-            float orig3 = self.appExecutive.end3PPanDistance;
-            
-            if (self.appExecutive.microstep2 < lastMicrostep)
-            {
-                NSLog(@"lt last - divide");
-                
-                a1 = orig1 / (16/(float)self.appExecutive.microstep2);
-                a2 = orig2 / (16/(float)self.appExecutive.microstep2);
-                a3 = orig3 / (16/(float)self.appExecutive.microstep2);
-            }
-            else
-            {
-                NSLog(@"gt last - multiply");
-                
-                a1 = orig1 * (16/(float)self.appExecutive.microstep2);
-                a2 = orig2 * (16/(float)self.appExecutive.microstep2);
-                a3 = orig3 * (16/(float)self.appExecutive.microstep2);
-            }
-            
-            NSLog(@"scaled start position: %f",a1);
-            NSLog(@"scaled mid position: %f",a2);
-            NSLog(@"scaled end position: %f",a3);
-            
-            self.appExecutive.scaledStart3PPanDistance = a1;
-            self.appExecutive.scaledMid3PPanDistance = a2;
-            self.appExecutive.scaledEnd3PPanDistance = a3;
-            
-            self.appExecutive.start3PPanDistance = a1;
-            self.appExecutive.mid3PPanDistance = a2;
-            self.appExecutive.end3PPanDistance = a3;
-        }
-        else if (self.motorNumber == 3)
-        {
-            NSLog(@"start3PTiltDistance: %f",self.appExecutive.start3PTiltDistance);
-            NSLog(@"mid3PTiltDistance: %f",self.appExecutive.mid3PTiltDistance);
-            NSLog(@"end3PTiltDistance: %f",self.appExecutive.end3PTiltDistance);
-            
-            NSLog(@"scale Tilt motor microstep3: %i",self.appExecutive.microstep3);
-            
-            //564564 * 16/8 =
-            
-            float a1;
-            float a2;
-            float a3;
-            
-            float orig1 = self.appExecutive.start3PTiltDistance;
-            float orig2 = self.appExecutive.mid3PTiltDistance;
-            float orig3 = self.appExecutive.end3PTiltDistance;
-            
-            if (self.appExecutive.microstep3 < lastMicrostep)
-            {
-                NSLog(@"lt last - divide");
-                
-                a1 = orig1 / (16/(float)self.appExecutive.microstep3);
-                a2 = orig2 / (16/(float)self.appExecutive.microstep3);
-                a3 = orig3 / (16/(float)self.appExecutive.microstep3);
-            }
-            else
-            {
-                NSLog(@"gt last - multiply");
-                
-                a1 = orig1 * (16/(float)self.appExecutive.microstep3);
-                a2 = orig2 * (16/(float)self.appExecutive.microstep3);
-                a3 = orig3 * (16/(float)self.appExecutive.microstep3);
-            }
-            
-            NSLog(@"scaled start position: %f",a1);
-            NSLog(@"scaled mid position: %f",a2);
-            NSLog(@"scaled end position: %f",a3);
-            
-            self.appExecutive.scaledStart3PTiltDistance = a1;
-            self.appExecutive.scaledMid3PTiltDistance = a2;
-            self.appExecutive.scaledEnd3PTiltDistance = a3;
-            
-            self.appExecutive.start3PTiltDistance = a1;
-            self.appExecutive.mid3PTiltDistance = a2;
-            self.appExecutive.end3PTiltDistance = a3;
-        }
+        self.appExecutive.endPoint1 = end;
+        self.appExecutive.startPoint1 = start;
     }
-    
-    lastMicrostep = microstepSetting;
+    else if ((int)self.motorNumber == 2)
+    {
+        self.appExecutive.endPoint2 = end;
+        self.appExecutive.startPoint2 = start;
+    }
+    else
+    {
+        self.appExecutive.endPoint3 = end;
+        self.appExecutive.startPoint3 = start;
+    }
     
     [self getDistance];
     [self updateInvertUI];
@@ -1747,7 +1654,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             else
             {
-                inches = [textField.text intValue];
+                //inches = [textField.text intValue];
+                inches = [textField.text floatValue];
                 
                 [self recalculate:inches];
             }

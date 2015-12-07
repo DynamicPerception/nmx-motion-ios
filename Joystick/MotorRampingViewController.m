@@ -95,7 +95,7 @@ NSArray static	*frameCountStrings = nil;
 
 #pragma mark Private Property Synthesis
 
-@synthesize appExecutive, lockButton, frameText, frameView, increaseSliders, decreaseSliders, selectedFrameNumber,picker, framePickerView, rampSettingSegment, selectedShotDuration, frameCount1, frameCount2, frameCount3, rampSettingImg,slide3P1Lbl,slide3P2Lbl,slide3P3Lbl,slide3PSlider1,slide3PSlider2,slide3PSlider3,pan3PSlider1,pan3PSlider2,pan3PSlider3,tilt3PSlider1,tilt3PSlider2,tilt3PSlider3,pan3P1Lbl,pan3P2Lbl,pan3P3Lbl,tilt3P1Lbl,tilt3P2Lbl,tilt3P3Lbl,slide3PView,pan3PView,tilt3PView,topHeaderLbl,settingsButton,batteryIcon,contentBG;
+@synthesize appExecutive, lockButton, frameText, frameView, increaseSliders, decreaseSliders, selectedFrameNumber,picker, framePickerView, rampSettingSegment, selectedShotDuration, frameCount1, frameCount2, frameCount3, rampSettingImg,slide3P1Lbl,slide3P2Lbl,slide3P3Lbl,slide3PSlider1,slide3PSlider2,slide3PSlider3,pan3PSlider1,pan3PSlider2,pan3PSlider3,tilt3PSlider1,tilt3PSlider2,tilt3PSlider3,pan3P1Lbl,pan3P2Lbl,pan3P3Lbl,tilt3P1Lbl,tilt3P2Lbl,tilt3P3Lbl,slide3PView,pan3PView,tilt3PView,topHeaderLbl,settingsButton,batteryIcon,contentBG,slideLbl2,slideLbl1,slideLbl3,slideLbl4,panLbl2,panLbl1,panLbl3,panLbl4,tiltLbl2,tiltLbl1,tiltLbl3,tiltLbl4;
 
 
 #pragma mark Private Property Methods
@@ -226,6 +226,21 @@ NSArray static	*frameCountStrings = nil;
      addObserver:self
      selector:@selector(handleVideoFrameNotification:)
      name:@"chooseVideoFrame" object:nil];
+    
+    slideLbl1.alpha = 0;
+    slideLbl2.alpha = 0;
+    slideLbl3.alpha = 0;
+    slideLbl4.alpha = 0;
+    
+    panLbl1.alpha = 0;
+    panLbl2.alpha = 0;
+    panLbl3.alpha = 0;
+    panLbl4.alpha = 0;
+    
+    tiltLbl1.alpha = 0;
+    tiltLbl2.alpha = 0;
+    tiltLbl3.alpha = 0;
+    tiltLbl4.alpha = 0;
     
     [super viewDidLoad];
 }
@@ -523,6 +538,113 @@ NSArray static	*frameCountStrings = nil;
     
     [settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
     
+    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName5) userInfo:nil repeats:NO];
+}
+
+- (void)timerName5 {
+	
+    [self setupDisplays];
+}
+
+- (void) viewDidAppear: (BOOL) animated {
+    
+    //[self setupDisplays];
+}
+
+- (void)setupDisplays {
+
+    slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseStart]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
+    
+    [slideLbl1 setNeedsDisplay];
+    
+    slideLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseFinal]-6, self.slideLbl2.frame.origin.y, slideLbl2.frame.size.width, slideLbl2.frame.size.height);
+    
+    [slideLbl2 setNeedsDisplay];
+    
+    slideLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.slideDecreaseStart]-6, self.slideLbl3.frame.origin.y, slideLbl3.frame.size.width, slideLbl3.frame.size.height);
+    
+    [slideLbl3 setNeedsDisplay];
+    
+    slideLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.slideDecreaseFinal]-6, self.slideLbl4.frame.origin.y, slideLbl4.frame.size.width, slideLbl4.frame.size.height);
+    
+    [slideLbl4 setNeedsDisplay];
+    
+    //pan
+    
+    panLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.panIncreaseStart]-6, self.panLbl1.frame.origin.y, panLbl1.frame.size.width, panLbl1.frame.size.height);
+    
+    [panLbl1 setNeedsDisplay];
+    
+    panLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.panIncreaseFinal]-6, self.panLbl2.frame.origin.y, panLbl2.frame.size.width, panLbl2.frame.size.height);
+    
+    [panLbl2 setNeedsDisplay];
+    
+    panLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.panDecreaseStart]-6, self.panLbl3.frame.origin.y, panLbl3.frame.size.width, panLbl3.frame.size.height);
+    
+    [panLbl3 setNeedsDisplay];
+    
+    panLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.panDecreaseFinal]-6, self.panLbl4.frame.origin.y, panLbl4.frame.size.width, panLbl4.frame.size.height);
+    
+    [panLbl4 setNeedsDisplay];
+    
+    //tilt
+    
+    tiltLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.tiltIncreaseStart]-6, self.tiltLbl1.frame.origin.y, tiltLbl1.frame.size.width, tiltLbl1.frame.size.height);
+    
+    [tiltLbl1 setNeedsDisplay];
+    
+    tiltLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.tiltIncreaseFinal]-6, self.tiltLbl2.frame.origin.y, tiltLbl2.frame.size.width, tiltLbl2.frame.size.height);
+    
+    [tiltLbl2 setNeedsDisplay];
+    
+    tiltLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.tiltDecreaseStart]-6, self.tiltLbl3.frame.origin.y, tiltLbl3.frame.size.width, tiltLbl3.frame.size.height);
+    
+    [tiltLbl3 setNeedsDisplay];
+    
+    tiltLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.tiltDecreaseFinal]-6, self.tiltLbl4.frame.origin.y, tiltLbl4.frame.size.width, tiltLbl4.frame.size.height);
+    
+    [tiltLbl4 setNeedsDisplay];
+    
+    [UIView animateWithDuration:.4 animations:^{
+        
+        slideLbl1.alpha = 1;
+        slideLbl2.alpha = 1;
+        slideLbl3.alpha = 1;
+        slideLbl4.alpha = 1;
+        
+        panLbl1.alpha = 1;
+        panLbl2.alpha = 1;
+        panLbl3.alpha = 1;
+        panLbl4.alpha = 1;
+        
+        tiltLbl1.alpha = 1;
+        tiltLbl2.alpha = 1;
+        tiltLbl3.alpha = 1;
+        tiltLbl4.alpha = 1;
+        
+        
+    } completion:^(BOOL finished) {
+        
+        [UIView animateWithDuration:.4 animations:^{
+            
+            
+        } completion:^(BOOL finished) {
+            
+        }];
+        
+    }];
+}
+
+- (float)xPositionFromSliderValue:(UISlider *)aSlider {
+    
+    float sliderRange2 = aSlider.frame.size.width - aSlider.currentThumbImage.size.width;
+    float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
+    
+    float sliderValueToPixels = (((aSlider.value - aSlider.minimumValue)/(aSlider.maximumValue - aSlider.minimumValue)) * sliderRange2) + sliderOrigin;
+    
+    sliderValueToPixels = sliderValueToPixels - (aSlider.currentThumbImage.size.width/2);
+    
+    return sliderValueToPixels;
 }
 
 - (void)showVoltage {
@@ -532,15 +654,15 @@ NSArray static	*frameCountStrings = nil;
 
 - (void)showVoltageTimer {
     
-    float voltage = self.appExecutive.voltage;
-    
-    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-    
-    float diff = self.appExecutive.voltageHigh - voltage;
-    
-    float per = diff/range;
-    
-    float per2 = voltage/self.appExecutive.voltageHigh;
+//    float voltage = self.appExecutive.voltage;
+//    
+//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
+//    
+//    float diff = self.appExecutive.voltageHigh - voltage;
+//    
+//    float per = diff/range;
+//    
+//    float per2 = voltage/self.appExecutive.voltageHigh;
     
     //per2 = .35;
     
@@ -576,9 +698,9 @@ NSArray static	*frameCountStrings = nil;
         
     float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
     
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 7,
+    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
                                                          batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
-                                                         batteryIcon.frame.size.width * .5,
+                                                         batteryIcon.frame.size.width * .47,
                                                          batteryIcon.frame.size.height * per4)];
     
     v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
@@ -605,10 +727,12 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) didReceiveMemoryWarning {
+    
     [super didReceiveMemoryWarning];
 }
 
 - (void) printRect: (CGRect) frame named: (NSString *) name {
+    
     CGPoint	origin	= frame.origin;
     CGSize	size	= frame.size;
     
@@ -616,6 +740,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) setFrameForIncreaseSlider: (UISlider *) slider {
+    
     CGRect	slideFrame	= slider.frame;
     CGRect	superframe	= slider.superview.frame;
     CGFloat slideMargin	= 8.0;
@@ -629,6 +754,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) setFrameForDecreaseSlider: (UISlider *) slider {
+    
     CGRect	slideFrame	= slider.frame;
     CGRect	superframe	= slider.superview.frame;
     CGFloat slideMargin	= 8.0;
@@ -643,6 +769,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) setupSliders {
+    
     if (setup == FALSE)
     {
         [self setFrameForIncreaseSlider: self.slideIncreaseStart];
@@ -714,6 +841,90 @@ NSArray static	*frameCountStrings = nil;
     self.tiltIncreaseFinal.restorationIdentifier = @"tiltIncreaseFinal";
     self.tiltDecreaseStart.restorationIdentifier = @"tiltDecreaseStart";
     self.tiltDecreaseFinal.restorationIdentifier = @"tiltDecreaseFinal";
+    
+    //NSLog(@"(int)self.slideIncreaseValues firstObject: %f",[[self.appExecutive.slideIncreaseValues firstObject] floatValue]);
+    
+    //float conv = sender.value * (selectedFrameCount/2);
+    
+    //NSLog(@"(int)self.slideIncreaseStart.value: %i",(int)self.slideIncreaseFinal.value);
+    
+    //float a = [[self.appExecutive.slideIncreaseValues firstObject] floatValue] * (selectedFrameCount/2);
+    
+    //NSLog(@"a: %f",a);
+    
+    //int b = [[self.appExecutive.slideIncreaseValues firstObject] floatValue] * (selectedFrameCount/2);
+    
+    //NSLog(@"b: %i",b);
+    
+    
+    
+    slideLbl1.text = [NSString stringWithFormat:@"%i",(int)(self.slideIncreaseStart.value * (selectedFrameCount/2))];
+    slideLbl2.text = [NSString stringWithFormat:@"%i",(int)(self.slideIncreaseFinal.value * (selectedFrameCount/2))];
+    slideLbl3.text = [NSString stringWithFormat:@"%i",(int)(self.slideDecreaseStart.value * (selectedFrameCount/2)+selectedFrameCount/2)];
+    slideLbl4.text = [NSString stringWithFormat:@"%i",(int)(self.slideDecreaseFinal.value * (selectedFrameCount/2)+selectedFrameCount/2)];
+    
+    panLbl1.text = [NSString stringWithFormat:@"%i",(int)(self.panIncreaseStart.value * (selectedFrameCount/2))];
+    panLbl2.text = [NSString stringWithFormat:@"%i",(int)(self.panIncreaseFinal.value * (selectedFrameCount/2))];
+    panLbl3.text = [NSString stringWithFormat:@"%i",(int)(self.panDecreaseStart.value * (selectedFrameCount/2)+selectedFrameCount/2)];
+    panLbl4.text = [NSString stringWithFormat:@"%i",(int)(self.panDecreaseFinal.value * (selectedFrameCount/2)+selectedFrameCount/2)];
+    
+    tiltLbl1.text = [NSString stringWithFormat:@"%i",(int)(self.tiltIncreaseStart.value * (selectedFrameCount/2))];
+    tiltLbl2.text = [NSString stringWithFormat:@"%i",(int)(self.tiltIncreaseFinal.value * (selectedFrameCount/2))];
+    tiltLbl3.text = [NSString stringWithFormat:@"%i",(int)(self.tiltDecreaseStart.value * (selectedFrameCount/2)+selectedFrameCount/2)];
+    tiltLbl4.text = [NSString stringWithFormat:@"%i",(int)(self.tiltDecreaseFinal.value * (selectedFrameCount/2)+selectedFrameCount/2)];
+    
+    
+    if (programMode == NMXProgramModeVideo)
+    {
+        NSLog(@"is video");
+        
+        slideLbl1.text = [self convertTime:self.slideIncreaseStart];
+        slideLbl2.text = [self convertTime:self.slideIncreaseFinal];
+        slideLbl3.text = [self convertTime:self.slideDecreaseStart];
+        slideLbl4.text = [self convertTime:self.slideDecreaseFinal];
+        
+        panLbl1.text = [self convertTime:self.panIncreaseStart];
+        panLbl2.text = [self convertTime:self.panIncreaseFinal];
+        panLbl3.text = [self convertTime:self.panDecreaseStart];
+        panLbl4.text = [self convertTime:self.panDecreaseFinal];
+        
+        tiltLbl1.text = [self convertTime:self.tiltIncreaseStart];
+        tiltLbl2.text = [self convertTime:self.tiltIncreaseFinal];
+        tiltLbl3.text = [self convertTime:self.tiltDecreaseStart];
+        tiltLbl4.text = [self convertTime:self.tiltDecreaseFinal];
+    }
+}
+
+- (NSString *)convertTime : (UISlider *)slider {
+
+    int sd = [self.appExecutive.videoLengthNumber intValue];
+    
+    float per1;
+    
+    NSString *b;
+    
+    if ([slider.restorationIdentifier containsString:@"Decrease"]) {
+        
+        b = [NSString stringWithFormat:@"%@ has final",slider.restorationIdentifier];
+        
+        //NSLog(@"%@",b);
+        
+        per1 = (float)((int)(slider.value * (selectedFrameCount/2)+selectedFrameCount/2))/[self.appExecutive.frameCountNumber floatValue];
+    }
+    else
+    {
+        b = [NSString stringWithFormat:@"%@ has start",slider.restorationIdentifier];
+        
+        //NSLog(@"%@",b);
+        
+        per1 = (float)((int)(slider.value * (selectedFrameCount/2)))/[self.appExecutive.frameCountNumber floatValue];
+    }
+    
+    float val1 = sd * per1;
+    
+    NSString *a = [self stringForTimeDisplay: (int)val1];
+    
+    return a;
 }
 
 //------------------------------------------------------------------------------
@@ -777,6 +988,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (CGPoint) locationOfThumb: (UISlider *) slider {
+    
     CGFloat 	value		= slider.value;
     CGFloat		range		= slider.maximumValue - slider.minimumValue;
     CGRect		totalTrack	= [slider trackRectForBounds: slider.bounds];
@@ -795,11 +1007,23 @@ NSArray static	*frameCountStrings = nil;
 #pragma mark Slide Controls
 
 - (IBAction) handleSlideIncreaseStart: (UISlider *) sender {
-
-    if (sender.value > self.slideIncreaseFinal.value)
-        self.slideIncreaseFinal.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
+    
+    if (sender.value > self.slideIncreaseFinal.value)
+    {
+        self.slideIncreaseFinal.value = sender.value;
+        
+        slideLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl2.frame.origin.y, slideLbl2.frame.size.width, slideLbl2.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            slideLbl2.text = [self convertTime:sender];
+        
+        } else {
+        slideLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+            
+        }
+    }
     
     //[self updateFrameText];
     
@@ -811,6 +1035,17 @@ NSArray static	*frameCountStrings = nil;
     //NSLog(@"start %@",self.slideView.increaseStart);
     
     [self.slideView setNeedsDisplay];
+    
+    slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        
+        slideLbl1.text = [self convertTime:sender];
+    } else {
+        
+        slideLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
     [self saveSlideIncreaseValues];
     
     if (isLocked)
@@ -821,11 +1056,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handleSlideIncreaseFinal: (UISlider *) sender {
-
-    if (sender.value < self.slideIncreaseStart.value)
-        self.slideIncreaseStart.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
+    
+    if (sender.value < self.slideIncreaseStart.value)
+    {
+        self.slideIncreaseStart.value = sender.value;
+        
+        slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            slideLbl1.text = [self convertTime:sender];
+        }
+        else {
+            slideLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -835,6 +1081,20 @@ NSArray static	*frameCountStrings = nil;
     self.slideView.increaseFinal = [self locationOfThumb: sender];
     
     [self.slideView setNeedsDisplay];
+    
+    
+    slideLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl2.frame.origin.y, slideLbl2.frame.size.width, slideLbl2.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        slideLbl2.text = [self convertTime:sender];
+    }
+    else {
+        slideLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
+    //[slideLbl2 setNeedsDisplay];
+    
+    
     [self saveSlideIncreaseValues];
     
     if (isLocked)
@@ -845,6 +1105,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) saveSlideIncreaseValues {
+    
     NSNumber *	startValue	= [NSNumber numberWithFloat: self.slideIncreaseStart.value];
     NSNumber *	finalValue	= [NSNumber numberWithFloat: self.slideIncreaseFinal.value];
     NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
@@ -855,11 +1116,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handleSlideDecreaseStart: (UISlider *) sender {
-
-    if (sender.value > self.slideDecreaseFinal.value)
-        self.slideDecreaseFinal.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
+    
+    if (sender.value > self.slideDecreaseFinal.value)
+    {
+        self.slideDecreaseFinal.value = sender.value;
+        
+        slideLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl4.frame.origin.y, slideLbl4.frame.size.width, slideLbl4.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            slideLbl4.text = [self convertTime:sender];
+        }
+        else {
+            slideLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -870,6 +1142,16 @@ NSArray static	*frameCountStrings = nil;
     self.slideView.decreaseFinal = [self locationOfThumb: self.slideDecreaseFinal];
     
     [self.slideView setNeedsDisplay];
+    
+    slideLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl3.frame.origin.y, slideLbl3.frame.size.width, slideLbl3.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        slideLbl3.text = [self convertTime:sender];
+    }
+    else {
+        slideLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
     [self saveSlideDecreaseValues];
     
     if (isLocked)
@@ -880,11 +1162,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handleSlideDecreaseFinal: (UISlider *) sender {
-
-    if (sender.value < self.slideDecreaseStart.value)
-        self.slideDecreaseStart.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
+    
+    if (sender.value < self.slideDecreaseStart.value)
+    {
+        self.slideDecreaseStart.value = sender.value;
+        
+        slideLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl3.frame.origin.y, slideLbl3.frame.size.width, slideLbl3.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            slideLbl3.text = [self convertTime:sender];
+        }
+        else {
+            slideLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -894,6 +1187,16 @@ NSArray static	*frameCountStrings = nil;
     self.slideView.decreaseFinal = [self locationOfThumb: sender];
     
     [self.slideView setNeedsDisplay];
+    
+    slideLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl4.frame.origin.y, slideLbl4.frame.size.width, slideLbl4.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        slideLbl4.text = [self convertTime:sender];
+    }
+    else {
+        slideLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
     [self saveSlideDecreaseValues];
     
     if (isLocked)
@@ -904,6 +1207,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) saveSlideDecreaseValues {
+    
     NSNumber *	startValue	= [NSNumber numberWithFloat: self.slideDecreaseStart.value];
     NSNumber *	finalValue	= [NSNumber numberWithFloat: self.slideDecreaseFinal.value];
     NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
@@ -914,11 +1218,22 @@ NSArray static	*frameCountStrings = nil;
 #pragma mark Pan Controls
 
 - (IBAction) handlePanIncreaseStart: (UISlider *) sender {
-
-    if (sender.value > self.panIncreaseFinal.value)
-        self.panIncreaseFinal.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
+    
+    if (sender.value > self.panIncreaseFinal.value)
+    {
+        self.panIncreaseFinal.value = sender.value;
+        
+        panLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl2.frame.origin.y, panLbl2.frame.size.width, panLbl2.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            panLbl2.text = [self convertTime:sender];
+        }
+        else {
+            panLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -928,6 +1243,17 @@ NSArray static	*frameCountStrings = nil;
     self.panView.increaseFinal = [self locationOfThumb: self.panIncreaseFinal];
     
     [self.panView setNeedsDisplay];
+    
+    panLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl1.frame.origin.y, panLbl1.frame.size.width, panLbl1.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        panLbl1.text = [self convertTime:sender];
+    }
+    else {
+        panLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
+    
     [self savePanIncreaseValues];
     
     if (isLocked)
@@ -938,11 +1264,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handlePanIncreaseFinal: (UISlider *) sender {
-
-    if (sender.value < self.panIncreaseStart.value)
-        self.panIncreaseStart.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
+    
+    if (sender.value < self.panIncreaseStart.value)
+    {
+        self.panIncreaseStart.value = sender.value;
+        
+        panLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl1.frame.origin.y, panLbl1.frame.size.width, panLbl1.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            panLbl1.text = [self convertTime:sender];
+        }
+        else {
+            panLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -952,6 +1289,16 @@ NSArray static	*frameCountStrings = nil;
     self.panView.increaseFinal = [self locationOfThumb: sender];
     
     [self.panView setNeedsDisplay];
+    
+    panLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl2.frame.origin.y, panLbl2.frame.size.width, panLbl2.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        panLbl2.text = [self convertTime:sender];
+    }
+    else {
+        panLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
     [self savePanIncreaseValues];
     
     if (isLocked)
@@ -962,6 +1309,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) savePanIncreaseValues {
+    
     NSNumber *	startValue	= [NSNumber numberWithFloat: self.panIncreaseStart.value];
     NSNumber *	finalValue	= [NSNumber numberWithFloat: self.panIncreaseFinal.value];
     NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
@@ -970,11 +1318,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handlePanDecreaseStart: (UISlider *) sender {
-
-    if (sender.value > self.panDecreaseFinal.value)
-        self.panDecreaseFinal.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
+    
+    if (sender.value > self.panDecreaseFinal.value)
+    {
+        self.panDecreaseFinal.value = sender.value;
+        
+        panLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl4.frame.origin.y, panLbl4.frame.size.width, panLbl4.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            panLbl4.text = [self convertTime:sender];
+        }
+        else {
+            panLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -984,6 +1343,17 @@ NSArray static	*frameCountStrings = nil;
     self.panView.decreaseFinal = [self locationOfThumb: self.panDecreaseFinal];
     
     [self.panView setNeedsDisplay];
+    
+    panLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl3.frame.origin.y, panLbl3.frame.size.width, panLbl3.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        panLbl3.text = [self convertTime:sender];
+    }
+    else {
+        panLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
+    
     [self savePanDecreaseValues];
     
     if (isLocked)
@@ -994,11 +1364,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handlePanDecreaseFinal: (UISlider *) sender {
-
-    if (sender.value < self.panDecreaseStart.value)
-        self.panDecreaseStart.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
+    
+    if (sender.value < self.panDecreaseStart.value)
+    {
+        self.panDecreaseStart.value = sender.value;
+        
+        panLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl3.frame.origin.y, panLbl3.frame.size.width, panLbl3.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            panLbl3.text = [self convertTime:sender];
+        }
+        else {
+            panLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -1008,6 +1389,17 @@ NSArray static	*frameCountStrings = nil;
     self.panView.decreaseFinal = [self locationOfThumb: sender];
     
     [self.panView setNeedsDisplay];
+    
+    panLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl4.frame.origin.y, panLbl4.frame.size.width, panLbl4.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        panLbl4.text = [self convertTime:sender];
+    }
+    else {
+        panLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
+    
     [self savePanDecreaseValues];
     
     if (isLocked)
@@ -1018,6 +1410,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) savePanDecreaseValues {
+    
     NSNumber *	startValue	= [NSNumber numberWithFloat: self.panDecreaseStart.value];
     NSNumber *	finalValue	= [NSNumber numberWithFloat: self.panDecreaseFinal.value];
     NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
@@ -1028,11 +1421,22 @@ NSArray static	*frameCountStrings = nil;
 #pragma mark Tilt Controls
 
 - (IBAction) handleTiltIncreaseStart: (UISlider *) sender {
-
-    if (sender.value > self.tiltIncreaseFinal.value)
-        self.tiltIncreaseFinal.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
+    
+    if (sender.value > self.tiltIncreaseFinal.value)
+    {
+        self.tiltIncreaseFinal.value = sender.value;
+        
+        tiltLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl2.frame.origin.y, tiltLbl2.frame.size.width, tiltLbl2.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            tiltLbl2.text = [self convertTime:sender];
+        }
+        else {
+            tiltLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -1042,6 +1446,17 @@ NSArray static	*frameCountStrings = nil;
     self.tiltView.increaseFinal = [self locationOfThumb: self.tiltIncreaseFinal];
     
     [self.tiltView setNeedsDisplay];
+    
+    tiltLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl1.frame.origin.y, tiltLbl1.frame.size.width, tiltLbl1.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        tiltLbl1.text = [self convertTime:sender];
+    }
+    else {
+        tiltLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
+    
     [self saveTiltIncreaseValues];
     
     if (isLocked)
@@ -1052,11 +1467,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handleTiltIncreaseFinal: (UISlider *) sender {
-
-    if (sender.value < self.tiltIncreaseStart.value)
-        self.tiltIncreaseStart.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
+    
+    if (sender.value < self.tiltIncreaseStart.value)
+    {
+        self.tiltIncreaseStart.value = sender.value;
+        
+        tiltLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl1.frame.origin.y, tiltLbl1.frame.size.width, tiltLbl1.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            tiltLbl1.text = [self convertTime:sender];
+        }
+        else {
+            tiltLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -1066,6 +1492,16 @@ NSArray static	*frameCountStrings = nil;
     self.tiltView.increaseFinal = [self locationOfThumb: sender];
     
     [self.tiltView setNeedsDisplay];
+    
+    tiltLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl2.frame.origin.y, tiltLbl2.frame.size.width, tiltLbl2.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        tiltLbl2.text = [self convertTime:sender];
+    }
+    else {
+        tiltLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
     [self saveTiltIncreaseValues];
     
     if (isLocked)
@@ -1076,6 +1512,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) saveTiltIncreaseValues {
+    
     NSNumber *	startValue	= [NSNumber numberWithFloat: self.tiltIncreaseStart.value];
     NSNumber *	finalValue	= [NSNumber numberWithFloat: self.tiltIncreaseFinal.value];
     NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
@@ -1084,11 +1521,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handleTiltDecreaseStart: (UISlider *) sender {
-
-    if (sender.value > self.tiltDecreaseFinal.value)
-        self.tiltDecreaseFinal.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
+    
+    if (sender.value > self.tiltDecreaseFinal.value)
+    {
+        self.tiltDecreaseFinal.value = sender.value;
+        
+        tiltLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl4.frame.origin.y, tiltLbl4.frame.size.width, tiltLbl4.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            tiltLbl4.text = [self convertTime:sender];
+        }
+        else {
+            tiltLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -1098,6 +1546,16 @@ NSArray static	*frameCountStrings = nil;
     self.tiltView.decreaseFinal = [self locationOfThumb: self.tiltDecreaseFinal];
     
     [self.tiltView setNeedsDisplay];
+    
+    tiltLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl3.frame.origin.y, tiltLbl3.frame.size.width, tiltLbl3.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) {
+        tiltLbl3.text = [self convertTime:sender];
+    }
+    else {
+        tiltLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
     [self saveTiltDecreaseValues];
     
     if (isLocked)
@@ -1108,11 +1566,22 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) handleTiltDecreaseFinal: (UISlider *) sender {
-
-    if (sender.value < self.tiltDecreaseStart.value)
-        self.tiltDecreaseStart.value = sender.value;
     
     currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
+    
+    if (sender.value < self.tiltDecreaseStart.value)
+    {
+        self.tiltDecreaseStart.value = sender.value;
+        
+        tiltLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl3.frame.origin.y, tiltLbl3.frame.size.width, tiltLbl3.frame.size.height);
+        
+        if (programMode == NMXProgramModeVideo) {
+            tiltLbl3.text = [self convertTime:sender];
+        }
+        else {
+            tiltLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+        }
+    }
     
     //[self updateFrameText];
     
@@ -1122,6 +1591,16 @@ NSArray static	*frameCountStrings = nil;
     self.tiltView.decreaseFinal = [self locationOfThumb: sender];
     
     [self.tiltView setNeedsDisplay];
+    
+    tiltLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl4.frame.origin.y, tiltLbl4.frame.size.width, tiltLbl4.frame.size.height);
+    
+    if (programMode == NMXProgramModeVideo) { 
+        tiltLbl4.text = [self convertTime:sender]; 
+    }
+    else {
+        tiltLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    }
+    
     [self saveTiltDecreaseValues];
     
     if (isLocked)
@@ -1132,6 +1611,7 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (void) saveTiltDecreaseValues {
+    
     NSNumber *	startValue	= [NSNumber numberWithFloat: self.tiltDecreaseStart.value];
     NSNumber *	finalValue	= [NSNumber numberWithFloat: self.tiltDecreaseFinal.value];
     NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
@@ -1580,6 +2060,12 @@ NSArray static	*frameCountStrings = nil;
     self.slideView.increaseFinal = [self locationOfThumb: self.slideIncreaseFinal];
     
     [self.slideView setNeedsDisplay];
+    
+    slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:slider]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
+    
+    slideLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
+    
+    
     [self saveSlideIncreaseValues];
 }
 
@@ -2259,11 +2745,12 @@ NSArray static	*frameCountStrings = nil;
 }
 
 - (IBAction) doneEditingFrame:(id)sender {
+    
     //[self.frameText resignFirstResponder];
     
     [self hideFrameText];
     
-    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(frameValueSelected) userInfo:nil repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:0.250 target:self selector:@selector(frameValueSelected) userInfo:nil repeats:NO];
 }
 
 - (void) setupSliderFunctions {

@@ -15,6 +15,8 @@
 @property (nonatomic, readwrite)	CGPoint	decreaseStart;
 @property (nonatomic, readwrite)	CGPoint	decreaseFinal;
 
+
+
 - (void) setViewWidth: (CGFloat) width;
 
 @end

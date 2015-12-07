@@ -121,7 +121,6 @@
     
     NSLog(@"Peripheral disconnected");
     
-    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"Peripheral disconnected Randall"];
     
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDisconnectDevice:)]))
     {
@@ -131,11 +130,7 @@
     {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             
-//            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Communications Error"
-//                                                            message: @"The device has disconnected."
-//                                                           delegate: self
-//                                                  cancelButtonTitle: @"OK"
-//                                                  otherButtonTitles: nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"Peripheral disconnected Randall"];
             
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
                                                             message: @"All settings saved on NMX - Tap OK to reconnect"
@@ -152,7 +147,7 @@
 
     NSLog(@"alertView dismiss");
     
-    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+    //[[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
 }
 
 - (void) startScanning: (BOOL) inLegacyDevices; {

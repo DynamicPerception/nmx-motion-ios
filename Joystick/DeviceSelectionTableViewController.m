@@ -178,10 +178,9 @@
             appExecutive.device = [self.deviceList objectAtIndex: indexPath.row];
         
             NSLog(@"device name: %@",appExecutive.device.name);
+        
         #endif
     }
-    
-    
 }
 
 - (void)didReceiveMemoryWarning {

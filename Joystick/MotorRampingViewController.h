@@ -90,4 +90,21 @@ NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewC
 - (IBAction)updateRampEasingValue:(id)sender;
 - (void)saveFrame: (NSNumber *)number;
 
+@property (weak, nonatomic) IBOutlet UILabel *slideLbl2;
+@property (weak, nonatomic) IBOutlet UILabel *slideLbl1;
+@property (weak, nonatomic) IBOutlet UILabel *slideLbl3;
+@property (weak, nonatomic) IBOutlet UILabel *slideLbl4;
+
+@property (weak, nonatomic) IBOutlet UILabel *panLbl2;
+@property (weak, nonatomic) IBOutlet UILabel *panLbl1;
+@property (weak, nonatomic) IBOutlet UILabel *panLbl3;
+@property (weak, nonatomic) IBOutlet UILabel *panLbl4;
+
+@property (weak, nonatomic) IBOutlet UILabel *tiltLbl2;
+@property (weak, nonatomic) IBOutlet UILabel *tiltLbl1;
+@property (weak, nonatomic) IBOutlet UILabel *tiltLbl3;
+@property (weak, nonatomic) IBOutlet UILabel *tiltLbl4;
+
+
+
 @end

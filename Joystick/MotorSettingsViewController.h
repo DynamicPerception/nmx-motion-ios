@@ -43,7 +43,8 @@
     NSString *direction;
     AppDelegate *appDelegate;
     float sensitivityRatio;
-    float lastMicrostep;
+    float dampening;
+    NSTimer *dampeningTimer;
 }
 
 @property (nonatomic, strong)		NSString *	motorName;
@@ -64,6 +65,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *unitsTxt;
 @property (weak, nonatomic) IBOutlet UILabel *sensitivityValue;
 @property (weak, nonatomic)	IBOutlet UISlider *	sensitivitySlider;
+@property (weak, nonatomic)	IBOutlet UISlider *	dampeningSlider;
 @property (weak, nonatomic) IBOutlet UILabel *joystickResponseLbl;
 @property (weak, nonatomic) IBOutlet JoyButton *siderealBtn;
 @property (weak, nonatomic) IBOutlet UILabel *overallDistanceLbl;

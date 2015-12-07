@@ -28,11 +28,34 @@
 //    return a;
 //}
 
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent*)event {
+    
+    CGRect bounds = self.bounds;
+    bounds = CGRectInset(bounds, -10, -15);
+    return CGRectContainsPoint(bounds, point);
+}
+
 - (CGRect)trackRectForBounds:(CGRect)bounds {
 
     CGRect a = CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height * .25);
     
     return a;
+}
+
+- (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    //NSLog(@"track");
+    
+    [super beginTrackingWithTouch:touch withEvent:event];
+    CGPoint touchLocation = [touch locationInView:self];
+    
+    CGFloat value = self.minimumValue + (self.maximumValue - self.minimumValue) *
+    ((touchLocation.x - self.currentThumbImage.size.width/2) /
+     (self.frame.size.width-self.currentThumbImage.size.width));
+    
+    [self setValue:value animated:YES];
+    
+    return YES;
 }
 
 //- (id) initWithFrame: (CGRect)rect

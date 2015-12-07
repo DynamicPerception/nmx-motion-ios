@@ -86,6 +86,7 @@ NSArray	static	*intervalTenths	= nil;
 }
 
 - (IBAction) handleOkButton: (id) sender {
+    
     NSDictionary *dict1 = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithFloat:selectedFloat], @"val1",heading, @"val2", nil];
     
     [[NSNotificationCenter defaultCenter]
@@ -96,6 +97,7 @@ NSArray	static	*intervalTenths	= nil;
 }
 
 - (IBAction)cancel:(id)sender {
+    
     [self dismissViewControllerAnimated: YES completion: nil];
 }
 

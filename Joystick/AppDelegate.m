@@ -50,18 +50,6 @@
     [GAI sharedInstance].trackUncaughtExceptions = YES;
     [[GAI sharedInstance] trackerWithTrackingId:@"UA-62513179-1"];
     
-//    UIImage *tt = [UIImage imageNamed:@"track-thumb.png"];
-//    UIImage *mint = [UIImage imageNamed:@"min-track.png"];
-//    UIImage *max2 = [UIImage imageNamed:@"max-track.png"];
-//    
-//    mint = [mint stretchableImageWithLeftCapWidth:10 topCapHeight:0];
-//    max2 = [max2 stretchableImageWithLeftCapWidth:10 topCapHeight:0];
-//    
-//    
-//    [[UISlider appearance] setThumbImage:tt forState:UIControlStateNormal];
-//    [[UISlider appearance] setMinimumTrackImage:mint forState:UIControlStateNormal];
-//    [[UISlider appearance] setMaximumTrackImage:max2 forState:UIControlStateNormal];
-    
     appBlue = [UIColor colorWithRed:98.0/255 green:170.0/255 blue:246.0/255 alpha:1];
     
     nav = (UINavigationController *)window.rootViewController;
