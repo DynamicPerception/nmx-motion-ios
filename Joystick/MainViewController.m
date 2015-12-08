@@ -129,6 +129,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 #pragma mark - Object Management
 
 - (void) viewDidLoad {
+    
+    [[NSUserDefaults standardUserDefaults] setValue:@(NO) forKey:@"_UIConstraintBasedLayoutLogUnsatisfiable"];
 
     self.appExecutive.device.delegate = self;
     [self.appExecutive.device connect];
@@ -190,8 +192,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
      addObserver:self
      selector:@selector(handleNotificationExitJSMode:)
      name:@"exitJSMode" object:nil];
-    
-    
     
 //    float fc = [self.appExecutive.frameCountNumber floatValue];
 //    
@@ -259,8 +259,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         tiltSliderLbl.hidden = YES;
     }
     
-    //NSLog(@"interval: %i",[self.appExecutive.intervalNumber intValue]);
-    
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName4) userInfo:nil repeats:NO];
     
     [super viewDidLoad];
@@ -280,9 +278,13 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         mode3PLbl2.text = @"3-Point Move";
         image3P.image = [UIImage imageNamed:@"3p.png"];
     }
+    else
+    {
+        
+    }
     
     #if TARGET_IPHONE_SIMULATOR
-        
+    
         [self showVoltage];
         
     #else
@@ -395,6 +397,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             if (self.appExecutive.mid3PSet == 2)
             {
                 NSLog(@"turn mid on");
+                
                 self.flipButton.selected = YES;
             }
             else
@@ -403,7 +406,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             }
             
             [UIView animateWithDuration:.4 animations:^{
-             distanceSlideLbl.alpha = 0;
+                
+                distanceSlideLbl.alpha = 0;
                 distancePanLbl.alpha = 0;
                 distanceTiltLbl.alpha = 0;
                 
@@ -420,20 +424,32 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             image3P.image = [UIImage imageNamed:@"2p.png"];
             self.flipButton.selected = NO;
             
-            if (startEndTotal != 0)
+            if (start2pTotals != 0)
             {
                 self.setStartButton.selected = YES;
+            }
+            
+            if (end2pTotals != 0)
+            {
                 self.setStopButton.selected = YES;
             }
             
-            [UIView animateWithDuration:.4 animations:^{
-             distanceSlideLbl.alpha = 1;
-                distancePanLbl.alpha = 1;
-                distanceTiltLbl.alpha = 1;
+            
+            
+            if (start2pTotals != 0 && end2pTotals != 0) {
                 
-            } completion:^(BOOL finished) {
-                
-            }];
+                [UIView animateWithDuration:.4 animations:^{
+                    
+                    distanceSlideLbl.alpha = 1;
+                    distancePanLbl.alpha = 1;
+                    distanceTiltLbl.alpha = 1;
+                    
+                } completion:^(BOOL finished) {
+                    
+                }];
+            }
+            
+            
         }
         
         //mode3PLbl.alpha = 1;
@@ -455,19 +471,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     [self.appExecutive.defaults synchronize];
     
     NSLog(@"defaults is3P: %li",(long)[appExecutive.defaults integerForKey:@"is3P"]);
-    
-//    if (self.appExecutive.is3P == YES)
-//    {
-//        [UIView animateWithDuration:.4 animations:^{
-//            
-//            distanceSlideLbl.alpha = 1;
-//            distancePanLbl.alpha = 1;
-//            distanceTiltLbl.alpha = 1;
-//            
-//        } completion:^(BOOL finished) {
-//            
-//        }];
-//    }
 }
 
 - (void)resetTimers {
@@ -645,12 +648,20 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     self.appExecutive.end3PPanDistance +
     self.appExecutive.end3PTiltDistance;
     
-    if (self.appExecutive.is3P == NO && startEndTotal != 0)
+    if (self.appExecutive.is3P == NO)
     {
         NSLog(@"startEndTotal: %i",startEndTotal);
         
-        self.setStartButton.selected = YES;
-        self.setStopButton.selected = YES;
+        if (start2pTotals != 0) {
+            
+            self.setStartButton.selected = YES;
+        }
+        
+        if (end2pTotals != 0) {
+            
+            self.setStopButton.selected = YES;
+        }
+        
     }
     else if (self.appExecutive.is3P == YES)
     {
@@ -722,6 +733,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 //    NSLog(@"mvc startPoint3: %i",self.appExecutive.startPoint3);
 //    NSLog(@"mvc endPoint3: %i",self.appExecutive.endPoint3);
     
+    start2pTotals = appExecutive.startPoint1 + appExecutive.startPoint2 + appExecutive.startPoint3;
+    end2pTotals = appExecutive.endPoint1 + appExecutive.endPoint2 + appExecutive.endPoint3;
+    
     startEndTotal =
     appExecutive.startPoint1 + appExecutive.endPoint1 +
     appExecutive.startPoint2 + appExecutive.endPoint2 +
@@ -731,9 +745,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     self.appExecutive.microstep2 = [self.appExecutive.device motorQueryMicrostep2:2];
     self.appExecutive.microstep3 = [self.appExecutive.device motorQueryMicrostep2:3];
     
-    NSLog(@"self.appExecutive.microstep1: %f",(float)self.appExecutive.microstep1);
-    NSLog(@"self.appExecutive.microstep2: %f",(float)self.appExecutive.microstep2);
-    NSLog(@"self.appExecutive.microstep3: %f",(float)self.appExecutive.microstep3);
+//    NSLog(@"self.appExecutive.microstep1: %f",(float)self.appExecutive.microstep1);
+//    NSLog(@"self.appExecutive.microstep2: %f",(float)self.appExecutive.microstep2);
+//    NSLog(@"self.appExecutive.microstep3: %f",(float)self.appExecutive.microstep3);
     
     bool pc = [self.appExecutive.device queryPowerCycle];
     
@@ -753,22 +767,27 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 //        NSLog(@"mid3PSet: %li", (long)[appExecutive.defaults integerForKey:@"mid3PSet"]);
 //        NSLog(@"end3PSet: %li", (long)[appExecutive.defaults integerForKey:@"end3PSet"]);
         
-        if ([self.appExecutive.defaults integerForKey:@"start3PSet"] == 2)
-        {
-            self.setStartButton.selected = YES;
-            self.appExecutive.start3PSet = 2;
+        if (self.appExecutive.is3P == YES) {
+            
+            if ([self.appExecutive.defaults integerForKey:@"start3PSet"] == 2)
+            {
+                self.setStartButton.selected = YES;
+                self.appExecutive.start3PSet = 2;
+            }
+            
+            if ([self.appExecutive.defaults integerForKey:@"end3PSet"] == 2)
+            {
+                self.setStopButton.selected = YES;
+                self.appExecutive.end3PSet = 2;
+            }
+            
+            if ([self.appExecutive.defaults integerForKey:@"mid3PSet"] == 2)
+            {
+                self.appExecutive.mid3PSet = 2;
+            }
         }
         
-        if ([self.appExecutive.defaults integerForKey:@"end3PSet"] == 2)
-        {
-            self.setStopButton.selected = YES;
-            self.appExecutive.end3PSet = 2;
-        }
         
-        if ([self.appExecutive.defaults integerForKey:@"mid3PSet"] == 2)
-        {
-            self.appExecutive.mid3PSet = 2;
-        }
         
         //NSLog(@"start3PSlideDistance: %f", [appExecutive.defaults floatForKey:@"start3PSlideDistance"]);
         
@@ -784,17 +803,17 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.appExecutive.end3PPanDistance = [appExecutive.defaults floatForKey:@"end3PPanDistance"];
         self.appExecutive.end3PTiltDistance = [appExecutive.defaults floatForKey:@"end3PTiltDistance"];
         
-        NSLog(@"start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
-        NSLog(@"start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
-        NSLog(@"start3PTiltDistance: %f",self.appExecutive.start3PTiltDistance);
-        
-        NSLog(@"mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
-        NSLog(@"mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
-        NSLog(@"mid3PTiltDistance: %f",self.appExecutive.mid3PTiltDistance);
-        
-        NSLog(@"end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
-        NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
-        NSLog(@"end3PTiltDistance: %f",self.appExecutive.end3PTiltDistance);
+//        NSLog(@"start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
+//        NSLog(@"start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
+//        NSLog(@"start3PTiltDistance: %f",self.appExecutive.start3PTiltDistance);
+//        
+//        NSLog(@"mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
+//        NSLog(@"mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
+//        NSLog(@"mid3PTiltDistance: %f",self.appExecutive.mid3PTiltDistance);
+//        
+//        NSLog(@"end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
+//        NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
+//        NSLog(@"end3PTiltDistance: %f",self.appExecutive.end3PTiltDistance);
         
         startTotals = self.appExecutive.start3PSlideDistance +
         self.appExecutive.start3PPanDistance +
@@ -841,40 +860,37 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.appExecutive.scaledEnd3PTiltDistance = [appExecutive.defaults floatForKey:@"scaledEnd3PTiltDistance"];
 
         
-        NSLog(@"after scaledStart3PSlideDistance: %f",self.appExecutive.scaledStart3PSlideDistance);
-        NSLog(@"after scaledStart3PPanDistance: %f",self.appExecutive.scaledStart3PPanDistance);
-        NSLog(@"after scaledStart3PTiltDistance: %f",self.appExecutive.scaledStart3PTiltDistance);
-        
-        NSLog(@"after scaledMid3PSlideDistance: %f",self.appExecutive.scaledMid3PSlideDistance);
-        NSLog(@"after scaledMid3PPanDistance: %f",self.appExecutive.scaledMid3PPanDistance);
-        NSLog(@"after scaledMid3PTiltDistance: %f",self.appExecutive.scaledMid3PTiltDistance);
-        
-        NSLog(@"after scaledEnd3PSlideDistance: %f",self.appExecutive.scaledEnd3PSlideDistance);
-        NSLog(@"after scaledEnd3PPanDistance: %f",self.appExecutive.scaledEnd3PPanDistance);
-        NSLog(@"after scaledEnd3PTiltDistance: %f",self.appExecutive.scaledEnd3PTiltDistance);
+//        NSLog(@"after scaledStart3PSlideDistance: %f",self.appExecutive.scaledStart3PSlideDistance);
+//        NSLog(@"after scaledStart3PPanDistance: %f",self.appExecutive.scaledStart3PPanDistance);
+//        NSLog(@"after scaledStart3PTiltDistance: %f",self.appExecutive.scaledStart3PTiltDistance);
+//        
+//        NSLog(@"after scaledMid3PSlideDistance: %f",self.appExecutive.scaledMid3PSlideDistance);
+//        NSLog(@"after scaledMid3PPanDistance: %f",self.appExecutive.scaledMid3PPanDistance);
+//        NSLog(@"after scaledMid3PTiltDistance: %f",self.appExecutive.scaledMid3PTiltDistance);
+//        
+//        NSLog(@"after scaledEnd3PSlideDistance: %f",self.appExecutive.scaledEnd3PSlideDistance);
+//        NSLog(@"after scaledEnd3PPanDistance: %f",self.appExecutive.scaledEnd3PPanDistance);
+//        NSLog(@"after scaledEnd3PTiltDistance: %f",self.appExecutive.scaledEnd3PTiltDistance);
         
         if ([appExecutive.defaults integerForKey:@"is3P"] == 0)
         {
-            if (startEndTotal != 0 && self.appExecutive.is3P == NO)
+            NSLog(@"its 2p");
+            
+//            if (startEndTotal != 0 && self.appExecutive.is3P == NO)
+//            {
+//                self.setStartButton.selected = YES;
+//                self.setStopButton.selected = YES;
+//            }
+            
+            if(start2pTotals != 0)
             {
                 self.setStartButton.selected = YES;
-                self.setStopButton.selected = YES;
             }
             
-            [UIView animateWithDuration:.4 animations:^{
-                
-                distanceSlideLbl.alpha = 1;
-                distancePanLbl.alpha = 1;
-                distanceTiltLbl.alpha = 1;
-                
-            } completion:^(BOOL finished) {
-                
-                [UIView animateWithDuration:.4 animations:^{
-                    
-                 } completion:^(BOOL finished) {
-                     
-                 }];
-            }];
+            if(end2pTotals != 0)
+            {
+                self.setStopButton.selected = YES;
+            }
         }
         else
         {
@@ -993,9 +1009,29 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     appExecutive.dampening2 = [appExecutive.device motorQueryContinuousAccelDecel: 2]/100;
     appExecutive.dampening3 = [appExecutive.device motorQueryContinuousAccelDecel: 3]/100;
     
-    NSLog(@"appExecutive.dampening1: %f",appExecutive.dampening1);
-    NSLog(@"appExecutive.dampening2: %f",appExecutive.dampening2);
-    NSLog(@"appExecutive.dampening3: %f",appExecutive.dampening3);
+//    NSLog(@"appExecutive.dampening1: %f",appExecutive.dampening1);
+//    NSLog(@"appExecutive.dampening2: %f",appExecutive.dampening2);
+//    NSLog(@"appExecutive.dampening3: %f",appExecutive.dampening3);
+    
+    if (([appExecutive.defaults integerForKey:@"is3P"] == 0 ||
+         [appExecutive.defaults objectForKey:@"is3P"] == nil) &&
+        (start2pTotals != 0 && end2pTotals != 0))
+    {
+        [UIView animateWithDuration:.4 animations:^{
+            
+            distanceSlideLbl.alpha = 1;
+            distancePanLbl.alpha = 1;
+            distanceTiltLbl.alpha = 1;
+            
+        } completion:^(BOOL finished) {
+            
+            [UIView animateWithDuration:.4 animations:^{
+                
+            } completion:^(BOOL finished) {
+                
+            }];
+        }];
+    }
     
     [self showVoltage];
     [self updateLabels];
@@ -1189,10 +1225,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     distance2 = appExecutive.endPoint2 - appExecutive.startPoint2;
     distance3 = appExecutive.endPoint3 - appExecutive.startPoint3;
     
-    NSLog(@"ul distance1: %f",distance1);
-    NSLog(@"ul distance2: %f",distance2);
-    NSLog(@"ul distance3: %f",distance3);
-    NSLog(@"\n");
+//    NSLog(@"ul distance1: %f",distance1);
+//    NSLog(@"ul distance2: %f",distance2);
+//    NSLog(@"ul distance3: %f",distance3);
+//    NSLog(@"\n");
 //
 //    NSLog(@"panRig: %@",panRig);
 //    NSLog(@"panGear: %f",panGear);
@@ -2114,9 +2150,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     self.appExecutive.start3PSet = 2;
     
     //NSLog(@"start3PSet: %li",(long)[appExecutive.defaults integerForKey:@"start3PSet"]);
-    NSLog(@"after scaledStart3PSlideDistance: %f",self.appExecutive.scaledStart3PSlideDistance);
-    NSLog(@"after scaledStart3PPanDistance: %f",self.appExecutive.scaledStart3PPanDistance);
-    NSLog(@"after scaledStart3PTiltDistance: %f",self.appExecutive.scaledStart3PTiltDistance);
+//    NSLog(@"after scaledStart3PSlideDistance: %f",self.appExecutive.scaledStart3PSlideDistance);
+//    NSLog(@"after scaledStart3PPanDistance: %f",self.appExecutive.scaledStart3PPanDistance);
+//    NSLog(@"after scaledStart3PTiltDistance: %f",self.appExecutive.scaledStart3PTiltDistance);
     
     [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledStart3PSlideDistance]
                                    forKey: @"scaledStart3PSlideDistance"];
@@ -2148,6 +2184,27 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.appExecutive.startPoint3 = [self.appExecutive.device queryProgramStartPoint:3];
         
         NSLog(@"mvc startPoint3: %i",self.appExecutive.startPoint3);
+        
+        start2pTotals = appExecutive.startPoint1 + appExecutive.startPoint2 + appExecutive.startPoint3;
+        end2pTotals = appExecutive.endPoint1 + appExecutive.endPoint2 + appExecutive.endPoint3;
+        
+        if (start2pTotals != 0 && end2pTotals != 0)
+        {
+            [UIView animateWithDuration:.4 animations:^{
+                
+                distanceSlideLbl.alpha = 1;
+                distancePanLbl.alpha = 1;
+                distanceTiltLbl.alpha = 1;
+                
+            } completion:^(BOOL finished) {
+                
+                [UIView animateWithDuration:.4 animations:^{
+                    
+                } completion:^(BOOL finished) {
+                    
+                }];
+            }];
+        }
     }
     
     [self enterJoystickMode];
@@ -2196,9 +2253,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         
         self.appExecutive.mid3PSet = 2;
         
-        NSLog(@"after scaledMid3PSlideDistance: %f",self.appExecutive.scaledMid3PSlideDistance);
-        NSLog(@"after scaledMid3PPanDistance: %f",self.appExecutive.scaledMid3PPanDistance);
-        NSLog(@"after scaledMid3PTiltDistance: %f",self.appExecutive.scaledMid3PTiltDistance);
+//        NSLog(@"after scaledMid3PSlideDistance: %f",self.appExecutive.scaledMid3PSlideDistance);
+//        NSLog(@"after scaledMid3PPanDistance: %f",self.appExecutive.scaledMid3PPanDistance);
+//        NSLog(@"after scaledMid3PTiltDistance: %f",self.appExecutive.scaledMid3PTiltDistance);
         
         [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledMid3PSlideDistance]
                                        forKey: @"scaledMid3PSlideDistance"];
@@ -2261,9 +2318,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     self.appExecutive.end3PSet = 2;
     
-    NSLog(@"after scaledEnd3PSlideDistance: %f",self.appExecutive.scaledEnd3PSlideDistance);
-    NSLog(@"after scaledEnd3PPanDistance: %f",self.appExecutive.scaledEnd3PPanDistance);
-    NSLog(@"after scaledEnd3PTiltDistance: %f",self.appExecutive.scaledEnd3PTiltDistance);
+//    NSLog(@"after scaledEnd3PSlideDistance: %f",self.appExecutive.scaledEnd3PSlideDistance);
+//    NSLog(@"after scaledEnd3PPanDistance: %f",self.appExecutive.scaledEnd3PPanDistance);
+//    NSLog(@"after scaledEnd3PTiltDistance: %f",self.appExecutive.scaledEnd3PTiltDistance);
     //NSLog(@"end3PSet: %li",(long)[appExecutive.defaults integerForKey:@"end3PSet"]);
     
     [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledEnd3PSlideDistance]
@@ -2296,6 +2353,27 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.appExecutive.endPoint3 = [self.appExecutive.device queryProgramEndPoint:3];
         
         NSLog(@"mvc endPoint3: %i",self.appExecutive.endPoint3);
+        
+        start2pTotals = appExecutive.startPoint1 + appExecutive.startPoint2 + appExecutive.startPoint3;
+        end2pTotals = appExecutive.endPoint1 + appExecutive.endPoint2 + appExecutive.endPoint3;
+        
+        if (start2pTotals != 0 && end2pTotals != 0)
+        {
+            [UIView animateWithDuration:.4 animations:^{
+                
+                distanceSlideLbl.alpha = 1;
+                distancePanLbl.alpha = 1;
+                distanceTiltLbl.alpha = 1;
+                
+            } completion:^(BOOL finished) {
+                
+                [UIView animateWithDuration:.4 animations:^{
+                    
+                } completion:^(BOOL finished) {
+                    
+                }];
+            }];
+        }
     }
     
     if (self.setStartButton.selected == YES)

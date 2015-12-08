@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1008389F1B8E0FC6003823E0 /* PresetManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1008389E1B8E0FC6003823E0 /* PresetManagerViewController.m */; };
 		100838A21B8F88C6003823E0 /* DistancePresetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 100838A11B8F88C6003823E0 /* DistancePresetViewController.m */; };
+		101F9B831C1740A9006DCFAA /* OverallDistanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 101F9B821C1740A9006DCFAA /* OverallDistanceViewController.m */; };
 		1057971F1BF39CD1000821D1 /* camera-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1057971D1BF39CD1000821D1 /* camera-icon.png */; };
 		105797201BF39CD1000821D1 /* camera-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1057971E1BF39CD1000821D1 /* camera-icon@2x.png */; };
 		106615831BA1CF1900A85529 /* LinearRotaryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 106615821BA1CF1900A85529 /* LinearRotaryViewController.m */; };
@@ -182,6 +183,8 @@
 		1008389E1B8E0FC6003823E0 /* PresetManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresetManagerViewController.m; sourceTree = "<group>"; };
 		100838A01B8F88C6003823E0 /* DistancePresetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DistancePresetViewController.h; sourceTree = "<group>"; };
 		100838A11B8F88C6003823E0 /* DistancePresetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DistancePresetViewController.m; sourceTree = "<group>"; };
+		101F9B811C1740A9006DCFAA /* OverallDistanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverallDistanceViewController.h; sourceTree = "<group>"; };
+		101F9B821C1740A9006DCFAA /* OverallDistanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OverallDistanceViewController.m; sourceTree = "<group>"; };
 		1057971D1BF39CD1000821D1 /* camera-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera-icon.png"; sourceTree = "<group>"; };
 		1057971E1BF39CD1000821D1 /* camera-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera-icon@2x.png"; sourceTree = "<group>"; };
 		106615811BA1CF1900A85529 /* LinearRotaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinearRotaryViewController.h; sourceTree = "<group>"; };
@@ -776,6 +779,8 @@
 				10CF71D21BC388E3004ED48C /* HelpViewController.m */,
 				10CF73721BD7DCF8004ED48C /* SiderealViewController.h */,
 				10CF73731BD7DCF8004ED48C /* SiderealViewController.m */,
+				101F9B811C1740A9006DCFAA /* OverallDistanceViewController.h */,
+				101F9B821C1740A9006DCFAA /* OverallDistanceViewController.m */,
 			);
 			name = SettingsViews;
 			sourceTree = "<group>";
@@ -1040,6 +1045,7 @@
 				5DAEBE5119F6080A000AC7AA /* DeviceSelectionTableViewController.m in Sources */,
 				23FD810B1A23D8FC00FD9D49 /* ReviewStatusViewController.m in Sources */,
 				23088C7E1A26390700C2A53B /* ExposureViewController.m in Sources */,
+				101F9B831C1740A9006DCFAA /* OverallDistanceViewController.m in Sources */,
 				232B09991A268A2600C9C510 /* DurationViewController.m in Sources */,
 				10CF73131BC85F95004ED48C /* RampTest.m in Sources */,
 				5DAEBE5419F60C61000AC7AA /* NMXDeviceManager.m in Sources */,

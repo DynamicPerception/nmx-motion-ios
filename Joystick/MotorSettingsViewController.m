@@ -55,7 +55,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 #pragma mark Private Propery Methods
 
-@synthesize leftBtn, rightBtn, okButton, appExecutive, distanceLbl, presetLbl, contentScroll,gearRatioLbl,rigRatioLbl,overallDistanceTxt,leftLbl,rightLbl,unitsLbl,scrollPositionView,unitsTxt,sensitivityValue,sensitivitySlider,joystickResponseLbl,siderealBtn,overallDistanceLbl,toggleJoystickSwitch,dampeningSlider;
+@synthesize leftBtn, rightBtn, okButton, appExecutive, distanceLbl, presetLbl, contentScroll,gearRatioLbl,rigRatioLbl,overallDistanceTxt,leftLbl,rightLbl,unitsLbl,scrollPositionView,unitsTxt,sensitivityValue,sensitivitySlider,joystickResponseLbl,siderealBtn,overallDistanceLbl,toggleJoystickSwitch,dampeningSlider,dampeningLbl;
 
 //------------------------------------------------------------------------------
 
@@ -112,6 +112,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 	 addObserver:self
 	 selector:@selector(handleNotificationDistancePreset:)
 	 name:@"loadDistancePreset" object:nil];
+    
+    [[NSNotificationCenter defaultCenter]
+	 addObserver:self
+	 selector:@selector(handleNotificationUpdateOverallDistance:)
+	 name:@"updateOverallDistance" object:nil];
     
     [contentScroll setContentSize:CGSizeMake(contentScroll.frame.size.width, siderealBtn.frame.origin.y + siderealBtn.frame.size.height + 10)];
     
@@ -209,10 +214,23 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     b = sqrtf(a);
     
-    dampeningSlider.value = b;
+    float inverseVal = 1 - b;
+    
+    //dampeningSlider.value = b;
+    
+    dampeningSlider.value = inverseVal;
+    
+    dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(dampeningSlider.value * 100)];
     
     NSLog(@"a: %f",a);
     NSLog(@"b: %f",b);
+    
+    //dampeningSlider.transform = CGAffineTransformRotate(dampeningSlider.transform, 180.0/180*M_PI);
+    
+    
+    
+    
+    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
     
     [super viewDidLoad];
 }
@@ -489,6 +507,35 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     
     [self dismissViewControllerAnimated: YES completion: nil];
+}
+
+
+
+- (void)handleNotificationUpdateOverallDistance:(NSNotification *)pNotification {
+    
+    float newFloat = [pNotification.object floatValue];
+    
+    NSLog(@"newFloat: %f",newFloat);
+    
+    if (([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
+    {
+        degrees = newFloat;
+        
+        NSLog(@"new degrees: %f",degrees);
+        
+        [self recalculate:degrees];
+    }
+    else
+    {
+        inches = newFloat;
+        
+        NSLog(@"new inches: %f",inches);
+        
+        [self recalculate:inches];
+    }
+    
+    //[self getDistance];
+    [self updateInvertUI];
 }
 
 - (void)handleNotificationDistancePreset:(NSNotification *)pNotification {
@@ -775,7 +822,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void)recalculate: (float)value {
     
-    NSLog(@"recalculate(): %f",value);
+    NSLog(@"recalculate: %f",value);
     
     float microsteps;
     float reciprocal = 0;
@@ -873,6 +920,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     NSLog(@"new end: %i", newPos);
     end = newPos;
     
+    distance = start - end; // 12-8-15 update
+    
     if (self.motorNumber == 1)
     {
         self.appExecutive.endPoint1 = end;
@@ -952,10 +1001,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     //NSLog(@"viewwillappear microstepSetting: %i",microstepSetting);
     
-    [self getDistance];
-    [self updateInvertUI];
+    //move to viewdidload 12-8-15
     
-    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
+//    [self getDistance];
+//    [self updateInvertUI];
+//    
+//    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
 }
 
 - (void)timerNameQuerySleep {
@@ -965,6 +1016,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     self.powerSaveSwitch.on = [appExecutive.device motorQuerySleep: (int)self.motorNumber];
     
     okButton.userInteractionEnabled = YES;
+    
+    [self getDistance];
+    [self updateInvertUI];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -1044,6 +1098,21 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         [msvc setScreenInd:2];
     }
+    else if ([segue.identifier isEqualToString: @"OverallDistance"])
+    {
+        NSLog(@"OverallDistance");
+        
+        OverallDistanceViewController *msvc = segue.destinationViewController;
+        
+        if (([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
+        {
+            [msvc setDistance:degrees];
+        }
+        else
+        {
+            [msvc setDistance:inches];
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -1063,7 +1132,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (IBAction) handleDampeningSlider: (UISlider *) sender {
     
+//    CGFloat value = sender.value;
+//    CGFloat adjustedValue = sender.maximumValue - value + sender.minimumValue;
+    
     NSLog(@"val: %f",sender.value);
+    
+    float inv = 1-sender.value;
+  
+    
+    NSLog(@"inv val: %f",inv);
+    
+    dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(sender.value * 100)];
+    //dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(adjustedValue * 100)];
     
     [dampeningTimer invalidate];
     
@@ -1074,7 +1154,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     float maxAccel = 30000;
     
-    float conv = pow((float)dampeningSlider.value,2) * maxAccel;
+    CGFloat adjustedValue = dampeningSlider.maximumValue - dampeningSlider.value + dampeningSlider.minimumValue;
+    
+    NSLog(@"adjustedValue: %f",adjustedValue);
+    
+    //float conv = pow((float)dampeningSlider.value,2) * maxAccel;
+    
+    float inverseVal = 1 - dampeningSlider.value;
+    
+    float conv = pow(inverseVal,2) * maxAccel;
     
     NSLog(@"conv: %f",conv);
     
@@ -1150,7 +1238,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     NSLog(@"self.appExecutive.useJoystick: %i",self.appExecutive.useJoystick);
 }
 
-- (IBAction)enableLeft: (id) sender {
+- (IBAction) enableLeft: (id) sender {
     
     [leftAutoTimer invalidate];
     [rightAutoTimer invalidate];

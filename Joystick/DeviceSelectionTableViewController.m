@@ -40,11 +40,15 @@
 //    
 //    [shareBtn addSubview:igv2];
     
-    float val1 = 26785;
+//    float val1 = 26785;
+//    
+//    val1 = 1000.0 * floor((val1/1000.0)+0.5);
+//    
+//    NSLog(@"val1: %f",val1);
     
-    val1 = 1000.0 * floor((val1/1000.0)+0.5);
     
-    NSLog(@"val1: %f",val1);
+    
+    
     
     [super viewDidLoad];
     

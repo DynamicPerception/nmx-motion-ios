@@ -127,6 +127,15 @@ NSArray static	*frameCountStrings = nil;
     
     programMode = [self.appExecutive.device mainQueryProgramMode];
     
+    
+    
+#if TARGET_IPHONE_SIMULATOR
+    
+    programMode = NMXProgramModeVideo;
+    
+#endif
+    
+    
     //NSLog(@"programMode ramping: %i",programMode);
     
     NSInteger	frameCount;
@@ -157,6 +166,7 @@ NSArray static	*frameCountStrings = nil;
     }
     
     //NSLog(@"programMode: %i",programMode);
+    NSLog(@"selectedFrameCount: %i",selectedFrameCount);
     
     NSInteger	ones		= frameCount % 10;
     NSInteger	tens		= (frameCount / 10) % 10;
@@ -407,7 +417,6 @@ NSArray static	*frameCountStrings = nil;
     slide3PSlider3.minimumTrackTintColor = white;
     slide3PSlider3.maximumTrackTintColor = blue;
     
-    
     //NSLog(@"appExecutive.is3P mr: %i",appExecutive.is3P);
     
     if (appExecutive.is3P == YES)
@@ -425,6 +434,10 @@ NSArray static	*frameCountStrings = nil;
             float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
             float per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
             float per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
+            
+            NSLog(@"per1: %f",per1);
+            NSLog(@"per2: %f",per2);
+            NSLog(@"per3: %f",per3);
             
             float val1 = sd * per1;
             float val2 = sd * per2;
@@ -856,6 +869,8 @@ NSArray static	*frameCountStrings = nil;
     
     //NSLog(@"b: %i",b);
     
+    s12p = (int)(self.slideIncreaseStart.value * (selectedFrameCount/2));
+    
     
     
     slideLbl1.text = [NSString stringWithFormat:@"%i",(int)(self.slideIncreaseStart.value * (selectedFrameCount/2))];
@@ -874,30 +889,74 @@ NSArray static	*frameCountStrings = nil;
     tiltLbl4.text = [NSString stringWithFormat:@"%i",(int)(self.tiltDecreaseFinal.value * (selectedFrameCount/2)+selectedFrameCount/2)];
     
     
-    if (programMode == NMXProgramModeVideo)
+    if (programMode == NMXProgramModeVideo && self.appExecutive.is3P == NO)
     {
         NSLog(@"is video");
         
-        slideLbl1.text = [self convertTime:self.slideIncreaseStart];
-        slideLbl2.text = [self convertTime:self.slideIncreaseFinal];
-        slideLbl3.text = [self convertTime:self.slideDecreaseStart];
-        slideLbl4.text = [self convertTime:self.slideDecreaseFinal];
+//        slideLbl1.text = [self convertTime:self.slideIncreaseStart];
+//        slideLbl2.text = [self convertTime:self.slideIncreaseFinal];
+//        slideLbl3.text = [self convertTime:self.slideDecreaseStart];
+//        slideLbl4.text = [self convertTime:self.slideDecreaseFinal];
+//        
+//        panLbl1.text = [self convertTime:self.panIncreaseStart];
+//        panLbl2.text = [self convertTime:self.panIncreaseFinal];
+//        panLbl3.text = [self convertTime:self.panDecreaseStart];
+//        panLbl4.text = [self convertTime:self.panDecreaseFinal];
+//        
+//        tiltLbl1.text = [self convertTime:self.tiltIncreaseStart];
+//        tiltLbl2.text = [self convertTime:self.tiltIncreaseFinal];
+//        tiltLbl3.text = [self convertTime:self.tiltDecreaseStart];
+//        tiltLbl4.text = [self convertTime:self.tiltDecreaseFinal];
         
-        panLbl1.text = [self convertTime:self.panIncreaseStart];
-        panLbl2.text = [self convertTime:self.panIncreaseFinal];
-        panLbl3.text = [self convertTime:self.panDecreaseStart];
-        panLbl4.text = [self convertTime:self.panDecreaseFinal];
+        slideLbl1.text = [self convertTime2:[slideLbl1.text floatValue]];
+        slideLbl2.text = [self convertTime2:[slideLbl2.text floatValue]];
+        slideLbl3.text = [self convertTime2:[slideLbl3.text floatValue]];
+        slideLbl4.text = [self convertTime2:[slideLbl4.text floatValue]];
         
-        tiltLbl1.text = [self convertTime:self.tiltIncreaseStart];
-        tiltLbl2.text = [self convertTime:self.tiltIncreaseFinal];
-        tiltLbl3.text = [self convertTime:self.tiltDecreaseStart];
-        tiltLbl4.text = [self convertTime:self.tiltDecreaseFinal];
+        panLbl1.text = [self convertTime2:[panLbl1.text floatValue]];
+        panLbl2.text = [self convertTime2:[panLbl2.text floatValue]];
+        panLbl3.text = [self convertTime2:[panLbl3.text floatValue]];
+        panLbl4.text = [self convertTime2:[panLbl4.text floatValue]];
+        
+        tiltLbl1.text = [self convertTime2:[tiltLbl1.text floatValue]];
+        tiltLbl2.text = [self convertTime2:[tiltLbl2.text floatValue]];
+        tiltLbl3.text = [self convertTime2:[tiltLbl3.text floatValue]];
+        tiltLbl4.text = [self convertTime2:[tiltLbl4.text floatValue]];
     }
 }
 
-- (NSString *)convertTime : (UISlider *)slider {
+- (NSString *)convertTime2 : (float)val {
+    
+    //int sd = [self.appExecutive.videoLengthNumber intValue];
+    
+    int sd = [self.appExecutive.frameCountNumber intValue];
+    
+    //float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+    //float val1 = sd * per1;
+    
+    float per1 = val/[self.appExecutive.frameCountNumber floatValue];
+    
+    //per1 = val * (selectedFrameCount/2);
+    
+    NSLog(@"%f per: %f",val,per1);
+    
+    float val1 = sd * per1;
+    
+    NSString *a = [self stringForTimeDisplay: (int)val1];
+    
+    return a;
+}
 
-    int sd = [self.appExecutive.videoLengthNumber intValue];
+- (NSString *)convertTime : (UISlider *)slider {
+    
+    //int sd = [self.appExecutive.videoLengthNumber intValue];
+    
+    int sd = [self.appExecutive.frameCountNumber intValue];
+    
+    NSLog(@"");
+    
+    //float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+    //float val1 = sd * per1;
     
     float per1;
     
@@ -909,7 +968,7 @@ NSArray static	*frameCountStrings = nil;
         
         //NSLog(@"%@",b);
         
-        per1 = (float)((int)(slider.value * (selectedFrameCount/2)+selectedFrameCount/2))/[self.appExecutive.frameCountNumber floatValue];
+        per1 = slider.value * (selectedFrameCount/2)+selectedFrameCount/2;
     }
     else
     {
@@ -917,8 +976,13 @@ NSArray static	*frameCountStrings = nil;
         
         //NSLog(@"%@",b);
         
-        per1 = (float)((int)(slider.value * (selectedFrameCount/2)))/[self.appExecutive.frameCountNumber floatValue];
+        per1 = slider.value * (selectedFrameCount/2);
     }
+    
+    //float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+    
+    NSLog(@"slider.value: %f",slider.value);
+    NSLog(@"%@ per: %f",slider.restorationIdentifier,per1);
     
     float val1 = sd * per1;
     
@@ -958,6 +1022,7 @@ NSArray static	*frameCountStrings = nil;
         [secView setIsSettingVideoFrame:YES];
         [secView setIsMotorSegueVal:currentSelectedFrameValue];
         [secView setSelectedVideoFrame:newVal];
+        
     }
     else if ([segue.identifier isEqualToString:@"ContinuousMotorRamp"])
     {
@@ -1016,12 +1081,13 @@ NSArray static	*frameCountStrings = nil;
         
         slideLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl2.frame.origin.y, slideLbl2.frame.size.width, slideLbl2.frame.size.height);
         
-        if (programMode == NMXProgramModeVideo) {
-            slideLbl2.text = [self convertTime:sender];
-        
-        } else {
-        slideLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-            
+        if (programMode == NMXProgramModeVideo)
+        {
+            slideLbl2.text = [self convertTime2:currentSelectedFrameValue];
+        }
+        else
+        {
+            slideLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
         }
     }
     
@@ -1040,7 +1106,7 @@ NSArray static	*frameCountStrings = nil;
     
     if (programMode == NMXProgramModeVideo) {
         
-        slideLbl1.text = [self convertTime:sender];
+        slideLbl1.text = [self convertTime2:currentSelectedFrameValue];
     } else {
         
         slideLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1066,7 +1132,7 @@ NSArray static	*frameCountStrings = nil;
         slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            slideLbl1.text = [self convertTime:sender];
+            slideLbl1.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             slideLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1086,7 +1152,7 @@ NSArray static	*frameCountStrings = nil;
     slideLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl2.frame.origin.y, slideLbl2.frame.size.width, slideLbl2.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        slideLbl2.text = [self convertTime:sender];
+        slideLbl2.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         slideLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1126,7 +1192,7 @@ NSArray static	*frameCountStrings = nil;
         slideLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl4.frame.origin.y, slideLbl4.frame.size.width, slideLbl4.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            slideLbl4.text = [self convertTime:sender];
+            slideLbl4.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             slideLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1146,7 +1212,7 @@ NSArray static	*frameCountStrings = nil;
     slideLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl3.frame.origin.y, slideLbl3.frame.size.width, slideLbl3.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        slideLbl3.text = [self convertTime:sender];
+        slideLbl3.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         slideLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1172,7 +1238,7 @@ NSArray static	*frameCountStrings = nil;
         slideLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl3.frame.origin.y, slideLbl3.frame.size.width, slideLbl3.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            slideLbl3.text = [self convertTime:sender];
+            slideLbl3.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             slideLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1191,7 +1257,7 @@ NSArray static	*frameCountStrings = nil;
     slideLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.slideLbl4.frame.origin.y, slideLbl4.frame.size.width, slideLbl4.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        slideLbl4.text = [self convertTime:sender];
+        slideLbl4.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         slideLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1228,7 +1294,7 @@ NSArray static	*frameCountStrings = nil;
         panLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl2.frame.origin.y, panLbl2.frame.size.width, panLbl2.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            panLbl2.text = [self convertTime:sender];
+            panLbl2.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             panLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1247,7 +1313,7 @@ NSArray static	*frameCountStrings = nil;
     panLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl1.frame.origin.y, panLbl1.frame.size.width, panLbl1.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        panLbl1.text = [self convertTime:sender];
+        panLbl1.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         panLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1274,7 +1340,7 @@ NSArray static	*frameCountStrings = nil;
         panLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl1.frame.origin.y, panLbl1.frame.size.width, panLbl1.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            panLbl1.text = [self convertTime:sender];
+            panLbl1.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             panLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1293,7 +1359,7 @@ NSArray static	*frameCountStrings = nil;
     panLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl2.frame.origin.y, panLbl2.frame.size.width, panLbl2.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        panLbl2.text = [self convertTime:sender];
+        panLbl2.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         panLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1328,7 +1394,7 @@ NSArray static	*frameCountStrings = nil;
         panLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl4.frame.origin.y, panLbl4.frame.size.width, panLbl4.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            panLbl4.text = [self convertTime:sender];
+            panLbl4.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             panLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1347,7 +1413,7 @@ NSArray static	*frameCountStrings = nil;
     panLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl3.frame.origin.y, panLbl3.frame.size.width, panLbl3.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        panLbl3.text = [self convertTime:sender];
+        panLbl3.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         panLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1374,7 +1440,7 @@ NSArray static	*frameCountStrings = nil;
         panLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl3.frame.origin.y, panLbl3.frame.size.width, panLbl3.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            panLbl3.text = [self convertTime:sender];
+            panLbl3.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             panLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1393,7 +1459,7 @@ NSArray static	*frameCountStrings = nil;
     panLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.panLbl4.frame.origin.y, panLbl4.frame.size.width, panLbl4.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        panLbl4.text = [self convertTime:sender];
+        panLbl4.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         panLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1431,7 +1497,7 @@ NSArray static	*frameCountStrings = nil;
         tiltLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl2.frame.origin.y, tiltLbl2.frame.size.width, tiltLbl2.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            tiltLbl2.text = [self convertTime:sender];
+            tiltLbl2.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             tiltLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1450,7 +1516,7 @@ NSArray static	*frameCountStrings = nil;
     tiltLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl1.frame.origin.y, tiltLbl1.frame.size.width, tiltLbl1.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        tiltLbl1.text = [self convertTime:sender];
+        tiltLbl1.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         tiltLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1477,7 +1543,7 @@ NSArray static	*frameCountStrings = nil;
         tiltLbl1.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl1.frame.origin.y, tiltLbl1.frame.size.width, tiltLbl1.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            tiltLbl1.text = [self convertTime:sender];
+            tiltLbl1.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             tiltLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1496,7 +1562,7 @@ NSArray static	*frameCountStrings = nil;
     tiltLbl2.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl2.frame.origin.y, tiltLbl2.frame.size.width, tiltLbl2.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        tiltLbl2.text = [self convertTime:sender];
+        tiltLbl2.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         tiltLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1531,7 +1597,7 @@ NSArray static	*frameCountStrings = nil;
         tiltLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl4.frame.origin.y, tiltLbl4.frame.size.width, tiltLbl4.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            tiltLbl4.text = [self convertTime:sender];
+            tiltLbl4.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             tiltLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1550,7 +1616,7 @@ NSArray static	*frameCountStrings = nil;
     tiltLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl3.frame.origin.y, tiltLbl3.frame.size.width, tiltLbl3.frame.size.height);
     
     if (programMode == NMXProgramModeVideo) {
-        tiltLbl3.text = [self convertTime:sender];
+        tiltLbl3.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         tiltLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1576,7 +1642,7 @@ NSArray static	*frameCountStrings = nil;
         tiltLbl3.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl3.frame.origin.y, tiltLbl3.frame.size.width, tiltLbl3.frame.size.height);
         
         if (programMode == NMXProgramModeVideo) {
-            tiltLbl3.text = [self convertTime:sender];
+            tiltLbl3.text = [self convertTime2:currentSelectedFrameValue];
         }
         else {
             tiltLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
@@ -1594,8 +1660,8 @@ NSArray static	*frameCountStrings = nil;
     
     tiltLbl4.frame = CGRectMake([self xPositionFromSliderValue:sender]-6, self.tiltLbl4.frame.origin.y, tiltLbl4.frame.size.width, tiltLbl4.frame.size.height);
     
-    if (programMode == NMXProgramModeVideo) { 
-        tiltLbl4.text = [self convertTime:sender]; 
+    if (programMode == NMXProgramModeVideo) {
+        tiltLbl4.text = [self convertTime2:currentSelectedFrameValue];
     }
     else {
         tiltLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];

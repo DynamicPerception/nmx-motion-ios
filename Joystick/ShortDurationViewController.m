@@ -272,12 +272,18 @@ NSArray static	*tenthsStrings = nil;
     {
         NSNumber *	number			= [NSNumber numberWithInt:isMotorSegueVal];
         
-        if (isSettingVideoFrame)
+        if (isSettingVideoFrame && selectedVideoFrame != 0)
         {
             number			= [NSNumber numberWithInt:selectedVideoFrame];
+            
+            NSLog(@"isSettingVideoFrame: %@",number);
         }
         
         NSInteger	duration		= [number integerValue];
+        
+        NSLog(@"duration: %li",(long)duration);
+        
+        
         NSInteger	wholeseconds	= duration / 1000;
         NSInteger	milliseconds	= duration % 1000;
         NSInteger	minutes			= (wholeseconds % 3600) / 60;

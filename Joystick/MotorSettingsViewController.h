@@ -14,6 +14,7 @@
 #import "AppDelegate.h"
 #import "SiderealViewController.h"
 #import "HelpViewController.h"
+#import "OverallDistanceViewController.h"
 
 @interface MotorSettingsViewController : UIViewController <BacklashDelegate, UITextFieldDelegate,UIScrollViewDelegate> {
 
@@ -70,6 +71,7 @@
 @property (weak, nonatomic) IBOutlet JoyButton *siderealBtn;
 @property (weak, nonatomic) IBOutlet UILabel *overallDistanceLbl;
 @property (weak, nonatomic) IBOutlet UISwitch *toggleJoystickSwitch;
+@property (weak, nonatomic) IBOutlet UILabel *dampeningLbl;
 
 - (IBAction) handleReleaseSensitivitySlider: (UISlider *) sender;
 - (IBAction) handleSensitivitySlider: (UISlider *) sender;

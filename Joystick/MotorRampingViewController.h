@@ -32,6 +32,21 @@ NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewC
     int newVal;
     int selectedVideoFrame;
     float selectedPercentage;
+    
+    int s12p;
+    int s22p;
+    int s32p;
+    int s42p;
+    
+    int p12p;
+    int p22p;
+    int p32p;
+    int p42p;
+    
+    int t12p;
+    int t22p;
+    int t32p;
+    int t42p;
 }
 
 @property int selectedFrameNumber;
