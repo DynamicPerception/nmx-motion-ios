@@ -12,7 +12,7 @@
 
 @protocol ELCAssetSelectionDelegate <NSObject>
 
-- (void)selectedAssets:(NSArray *)assets;
-- (BOOL)shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount;
+- (void) selectedAssets:(NSArray *)assets;
+- (BOOL) shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount;
 
 @end

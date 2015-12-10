@@ -34,9 +34,9 @@
  */
 @property (readonly) NSArray *formatters;
 
-- (void)addFormatter:(id<DDLogFormatter>)formatter;
-- (void)removeFormatter:(id<DDLogFormatter>)formatter;
-- (void)removeAllFormatters;
-- (BOOL)isFormattingWithFormatter:(id<DDLogFormatter>)formatter;
+- (void) addFormatter:(id<DDLogFormatter>)formatter;
+- (void) removeFormatter:(id<DDLogFormatter>)formatter;
+- (void) removeAllFormatters;
+- (BOOL) isFormattingWithFormatter:(id<DDLogFormatter>)formatter;
 
 @end

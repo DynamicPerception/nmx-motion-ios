@@ -33,7 +33,8 @@
 @property (nonatomic, strong)		NSMutableArray *presetStringList;
 @property (nonatomic, strong)		NSString *currentSettingString;
 @property int setting;
+@property float currentCustomVal;
 
-- (IBAction)cancel:(id)sender;
+- (IBAction) cancel:(id)sender;
 
 @end

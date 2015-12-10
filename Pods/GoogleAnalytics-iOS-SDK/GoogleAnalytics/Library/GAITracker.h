@@ -33,7 +33,7 @@
  @param value The value to set for the parameter. If this is nil, the
  value for the parameter will be cleared.
  */
-- (void)set:(NSString *)parameterName
+- (void) set:(NSString *)parameterName
       value:(NSString *)value;
 
 /*!
@@ -52,6 +52,6 @@
  @param parameters A map from parameter names to parameter values which will be
  set just for this piece of tracking information, or nil for none.
  */
-- (void)send:(NSDictionary *)parameters;
+- (void) send:(NSDictionary *)parameters;
 
 @end

@@ -163,6 +163,9 @@ typedef enum : unsigned char {
 - (bool) queryPowerCycle;
 - (void) motorSet: (int) motorNumber ContinuousSpeedAccelDecel: (float) speed;
 - (float) motorQueryContinuousAccelDecel: (int) motorNumber;
+- (void) motorSet:(int)motorNumber SetMotorPosition: (UInt32) position;
+- (void) motorSet:(int)motorNumber ResetLimits: (UInt32) position;
+- (void) resetLimits: (int) motorNumber;
 
 @end
 

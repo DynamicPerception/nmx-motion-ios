@@ -62,7 +62,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 #endif
 }
 
-- (void)deleteOldLogFiles;
+- (void) deleteOldLogFiles;
 - (NSString *)defaultLogsDirectory;
 
 @end
@@ -73,11 +73,11 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 @synthesize logFilesDiskQuota = _logFilesDiskQuota;
 
 
-- (instancetype)init {
+- (instancetype) init {
     return [self initWithLogsDirectory:nil];
 }
 
-- (instancetype)initWithLogsDirectory:(NSString *)aLogsDirectory {
+- (instancetype) initWithLogsDirectory:(NSString *)aLogsDirectory {
     if ((self = [super init])) {
         _maximumNumberOfLogFiles = kDDDefaultLogMaxNumLogFiles;
         _logFilesDiskQuota = kDDDefaultLogFilesDiskQuota;
@@ -113,7 +113,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 }
 
 #if TARGET_OS_IPHONE
-- (instancetype)initWithLogsDirectory:(NSString *)logsDirectory defaultFileProtectionLevel:(NSString *)fileProtectionLevel {
+- (instancetype) initWithLogsDirectory:(NSString *)logsDirectory defaultFileProtectionLevel:(NSString *)fileProtectionLevel {
     if ((self = [self initWithLogsDirectory:logsDirectory])) {
         if ([fileProtectionLevel isEqualToString:NSFileProtectionNone] ||
             [fileProtectionLevel isEqualToString:NSFileProtectionComplete] ||
@@ -128,7 +128,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 
 #endif
 
-- (void)dealloc {
+- (void) dealloc {
     // try-catch because the observer might be removed or never added. In this case, removeObserver throws and exception
     @try {
         [self removeObserver:self forKeyPath:NSStringFromSelector(@selector(maximumNumberOfLogFiles))];
@@ -141,7 +141,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 #pragma mark Configuration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
+- (void) observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
@@ -170,7 +170,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 /**
  * Deletes archived log files that exceed the maximumNumberOfLogFiles or logFilesDiskQuota configuration values.
  **/
-- (void)deleteOldLogFiles {
+- (void) deleteOldLogFiles {
     NSLogVerbose(@"DDLogFileManagerDefault: deleteOldLogFiles");
 
     NSArray *sortedLogFileInfos = [self sortedLogFileInfos];
@@ -280,7 +280,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
  *
  * You can change it by overriding newLogFileName and isLogFile: methods.
  **/
-- (BOOL)isLogFile:(NSString *)fileName {
+- (BOOL) isLogFile:(NSString *)fileName {
     NSString *appName = [self applicationName];
 
     BOOL hasProperPrefix = [fileName hasPrefix:appName];
@@ -565,11 +565,11 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 
 @implementation DDLogFileFormatterDefault
 
-- (instancetype)init {
+- (instancetype) init {
     return [self initWithDateFormatter:nil];
 }
 
-- (instancetype)initWithDateFormatter:(NSDateFormatter *)aDateFormatter {
+- (instancetype) initWithDateFormatter:(NSDateFormatter *)aDateFormatter {
     if ((self = [super init])) {
         if (aDateFormatter) {
             _dateFormatter = aDateFormatter;
@@ -608,21 +608,21 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     NSTimeInterval _rollingFrequency;
 }
 
-- (void)rollLogFileNow;
-- (void)maybeRollLogFileDueToAge;
-- (void)maybeRollLogFileDueToSize;
+- (void) rollLogFileNow;
+- (void) maybeRollLogFileDueToAge;
+- (void) maybeRollLogFileDueToSize;
 
 @end
 
 @implementation DDFileLogger
 
-- (instancetype)init {
+- (instancetype) init {
     DDLogFileManagerDefault *defaultLogFileManager = [[DDLogFileManagerDefault alloc] init];
 
     return [self initWithLogFileManager:defaultLogFileManager];
 }
 
-- (instancetype)initWithLogFileManager:(id <DDLogFileManager>)aLogFileManager {
+- (instancetype) initWithLogFileManager:(id <DDLogFileManager>)aLogFileManager {
     if ((self = [super init])) {
         _maximumFileSize = kDDDefaultLogMaxFileSize;
         _rollingFrequency = kDDDefaultLogRollingFrequency;
@@ -636,7 +636,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return self;
 }
 
-- (void)dealloc {
+- (void) dealloc {
     [_currentLogFileHandle synchronizeFile];
     [_currentLogFileHandle closeFile];
 
@@ -686,7 +686,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return result;
 }
 
-- (void)setMaximumFileSize:(unsigned long long)newMaximumFileSize {
+- (void) setMaximumFileSize:(unsigned long long)newMaximumFileSize {
     dispatch_block_t block = ^{
         @autoreleasepool {
             _maximumFileSize = newMaximumFileSize;
@@ -714,7 +714,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     });
 }
 
-- (NSTimeInterval)rollingFrequency {
+- (NSTimeInterval) rollingFrequency {
     __block NSTimeInterval result;
 
     dispatch_block_t block = ^{
@@ -743,7 +743,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return result;
 }
 
-- (void)setRollingFrequency:(NSTimeInterval)newRollingFrequency {
+- (void) setRollingFrequency:(NSTimeInterval)newRollingFrequency {
     dispatch_block_t block = ^{
         @autoreleasepool {
             _rollingFrequency = newRollingFrequency;
@@ -775,7 +775,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 #pragma mark File Rolling
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)scheduleTimerToRollLogFileDueToAge {
+- (void) scheduleTimerToRollLogFileDueToAge {
     if (_rollingTimer) {
         dispatch_source_cancel(_rollingTimer);
         _rollingTimer = NULL;
@@ -817,11 +817,11 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     dispatch_resume(_rollingTimer);
 }
 
-- (void)rollLogFile {
+- (void) rollLogFile {
     [self rollLogFileWithCompletionBlock:nil];
 }
 
-- (void)rollLogFileWithCompletionBlock:(void (^)())completionBlock {
+- (void) rollLogFileWithCompletionBlock:(void (^)())completionBlock {
     // This method is public.
     // We need to execute the rolling on our logging thread/queue.
 
@@ -852,7 +852,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     }
 }
 
-- (void)rollLogFileNow {
+- (void) rollLogFileNow {
     NSLogVerbose(@"DDFileLogger: rollLogFileNow");
 
     if (_currentLogFileHandle == nil) {
@@ -882,7 +882,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     }
 }
 
-- (void)maybeRollLogFileDueToAge {
+- (void) maybeRollLogFileDueToAge {
     if (_rollingFrequency > 0.0 && _currentLogFileInfo.age >= _rollingFrequency) {
         NSLogVerbose(@"DDFileLogger: Rolling log file due to age...");
 
@@ -892,7 +892,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     }
 }
 
-- (void)maybeRollLogFileDueToSize {
+- (void) maybeRollLogFileDueToSize {
     // This method is called from logMessage.
     // Keep it FAST.
 
@@ -1028,7 +1028,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static int exception_count = 0;
-- (void)logMessage:(DDLogMessage *)logMessage {
+- (void) logMessage:(DDLogMessage *)logMessage {
     NSString *message = logMessage->_message;
     BOOL isFormatted = NO;
 
@@ -1063,7 +1063,7 @@ static int exception_count = 0;
     }
 }
 
-- (void)willRemoveLogger {
+- (void) willRemoveLogger {
     // If you override me be sure to invoke [super willRemoveLogger];
 
     [self rollLogFileNow];
@@ -1120,7 +1120,7 @@ static int exception_count = 0;
     return [[self alloc] initWithFilePath:aFilePath];
 }
 
-- (instancetype)initWithFilePath:(NSString *)aFilePath {
+- (instancetype) initWithFilePath:(NSString *)aFilePath {
     if ((self = [super init])) {
         filePath = [aFilePath copy];
     }
@@ -1172,7 +1172,7 @@ static int exception_count = 0;
     return _fileSize;
 }
 
-- (NSTimeInterval)age {
+- (NSTimeInterval) age {
     return [[self creationDate] timeIntervalSinceNow] * -1.0;
 }
 
@@ -1191,7 +1191,7 @@ static int exception_count = 0;
 #pragma mark Archiving
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL)isArchived {
+- (BOOL) isArchived {
 #if TARGET_IPHONE_SIMULATOR
 
     // Extended attributes don't work properly on the simulator.
@@ -1207,7 +1207,7 @@ static int exception_count = 0;
 #endif
 }
 
-- (void)setIsArchived:(BOOL)flag {
+- (void) setIsArchived:(BOOL)flag {
 #if TARGET_IPHONE_SIMULATOR
 
     // Extended attributes don't work properly on the simulator.
@@ -1235,14 +1235,14 @@ static int exception_count = 0;
 #pragma mark Changes
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)reset {
+- (void) reset {
     _fileName = nil;
     _fileAttributes = nil;
     _creationDate = nil;
     _modificationDate = nil;
 }
 
-- (void)renameFile:(NSString *)newFileName {
+- (void) renameFile:(NSString *)newFileName {
     // This method is only used on the iPhone simulator, where normal extended attributes are broken.
     // See full explanation in the header file.
 
@@ -1279,7 +1279,7 @@ static int exception_count = 0;
 // So we have to use a less attractive alternative.
 // See full explanation in the header file.
 
-- (BOOL)hasExtensionAttributeWithName:(NSString *)attrName {
+- (BOOL) hasExtensionAttributeWithName:(NSString *)attrName {
     // This method is only used on the iPhone simulator, where normal extended attributes are broken.
     // See full explanation in the header file.
 
@@ -1307,7 +1307,7 @@ static int exception_count = 0;
     return NO;
 }
 
-- (void)addExtensionAttributeWithName:(NSString *)attrName {
+- (void) addExtensionAttributeWithName:(NSString *)attrName {
     // This method is only used on the iPhone simulator, where normal extended attributes are broken.
     // See full explanation in the header file.
 
@@ -1364,7 +1364,7 @@ static int exception_count = 0;
     [self renameFile:newFileName];
 }
 
-- (void)removeExtensionAttributeWithName:(NSString *)attrName {
+- (void) removeExtensionAttributeWithName:(NSString *)attrName {
     // This method is only used on the iPhone simulator, where normal extended attributes are broken.
     // See full explanation in the header file.
 
@@ -1410,7 +1410,7 @@ static int exception_count = 0;
 
 #else /* if TARGET_IPHONE_SIMULATOR */
 
-- (BOOL)hasExtendedAttributeWithName:(NSString *)attrName {
+- (BOOL) hasExtendedAttributeWithName:(NSString *)attrName {
     const char *path = [filePath UTF8String];
     const char *name = [attrName UTF8String];
 
@@ -1419,7 +1419,7 @@ static int exception_count = 0;
     return (result >= 0);
 }
 
-- (void)addExtendedAttributeWithName:(NSString *)attrName {
+- (void) addExtendedAttributeWithName:(NSString *)attrName {
     const char *path = [filePath UTF8String];
     const char *name = [attrName UTF8String];
 
@@ -1433,7 +1433,7 @@ static int exception_count = 0;
     }
 }
 
-- (void)removeExtendedAttributeWithName:(NSString *)attrName {
+- (void) removeExtendedAttributeWithName:(NSString *)attrName {
     const char *path = [filePath UTF8String];
     const char *name = [attrName UTF8String];
 
@@ -1453,7 +1453,7 @@ static int exception_count = 0;
 #pragma mark Comparisons
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL)isEqual:(id)object {
+- (BOOL) isEqual:(id)object {
     if ([object isKindOfClass:[self class]]) {
         DDLogFileInfo *another = (DDLogFileInfo *)object;
 
@@ -1463,7 +1463,7 @@ static int exception_count = 0;
     return NO;
 }
 
-- (NSComparisonResult)reverseCompareByCreationDate:(DDLogFileInfo *)another {
+- (NSComparisonResult) reverseCompareByCreationDate:(DDLogFileInfo *)another {
     NSDate *us = [self creationDate];
     NSDate *them = [another creationDate];
 
@@ -1480,7 +1480,7 @@ static int exception_count = 0;
     return NSOrderedSame;
 }
 
-- (NSComparisonResult)reverseCompareByModificationDate:(DDLogFileInfo *)another {
+- (NSComparisonResult) reverseCompareByModificationDate:(DDLogFileInfo *)another {
     NSDate *us = [self modificationDate];
     NSDate *them = [another modificationDate];
 

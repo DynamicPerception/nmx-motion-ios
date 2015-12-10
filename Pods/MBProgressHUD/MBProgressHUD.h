@@ -172,7 +172,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
  * @param window The window instance that will provide the bounds for the HUD. Should be the same instance as
  * the HUD's superview (i.e., the window that the HUD will be added to).
  */
-- (id)initWithWindow:(UIWindow *)window;
+- (id) initWithWindow:(UIWindow *)window;
 
 /**
  * A convenience constructor that initializes the HUD with the view's bounds. Calls the designated constructor with
@@ -181,7 +181,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
  * @param view The view instance that will provide the bounds for the HUD. Should be the same instance as
  * the HUD's superview (i.e., the view that the HUD will be added to).
  */
-- (id)initWithView:(UIView *)view;
+- (id) initWithView:(UIView *)view;
 
 /** 
  * Display the HUD. You need to make sure that the main thread completes its run loop soon after this method call so
@@ -193,7 +193,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
  *
  * @see animationType
  */
-- (void)show:(BOOL)animated;
+- (void) show:(BOOL)animated;
 
 /** 
  * Hide the HUD. This still calls the hudWasHidden: delegate. This is the counterpart of the show: method. Use it to
@@ -204,7 +204,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
  *
  * @see animationType
  */
-- (void)hide:(BOOL)animated;
+- (void) hide:(BOOL)animated;
 
 /** 
  * Hide the HUD after a delay. This still calls the hudWasHidden: delegate. This is the counterpart of the show: method. Use it to
@@ -216,7 +216,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
  *
  * @see animationType
  */
-- (void)hide:(BOOL)animated afterDelay:(NSTimeInterval)delay;
+- (void) hide:(BOOL)animated afterDelay:(NSTimeInterval)delay;
 
 /** 
  * Shows the HUD while a background task is executing in a new thread, then hides the HUD.
@@ -230,7 +230,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
  * @param animated If set to YES the HUD will (dis)appear using the current animationType. If set to NO the HUD will not use
  * animations while (dis)appearing.
  */
-- (void)showWhileExecuting:(SEL)method onTarget:(id)target withObject:(id)object animated:(BOOL)animated;
+- (void) showWhileExecuting:(SEL)method onTarget:(id)target withObject:(id)object animated:(BOOL)animated;
 
 #if NS_BLOCKS_AVAILABLE
 
@@ -239,21 +239,21 @@ typedef void (^MBProgressHUDCompletionBlock)();
  *
  * @see showAnimated:whileExecutingBlock:onQueue:completionBlock:
  */
-- (void)showAnimated:(BOOL)animated whileExecutingBlock:(dispatch_block_t)block;
+- (void) showAnimated:(BOOL)animated whileExecutingBlock:(dispatch_block_t)block;
 
 /**
  * Shows the HUD while a block is executing on a background queue, then hides the HUD.
  *
  * @see showAnimated:whileExecutingBlock:onQueue:completionBlock:
  */
-- (void)showAnimated:(BOOL)animated whileExecutingBlock:(dispatch_block_t)block completionBlock:(MBProgressHUDCompletionBlock)completion;
+- (void) showAnimated:(BOOL)animated whileExecutingBlock:(dispatch_block_t)block completionBlock:(MBProgressHUDCompletionBlock)completion;
 
 /**
  * Shows the HUD while a block is executing on the specified dispatch queue, then hides the HUD.
  *
  * @see showAnimated:whileExecutingBlock:onQueue:completionBlock:
  */
-- (void)showAnimated:(BOOL)animated whileExecutingBlock:(dispatch_block_t)block onQueue:(dispatch_queue_t)queue;
+- (void) showAnimated:(BOOL)animated whileExecutingBlock:(dispatch_block_t)block onQueue:(dispatch_queue_t)queue;
 
 /** 
  * Shows the HUD while a block is executing on the specified dispatch queue, executes completion block on the main queue, and then hides the HUD.
@@ -266,7 +266,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
  *
  * @see completionBlock
  */
-- (void)showAnimated:(BOOL)animated whileExecutingBlock:(dispatch_block_t)block onQueue:(dispatch_queue_t)queue
+- (void) showAnimated:(BOOL)animated whileExecutingBlock:(dispatch_block_t)block onQueue:(dispatch_queue_t)queue
 		  completionBlock:(MBProgressHUDCompletionBlock)completion;
 
 /**
@@ -449,7 +449,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
 /** 
  * Called after the HUD was fully hidden from the screen. 
  */
-- (void)hudWasHidden:(MBProgressHUD *)hud;
+- (void) hudWasHidden:(MBProgressHUD *)hud;
 
 @end
 

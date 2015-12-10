@@ -39,7 +39,7 @@
 
 @implementation DDDispatchQueueLogFormatter
 
-- (instancetype)init {
+- (instancetype) init {
     if ((self = [super init])) {
         _dateFormatString = @"yyyy-MM-dd HH:mm:ss:SSS";
 
@@ -77,7 +77,7 @@
     return result;
 }
 
-- (void)setReplacementString:(NSString *)shortLabel forQueueLabel:(NSString *)longLabel {
+- (void) setReplacementString:(NSString *)shortLabel forQueueLabel:(NSString *)longLabel {
     OSSpinLockLock(&_lock);
     {
         if (shortLabel) {
@@ -236,11 +236,11 @@
     return [NSString stringWithFormat:@"%@ [%@] %@", timestamp, queueThreadLabel, logMessage->_message];
 }
 
-- (void)didAddToLogger:(id <DDLogger>)logger {
+- (void) didAddToLogger:(id <DDLogger>)logger {
     OSAtomicIncrement32(&_atomicLoggerCount);
 }
 
-- (void)willRemoveFromLogger:(id <DDLogger>)logger {
+- (void) willRemoveFromLogger:(id <DDLogger>)logger {
     OSAtomicDecrement32(&_atomicLoggerCount);
 }
 

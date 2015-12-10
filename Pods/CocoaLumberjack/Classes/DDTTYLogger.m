@@ -107,7 +107,7 @@
     size_t resetCodeLen;
 }
 
-- (instancetype)initWithForegroundColor:(DDColor *)fgColor backgroundColor:(DDColor *)bgColor flag:(DDLogFlag)mask context:(NSInteger)ctxt;
+- (instancetype) initWithForegroundColor:(DDColor *)fgColor backgroundColor:(DDColor *)bgColor flag:(DDLogFlag)mask context:(NSInteger)ctxt;
 
 @end
 
@@ -814,7 +814,7 @@ static DDTTYLogger *sharedInstance;
     return sharedInstance;
 }
 
-- (instancetype)init {
+- (instancetype) init {
     if (sharedInstance != nil) {
         return nil;
     }
@@ -879,12 +879,12 @@ static DDTTYLogger *sharedInstance;
     return self;
 }
 
-- (void)loadDefaultColorProfiles {
+- (void) loadDefaultColorProfiles {
     [self setForegroundColor:DDMakeColor(214,  57,  30) backgroundColor:nil forFlag:DDLogFlagError];
     [self setForegroundColor:DDMakeColor(204, 121,  32) backgroundColor:nil forFlag:DDLogFlagWarning];
 }
 
-- (BOOL)colorsEnabled {
+- (BOOL) colorsEnabled {
     // The design of this method is taken from the DDAbstractLogger implementation.
     // For extensive documentation please refer to the DDAbstractLogger implementation.
 
@@ -911,7 +911,7 @@ static DDTTYLogger *sharedInstance;
     return result;
 }
 
-- (void)setColorsEnabled:(BOOL)newColorsEnabled {
+- (void) setColorsEnabled:(BOOL)newColorsEnabled {
     dispatch_block_t block = ^{
         @autoreleasepool {
             _colorsEnabled = newColorsEnabled;
@@ -942,11 +942,11 @@ static DDTTYLogger *sharedInstance;
     });
 }
 
-- (void)setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask {
+- (void) setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask {
     [self setForegroundColor:txtColor backgroundColor:bgColor forFlag:mask context:LOG_CONTEXT_ALL];
 }
 
-- (void)setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask context:(NSInteger)ctxt {
+- (void) setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask context:(NSInteger)ctxt {
     dispatch_block_t block = ^{
         @autoreleasepool {
             DDTTYLoggerColorProfile *newColorProfile =
@@ -990,7 +990,7 @@ static DDTTYLogger *sharedInstance;
     }
 }
 
-- (void)setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forTag:(id <NSCopying>)tag {
+- (void) setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forTag:(id <NSCopying>)tag {
     NSAssert([(id < NSObject >) tag conformsToProtocol: @protocol(NSCopying)], @"Invalid tag");
 
     dispatch_block_t block = ^{
@@ -1022,11 +1022,11 @@ static DDTTYLogger *sharedInstance;
     }
 }
 
-- (void)clearColorsForFlag:(DDLogFlag)mask {
+- (void) clearColorsForFlag:(DDLogFlag)mask {
     [self clearColorsForFlag:mask context:0];
 }
 
-- (void)clearColorsForFlag:(DDLogFlag)mask context:(NSInteger)context {
+- (void) clearColorsForFlag:(DDLogFlag)mask context:(NSInteger)context {
     dispatch_block_t block = ^{
         @autoreleasepool {
             NSUInteger i = 0;
@@ -1060,7 +1060,7 @@ static DDTTYLogger *sharedInstance;
     }
 }
 
-- (void)clearColorsForTag:(id <NSCopying>)tag {
+- (void) clearColorsForTag:(id <NSCopying>)tag {
     NSAssert([(id < NSObject >) tag conformsToProtocol: @protocol(NSCopying)], @"Invalid tag");
 
     dispatch_block_t block = ^{
@@ -1084,7 +1084,7 @@ static DDTTYLogger *sharedInstance;
     }
 }
 
-- (void)clearColorsForAllFlags {
+- (void) clearColorsForAllFlags {
     dispatch_block_t block = ^{
         @autoreleasepool {
             [_colorProfilesArray removeAllObjects];
@@ -1106,7 +1106,7 @@ static DDTTYLogger *sharedInstance;
     }
 }
 
-- (void)clearColorsForAllTags {
+- (void) clearColorsForAllTags {
     dispatch_block_t block = ^{
         @autoreleasepool {
             [_colorProfilesDict removeAllObjects];
@@ -1128,7 +1128,7 @@ static DDTTYLogger *sharedInstance;
     }
 }
 
-- (void)clearAllColors {
+- (void) clearAllColors {
     dispatch_block_t block = ^{
         @autoreleasepool {
             [_colorProfilesArray removeAllObjects];
@@ -1151,7 +1151,7 @@ static DDTTYLogger *sharedInstance;
     }
 }
 
-- (void)logMessage:(DDLogMessage *)logMessage {
+- (void) logMessage:(DDLogMessage *)logMessage {
     NSString *logMsg = logMessage->_message;
     BOOL isFormatted = NO;
 
@@ -1365,7 +1365,7 @@ static DDTTYLogger *sharedInstance;
 
 @implementation DDTTYLoggerColorProfile
 
-- (instancetype)initWithForegroundColor:(DDColor *)fgColor backgroundColor:(DDColor *)bgColor flag:(DDLogFlag)aMask context:(NSInteger)ctxt {
+- (instancetype) initWithForegroundColor:(DDColor *)fgColor backgroundColor:(DDColor *)bgColor flag:(DDLogFlag)aMask context:(NSInteger)ctxt {
     if ((self = [super init])) {
         mask = aMask;
         context = ctxt;

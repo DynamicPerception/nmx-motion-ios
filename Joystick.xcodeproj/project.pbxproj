@@ -181,8 +181,8 @@
 /* Begin PBXFileReference section */
 		1008389D1B8E0FC6003823E0 /* PresetManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresetManagerViewController.h; sourceTree = "<group>"; };
 		1008389E1B8E0FC6003823E0 /* PresetManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresetManagerViewController.m; sourceTree = "<group>"; };
-		100838A01B8F88C6003823E0 /* DistancePresetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DistancePresetViewController.h; sourceTree = "<group>"; };
-		100838A11B8F88C6003823E0 /* DistancePresetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DistancePresetViewController.m; sourceTree = "<group>"; };
+		100838A01B8F88C6003823E0 /* DistancePresetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DistancePresetViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		100838A11B8F88C6003823E0 /* DistancePresetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DistancePresetViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		101F9B811C1740A9006DCFAA /* OverallDistanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverallDistanceViewController.h; sourceTree = "<group>"; };
 		101F9B821C1740A9006DCFAA /* OverallDistanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OverallDistanceViewController.m; sourceTree = "<group>"; };
 		1057971D1BF39CD1000821D1 /* camera-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera-icon.png"; sourceTree = "<group>"; };
@@ -193,7 +193,7 @@
 		106615851BA2118B00A85529 /* down-arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "down-arrow@2x.png"; sourceTree = "<group>"; };
 		106615881BA218DF00A85529 /* icon-arrow-down-b-128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-arrow-down-b-128.png"; sourceTree = "<group>"; };
 		106615931BA465C100A85529 /* ConstraintTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstraintTest.h; sourceTree = "<group>"; };
-		106615941BA465C100A85529 /* ConstraintTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConstraintTest.m; sourceTree = "<group>"; };
+		106615941BA465C100A85529 /* ConstraintTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ConstraintTest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		10871B5D1B8B94B900B1D017 /* PresetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresetViewController.h; sourceTree = "<group>"; };
 		10871B5E1B8B94B900B1D017 /* PresetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresetViewController.m; sourceTree = "<group>"; };
 		10871B601B8B981100B1D017 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -296,7 +296,7 @@
 		10D5EBB71B94CEEC006125E1 /* done1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = done1.png; sourceTree = "<group>"; };
 		10D5EBB81B94CEEC006125E1 /* doneup1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = doneup1.png; sourceTree = "<group>"; };
 		10F9DE231BEBC0C20059A727 /* ELCAlbumPickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ELCAlbumPickerController.h; sourceTree = "<group>"; };
-		10F9DE241BEBC0C20059A727 /* ELCAlbumPickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ELCAlbumPickerController.m; sourceTree = "<group>"; };
+		10F9DE241BEBC0C20059A727 /* ELCAlbumPickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ELCAlbumPickerController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		10F9DE251BEBC0C20059A727 /* ELCAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ELCAsset.h; sourceTree = "<group>"; };
 		10F9DE261BEBC0C20059A727 /* ELCAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ELCAsset.m; sourceTree = "<group>"; };
 		10F9DE271BEBC0C20059A727 /* ELCAssetCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ELCAssetCell.h; sourceTree = "<group>"; };
@@ -319,7 +319,7 @@
 		2361D8711A49E7F9003FED88 /* SetSecondsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetSecondsViewController.h; sourceTree = "<group>"; };
 		2361D8721A49E7F9003FED88 /* SetSecondsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetSecondsViewController.m; sourceTree = "<group>"; };
 		2362F62919EEF1F500C85368 /* AppExecutive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppExecutive.h; sourceTree = "<group>"; };
-		2362F62A19EEF1F500C85368 /* AppExecutive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppExecutive.m; sourceTree = "<group>"; };
+		2362F62A19EEF1F500C85368 /* AppExecutive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppExecutive.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		236621071A39FA520009EB85 /* FrameRateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameRateViewController.h; sourceTree = "<group>"; };
 		236621081A39FA520009EB85 /* FrameRateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameRateViewController.m; sourceTree = "<group>"; };
 		2389AC1619DD938100FB2679 /* NMX Motion 3.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NMX Motion 3.0.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -383,25 +383,25 @@
 		3F9C16681B63D82600D7D51B /* thumbBlue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumbBlue@2x.png"; sourceTree = "<group>"; };
 		3F9C16691B63D82600D7D51B /* thumbBlue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumbBlue.png; sourceTree = "<group>"; };
 		3FB4A5591B5FE84C006CFF1F /* DrawTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawTest.h; sourceTree = "<group>"; };
-		3FB4A55A1B5FE84C006CFF1F /* DrawTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawTest.m; sourceTree = "<group>"; };
+		3FB4A55A1B5FE84C006CFF1F /* DrawTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DrawTest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		3FB4A55C1B5FF154006CFF1F /* GraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphView.h; sourceTree = "<group>"; };
 		3FB4A55D1B5FF154006CFF1F /* GraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GraphView.m; sourceTree = "<group>"; };
 		3FB4A55F1B601DD9006CFF1F /* ScrollGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollGraph.h; sourceTree = "<group>"; };
 		3FB4A5601B601DD9006CFF1F /* ScrollGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScrollGraph.m; sourceTree = "<group>"; };
 		3FB4A5621B601E09006CFF1F /* DrawScrollTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawScrollTest.h; sourceTree = "<group>"; };
-		3FB4A5631B601E09006CFF1F /* DrawScrollTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawScrollTest.m; sourceTree = "<group>"; };
+		3FB4A5631B601E09006CFF1F /* DrawScrollTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DrawScrollTest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		3FB4A5651B61F0B4006CFF1F /* NotificationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationTest.h; sourceTree = "<group>"; };
 		3FB4A5661B61F0B4006CFF1F /* NotificationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationTest.m; sourceTree = "<group>"; };
 		3FB4A5681B620E78006CFF1F /* thumb2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumb2.png; sourceTree = "<group>"; };
 		59981E3093D1B0C2F76D6F57 /* Pods-NMX Motion.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NMX Motion.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NMX Motion/Pods-NMX Motion.debug.xcconfig"; sourceTree = "<group>"; };
 		5D25BC641A5B862B00F324AD /* DeviceSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSettingsViewController.h; sourceTree = "<group>"; };
-		5D25BC651A5B862B00F324AD /* DeviceSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSettingsViewController.m; sourceTree = "<group>"; };
+		5D25BC651A5B862B00F324AD /* DeviceSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DeviceSettingsViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5D5C2F751A6448530009FE8A /* NSNumber+ASI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber+ASI.h"; sourceTree = "<group>"; };
 		5D5C2F761A6448530009FE8A /* NSNumber+ASI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber+ASI.m"; sourceTree = "<group>"; };
 		5DAEBE4919F4504F000AC7AA /* thumb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumb.png; sourceTree = "<group>"; };
 		5DAEBE4B19F4508F000AC7AA /* thumb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb@2x.png"; sourceTree = "<group>"; };
 		5DAEBE4F19F6080A000AC7AA /* DeviceSelectionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSelectionTableViewController.h; sourceTree = "<group>"; };
-		5DAEBE5019F6080A000AC7AA /* DeviceSelectionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSelectionTableViewController.m; sourceTree = "<group>"; };
+		5DAEBE5019F6080A000AC7AA /* DeviceSelectionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DeviceSelectionTableViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5DAEBE5219F60C61000AC7AA /* NMXDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NMXDeviceManager.h; sourceTree = "<group>"; };
 		5DAEBE5319F60C61000AC7AA /* NMXDeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NMXDeviceManager.m; sourceTree = "<group>"; };
 		5DAEBE5519F60D6F000AC7AA /* NMXDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NMXDevice.h; sourceTree = "<group>"; };

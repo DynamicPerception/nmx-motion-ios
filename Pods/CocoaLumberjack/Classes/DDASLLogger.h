@@ -43,6 +43,6 @@
 // Inherited from DDAbstractLogger
 
 // - (id <DDLogFormatter>)logFormatter;
-// - (void)setLogFormatter:(id <DDLogFormatter>)formatter;
+// - (void) setLogFormatter:(id <DDLogFormatter>)formatter;
 
 @end

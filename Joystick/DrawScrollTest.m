@@ -16,7 +16,7 @@
 
 @synthesize slideGraph;
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     
     slideGraph.frame1 = 22;
     slideGraph.frame2 = 137;
@@ -30,7 +30,7 @@
     [super viewDidLoad];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
     
     [super didReceiveMemoryWarning];
 }

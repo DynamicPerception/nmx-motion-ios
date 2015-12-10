@@ -24,9 +24,9 @@
 
 @property(nonatomic, weak) id<ELCAssetPickerFilterDelegate> assetPickerFilterDelegate;
 
-- (int)totalSelectedAssets;
-- (void)preparePhotos;
+- (int) totalSelectedAssets;
+- (void) preparePhotos;
 
-- (void)doneAction:(id)sender;
+- (void) doneAction:(id)sender;
 
 @end

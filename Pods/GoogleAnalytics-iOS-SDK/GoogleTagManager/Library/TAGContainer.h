@@ -56,7 +56,7 @@ typedef enum {
    * @return The evaluated result, which can be an <code>NSString</code> or
    *     <code>NSNumber</code>.
    */
-- (void)execute:(NSString *)tagName parameters:(NSDictionary *)parameters;
+- (void) execute:(NSString *)tagName parameters:(NSDictionary *)parameters;
 
 @end
 
@@ -79,7 +79,7 @@ typedef enum {
  * @return The evaluated result, which can be an <code>NSString</code> or
  *     <code>NSNumber</code>.
  */
-- (id)valueForMacro:(NSString *)macroName parameters:(NSDictionary *)parameters;
+- (id) valueForMacro:(NSString *)macroName parameters:(NSDictionary *)parameters;
 
 @end
 
@@ -108,7 +108,7 @@ typedef enum {
  * @param container The container being refreshed.
  * @param refreshType The type of refresh which is starting.
  */
-- (void)containerRefreshBegin:(TAGContainer *)container
+- (void) containerRefreshBegin:(TAGContainer *)container
                   refreshType:(TAGContainerCallbackRefreshType)refreshType;
 
 /**
@@ -117,7 +117,7 @@ typedef enum {
  * @param container The container being refreshed.
  * @param refreshType The type of refresh which completed successfully.
  */
-- (void)containerRefreshSuccess:(TAGContainer *)container
+- (void) containerRefreshSuccess:(TAGContainer *)container
                     refreshType:(TAGContainerCallbackRefreshType)refreshType;
 
 /**
@@ -127,7 +127,7 @@ typedef enum {
  * @param failure The reason for the refresh failure.
  * @param refreshType The type of refresh which failed.
  */
-- (void)containerRefreshFailure:(TAGContainer *)container
+- (void) containerRefreshFailure:(TAGContainer *)container
                         failure:(TAGContainerCallbackRefreshFailure)failure
                     refreshType:(TAGContainerCallbackRefreshType)refreshType;
 
@@ -158,7 +158,7 @@ typedef enum {
 /**
  * Containers should be instantiated through TAGManager or TAGContainerOpener.
  */
-- (id)init __attribute__((unavailable));
+- (id) init __attribute__((unavailable));
 // @endcond
 
 /**
@@ -167,7 +167,7 @@ typedef enum {
  *
  * @param key The key to lookup for the configuration value.
  */
-- (BOOL)booleanForKey:(NSString *)key;
+- (BOOL) booleanForKey:(NSString *)key;
 
 /**
  * Returns a <code>double</code> representing the configuration value for the
@@ -175,7 +175,7 @@ typedef enum {
  *
  * @param key The key to lookup for the configuration value.
  */
-- (double)doubleForKey:(NSString *)key;
+- (double) doubleForKey:(NSString *)key;
 
 /**
  * Returns an <code>int64_t</code> representing the configuration value for the
@@ -183,7 +183,7 @@ typedef enum {
  *
  * @param key The key to lookup for the configuration value.
  */
-- (int64_t)int64ForKey:(NSString *)key;
+- (int64_t) int64ForKey:(NSString *)key;
 
 /**
  * Returns an <code>NSString</code> to represent the configuration value for the
@@ -198,19 +198,19 @@ typedef enum {
  * Requests that this container be refreshed from the network.
  * This call is asynchronous, so the refresh may take place on another thread.
  */
-- (void)refresh;
+- (void) refresh;
 
 /**
  * Closes this container so that it will no longer be refreshed.
  * After closing, don't make any other calls to the container.
  */
-- (void)close;
+- (void) close;
 
 /**
  * Returns whether this is a default container, or one refreshed from the
  * server.
  */
-- (BOOL)isDefault;
+- (BOOL) isDefault;
 
 /**
  * Registers the given macro handler to handle a given function call macro.
@@ -219,7 +219,7 @@ typedef enum {
  *     nil, the method unregisters any existing handler for that macro.
  * @param macroName The name of the macro which is being registered.
  */
-- (void)registerFunctionCallMacroHandler:(id<TAGFunctionCallMacroHandler>)handler
+- (void) registerFunctionCallMacroHandler:(id<TAGFunctionCallMacroHandler>)handler
                                 forMacro:(NSString *)macroName;
 
 /**
@@ -238,7 +238,7 @@ typedef enum {
  *     nil, the method unregisters any existing handler for that tag.
  * @param tagName The name of the tag which is being registered.
  */
-- (void)registerFunctionCallTagHandler:(id<TAGFunctionCallTagHandler>)handler
+- (void) registerFunctionCallTagHandler:(id<TAGFunctionCallTagHandler>)handler
                                 forTag:(NSString *)tagName;
 
 /**

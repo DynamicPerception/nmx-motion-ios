@@ -1058,7 +1058,7 @@ NSArray *defaultRampingValues() {
 	return TRUE;
 }
 
-- (void)restoreDefaults {
+- (void) restoreDefaults {
     
     NSLog(@"restoreDefaults");
     
@@ -1125,7 +1125,7 @@ NSArray *defaultRampingValues() {
     [self.defaults synchronize];
 }
 
-- (void)setPoints {
+- (void) setPoints {
     
     //NSLog(@"startStopQueryTimer");
         

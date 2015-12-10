@@ -97,7 +97,7 @@ extern NSObject *kTAGDataLayerObjectNotPresent;
  * Pushes a key/value pair to the data layer. This is just a convenience
  * method that calls <code>push:@{key: value}</code>.
  */
-- (void)pushValue:(NSObject*)value forKey:(NSObject*)key;
+- (void) pushValue:(NSObject*)value forKey:(NSObject*)key;
 
 /**
  * Merges the given <code>update</code> object into the existing data model,
@@ -120,7 +120,7 @@ extern NSObject *kTAGDataLayerObjectNotPresent;
  *
  * @param update The update object to process
  */
-- (void)push:(NSDictionary*)update;
+- (void) push:(NSDictionary*)update;
 
 /**
  * Returns the object in the model associated with the given key.

@@ -46,6 +46,7 @@
     float sensitivityRatio;
     float dampening;
     NSTimer *dampeningTimer;
+    bool endGreater;
 }
 
 @property (nonatomic, strong)		NSString *	motorName;
@@ -75,7 +76,7 @@
 
 - (IBAction) handleReleaseSensitivitySlider: (UISlider *) sender;
 - (IBAction) handleSensitivitySlider: (UISlider *) sender;
-- (IBAction)goToPresets:(id)sender;
-- (IBAction)toogleJoystick:(id)sender;
+- (IBAction) goToPresets:(id)sender;
+- (IBAction) toogleJoystick:(id)sender;
 
 @end

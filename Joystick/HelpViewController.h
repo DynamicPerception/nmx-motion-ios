@@ -13,6 +13,6 @@
 @property int screenInd;
 @property (weak, nonatomic) IBOutlet UITextView *helpTxt;
 
-- (IBAction)handleOkButton:(id)sender;
+- (IBAction) handleOkButton:(id)sender;
 
 @end

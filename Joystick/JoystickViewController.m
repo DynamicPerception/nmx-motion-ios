@@ -281,7 +281,7 @@
     }
 }
 
-- (void)handleLock : (CGPoint) viewLocation {
+- (void) handleLock : (CGPoint) viewLocation {
  
     //NSLog(@"viewLocation x: %f y: %f",viewLocation.x, viewLocation.y);
     
@@ -353,7 +353,7 @@
     [self.delegate joystickPosition: self.joystickView.joystickPosition];
 }
 
-- (void)lockUpdateTimer {
+- (void) lockUpdateTimer {
     
     if (upDown == YES)
     {

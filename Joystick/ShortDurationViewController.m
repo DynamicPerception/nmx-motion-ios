@@ -211,7 +211,7 @@ NSArray static	*tenthsStrings = nil;
     [super viewDidLoad];
 }
 
-- (float)roundNumber: (float)val {
+- (float) roundNumber: (float)val {
     
     float val1 = 100.0 * floor((val/100.0) + 0.5);
     

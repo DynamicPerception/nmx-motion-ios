@@ -69,12 +69,13 @@ typedef enum : unsigned char {
     NMXCommandMotorSetProgramDecel = 22,
     NMXCommandMotorSendToProgramStartPoint = 23,
     NMXCommandMotorSetLeadOutShotsOrTime = 25,
+    NMXCommandMotorResetLimitsProgramStart = 27,
     NMXCommandMotorAutoSetProgramMicrosteps = 28,
     NMXCommandMotorSetStartHere = 29,
     NMXCommandMotorSetStopHere = 30,
+    NMXCommandMotorPosition = 31,
     NMXCommandMotorQueryBacklash = 101,
     NMXCommandMotorMicrostepValue = 102,
-    
     NMXCommandMotorQueryCurrentPosition = 106,
     NMXCommandMotorQueryRunning = 107,
     NMXCommandMotorQueryContinuousAccelDecel = 109,
@@ -93,7 +94,6 @@ typedef enum : unsigned char {
     NMXCommandProgramStopPoint = 112
     
 } NMXCommandProgrammedTravel;
-
 
 
 typedef enum : unsigned char {
@@ -235,7 +235,7 @@ bool waitForResponse;
     return self.myPeripheral.name;
 }
 
-- (void)centralManagerDidUpdateState: (CBCentralManager *) central {
+- (void) centralManagerDidUpdateState: (CBCentralManager *) central {
 
     DDLogDebug(@"centralManagerState = %d", (int)central.state);
 }
@@ -292,6 +292,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     if ([self.myNotifyBuffer length] > 9)
     {
+        //NSLog(@"self.myNotifyBuffer: %@",self.myNotifyBuffer);
+        
         unsigned char length = ((unsigned char *)self.myNotifyBuffer.bytes)[9];
         
         if ([self.myNotifyBuffer length] >= 10 + length)
@@ -390,7 +392,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         if (waitForResponse)
         {
-             DDLogDebug(@"Waited for response and sending command %@ expect response", desc); //randall 8-17-15
+             //DDLogDebug(@"Waited for response and sending command %@ expect response", desc); //randall 8-17-15
             
             if ([desc containsString:@"Set KeyFrame Position"]) {
                 
@@ -401,7 +403,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         }
         else
         {
-            DDLogDebug(@"Delayed for response and sending command %@ expect response", desc); //randall 10-20-15
+            //DDLogDebug(@"Delayed for response and sending command %@ expect response", desc); //randall 10-20-15
         }
         
         // Be recreating the semaphore we will wait on with each send, we hope to be able to catch back up if we get double responses after a timeout.
@@ -412,11 +414,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         if (waitForResponse)
         {
-            DDLogDebug(@"Waited for response and sending command %@ no response expected", desc); //randall 8-17-15
+            //DDLogDebug(@"Waited for response and sending command %@ no response expected", desc); //randall 8-17-15
         }
         else
         {
-            DDLogDebug(@"Delayed for response and sending command %@ no response expected", desc); //randall 10-20-15
+            //DDLogDebug(@"Delayed for response and sending command %@ no response expected", desc); //randall 10-20-15
         }
     }
     
@@ -531,6 +533,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     NMXValueType valueType;
     NSNumber * returnedNumber;
+    
+    //NSLog(@"myNotifyData.bytes: %@",&self.myNotifyData.bytes[10]);
     
     memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
     
@@ -1128,6 +1132,14 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     [self sendCommand: newData WithDesc: @"Send Motor To Start Point" WaitForResponse: true WithTimeout: 0.2];
 }
 
+- (void) resetLimits: (int) motorNumber {
+    
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorResetLimitsProgramStart dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    [self sendCommand: newData WithDesc: @"Reset Limits" WaitForResponse: true WithTimeout: 0.2];
+}
+
 - (void) motorSetStopHere: (int) motorNumber {
 
     unsigned char newDataBytes[16];
@@ -1148,6 +1160,21 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 14];
     NSString *  descString = [NSString stringWithFormat: @"Set Program Start Point %d", (unsigned int)position];
+    [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
+}
+
+- (void) motorSet:(int)motorNumber SetMotorPosition: (UInt32) position {
+    
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorPosition dataLength: 4];
+    unsigned char * positionPtr = (unsigned char *)&position;
+    newDataBytes[10] = positionPtr[3];
+    newDataBytes[11] = positionPtr[2];
+    newDataBytes[12] = positionPtr[1];
+    newDataBytes[13] = positionPtr[0];
+    
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 14];
+    NSString *  descString = [NSString stringWithFormat: @"Set Motor Position %d", (unsigned int)position];
     [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
 }
 

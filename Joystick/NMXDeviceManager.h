@@ -27,8 +27,8 @@
 - (void) stopScanning;
 - (NSArray *) deviceList;
 
-- (void)isInReview;
-- (void)notInReview;
+- (void) isInReview;
+- (void) notInReview;
 
 @property (atomic, strong) id<NMXDeviceManagerDelegate> delegate;
 @property bool inReview;

@@ -21,7 +21,7 @@
 
 @synthesize presetTxt;
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
@@ -31,7 +31,7 @@
     [super viewDidLoad];
 }
 
-- (void)textFieldDidEndEditing:(UITextField *)textField {
+- (void) textFieldDidEndEditing:(UITextField *)textField {
     
     if (textField.text.length > 0)
     {
@@ -63,18 +63,18 @@
     }
 }
 
-- (IBAction)cancel:(id)sender {
+- (IBAction) cancel:(id)sender {
     [self dismissViewControllerAnimated: YES completion: nil];
 }
 
-- (void)savePreset {
+- (void) savePreset {
     
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"savePreset"
      object:presetTxt.text];    
 }
 
-- (bool)validatePreset: (NSString *) name {
+- (bool) validatePreset: (NSString *) name {
 
     NSError *error = nil;
     
@@ -101,14 +101,14 @@
     return true;
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField*)textField {
+- (BOOL) textFieldShouldReturn:(UITextField*)textField {
 	
 	[textField resignFirstResponder];
 	
 	return YES;
 }
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
     
     [super didReceiveMemoryWarning];
 }

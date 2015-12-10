@@ -22,7 +22,7 @@
 
 @synthesize notificationLbl,shareBtn;
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     
 //    UIImage *ig = [UIImage imageNamed: @"Instagram.png"];
 //    
@@ -80,12 +80,12 @@
     notificationLbl.hidden = YES;
 }
 
-- (void)handleNotificationNotificationHost:(NSNotification *)pNotification {
+- (void) handleNotificationNotificationHost:(NSNotification *)pNotification {
 	
     notificationLbl.text = pNotification.object;
 }
 
-- (void)timerName {
+- (void) timerName {
 	
     if ([[[AppExecutive sharedInstance].defaults stringForKey: @"didDisconnect"] isEqualToString:@"yes"]) {
         
@@ -126,7 +126,7 @@
     [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
 }
 
-- (IBAction)legacyDeviceChanged: (UISwitch *) sender {
+- (IBAction) legacyDeviceChanged: (UISwitch *) sender {
 
     [[AppExecutive sharedInstance].deviceManager stopScanning];
     [self.tableView reloadData];
@@ -135,12 +135,12 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
 
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
     // Return the number of rows in the section.
     
@@ -187,7 +187,7 @@
     }
 }
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
 
     [super didReceiveMemoryWarning];
 }

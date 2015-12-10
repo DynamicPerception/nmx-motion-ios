@@ -24,8 +24,9 @@
 @property (nonatomic, strong)		NSMutableArray *presetList;
 @property (nonatomic, strong)		NSMutableArray *presetStringList;
 @property (nonatomic, strong)	IBOutlet	UIPickerView *	picker;
+@property float currentCustomVal;
 
-- (IBAction)handleOkButton: (id) sender;
-- (IBAction)cancel:(id)sender;
+- (IBAction) handleOkButton: (id) sender;
+- (IBAction) cancel:(id)sender;
 
 @end

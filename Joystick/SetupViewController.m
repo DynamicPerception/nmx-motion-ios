@@ -252,12 +252,12 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     [super viewDidLoad];
 }
 
-- (void)showVoltage {
+- (void) showVoltage {
     
     [NSTimer scheduledTimerWithTimeInterval:.500 target:self selector:@selector(showVoltageTimer) userInfo:nil repeats:NO];
 }
 
-- (void)showVoltageTimer {
+- (void) showVoltageTimer {
     
     
 	
@@ -315,7 +315,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     [self.view addSubview:v];
 }
 
-- (int)convert: (int)val : (int)setting {
+- (int) convert: (int)val : (int)setting {
     
     //NSLog(@"convert function: val: %i setting: %i",val,setting);
     
@@ -398,7 +398,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 	[self.videoModeControl setTitleTextAttributes: attributes forState: UIControlStateSelected];
 }
 
-- (void)popMinSeconds {
+- (void) popMinSeconds {
     
     int microstepSetting1 = appExecutive.microstep1 * 200;
     int microstepSetting2 = appExecutive.microstep2 * 200;
@@ -1023,12 +1023,12 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 #pragma mark - Notifications
 
-- (void)handleNotificationRemoveSubviews:(NSNotification *)pNotification {
+- (void) handleNotificationRemoveSubviews:(NSNotification *)pNotification {
 
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
-- (void)handleNotificationRestoreDefaults:(NSNotification *)pNotification {
+- (void) handleNotificationRestoreDefaults:(NSNotification *)pNotification {
     
     NSLog(@"Restore Defaults");
     
@@ -1040,7 +1040,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     [self updateViewFields];
 }
 
-- (void)handleNotificationLoadPreset:(NSNotification *)pNotification {
+- (void) handleNotificationLoadPreset:(NSNotification *)pNotification {
     
     PresetOb *preset = pNotification.object;
     
@@ -1067,7 +1067,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
-- (void)handleNotificationSavePreset:(NSNotification *)pNotification {
+- (void) handleNotificationSavePreset:(NSNotification *)pNotification {
     
     NSLog(@"handleNotificationSavePreset");
     

@@ -41,7 +41,7 @@ static DDASLLogger *sharedInstance;
     return sharedInstance;
 }
 
-- (instancetype)init {
+- (instancetype) init {
     if (sharedInstance != nil) {
         return nil;
     }
@@ -56,7 +56,7 @@ static DDASLLogger *sharedInstance;
     return self;
 }
 
-- (void)logMessage:(DDLogMessage *)logMessage {
+- (void) logMessage:(DDLogMessage *)logMessage {
     // Skip captured log messages
     if ([logMessage->_fileName isEqualToString:@"DDASLLogCapture"]) {
         return;

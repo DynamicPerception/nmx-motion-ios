@@ -13,8 +13,8 @@
 @protocol ELCAssetDelegate <NSObject>
 
 @optional
-- (void)assetSelected:(ELCAsset *)asset;
-- (BOOL)shouldSelectAsset:(ELCAsset *)asset;
+- (void) assetSelected:(ELCAsset *)asset;
+- (BOOL) shouldSelectAsset:(ELCAsset *)asset;
 @end
 
 
@@ -24,6 +24,6 @@
 @property (nonatomic, weak) id<ELCAssetDelegate> parent;
 @property (nonatomic, assign) BOOL selected;
 
-- (id)initWithAsset:(ALAsset *)asset;
+- (id) initWithAsset:(ALAsset *)asset;
 
 @end

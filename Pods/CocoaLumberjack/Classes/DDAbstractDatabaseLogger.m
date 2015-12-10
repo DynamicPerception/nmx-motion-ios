@@ -23,8 +23,8 @@
 
 @interface DDAbstractDatabaseLogger ()
 
-- (void)destroySaveTimer;
-- (void)destroyDeleteTimer;
+- (void) destroySaveTimer;
+- (void) destroyDeleteTimer;
 
 @end
 
@@ -32,7 +32,7 @@
 
 @implementation DDAbstractDatabaseLogger
 
-- (instancetype)init {
+- (instancetype) init {
     if ((self = [super init])) {
         _saveThreshold = 500;
         _saveInterval = 60;           // 60 seconds
@@ -43,7 +43,7 @@
     return self;
 }
 
-- (void)dealloc {
+- (void) dealloc {
     [self destroySaveTimer];
     [self destroyDeleteTimer];
 }
@@ -52,7 +52,7 @@
 #pragma mark Override Me
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL)db_log:(DDLogMessage *)logMessage {
+- (BOOL) db_log:(DDLogMessage *)logMessage {
     // Override me and add your implementation.
     //
     // Return YES if an item was added to the buffer.
@@ -61,15 +61,15 @@
     return NO;
 }
 
-- (void)db_save {
+- (void) db_save {
     // Override me and add your implementation.
 }
 
-- (void)db_delete {
+- (void) db_delete {
     // Override me and add your implementation.
 }
 
-- (void)db_saveAndDelete {
+- (void) db_saveAndDelete {
     // Override me and add your implementation.
 }
 
@@ -77,7 +77,7 @@
 #pragma mark Private API
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)performSaveAndSuspendSaveTimer {
+- (void) performSaveAndSuspendSaveTimer {
     if (_unsavedCount > 0) {
         if (_deleteOnEverySave) {
             [self db_saveAndDelete];
@@ -95,7 +95,7 @@
     }
 }
 
-- (void)performDelete {
+- (void) performDelete {
     if (_maxAge > 0.0) {
         [self db_delete];
 
@@ -107,7 +107,7 @@
 #pragma mark Timers
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)destroySaveTimer {
+- (void) destroySaveTimer {
     if (_saveTimer) {
         dispatch_source_cancel(_saveTimer);
 
@@ -124,7 +124,7 @@
     }
 }
 
-- (void)updateAndResumeSaveTimer {
+- (void) updateAndResumeSaveTimer {
     if ((_saveTimer != NULL) && (_saveInterval > 0.0) && (_unsavedTime > 0.0)) {
         uint64_t interval = (uint64_t)(_saveInterval * NSEC_PER_SEC);
         dispatch_time_t startTime = dispatch_time(_unsavedTime, interval);
@@ -138,7 +138,7 @@
     }
 }
 
-- (void)createSuspendedSaveTimer {
+- (void) createSuspendedSaveTimer {
     if ((_saveTimer == NULL) && (_saveInterval > 0.0)) {
         _saveTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.loggerQueue);
 
@@ -150,7 +150,7 @@
     }
 }
 
-- (void)destroyDeleteTimer {
+- (void) destroyDeleteTimer {
     if (_deleteTimer) {
         dispatch_source_cancel(_deleteTimer);
         #if !OS_OBJECT_USE_OBJC
@@ -160,7 +160,7 @@
     }
 }
 
-- (void)updateDeleteTimer {
+- (void) updateDeleteTimer {
     if ((_deleteTimer != NULL) && (_deleteInterval > 0.0) && (_maxAge > 0.0)) {
         uint64_t interval = (uint64_t)(_deleteInterval * NSEC_PER_SEC);
         dispatch_time_t startTime;
@@ -175,7 +175,7 @@
     }
 }
 
-- (void)createAndStartDeleteTimer {
+- (void) createAndStartDeleteTimer {
     if ((_deleteTimer == NULL) && (_deleteInterval > 0.0) && (_maxAge > 0.0)) {
         _deleteTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.loggerQueue);
 
@@ -197,7 +197,7 @@
 #pragma mark Configuration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (NSUInteger)saveThreshold {
+- (NSUInteger) saveThreshold {
     // The design of this method is taken from the DDAbstractLogger implementation.
     // For extensive documentation please refer to the DDAbstractLogger implementation.
 
@@ -224,7 +224,7 @@
     return result;
 }
 
-- (void)setSaveThreshold:(NSUInteger)threshold {
+- (void) setSaveThreshold:(NSUInteger)threshold {
     dispatch_block_t block = ^{
         @autoreleasepool {
             if (_saveThreshold != threshold) {
@@ -257,7 +257,7 @@
     }
 }
 
-- (NSTimeInterval)saveInterval {
+- (NSTimeInterval) saveInterval {
     // The design of this method is taken from the DDAbstractLogger implementation.
     // For extensive documentation please refer to the DDAbstractLogger implementation.
 
@@ -284,7 +284,7 @@
     return result;
 }
 
-- (void)setSaveInterval:(NSTimeInterval)interval {
+- (void) setSaveInterval:(NSTimeInterval)interval {
     dispatch_block_t block = ^{
         @autoreleasepool {
             // C99 recommended floating point comparison macro
@@ -348,7 +348,7 @@
     }
 }
 
-- (NSTimeInterval)maxAge {
+- (NSTimeInterval) maxAge {
     // The design of this method is taken from the DDAbstractLogger implementation.
     // For extensive documentation please refer to the DDAbstractLogger implementation.
 
@@ -375,7 +375,7 @@
     return result;
 }
 
-- (void)setMaxAge:(NSTimeInterval)interval {
+- (void) setMaxAge:(NSTimeInterval)interval {
     dispatch_block_t block = ^{
         @autoreleasepool {
             // C99 recommended floating point comparison macro
@@ -445,7 +445,7 @@
     }
 }
 
-- (NSTimeInterval)deleteInterval {
+- (NSTimeInterval) deleteInterval {
     // The design of this method is taken from the DDAbstractLogger implementation.
     // For extensive documentation please refer to the DDAbstractLogger implementation.
 
@@ -472,7 +472,7 @@
     return result;
 }
 
-- (void)setDeleteInterval:(NSTimeInterval)interval {
+- (void) setDeleteInterval:(NSTimeInterval)interval {
     dispatch_block_t block = ^{
         @autoreleasepool {
             // C99 recommended floating point comparison macro
@@ -535,7 +535,7 @@
     }
 }
 
-- (BOOL)deleteOnEverySave {
+- (BOOL) deleteOnEverySave {
     // The design of this method is taken from the DDAbstractLogger implementation.
     // For extensive documentation please refer to the DDAbstractLogger implementation.
 
@@ -562,7 +562,7 @@
     return result;
 }
 
-- (void)setDeleteOnEverySave:(BOOL)flag {
+- (void) setDeleteOnEverySave:(BOOL)flag {
     dispatch_block_t block = ^{
         _deleteOnEverySave = flag;
     };
@@ -586,7 +586,7 @@
 #pragma mark Public API
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)savePendingLogEntries {
+- (void) savePendingLogEntries {
     dispatch_block_t block = ^{
         @autoreleasepool {
             [self performSaveAndSuspendSaveTimer];
@@ -600,7 +600,7 @@
     }
 }
 
-- (void)deleteOldLogEntries {
+- (void) deleteOldLogEntries {
     dispatch_block_t block = ^{
         @autoreleasepool {
             [self performDelete];
@@ -618,7 +618,7 @@
 #pragma mark DDLogger
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)didAddLogger {
+- (void) didAddLogger {
     // If you override me be sure to invoke [super didAddLogger];
 
     [self createSuspendedSaveTimer];
@@ -626,7 +626,7 @@
     [self createAndStartDeleteTimer];
 }
 
-- (void)willRemoveLogger {
+- (void) willRemoveLogger {
     // If you override me be sure to invoke [super willRemoveLogger];
 
     [self performSaveAndSuspendSaveTimer];
@@ -635,7 +635,7 @@
     [self destroyDeleteTimer];
 }
 
-- (void)logMessage:(DDLogMessage *)logMessage {
+- (void) logMessage:(DDLogMessage *)logMessage {
     if ([self db_log:logMessage]) {
         BOOL firstUnsavedEntry = (++_unsavedCount == 1);
 
@@ -648,7 +648,7 @@
     }
 }
 
-- (void)flush {
+- (void) flush {
     // This method is invoked by DDLog's flushLog method.
     //
     // It is called automatically when the application quits,

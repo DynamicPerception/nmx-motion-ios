@@ -51,7 +51,7 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
 @synthesize controlBackground;
 @synthesize picker;
 @synthesize okButton;
-@synthesize distance;
+@synthesize distance,subLabelTxt,subLabel;
 
 #pragma mark Public Property Methods
 
@@ -99,6 +99,8 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
     
     self.picker.delegate = self;
     self.picker.dataSource = self;
+    
+    subLabel.text = subLabelTxt;
 }
 
 - (void) viewWillAppear: (BOOL) animated {
@@ -106,7 +108,7 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
     [super viewWillAppear: animated];
     [self.view sendSubviewToBack: self.controlBackground];
     
-    NSLog(@"distance: %f",distance);
+    NSLog(@"current overall distance: %f",distance);
     
     float val1 = [self roundNumber:fabs(distance)];
     
@@ -122,7 +124,7 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
                                                object: nil];
 }
 
-- (float)roundNumber: (float)val {
+- (float) roundNumber: (float)val {
     
     float val1 = (round(val*100)) / 100.0;
     

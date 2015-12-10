@@ -22,12 +22,12 @@
 
 @interface DDLoggingContextSet : NSObject
 
-- (void)addToSet:(NSUInteger)loggingContext;
-- (void)removeFromSet:(NSUInteger)loggingContext;
+- (void) addToSet:(NSUInteger)loggingContext;
+- (void) removeFromSet:(NSUInteger)loggingContext;
 
 @property (readonly, copy) NSArray *currentSet;
 
-- (BOOL)isInSet:(NSUInteger)loggingContext;
+- (BOOL) isInSet:(NSUInteger)loggingContext;
 
 @end
 
@@ -44,7 +44,7 @@
 
 @implementation DDContextWhitelistFilterLogFormatter
 
-- (instancetype)init {
+- (instancetype) init {
     if ((self = [super init])) {
         _contextSet = [[DDLoggingContextSet alloc] init];
     }
@@ -52,11 +52,11 @@
     return self;
 }
 
-- (void)addToWhitelist:(NSUInteger)loggingContext {
+- (void) addToWhitelist:(NSUInteger)loggingContext {
     [_contextSet addToSet:loggingContext];
 }
 
-- (void)removeFromWhitelist:(NSUInteger)loggingContext {
+- (void) removeFromWhitelist:(NSUInteger)loggingContext {
     [_contextSet removeFromSet:loggingContext];
 }
 
@@ -64,7 +64,7 @@
     return [_contextSet currentSet];
 }
 
-- (BOOL)isOnWhitelist:(NSUInteger)loggingContext {
+- (BOOL) isOnWhitelist:(NSUInteger)loggingContext {
     return [_contextSet isInSet:loggingContext];
 }
 
@@ -91,7 +91,7 @@
 
 @implementation DDContextBlacklistFilterLogFormatter
 
-- (instancetype)init {
+- (instancetype) init {
     if ((self = [super init])) {
         _contextSet = [[DDLoggingContextSet alloc] init];
     }
@@ -99,11 +99,11 @@
     return self;
 }
 
-- (void)addToBlacklist:(NSUInteger)loggingContext {
+- (void) addToBlacklist:(NSUInteger)loggingContext {
     [_contextSet addToSet:loggingContext];
 }
 
-- (void)removeFromBlacklist:(NSUInteger)loggingContext {
+- (void) removeFromBlacklist:(NSUInteger)loggingContext {
     [_contextSet removeFromSet:loggingContext];
 }
 
@@ -111,7 +111,7 @@
     return [_contextSet currentSet];
 }
 
-- (BOOL)isOnBlacklist:(NSUInteger)loggingContext {
+- (BOOL) isOnBlacklist:(NSUInteger)loggingContext {
     return [_contextSet isInSet:loggingContext];
 }
 
@@ -140,7 +140,7 @@
 
 @implementation DDLoggingContextSet
 
-- (instancetype)init {
+- (instancetype) init {
     if ((self = [super init])) {
         _set = [[NSMutableSet alloc] init];
     }
@@ -148,7 +148,7 @@
     return self;
 }
 
-- (void)addToSet:(NSUInteger)loggingContext {
+- (void) addToSet:(NSUInteger)loggingContext {
     OSSpinLockLock(&_lock);
     {
         [_set addObject:@(loggingContext)];
@@ -156,7 +156,7 @@
     OSSpinLockUnlock(&_lock);
 }
 
-- (void)removeFromSet:(NSUInteger)loggingContext {
+- (void) removeFromSet:(NSUInteger)loggingContext {
     OSSpinLockLock(&_lock);
     {
         [_set removeObject:@(loggingContext)];
@@ -176,7 +176,7 @@
     return result;
 }
 
-- (BOOL)isInSet:(NSUInteger)loggingContext {
+- (BOOL) isInSet:(NSUInteger)loggingContext {
     BOOL result = NO;
 
     OSSpinLockLock(&_lock);

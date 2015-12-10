@@ -13,12 +13,12 @@
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
+- (void) drawRect:(CGRect)rect {
     // Drawing code
 }
 */
 
-//- (CGRect)thumbRectForBounds:(CGRect)bounds trackRect:(CGRect)rect value:(float)value {
+//- (CGRect) thumbRectForBounds:(CGRect)bounds trackRect:(CGRect)rect value:(float)value {
 //    
 //    //NSLog(@"rect: %@",rect);
 //    //NSLog(@"value: %f",value);
@@ -28,21 +28,21 @@
 //    return a;
 //}
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent*)event {
+- (BOOL) pointInside:(CGPoint)point withEvent:(UIEvent*)event {
     
     CGRect bounds = self.bounds;
     bounds = CGRectInset(bounds, -10, -15);
     return CGRectContainsPoint(bounds, point);
 }
 
-- (CGRect)trackRectForBounds:(CGRect)bounds {
+- (CGRect) trackRectForBounds:(CGRect)bounds {
 
     CGRect a = CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height * .25);
     
     return a;
 }
 
-- (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+- (BOOL) beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     //NSLog(@"track");
     

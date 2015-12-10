@@ -22,7 +22,7 @@
 NSArray	static	*intervalOnes	= nil;
 NSArray	static	*intervalTenths	= nil;
 
-@synthesize valueTxt,headingLbl,heading,presetList,presetStringList,picker,okButton;
+@synthesize valueTxt,headingLbl,heading,presetList,presetStringList,picker,okButton,currentCustomVal;
 
 + (void) initialize {
 
@@ -39,21 +39,45 @@ NSArray	static	*intervalTenths	= nil;
     intervalTenths	= [NSArray arrayWithArray: tenths];
 }
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     
+    NSLog(@"linearrotary");
+        
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     valueTxt.delegate = self;
     self.okButton.enabled = NO;
     
+    selectedFloat = currentCustomVal;
+    
+    NSLog(@"selectedFloat: %f",selectedFloat);
+    NSLog(@"currentCustomVal: %f",currentCustomVal);
+    
     headingLbl.text = heading;
     
     [self setupReturnButton];
     
+    if(selectedFloat > 0)
+    {
+        okButton.enabled = YES;
+    }
+    
     [super viewDidLoad];
 }
 
-- (void)setupReturnButton {
+- (void) viewWillAppear: (BOOL) animated {
+    
+    [super viewWillAppear: animated];
+    [self.view sendSubviewToBack: self.controlBackground];
+    
+    NSInteger interval = currentCustomVal * 1000;
+    
+    //converted back NSLog(@"val1: %f",(float)interval/1000);
+    
+    [self setPickerValue: interval animated: NO];
+}
+
+- (void) setupReturnButton {
     
     UIToolbar* keyboardToolbar = [[UIToolbar alloc] init];
     
@@ -73,7 +97,7 @@ NSArray	static	*intervalTenths	= nil;
     valueTxt.inputAccessoryView = keyboardToolbar;
 }
 
-- (void)textFieldDidEndEditing:(UITextField *)textField {
+- (void) textFieldDidEndEditing:(UITextField *)textField {
     
     if (textField.text.length > 0)
     {
@@ -96,12 +120,12 @@ NSArray	static	*intervalTenths	= nil;
     //[self dismissViewControllerAnimated: YES completion: nil];
 }
 
-- (IBAction)cancel:(id)sender {
+- (IBAction) cancel:(id)sender {
     
     [self dismissViewControllerAnimated: YES completion: nil];
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField*)textField {
+- (BOOL) textFieldShouldReturn:(UITextField*)textField {
     
     [textField resignFirstResponder];
     

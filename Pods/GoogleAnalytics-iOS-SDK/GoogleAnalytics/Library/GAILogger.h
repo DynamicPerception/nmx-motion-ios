@@ -30,20 +30,20 @@ typedef NS_ENUM(NSUInteger, GAILogLevel) {
 /*!
  Logs message with log level |kGAILogLevelVerbose|.
  */
-- (void)verbose:(NSString *)message;
+- (void) verbose:(NSString *)message;
 
 /*!
  Logs message with log level |kGAILogLevelInfo|.
  */
-- (void)info:(NSString *)message;
+- (void) info:(NSString *)message;
 
 /*!
  Logs message with log level |kGAILogLevelWarning|.
  */
-- (void)warning:(NSString *)message;
+- (void) warning:(NSString *)message;
 
 /*!
  Logs message with log level |kGAILogLevelError|.
  */
-- (void)error:(NSString *)message;
+- (void) error:(NSString *)message;
 @end

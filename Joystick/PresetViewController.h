@@ -35,8 +35,8 @@
 @property (weak, nonatomic) IBOutlet JoyButton *overwriteBtn;
 
 
-- (IBAction)cancel:(id)sender;
-- (IBAction)deletePreset:(id)sender;
-- (IBAction)overwritePreset:(id)sender;
+- (IBAction) cancel:(id)sender;
+- (IBAction) deletePreset:(id)sender;
+- (IBAction) overwritePreset:(id)sender;
 
 @end

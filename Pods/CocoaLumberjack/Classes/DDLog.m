@@ -807,7 +807,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
 
 @implementation DDLoggerNode
 
-- (instancetype)initWithLogger:(id <DDLogger>)logger loggerQueue:(dispatch_queue_t)loggerQueue level:(DDLogLevel)level {
+- (instancetype) initWithLogger:(id <DDLogger>)logger loggerQueue:(dispatch_queue_t)loggerQueue level:(DDLogLevel)level {
     if ((self = [super init])) {
         _logger = logger;
 
@@ -827,7 +827,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     return [[DDLoggerNode alloc] initWithLogger:logger loggerQueue:loggerQueue level:level];
 }
 
-- (void)dealloc {
+- (void) dealloc {
     #if !OS_OBJECT_USE_OBJC
     if (_loggerQueue) {
         dispatch_release(_loggerQueue);
@@ -883,7 +883,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
 
 #endif /* if TARGET_OS_IPHONE */
 
-- (instancetype)initWithMessage:(NSString *)message
+- (instancetype) initWithMessage:(NSString *)message
                           level:(DDLogLevel)level
                            flag:(DDLogFlag)flag
                         context:(NSInteger)context
@@ -932,7 +932,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     return self;
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id) copyWithZone:(NSZone *)zone {
     DDLogMessage *newMessage = [DDLogMessage new];
     
     newMessage->_message = _message;
@@ -962,7 +962,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
 
 @implementation DDAbstractLogger
 
-- (instancetype)init {
+- (instancetype) init {
     if ((self = [super init])) {
         const char *loggerQueueName = NULL;
 
@@ -995,7 +995,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     return self;
 }
 
-- (void)dealloc {
+- (void) dealloc {
     #if !OS_OBJECT_USE_OBJC
 
     if (_loggerQueue) {
@@ -1005,7 +1005,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     #endif
 }
 
-- (void)logMessage:(DDLogMessage *)logMessage {
+- (void) logMessage:(DDLogMessage *)logMessage {
     // Override me
 }
 
@@ -1075,7 +1075,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     return result;
 }
 
-- (void)setLogFormatter:(id <DDLogFormatter>)logFormatter {
+- (void) setLogFormatter:(id <DDLogFormatter>)logFormatter {
     // The design of this method is documented extensively in the logFormatter message (above in code).
 
     NSAssert(![self isOnGlobalLoggingQueue], @"Core architecture requirement failure");
@@ -1104,7 +1104,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     });
 }
 
-- (dispatch_queue_t)loggerQueue {
+- (dispatch_queue_t) loggerQueue {
     return _loggerQueue;
 }
 
@@ -1112,11 +1112,11 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     return NSStringFromClass([self class]);
 }
 
-- (BOOL)isOnGlobalLoggingQueue {
+- (BOOL) isOnGlobalLoggingQueue {
     return (dispatch_get_specific(GlobalLoggingQueueIdentityKey) != NULL);
 }
 
-- (BOOL)isOnInternalLoggerQueue {
+- (BOOL) isOnInternalLoggerQueue {
     void *key = (__bridge void *)self;
 
     return (dispatch_get_specific(key) != NULL);

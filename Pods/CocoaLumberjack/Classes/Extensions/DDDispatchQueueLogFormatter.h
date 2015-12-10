@@ -67,7 +67,7 @@
  * Standard init method.
  * Configure using properties as desired.
  **/
-- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 
 /**
  * The minQueueLength restricts the minimum size of the [detail box].
@@ -119,7 +119,7 @@
  * To remove/undo a previous replacement, invoke this method with nil for the 'shortLabel' parameter.
  **/
 - (NSString *)replacementStringForQueueLabel:(NSString *)longLabel;
-- (void)setReplacementString:(NSString *)shortLabel forQueueLabel:(NSString *)longLabel;
+- (void) setReplacementString:(NSString *)shortLabel forQueueLabel:(NSString *)longLabel;
 
 @end
 

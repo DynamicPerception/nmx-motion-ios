@@ -50,7 +50,7 @@
 
 @implementation DDMultiFormatter
 
-- (instancetype)init {
+- (instancetype) init {
     self = [super init];
 
     if (self) {
@@ -66,7 +66,7 @@
 }
 
 #if NEEDS_DISPATCH_RETAIN_RELEASE
-- (void)dealloc {
+- (void) dealloc {
     dispatch_release(_queue);
 }
 
@@ -110,25 +110,25 @@
     return formatters;
 }
 
-- (void)addFormatter:(id<DDLogFormatter>)formatter {
+- (void) addFormatter:(id<DDLogFormatter>)formatter {
     dispatch_barrier_async(_queue, ^{
         [_formatters addObject:formatter];
     });
 }
 
-- (void)removeFormatter:(id<DDLogFormatter>)formatter {
+- (void) removeFormatter:(id<DDLogFormatter>)formatter {
     dispatch_barrier_async(_queue, ^{
         [_formatters removeObject:formatter];
     });
 }
 
-- (void)removeAllFormatters {
+- (void) removeAllFormatters {
     dispatch_barrier_async(_queue, ^{
         [_formatters removeAllObjects];
     });
 }
 
-- (BOOL)isFormattingWithFormatter:(id<DDLogFormatter>)formatter {
+- (BOOL) isFormattingWithFormatter:(id<DDLogFormatter>)formatter {
     __block BOOL hasFormatter;
 
     dispatch_sync(_queue, ^{

@@ -19,7 +19,7 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *presetTxt;
 
-- (IBAction)handleOkButton: (id) sender;
-- (IBAction)cancel:(id)sender;
+- (IBAction) handleOkButton: (id) sender;
+- (IBAction) cancel:(id)sender;
 
 @end

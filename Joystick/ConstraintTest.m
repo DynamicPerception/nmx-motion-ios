@@ -16,7 +16,7 @@
 
 @synthesize overBtn,buttonView;
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     
     //overBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
     
@@ -32,7 +32,7 @@
     [super viewDidLoad];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
     
     [super didReceiveMemoryWarning];
 }

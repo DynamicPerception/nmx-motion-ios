@@ -12,7 +12,7 @@
 
 //Using auto synthesizers
 
-- (id)initWithAsset:(ALAsset*)asset {
+- (id) initWithAsset:(ALAsset*)asset {
 
 	self = [super init];
 	if (self) {
@@ -22,12 +22,12 @@
 	return self;	
 }
 
-- (void)toggleSelection {
+- (void) toggleSelection {
 
     self.selected = !self.selected;
 }
 
-- (void)setSelected:(BOOL)selected {
+- (void) setSelected:(BOOL)selected {
 
     if (selected) {
         if ([_parent respondsToSelector:@selector(shouldSelectAsset:)]) {

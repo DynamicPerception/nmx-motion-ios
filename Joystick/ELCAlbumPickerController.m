@@ -22,7 +22,7 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
 
     [super viewDidLoad];
 	
@@ -82,18 +82,18 @@
     });    
 }
 
-- (void)reloadTableView {
+- (void) reloadTableView {
 
 	[self.tableView reloadData];
 	[self.navigationItem setTitle:@"Select an Album"];
 }
 
-- (BOOL)shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount {
+- (BOOL) shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount {
 
     return [self.parent shouldSelectAsset:asset previousCount:previousCount];
 }
 
-- (void)selectedAssets:(NSArray*)assets {
+- (void) selectedAssets:(NSArray*)assets {
 
 	[_parent selectedAssets:assets];
 }
@@ -101,13 +101,13 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
 
     // Return the number of sections.
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
     // Return the number of rows in the section.
     return [self.assetGroups count];
@@ -139,7 +139,7 @@
 #pragma mark -
 #pragma mark Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 	ELCAssetTablePicker *picker = [[ELCAssetTablePicker alloc] initWithNibName: nil bundle: nil];
 	picker.parent = self;
@@ -152,7 +152,7 @@
 	[self.navigationController pushViewController:picker animated:YES];
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
 	return 57;
 }

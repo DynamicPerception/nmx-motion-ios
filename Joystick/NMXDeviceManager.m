@@ -32,7 +32,7 @@
 @synthesize inReview;
 
 
-- (id)init {
+- (id) init {
 
     self = [super init];
     
@@ -48,7 +48,7 @@
     return self;
 }
 
-- (void)centralManagerDidUpdateState: (CBCentralManager *)central {
+- (void) centralManagerDidUpdateState: (CBCentralManager *)central {
 
     DDLogDebug(@"centralManagerState = %d", (int)central.state);
     
@@ -115,7 +115,7 @@
     [peripheral discoverServices:nil];
 }
 
-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
+- (void) centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
 
     //DDLogDebug(@"Peripheral disconnected");
     
@@ -179,12 +179,12 @@
     self.myDevices = [NSMutableArray arrayWithCapacity: 3];
 }
 
-- (void)isInReview {
+- (void) isInReview {
     
     inReview = YES;
 }
 
-- (void)notInReview {
+- (void) notInReview {
     
     inReview = NO;
 }

@@ -298,7 +298,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy);
 
 @protocol DDLogger <NSObject>
 
-- (void)logMessage:(DDLogMessage *)logMessage;
+- (void) logMessage:(DDLogMessage *)logMessage;
 
 /**
  * Formatters may optionally be added to any logger.
@@ -321,8 +321,8 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy);
  * This is the same thread/queue that will execute every logMessage: invocation.
  * Loggers may use these methods for thread synchronization or other setup/teardown tasks.
  **/
-- (void)didAddLogger;
-- (void)willRemoveLogger;
+- (void) didAddLogger;
+- (void) willRemoveLogger;
 
 /**
  * Some loggers may buffer IO for optimization purposes.
@@ -334,7 +334,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy);
  * Note that DDLog's flushLog method is invoked automatically when the application quits,
  * and it may be also invoked manually by the developer prior to application crashes, or other such reasons.
  **/
-- (void)flush;
+- (void) flush;
 
 /**
  * Each logger is executed concurrently with respect to the other loggers.
@@ -384,8 +384,8 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy);
  * Or if a formatter has potentially thread-unsafe code (e.g. NSDateFormatter),
  * it could possibly use these hooks to switch to thread-safe versions of the code.
  **/
-- (void)didAddToLogger:(id <DDLogger>)logger;
-- (void)willRemoveFromLogger:(id <DDLogger>)logger;
+- (void) didAddToLogger:(id <DDLogger>)logger;
+- (void) willRemoveFromLogger:(id <DDLogger>)logger;
 
 @end
 
@@ -475,7 +475,7 @@ typedef NS_OPTIONS(NSInteger, DDLogMessageOptions) {
  * However, if you need them to be copied you may use the options parameter to specify this.
  * Options is a bitmask which supports DDLogMessageCopyFile and DDLogMessageCopyFunction.
  **/
-- (instancetype)initWithMessage:(NSString *)message
+- (instancetype) initWithMessage:(NSString *)message
                           level:(DDLogLevel)level
                            flag:(DDLogFlag)flag
                         context:(NSInteger)context

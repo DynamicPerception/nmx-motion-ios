@@ -16,7 +16,7 @@
 
 @synthesize screenInd,helpTxt;
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     
     NSString *screen1 = @"<html><head><meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\"><style type=\"text/css\">ol{margin:0;padding:0}.c0{orphans:2;widows:2;direction:ltr;height:11pt}.c6{background-color:#fff;max-width:451.4pt;padding:72pt 72pt 72pt 72pt}.c5{font-size: 12pt;color: #222222}.c2{orphans:2;widows:2;direction:ltr}.c7{font-size: 9.5pt;color: #a61c00}.c1{font-size: 9.5pt;color: #222222}.c3{text-decoration:underline}.c4{font-weight:bold}.title{padding-top:0pt;color:#000000;font-size:26pt;padding-bottom:3pt;font-family:\"Arial\";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}.subtitle{padding-top:0pt;color:#666666;font-size:15pt;padding-bottom:16pt;font-family:\"Arial\";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}li{color:#000000;font-size:11pt;font-family:\"Arial\"}p{margin:0;color:#000000;font-size:11pt;font-family:\"Arial\"}h1{padding-top:20pt;color:#000000;font-size:20pt;padding-bottom:6pt;font-family:\"Arial\";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h2{padding-top:18pt;color:#000000;font-size:16pt;padding-bottom:6pt;font-family:\"Arial\";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h3{padding-top:16pt;color:#434343;font-size:14pt;padding-bottom:4pt;font-family:\"Arial\";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h4{padding-top:14pt;color:#666666;font-size:12pt;padding-bottom:4pt;font-family:\"Arial\";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h5{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:\"Arial\";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h6{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:\"Arial\";line-height:1.15;page-break-after:avoid;font-style:italic;orphans:2;widows:2;text-align:left}</style></head><body class=\"c6\"><p class=\"c2\"><span class=\"c5 c3\">Top of Screen</span></p><p class=\"c0\"><span class=\"c1\"></span></p><p class=\"c2\"><span class=\"c1 c4\">Slide - Pan - Tilt</span><span class=\"c1\">&nbsp;axis buttons provide access to detailed settings for each motor port. </span></p><p class=\"c0\"><span class=\"c1\"></span></p><p class=\"c2\"><span class=\"c1 c4\">Slide = Motor Port 1</span><span class=\"c1\">, </span><span class=\"c1 c4\">Pan = Motor Port 2</span><span class=\"c1\">&nbsp;and </span><span class=\"c1 c4\">Tilt = Motor Port 3</span><span class=\"c1\">&nbsp;on the NMX. &nbsp;In 2P mode the set distance between the start and stop positions is displayed below each button (NOTE: this does require the correct motor gear ratio and rig ratio be set in the axis detail settings)</span></p><p class=\"c0\"><span class=\"c1\"></span></p><p class=\"c2\"><span class=\"c5 c3\">Middle Joystick Area</span></p><p class=\"c0\"><span class=\"c1 c3\"></span></p><p class=\"c2\"><span class=\"c1 c4\">Slider Control and Pan/TIlt Joystick</span><span class=\"c1\">&nbsp;are used to move the rig into keyframe positions.</span></p><p class=\"c0\"><span class=\"c1\"></span></p><p class=\"c2\"><span class=\"c1 c4\">2P vs 3P</span><span class=\"c1 c4\">&nbsp;Keyframe Toggle (top right) </span><span class=\"c1\">2P (two point) allows basic start and end of movement to be set vs 3P (three point) allows start, middle and end points to be set for more complex moves.</span></p><p class=\"c0\"><span class=\"c1\"></span></p><p class=\"c2\"><span class=\"c1 c4\">Lock Axis Toggle (lower left)</span><span class=\"c1\">&nbsp;isolates pan or tilt movements, when unlocked movement is not restricted, pan and tilt will be able move at the same time.</span></p><p class=\"c0\"><span class=\"c1\"></span></p><p class=\"c2\"><span class=\"c1 c4\">Gear Symbol (lower right)</span><span class=\"c1\">&nbsp;App settings; give NMX a unique name, check battery level and set voltage range, app version.</span></p><p class=\"c0\"><span class=\"c1 c4\"></span></p><p class=\"c2\"><span class=\"c5 c3\">Lower Screen</span></p><p class=\"c0\"><span class=\"c1 c4\"></span></p><p class=\"c2\"><span class=\"c1 c4\">Start and End buttons</span><span class=\"c1\">&nbsp;- tap to set current rig position as Start or End of movement, NOTE: End can be set before start, this can be helpful if you don&rsquo;t want to waste time/energy having the rig return to the start when you are ready to run a program.</span></p><p class=\"c0\"><span class=\"c1\"></span></p><p class=\"c2\"><span class=\"c1 c4\">Flip (in 2P mode) button </span><span class=\"c1\">Swaps start and end points </span><span class=\"c1 c4\">Mid (in 3P mode) button</span><span class=\"c1\">&nbsp;sets middle keyframe</span></p><p class=\"c0\"><span class=\"c1\"></span></p><p class=\"c2\"><span class=\"c1 c4\">Fire Camera </span><span class=\"c1\">Sends a single </span><span class=\"c1\">camera test shot</span></p></body></html>";
     
@@ -68,12 +68,12 @@
     // Do any additional setup after loading the view.
 }
 
-- (IBAction)handleOkButton:(id)sender {
+- (IBAction) handleOkButton:(id)sender {
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
     
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -83,7 +83,7 @@
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.

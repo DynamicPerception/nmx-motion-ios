@@ -10,7 +10,7 @@
 
 @protocol MotorRampingDelegate <NSObject>
 
-- (void)saveFrame: (NSNumber *)number;
+- (void) saveFrame: (NSNumber *)number;
 
 @end
 

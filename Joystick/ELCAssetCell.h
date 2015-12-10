@@ -10,6 +10,6 @@
 
 @interface ELCAssetCell : UITableViewCell
 
-- (void)setAssets:(NSArray *)assets;
+- (void) setAssets:(NSArray *)assets;
 
 @end

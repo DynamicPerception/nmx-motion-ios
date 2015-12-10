@@ -48,7 +48,7 @@
 
 @synthesize picker;
 
-@synthesize presetList, presetStringList, setting, currentSettingString;
+@synthesize presetList, presetStringList, setting, currentSettingString,currentCustomVal;
 
 
 #pragma mark Public Propery Methods
@@ -182,7 +182,7 @@
 //	 name:@"linearRotaryPreset" object:nil];
 }
 
-- (void)handleNotificationRotaryPreset:(NSNotification *)pNotification {
+- (void) handleNotificationRotaryPreset:(NSNotification *)pNotification {
     
     NSDictionary *preset1 = pNotification.object;
     
@@ -223,7 +223,7 @@
     [self.picker reloadAllComponents];
 }
 
-- (IBAction)cancel:(id)sender {
+- (IBAction) cancel:(id)sender {
     [self dismissViewControllerAnimated: YES completion: nil];
 }
 
@@ -273,9 +273,12 @@
     }
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    
     LinearRotaryViewController *msvc = segue.destinationViewController;
+    
     [msvc setHeading:heading];
+    [msvc setCurrentCustomVal:currentCustomVal];
 }
 
 //------------------------------------------------------------------------------

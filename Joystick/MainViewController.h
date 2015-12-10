@@ -72,6 +72,10 @@
     int start2pTotals;
     
     UIView *batteryView;
+    
+    bool debugDistance;
+    
+    
 }
 
 @property (weak, nonatomic)	IBOutlet UISwitch *dominantAxisSwitch;
@@ -114,9 +118,36 @@
 @property (strong, nonatomic) NSMutableArray *ar2;
 @property (strong, nonatomic) NSMutableArray *ar3;
 
+@property (weak, nonatomic) IBOutlet UIView *setStartView;
+@property (weak, nonatomic) IBOutlet UIButton *setStart1Btn;
+@property (weak, nonatomic) IBOutlet UIButton *goTo1Btn;
+@property (weak, nonatomic) IBOutlet UIButton *cancel1Btn;
+
+@property (weak, nonatomic) IBOutlet UIView *setMidView;
+@property (weak, nonatomic) IBOutlet UIButton *setMid1Btn;
+@property (weak, nonatomic) IBOutlet UIButton *goToMidBtn;
+@property (weak, nonatomic) IBOutlet UIButton *cancelMidBtn;
+
+@property (weak, nonatomic) IBOutlet UIView *setStopView;
+@property (weak, nonatomic) IBOutlet UIButton *setStop1Btn;
+@property (weak, nonatomic) IBOutlet UIButton *goToStopBtn;
+@property (weak, nonatomic) IBOutlet UIButton *cancelStopBtn;
+@property (weak, nonatomic) IBOutlet UIView *controlBackground;
+
+- (IBAction) setStartPoint1:(id)sender;
+- (IBAction) goToStartPoint1:(id)sender;
+- (IBAction) closeStartView:(id)sender;
+
+- (IBAction) setStopPoint1:(id)sender;
+- (IBAction) goToStopPoint1:(id)sender;
+- (IBAction) closeStopView:(id)sender;
+
+- (IBAction) setMidPoint1:(id)sender;
+- (IBAction) goToMidPoint1:(id)sender;
+- (IBAction) closeMidView:(id)sender;
+
 - (IBAction) unwindFromSetupViewController: (UIStoryboardSegue *) segue;
 - (IBAction) handleDominantAxisSwitch: (UISwitch *) sender;
 - (IBAction) manage2P:(id)sender;
 
 @end
-

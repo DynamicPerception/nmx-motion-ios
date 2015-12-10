@@ -462,6 +462,11 @@ NSArray static	*frameCountStrings = nil;
         self.slideView.hidden = YES;
         self.panView.hidden = YES;
         self.tiltView.hidden = YES;
+        
+        frameCount1.hidden = YES;
+        frameCount2.hidden = YES;
+        frameCount3.hidden = YES;
+        
         lockButton.hidden = YES;
         rampSettingSegment.hidden = YES;
         rampSettingImg.hidden = YES;
@@ -554,7 +559,7 @@ NSArray static	*frameCountStrings = nil;
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName5) userInfo:nil repeats:NO];
 }
 
-- (void)timerName5 {
+- (void) timerName5 {
 	
     [self setupDisplays];
 }
@@ -564,7 +569,7 @@ NSArray static	*frameCountStrings = nil;
     //[self setupDisplays];
 }
 
-- (void)setupDisplays {
+- (void) setupDisplays {
 
     slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseStart]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
     
@@ -648,7 +653,7 @@ NSArray static	*frameCountStrings = nil;
     }];
 }
 
-- (float)xPositionFromSliderValue:(UISlider *)aSlider {
+- (float) xPositionFromSliderValue:(UISlider *)aSlider {
     
     float sliderRange2 = aSlider.frame.size.width - aSlider.currentThumbImage.size.width;
     float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
@@ -660,12 +665,12 @@ NSArray static	*frameCountStrings = nil;
     return sliderValueToPixels;
 }
 
-- (void)showVoltage {
+- (void) showVoltage {
     
     [NSTimer scheduledTimerWithTimeInterval:.500 target:self selector:@selector(showVoltageTimer) userInfo:nil repeats:NO];
 }
 
-- (void)showVoltageTimer {
+- (void) showVoltageTimer {
     
 //    float voltage = self.appExecutive.voltage;
 //    
@@ -2328,7 +2333,7 @@ NSArray static	*frameCountStrings = nil;
     [self saveTiltDecreaseValues];
 }
 
-- (IBAction)showFrameText:(id)sender {
+- (IBAction) showFrameText:(id)sender {
     
     UISlider *slider = sender;
     

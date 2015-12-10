@@ -16,7 +16,7 @@
 
 @synthesize graphView, panGraph, tiltGraph, playheadView, scrollView;
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     
     masterFrameCount = 1000;
     
@@ -75,7 +75,7 @@
 
 
 
-- (void)timerName2 {
+- (void) timerName2 {
     
     //NSLog(@"playheadView width: %f",playheadView.frame.size.width);
     
@@ -95,7 +95,7 @@
     }
 }
 
-- (void)initVars {
+- (void) initVars {
 
     //    285 - 150 = x * 150;
     //    135 = x * 150;
@@ -200,7 +200,7 @@
     //	 name:@"note" object:nil];
 }
 
-- (void)timerName {
+- (void) timerName {
     
     //NSLog(@"playheadView width: %f",playheadView.frame.size.width);
     
@@ -247,7 +247,7 @@
 //                                                                     "0.7333333"
 //
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
     
     [super didReceiveMemoryWarning];
 }

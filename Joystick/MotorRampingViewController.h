@@ -90,20 +90,20 @@ NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewC
 @property (weak, nonatomic) IBOutlet UIImageView *batteryIcon;
 @property (weak, nonatomic) IBOutlet UIView *contentBG;
 
-- (IBAction)handleSlide3PSlider1:(id)sender;
-- (IBAction)handleSlide3PSlider2:(id)sender;
-- (IBAction)handleSlide3PSlider3:(id)sender;
+- (IBAction) handleSlide3PSlider1:(id)sender;
+- (IBAction) handleSlide3PSlider2:(id)sender;
+- (IBAction) handleSlide3PSlider3:(id)sender;
 
-- (IBAction)handlePan3PSlider1:(id)sender;
-- (IBAction)handlePan3PSlider2:(id)sender;
-- (IBAction)handlePan3PSlider3:(id)sender;
+- (IBAction) handlePan3PSlider1:(id)sender;
+- (IBAction) handlePan3PSlider2:(id)sender;
+- (IBAction) handlePan3PSlider3:(id)sender;
 
-- (IBAction)handleTilt3PSlider1:(id)sender;
-- (IBAction)handleTilt3PSlider2:(id)sender;
-- (IBAction)handleTilt3PSlider3:(id)sender;
+- (IBAction) handleTilt3PSlider1:(id)sender;
+- (IBAction) handleTilt3PSlider2:(id)sender;
+- (IBAction) handleTilt3PSlider3:(id)sender;
 
-- (IBAction)updateRampEasingValue:(id)sender;
-- (void)saveFrame: (NSNumber *)number;
+- (IBAction) updateRampEasingValue:(id)sender;
+- (void) saveFrame: (NSNumber *)number;
 
 @property (weak, nonatomic) IBOutlet UILabel *slideLbl2;
 @property (weak, nonatomic) IBOutlet UILabel *slideLbl1;

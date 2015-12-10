@@ -46,7 +46,7 @@ typedef enum {
  * @return YES if the container is available. NO if TAGContainerFuture::get:
  *     will block and wait for the container to be available.
  */
-- (BOOL)isDone;
+- (BOOL) isDone;
 
 @end
 
@@ -63,7 +63,7 @@ typedef enum {
  *
  * @param container The requested container.
  */
-- (void)containerAvailable:(TAGContainer *)container;
+- (void) containerAvailable:(TAGContainer *)container;
 
 @end
 
@@ -103,7 +103,7 @@ typedef enum {
  * openContainerWithId:tagManager:timeout:openType:
  * or openContainerWithId:tagManager::timeout:openType:notifier:.
  */
-- (id)init __attribute__((unavailable));
+- (id) init __attribute__((unavailable));
 // @endcond
 
 /**

@@ -87,29 +87,29 @@ typedef void (^NetworkUnreachable)(Reachability * reachability);
 
 - (Reachability *)initWithReachabilityRef:(SCNetworkReachabilityRef)ref;
 
-- (BOOL)startNotifier;
-- (void)stopNotifier;
+- (BOOL) startNotifier;
+- (void) stopNotifier;
 
-- (BOOL)isReachable;
-- (BOOL)isReachableViaWWAN;
-- (BOOL)isReachableViaWiFi;
+- (BOOL) isReachable;
+- (BOOL) isReachableViaWWAN;
+- (BOOL) isReachableViaWiFi;
 
 // WWAN may be available, but not active until a connection has been established.
 // WiFi may require a connection for VPN on Demand.
 
-- (BOOL)isConnectionRequired; // Identical DDG variant.
-- (BOOL)connectionRequired; // Apple's routine.
+- (BOOL) isConnectionRequired; // Identical DDG variant.
+- (BOOL) connectionRequired; // Apple's routine.
 
 // Dynamic, on demand connection?
 
-- (BOOL)isConnectionOnDemand;
+- (BOOL) isConnectionOnDemand;
 
 // Is user intervention required?
 
-- (BOOL)isInterventionRequired;
+- (BOOL) isInterventionRequired;
 
-- (NetworkStatus)currentReachabilityStatus;
-- (SCNetworkReachabilityFlags)reachabilityFlags;
+- (NetworkStatus) currentReachabilityStatus;
+- (SCNetworkReachabilityFlags) reachabilityFlags;
 - (NSString*)currentReachabilityString;
 - (NSString*)currentReachabilityFlags;
 

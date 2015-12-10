@@ -20,7 +20,7 @@
 
 //Using auto synthesizers
 
-- (id)init {
+- (id) init {
 
     self = [super init];
     if (self) {
@@ -31,7 +31,7 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
 
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
 	[self.tableView setAllowsSelection:NO];
@@ -50,25 +50,25 @@
 	[self performSelectorInBackground:@selector(preparePhotos) withObject:nil];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void) viewWillAppear:(BOOL)animated {
 
     [super viewWillAppear:animated];
     self.columns = self.view.bounds.size.width / 80;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
 
     return YES;
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 
     [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
     self.columns = self.view.bounds.size.width / 80;
     [self.tableView reloadData];
 }
 
-- (void)preparePhotos {
+- (void) preparePhotos {
 
     @autoreleasepool {
 
@@ -112,7 +112,7 @@
     }
 }
 
-- (void)doneAction:(id)sender {
+- (void) doneAction:(id)sender {
 	
 	NSMutableArray *selectedAssetsImages = [[NSMutableArray alloc] init];
 	    
@@ -124,7 +124,7 @@
     [self.parent selectedAssets:selectedAssetsImages];
 }
 
-- (BOOL)shouldSelectAsset:(ELCAsset *)asset {
+- (BOOL) shouldSelectAsset:(ELCAsset *)asset {
 
     NSUInteger selectionCount = 0;
     for (ELCAsset *elcAsset in self.elcAssets) {
@@ -137,7 +137,7 @@
     return shouldSelect;
 }
 
-- (void)assetSelected:(ELCAsset *)asset {
+- (void) assetSelected:(ELCAsset *)asset {
 
     if (self.singleSelection) {
 
@@ -155,13 +155,13 @@
 
 #pragma mark UITableViewDataSource Delegate Methods
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
 
     // Return the number of sections.
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
     if (self.columns <= 0) { //Sometimes called before we know how many columns we have
         self.columns = 4;
@@ -193,12 +193,12 @@
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
 	return 79;
 }
 
-- (int)totalSelectedAssets {
+- (int) totalSelectedAssets {
 
     int count = 0;
     

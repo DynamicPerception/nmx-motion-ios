@@ -136,11 +136,11 @@
     [self.picker reloadAllComponents];
 }
 
-- (IBAction)cancel:(id)sender {
+- (IBAction) cancel:(id)sender {
     [self dismissViewControllerAnimated: YES completion: nil];
 }
 
-- (IBAction)deletePreset:(id)sender {
+- (IBAction) deletePreset:(id)sender {
     UIActionSheet * sheet = [[UIActionSheet alloc]
                              initWithTitle:@"Delete Preset?"
                              delegate:self
@@ -151,7 +151,7 @@
     [sheet showInView:self.view];
 }
 
-- (IBAction)overwritePreset:(id)sender {
+- (IBAction) overwritePreset:(id)sender {
     UIActionSheet * sheet = [[UIActionSheet alloc]
                              initWithTitle:@"Overwrite Preset?"
                              delegate:self
@@ -162,7 +162,7 @@
     [sheet showInView:self.view];
 }
 
-- (void)confirmDelete {
+- (void) confirmDelete {
 
     NSLog(@"delete");
     
@@ -178,7 +178,7 @@
     [self loadPresets];
 }
 
-- (void)confirmOverwrite {
+- (void) confirmOverwrite {
 
     NSLog(@"overwrite");
     
@@ -198,7 +198,7 @@
      object:name];
 }
 
-- (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex {
+- (void) actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex {
     
     if ([actionSheet.title isEqualToString:@"Delete Preset?"])
     {

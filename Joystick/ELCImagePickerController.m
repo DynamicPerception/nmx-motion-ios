@@ -17,7 +17,7 @@
 
 //Using auto synthesizers
 
-- (id)initImagePicker {
+- (id) initImagePicker {
 
     ELCAlbumPickerController *albumPicker = [[ELCAlbumPickerController alloc] initWithStyle:UITableViewStylePlain];
     
@@ -31,7 +31,7 @@
     return self;
 }
 
-- (id)initWithRootViewController:(UIViewController *)rootViewController {
+- (id) initWithRootViewController:(UIViewController *)rootViewController {
 
     self = [super initWithRootViewController:rootViewController];
     
@@ -43,7 +43,7 @@
     return self;
 }
 
-- (void)cancelImagePicker {
+- (void) cancelImagePicker {
 
 	if ([_imagePickerDelegate respondsToSelector:@selector(elcImagePickerControllerDidCancel:)]) {
         
@@ -51,7 +51,7 @@
 	}
 }
 
-- (BOOL)shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount {
+- (BOOL) shouldSelectAsset:(ELCAsset *)asset previousCount:(NSUInteger)previousCount {
 
     BOOL shouldSelect = previousCount < self.maximumImagesCount;
     
@@ -69,7 +69,7 @@
     return shouldSelect;
 }
 
-- (void)selectedAssets:(NSArray *)assets {
+- (void) selectedAssets:(NSArray *)assets {
 
 	NSMutableArray *returnArray = [[NSMutableArray alloc] init];
 	
@@ -116,7 +116,7 @@
     }
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
 
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         return YES;

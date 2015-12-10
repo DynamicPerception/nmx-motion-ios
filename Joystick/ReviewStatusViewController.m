@@ -321,7 +321,7 @@ ControllerState;
     [shareBtn2 addSubview:igv4];
 }
 
-- (void)handleAddKeyframeDebug:(NSNotification *)pNotification {
+- (void) handleAddKeyframeDebug:(NSNotification *)pNotification {
     
     NSNumber *n = pNotification.object;
     
@@ -343,7 +343,7 @@ ControllerState;
 
 #pragma mark - Delay Timer Notification
 
-- (void)handleShotDurationNotification:(NSNotification *)pNotification {
+- (void) handleShotDurationNotification:(NSNotification *)pNotification {
     
     NSNumber *n = pNotification.object;
         
@@ -392,7 +392,7 @@ ControllerState;
 
 //http://stackoverflow.com/questions/17145112/countdown-timer-ios-tutorial
 
-- (void)manageCountdownTimer {
+- (void) manageCountdownTimer {
     
     [countdownTimer invalidate];
     
@@ -401,7 +401,7 @@ ControllerState;
     countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(countDownTimerFired:) userInfo:nil repeats:YES];
 }
 
-- (void)countDownTimerFired:(id)sender {
+- (void) countDownTimerFired:(id)sender {
     
     NSLog(@"countDownTimerFired secondsLeft: %i",secondsLeft);
     
@@ -438,7 +438,7 @@ ControllerState;
 
 //count up timer
 
-- (void)countUpTimerFired:(id)sender {
+- (void) countUpTimerFired:(id)sender {
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
@@ -455,7 +455,7 @@ ControllerState;
     });
 }
 
-- (void)manageCountupTimer {
+- (void) manageCountupTimer {
     
     if(!running)
     {
@@ -485,7 +485,7 @@ ControllerState;
     }
 }
 
-- (IBAction)resetPressed:(id)sender{
+- (IBAction) resetPressed:(id)sender{
     
     [stopTimer invalidate];
     stopTimer = nil;
@@ -495,13 +495,13 @@ ControllerState;
     running = FALSE;
 }
 
-- (void)timerName {
+- (void) timerName {
 	
     sendMotorsToStartButton.hidden = YES;
     motorRampingButton.hidden = YES;
 }
 
-- (void)doStartMove {
+- (void) doStartMove {
     
     [[AppExecutive sharedInstance].device mainStartPlannedMove];
     
@@ -522,7 +522,7 @@ ControllerState;
     }
 }
 
-- (void)startKeyframeTimer {
+- (void) startKeyframeTimer {
 
     keyframeTimer = [NSTimer scheduledTimerWithTimeInterval:2.000
                                                      target:self
@@ -531,7 +531,7 @@ ControllerState;
                                                     repeats:YES];
 }
 
-- (void)startProgram {
+- (void) startProgram {
     
     NSLog(@"startProgram");
     
@@ -771,7 +771,7 @@ ControllerState;
     [self showVoltage];
 }
 
-- (void)initKeyFrameValues {
+- (void) initKeyFrameValues {
     
     //for shoot move, absicssa is multiple of 1000
     
@@ -914,14 +914,14 @@ ControllerState;
     //    }
 }
 
-- (float)roundNumber: (float)val {
+- (float) roundNumber: (float)val {
 
     float val1 = 1000.0 * floor((val/1000.0) + 0.5);
     
     return val1;
 }
 
-- (void)setupAfterConnection {
+- (void) setupAfterConnection {
 
     device = [AppExecutive sharedInstance].device;
 
@@ -1102,7 +1102,7 @@ ControllerState;
 
 #pragma mark - IBAction Methods
 
-- (IBAction)manageKeepAlive:(id)sender {
+- (IBAction) manageKeepAlive:(id)sender {
     
     [appExecutive.defaults setObject: [NSNumber numberWithInt:keepAliveSwitch.isOn] forKey: @"keepAlive"];
     [appExecutive.defaults synchronize];
@@ -1150,7 +1150,7 @@ ControllerState;
     [NSTimer scheduledTimerWithTimeInterval:0.150 target:self selector:@selector(removeDelayTimer) userInfo:nil repeats:NO];
 }
 
-- (void)removeDelayTimer {
+- (void) removeDelayTimer {
 	
     [[AppExecutive sharedInstance].device mainStartPlannedMove];
     
@@ -2102,7 +2102,7 @@ ControllerState;
 
 #pragma mark - Share
 
-- (void)takePhoto {
+- (void) takePhoto {
     
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
@@ -2112,7 +2112,7 @@ ControllerState;
     [self presentViewController:picker animated:YES completion:NULL];
 }
 
-- (void)selectPhoto {
+- (void) selectPhoto {
     
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
@@ -2124,7 +2124,7 @@ ControllerState;
 
 #pragma mark ELCImagePickerControllerDelegate Methods
 
-- (void)elcImagePickerController:(ELCImagePickerController *)picker didFinishPickingMediaWithInfo:(NSArray *)info {
+- (void) elcImagePickerController:(ELCImagePickerController *)picker didFinishPickingMediaWithInfo:(NSArray *)info {
     
     NSLog(@"add");
     
@@ -2160,12 +2160,12 @@ ControllerState;
     return img;
 }
 
-- (void)elcImagePickerControllerDidCancel:(ELCImagePickerController *)picker {
+- (void) elcImagePickerControllerDidCancel:(ELCImagePickerController *)picker {
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)displayPickerForGroup:(ALAssetsGroup *)group {
+- (void) displayPickerForGroup:(ALAssetsGroup *)group {
     
     ELCAssetTablePicker *tablePicker = [[ELCAssetTablePicker alloc] initWithStyle:UITableViewStylePlain];
     tablePicker.singleSelection = YES;
@@ -2185,14 +2185,14 @@ ControllerState;
     [self presentViewController:elcPicker animated:YES completion:nil];
 }
 
-- (void)showMultipleImageOptions {
+- (void) showMultipleImageOptions {
     
     //[self performSegueWithIdentifier:@"Add" sender:self];
 }
 
 #pragma mark - Image Picker
 
-- (void)launchMultiImageController {
+- (void) launchMultiImageController {
     
     ELCImagePickerController *elcPicker = [[ELCImagePickerController alloc] initImagePicker];
     elcPicker.maximumImagesCount = 20;
@@ -2202,7 +2202,7 @@ ControllerState;
     [self presentViewController:elcPicker animated:YES completion:nil];
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     chosenImage = info[UIImagePickerControllerEditedImage];
     //self.itemImage.image = chosenImage;
@@ -2218,7 +2218,7 @@ ControllerState;
     camClosed = YES;
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
     
@@ -2227,7 +2227,7 @@ ControllerState;
 
 #pragma mark - Actionsheet
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void) actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if ([actionSheet.title isEqualToString:@"Share NMX Motion"])
     {
@@ -2302,12 +2302,12 @@ ControllerState;
     }
 }
 
-- (IBAction)shareScene:(UIButton*)sender {
+- (IBAction) shareScene:(UIButton*)sender {
     
     [self takePhoto];    
 }
 
-- (void)share2 {
+- (void) share2 {
     
     if (appDelegate.hostActive == YES || appDelegate.internetActive == YES)
     {
@@ -2335,7 +2335,7 @@ ControllerState;
     }
 }
 
-- (void)textOutfit {
+- (void) textOutfit {
     
     //UIImage *pic1 = [self loadImage:@"image1.png"];
     
@@ -2367,7 +2367,7 @@ ControllerState;
     }
 }
 
-- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
+- (void) messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
     
     if(result == MessageComposeResultCancelled)
     {
@@ -2396,12 +2396,12 @@ ControllerState;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+- (void) mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)sendEmail {
+- (void) sendEmail {
     
     //    createdImage = [self imageWithView:imageContentView];
     //    createdImage = [self imageWithImage:createdImage scaledToWidth:612];
@@ -2419,7 +2419,7 @@ ControllerState;
     [self presentViewController:picker animated:YES completion:nil];
 }
 
-- (void)shareInstagram {
+- (void) shareInstagram {
     
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 63, 320, 320)];
     imageView.image = chosenImage;
@@ -2464,7 +2464,7 @@ ControllerState;
     return interactionController;
 }
 
-- (void)shareFacebook {
+- (void) shareFacebook {
     
     //    createdImage = [self imageWithView:imageContentView];
     //    createdImage = [self imageWithImage:createdImage scaledToWidth:612];
@@ -2485,7 +2485,7 @@ ControllerState;
     }
 }
 
-- (void)shareTwitter {
+- (void) shareTwitter {
     
     if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
     {
@@ -2497,12 +2497,12 @@ ControllerState;
     }
 }
 
-- (void)showVoltage {
+- (void) showVoltage {
     
     [NSTimer scheduledTimerWithTimeInterval:.500 target:self selector:@selector(showVoltageTimer) userInfo:nil repeats:NO];
 }
 
-- (void)showVoltageTimer {
+- (void) showVoltageTimer {
     
 //    float voltage = self.appExecutive.voltage;
 //    

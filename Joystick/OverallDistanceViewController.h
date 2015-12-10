@@ -11,5 +11,7 @@
 @interface OverallDistanceViewController : UIViewController<UIPickerViewDelegate, UIPickerViewDataSource>
 
 @property float distance;
+@property (weak, nonatomic) IBOutlet NSString *subLabelTxt;
+@property (weak, nonatomic) IBOutlet UILabel *subLabel;
 
 @end

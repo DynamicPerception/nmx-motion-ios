@@ -159,14 +159,14 @@ typedef enum {
 
  @param name The name of the tracker.
  */
-- (void)removeTrackerByName:(NSString *)name;
+- (void) removeTrackerByName:(NSString *)name;
 
 /*!
  Dispatches any pending tracking information.
 
  Note that this does not have any effect on dispatchInterval, and can be used in
  conjunction with periodic dispatch. */
-- (void)dispatch;
+- (void) dispatch;
 
 /*!
  Dispatches the next tracking beacon in the queue, calling completionHandler when
@@ -188,5 +188,5 @@ typedef enum {
  @param completionHandler The block to run after a single dispatch request. The GAIDispatchResult
         param indicates whether the dispatch succeeded, had an error, or had no hits to dispatch.
  */
-- (void)dispatchWithCompletionHandler:(void (^)(GAIDispatchResult result))completionHandler;
+- (void) dispatchWithCompletionHandler:(void (^)(GAIDispatchResult result))completionHandler;
 @end

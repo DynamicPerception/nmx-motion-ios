@@ -22,13 +22,13 @@
  * @param info An NSArray containing dictionary's with the key UIImagePickerControllerOriginalImage, which is a rotated, and sized for the screen 'default representation' of the image selected. If you want to get the original image, use the UIImagePickerControllerReferenceURL key.
  */
 
-- (void)elcImagePickerController:(ELCImagePickerController *)picker didFinishPickingMediaWithInfo:(NSArray *)info;
+- (void) elcImagePickerController:(ELCImagePickerController *)picker didFinishPickingMediaWithInfo:(NSArray *)info;
 
 /**
  * Called when image selection was cancelled, by tapping the 'Cancel' BarButtonItem.
  */
 
-- (void)elcImagePickerControllerDidCancel:(ELCImagePickerController *)picker;
+- (void) elcImagePickerControllerDidCancel:(ELCImagePickerController *)picker;
 
 @end
 
@@ -44,8 +44,8 @@
 
 @property (nonatomic, assign) BOOL returnsOriginalImage;
 
-- (id)initImagePicker;
-- (void)cancelImagePicker;
+- (id) initImagePicker;
+- (void) cancelImagePicker;
 
 @end
 

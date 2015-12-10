@@ -71,7 +71,7 @@
  * The actual implementation of these methods is inherited from DDAbstractLogger.
 
    - (id <DDLogFormatter>)logFormatter;
-   - (void)setLogFormatter:(id <DDLogFormatter>)formatter;
+   - (void) setLogFormatter:(id <DDLogFormatter>)formatter;
 
  */
 
@@ -120,7 +120,7 @@
  *
  * This method invokes setForegroundColor:backgroundColor:forFlag:context: and applies it to `LOG_CONTEXT_ALL`.
  **/
-- (void)setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask;
+- (void) setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask;
 
 /**
  * Just like setForegroundColor:backgroundColor:flag, but allows you to specify a particular logging context.
@@ -133,7 +133,7 @@
  * Logging context's are explained in further detail here:
  * Documentation/CustomContext.md
  **/
-- (void)setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask context:(NSInteger)ctxt;
+- (void) setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask context:(NSInteger)ctxt;
 
 /**
  * Similar to the methods above, but allows you to map DDLogMessage->tag to a particular color profile.
@@ -158,16 +158,16 @@
  *
  * DDLogPurple(@"I'm a purple log message!");
  **/
-- (void)setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forTag:(id <NSCopying>)tag;
+- (void) setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forTag:(id <NSCopying>)tag;
 
 /**
  * Clearing color profiles.
  **/
-- (void)clearColorsForFlag:(DDLogFlag)mask;
-- (void)clearColorsForFlag:(DDLogFlag)mask context:(NSInteger)context;
-- (void)clearColorsForTag:(id <NSCopying>)tag;
-- (void)clearColorsForAllFlags;
-- (void)clearColorsForAllTags;
-- (void)clearAllColors;
+- (void) clearColorsForFlag:(DDLogFlag)mask;
+- (void) clearColorsForFlag:(DDLogFlag)mask context:(NSInteger)context;
+- (void) clearColorsForTag:(id <NSCopying>)tag;
+- (void) clearColorsForAllFlags;
+- (void) clearColorsForAllTags;
+- (void) clearAllColors;
 
 @end

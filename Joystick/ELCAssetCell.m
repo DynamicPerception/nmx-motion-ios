@@ -20,7 +20,7 @@
 
 //Using auto synthesizers
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+- (id) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
 	if (self) {
@@ -36,7 +36,7 @@
 	return self;
 }
 
-- (void)setAssets:(NSArray *)assets {
+- (void) setAssets:(NSArray *)assets {
 
     self.rowAssets = assets;
 	for (UIImageView *view in _imageViewArray) {
@@ -73,7 +73,7 @@
     }
 }
 
-- (void)cellTapped:(UITapGestureRecognizer *)tapRecognizer {
+- (void) cellTapped:(UITapGestureRecognizer *)tapRecognizer {
 
     CGPoint point = [tapRecognizer locationInView:self];
     CGFloat totalWidth = self.rowAssets.count * 75 + (self.rowAssets.count - 1) * 4;
@@ -93,7 +93,7 @@
     }
 }
 
-- (void)layoutSubviews {
+- (void) layoutSubviews {
     
     CGFloat totalWidth = self.rowAssets.count * 75 + (self.rowAssets.count - 1) * 4;
     CGFloat startX = (self.bounds.size.width - totalWidth) / 2;

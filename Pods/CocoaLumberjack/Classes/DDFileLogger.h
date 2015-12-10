@@ -111,8 +111,8 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
 
 // Notifications from DDFileLogger
 
-- (void)didArchiveLogFile:(NSString *)logFilePath;
-- (void)didRollAndArchiveLogFile:(NSString *)logFilePath;
+- (void) didArchiveLogFile:(NSString *)logFilePath;
+- (void) didRollAndArchiveLogFile:(NSString *)logFilePath;
 
 @end
 
@@ -135,8 +135,8 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
  **/
 @interface DDLogFileManagerDefault : NSObject <DDLogFileManager>
 
-- (instancetype)init;
-- (instancetype)initWithLogsDirectory:(NSString *)logsDirectory NS_DESIGNATED_INITIALIZER;
+- (instancetype) init;
+- (instancetype) initWithLogsDirectory:(NSString *)logsDirectory NS_DESIGNATED_INITIALIZER;
 #if TARGET_OS_IPHONE
 /*
  * Calling this constructor you can override the default "automagically" chosen NSFileProtection level.
@@ -149,7 +149,7 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
  *    null
  *    cy#
  **/
-- (instancetype)initWithLogsDirectory:(NSString *)logsDirectory defaultFileProtectionLevel:(NSString *)fileProtectionLevel;
+- (instancetype) initWithLogsDirectory:(NSString *)logsDirectory defaultFileProtectionLevel:(NSString *)fileProtectionLevel;
 #endif
 
 /*
@@ -178,7 +178,7 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
  *   file "com.organization.myapp 2013-12-03 3.log" would be created.
  **/
 @property (readonly, copy) NSString *newLogFileName;
-- (BOOL)isLogFile:(NSString *)fileName;
+- (BOOL) isLogFile:(NSString *)fileName;
 
 /* Inherited from DDLogFileManager protocol:
 
@@ -215,8 +215,8 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
  **/
 @interface DDLogFileFormatterDefault : NSObject <DDLogFormatter>
 
-- (instancetype)init;
-- (instancetype)initWithDateFormatter:(NSDateFormatter *)dateFormatter NS_DESIGNATED_INITIALIZER;
+- (instancetype) init;
+- (instancetype) initWithDateFormatter:(NSDateFormatter *)dateFormatter NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -226,8 +226,8 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
 
 @interface DDFileLogger : DDAbstractLogger <DDLogger>
 
-- (instancetype)init;
-- (instancetype)initWithLogFileManager:(id <DDLogFileManager>)logFileManager NS_DESIGNATED_INITIALIZER;
+- (instancetype) init;
+- (instancetype) initWithLogFileManager:(id <DDLogFileManager>)logFileManager NS_DESIGNATED_INITIALIZER;
 
 /**
  * Log File Rolling:
@@ -283,16 +283,16 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
 // You can optionally force the current log file to be rolled with this method.
 // CompletionBlock will be called on main queue.
 
-- (void)rollLogFileWithCompletionBlock:(void (^)())completionBlock;
+- (void) rollLogFileWithCompletionBlock:(void (^)())completionBlock;
 
 // Method is deprecated. Use rollLogFileWithCompletionBlock: method instead.
 
-- (void)rollLogFile __attribute((deprecated));
+- (void) rollLogFile __attribute((deprecated));
 
 // Inherited from DDAbstractLogger
 
 // - (id <DDLogFormatter>)logFormatter;
-// - (void)setLogFormatter:(id <DDLogFormatter>)formatter;
+// - (void) setLogFormatter:(id <DDLogFormatter>)formatter;
 
 /**
  * Returns the log file that should be used.
@@ -341,10 +341,10 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
 
 + (instancetype)logFileWithPath:(NSString *)filePath;
 
-- (instancetype)initWithFilePath:(NSString *)filePath NS_DESIGNATED_INITIALIZER;
+- (instancetype) initWithFilePath:(NSString *)filePath NS_DESIGNATED_INITIALIZER;
 
-- (void)reset;
-- (void)renameFile:(NSString *)newFileName;
+- (void) reset;
+- (void) renameFile:(NSString *)newFileName;
 
 #if TARGET_IPHONE_SIMULATOR
 
@@ -368,24 +368,24 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
 // "mylog.txt" -> "mylog.archived.txt"
 // "mylog"     -> "mylog.archived"
 
-- (BOOL)hasExtensionAttributeWithName:(NSString *)attrName;
+- (BOOL) hasExtensionAttributeWithName:(NSString *)attrName;
 
-- (void)addExtensionAttributeWithName:(NSString *)attrName;
-- (void)removeExtensionAttributeWithName:(NSString *)attrName;
+- (void) addExtensionAttributeWithName:(NSString *)attrName;
+- (void) removeExtensionAttributeWithName:(NSString *)attrName;
 
 #else /* if TARGET_IPHONE_SIMULATOR */
 
 // Normal use of extended attributes used everywhere else,
 // such as on Macs and on iPhone devices.
 
-- (BOOL)hasExtendedAttributeWithName:(NSString *)attrName;
+- (BOOL) hasExtendedAttributeWithName:(NSString *)attrName;
 
-- (void)addExtendedAttributeWithName:(NSString *)attrName;
-- (void)removeExtendedAttributeWithName:(NSString *)attrName;
+- (void) addExtendedAttributeWithName:(NSString *)attrName;
+- (void) removeExtendedAttributeWithName:(NSString *)attrName;
 
 #endif /* if TARGET_IPHONE_SIMULATOR */
 
-- (NSComparisonResult)reverseCompareByCreationDate:(DDLogFileInfo *)another;
-- (NSComparisonResult)reverseCompareByModificationDate:(DDLogFileInfo *)another;
+- (NSComparisonResult) reverseCompareByCreationDate:(DDLogFileInfo *)another;
+- (NSComparisonResult) reverseCompareByModificationDate:(DDLogFileInfo *)another;
 
 @end

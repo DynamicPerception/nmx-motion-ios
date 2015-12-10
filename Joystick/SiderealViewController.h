@@ -10,6 +10,6 @@
 
 @interface SiderealViewController : UIViewController
 
-- (IBAction)handleOkButton:(id)sender;
+- (IBAction) handleOkButton:(id)sender;
 
 @end

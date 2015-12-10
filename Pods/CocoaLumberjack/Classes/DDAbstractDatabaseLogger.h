@@ -102,11 +102,11 @@
 /**
  * Forces a save of any pending log entries (flushes log entries to disk).
  **/
-- (void)savePendingLogEntries;
+- (void) savePendingLogEntries;
 
 /**
  * Removes any log entries that are older than maxAge.
  **/
-- (void)deleteOldLogEntries;
+- (void) deleteOldLogEntries;
 
 @end

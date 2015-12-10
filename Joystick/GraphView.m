@@ -12,7 +12,7 @@
 
 @synthesize frame1, frame2, frame3, frame4, frameCount, scrollView, headerString, isVideo, videoLength, is3P;
 
-- (void)drawRect:(CGRect)rect {
+- (void) drawRect:(CGRect)rect {
     
     if (is3P)
     {
@@ -26,7 +26,7 @@
     }    
 }
 
-- (void)go3P {
+- (void) go3P {
     
     graphWidth = self.frame.size.width;
     graphHeight = self.frame.size.height;
@@ -109,7 +109,7 @@
     [[self layer] addSublayer:decreaseCircle2];
 }
 
-- (void)go {
+- (void) go {
 
     graphWidth = self.frame.size.width;
     graphHeight = self.frame.size.height;
@@ -189,7 +189,7 @@
     [[self layer] addSublayer:decreaseCircle];
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 
     UITouch *t = [[event allTouches] anyObject];
     CGPoint loc = [t locationInView:[t view]];

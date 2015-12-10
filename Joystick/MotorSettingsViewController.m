@@ -59,7 +59,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 //------------------------------------------------------------------------------
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
@@ -72,7 +72,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             
     NSLog(@"start: %i",start);
     NSLog(@"end: %i",end);
-    NSLog(@"viewdidload microstepSetting: %i", microstepSetting);
+    //NSLog(@"viewdidload microstepSetting: %i", microstepSetting);
 
 	// items for IBOutlet objects don't appear until the view is loaded
 
@@ -98,7 +98,16 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     //NMXDevice * device = [AppExecutive sharedInstance].device;
     
-    distance = start - end;
+    if(start > end)
+    {
+        distance = start - end;
+    }
+    else
+    {
+        distance = end - start;
+    }
+    
+    NSLog(@"distance: %f",distance);
     
     presetLbl.text = @"-";
     gearRatioLbl.text = @"-";
@@ -167,17 +176,20 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     //NSLog(@"sensitivityRatio: %f",sensitivityRatio);
     
-    if (self.motorNumber == 1) {
+    if (self.appExecutive.is3P == YES) {
+       
+        if (self.motorNumber == 1) {
+            
+            NSLog(@"start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
+            NSLog(@"mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
+            NSLog(@"end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
+        }
+        if (self.motorNumber == 2) {
         
-        NSLog(@"start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
-        NSLog(@"mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
-        NSLog(@"end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
-    }
-    if (self.motorNumber == 2) {
-    
-        NSLog(@"start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
-        NSLog(@"mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
-        NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
+            NSLog(@"start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
+            NSLog(@"mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
+            NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
+        }
     }
     
     float maxAccel = 30000;
@@ -218,31 +230,33 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     //dampeningSlider.value = b;
     
+    dampeningSlider.maximumValue = .8;
+    
     dampeningSlider.value = inverseVal;
     
-    dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(dampeningSlider.value * 100)];
+    //dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(dampeningSlider.value * 100)];
     
-    NSLog(@"a: %f",a);
-    NSLog(@"b: %f",b);
+    int per1 = (int)(dampeningSlider.value * 100);
+    
+    dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(per1 + (per1 * .2))];
+    
+//    NSLog(@"a: %f",a);
+//    NSLog(@"b: %f",b);
     
     //dampeningSlider.transform = CGAffineTransformRotate(dampeningSlider.transform, 180.0/180*M_PI);
-    
-    
-    
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
     
     [super viewDidLoad];
 }
 
-- (void)getSavedGearMotorRatios {
+- (void) getSavedGearMotorRatios {
 
     if (self.motorNumber == 1)
     {
         NSLog(@"self.motorNumber: %i",(int)self.motorNumber);
         NSLog(@"self.appExecutive.defaults slideGear: %i",(int)[self.appExecutive.defaults integerForKey:@"slideGear"]);
         NSLog(@"self.appExecutive.defaults slideMotor: %i",(int)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
-        
         
         if ([self.appExecutive.defaults integerForKey:@"slideGear"])
         {
@@ -281,6 +295,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             else if (self.appExecutive.slideMotor == 3)
             {
                 rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"]];
+                
+                customLinearParam = [self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"];
             }
         }
     }
@@ -319,6 +335,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             else if (self.appExecutive.panMotor == 3)
             {
                 rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"panMotorCustomValue"]];
+                
+                customLinearParam = [self.appExecutive.defaults floatForKey:@"panMotorCustomValue"];
             }
         }
     }
@@ -357,12 +375,14 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             else if (self.appExecutive.tiltMotor == 3)
             {
                 rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"]];
+                
+                customLinearParam = [self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"];
             }
         }
     }
 }
 
-- (void)setupReturnButtons {
+- (void) setupReturnButtons {
     
     overallDistanceTxt.borderStyle = UITextBorderStyleNone;
     overallDistanceTxt.text = @"-";
@@ -415,7 +435,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 #pragma mark - Scrollview Delegate Methods
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+- (void) scrollViewDidScroll:(UIScrollView *)scrollView {
     
     if(scrollPositionView.alpha == 0)
     {
@@ -429,7 +449,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
 }
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+- (void) scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     
     float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
     
@@ -459,7 +479,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 #pragma mark - Notifications
 
-- (void)handleNotificationRotaryPreset:(NSNotification *)pNotification {
+- (void) handleNotificationRotaryPreset:(NSNotification *)pNotification {
     
     NSDictionary *preset = pNotification.object;
     
@@ -506,19 +526,22 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         [self.appExecutive.defaults synchronize];
     }
     
+    [self getDistance];
+    [self updateInvertUI];
+    
     [self dismissViewControllerAnimated: YES completion: nil];
 }
 
-
-
-- (void)handleNotificationUpdateOverallDistance:(NSNotification *)pNotification {
+- (void) handleNotificationUpdateOverallDistance:(NSNotification *)pNotification {
     
     float newFloat = [pNotification.object floatValue];
     
     NSLog(@"newFloat: %f",newFloat);
     
-    if (([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
+    if (([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"]))
     {
+        // && distance != 0
+        
         degrees = newFloat;
         
         NSLog(@"new degrees: %f",degrees);
@@ -534,11 +557,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         [self recalculate:inches];
     }
     
-    //[self getDistance];
+//    [self getDistance];
     [self updateInvertUI];
 }
 
-- (void)handleNotificationDistancePreset:(NSNotification *)pNotification {
+- (void) handleNotificationDistancePreset:(NSNotification *)pNotification {
     
     //NSString *direction;
     
@@ -686,13 +709,13 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [self updateInvertUI];
 }
 
-- (void)getDistance {
+- (void) getDistance {
     
     //int motorsteps = 200;
     float microsteps;
     float reciprocal = 0;
     
-    NSLog(@"getdistance microstepSetting: %i",microstepSetting);
+    //NSLog(@"getdistance microstepSetting: %i",microstepSetting);
     
     if (microstepSetting == 4)
     {
@@ -735,10 +758,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     float rigRatio;
     
-    NSLog(@"microsteps: %f",microsteps);
-    NSLog(@"distance: %f",distance);
-    NSLog(@"gearRatio: %f",gearRatio);
-    NSLog(@"reciprocal: %f",reciprocal);
+//    NSLog(@"microsteps: %f",microsteps);
+//    NSLog(@"distance: %f",distance);
+//    NSLog(@"gearRatio: %f",gearRatio);
+//    NSLog(@"reciprocal: %f",reciprocal);
     
     if (([rigRatioLbl.text containsString:@"Stage R"] ||
          [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
@@ -775,7 +798,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         if([rigRatioLbl.text containsString:@"Linear Custom"])
         {
             inches = ((distance/microsteps) * reciprocal) * customLinearParam;
+            
+            NSLog(@"contains Linear Custom gd MS: %f", customLinearParam);
+            
+//            float a1 = (distance/microsteps);
+//            float a2 = a1 * reciprocal;
+//            float a3 = a2 * customLinearParam;
+            
+//            NSLog(@"a1: %f",a1);
+//            NSLog(@"a2: %f",a2);
+//            NSLog(@"a3: %f",a3);
         }
+        else
         {
             //inches = ((distance/microsteps) * reciprocal) * 3.54;
             inches = ((distance/microsteps) * reciprocal) * 3.346;
@@ -784,7 +818,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 //        float a1 = (distance/microsteps);
 //        float a2 = a1 * reciprocal;
 //        float a3 = a2 * 3.54;
-        
+//        
 //        NSLog(@"a1: %f",a1);
 //        NSLog(@"a2: %f",a2);
 //        NSLog(@"a3: %f",a3);
@@ -795,6 +829,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     
     NSLog(@"calculatedValue: %f",calculatedValue);
+    NSLog(@"\n");
     
     /*
         Motor steps - m (steps per rotation)
@@ -820,7 +855,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     */
 }
 
-- (void)recalculate: (float)value {
+- (void) recalculate: (float)value {
     
     NSLog(@"recalculate: %f",value);
     
@@ -895,7 +930,20 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         //float a4 = reciprocal * 3.54; //.184
         
-        float a4 = reciprocal * 3.346;
+        float a4; // = reciprocal * 3.346;
+        
+        if([rigRatioLbl.text containsString:@"Linear Custom"])
+        {
+            a4 = reciprocal * customLinearParam;
+            
+            NSLog(@"contains Linear Custom recalculate: %f",customLinearParam);
+        }
+        else
+        {
+            //inches = ((distance/microsteps) * reciprocal) * 3.54;
+            
+            a4 = reciprocal * 3.346;
+        }
         
         NSLog(@"a4: %f",a4);
         
@@ -916,11 +964,34 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     int n = (int)a2;
     int ab = abs(n);
-    int newPos = start + ab;
+    
+    //int newPos = start + ab;
+    //int newPos = start - n;
+    
+    int newPos;
+    
+    if(start > end)
+    {
+        newPos = start - n;
+    }
+    else
+    {
+        newPos = start + n;
+    }
+    
     NSLog(@"new end: %i", newPos);
     end = newPos;
     
-    distance = start - end; // 12-8-15 update
+    //distance = start - end; // 12-8-15 update
+    
+    if(start > end)
+    {
+        distance = start - end;
+    }
+    else
+    {
+        distance = end - start;
+    }
     
     if (self.motorNumber == 1)
     {
@@ -938,7 +1009,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [appExecutive.device motorSet:(int)self.motorNumber ProgramStopPoint:newPos];
 }
 
-- (void)jsTimer {
+- (void) jsTimer {
 	
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"enterJSMode"
@@ -947,7 +1018,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     joystickmode = YES;
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void) viewWillAppear:(BOOL)animated {
     
     //NSLog(@"R viewWillAppear");
     
@@ -1009,7 +1080,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 //    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
 }
 
-- (void)timerNameQuerySleep {
+- (void) timerNameQuerySleep {
     
     //NSLog(@"query sleep");
 	
@@ -1021,19 +1092,19 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [self updateInvertUI];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void) viewWillDisappear:(BOOL)animated {
     
     [super viewWillDisappear: animated];
     
     //[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-- (void)deviceDisconnect: (id) object {
+- (void) deviceDisconnect: (id) object {
     
     [self dismissViewControllerAnimated: YES completion: nil];
 }
 
-- (void)setSegmentedControllerAttributes {
+- (void) setSegmentedControllerAttributes {
     
 	NSDictionary *	attributes = @{ NSForegroundColorAttributeName: [UIColor whiteColor] };
 
@@ -1041,7 +1112,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 	[self.microstepsControl setTitleTextAttributes: attributes forState: UIControlStateSelected];    
 }
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
     
 	[super didReceiveMemoryWarning];
 }
@@ -1050,7 +1121,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 #pragma mark - Navigation
 
-- (void)prepareForSegue: (UIStoryboardSegue *) segue sender: (id) sender {
+- (void) prepareForSegue: (UIStoryboardSegue *) segue sender: (id) sender {
     
     if (joystickmode)
     {
@@ -1082,6 +1153,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         else
         {
             [secView setCurrentSettingString:rigRatioLbl.text];
+            [secView setCurrentCustomVal:customLinearParam];
+            
+            NSLog(@"customLinearParam: %f",customLinearParam);
         }
     }
     else if ([segue.identifier isEqualToString: @"GoToSidereal"])
@@ -1100,17 +1174,19 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     else if ([segue.identifier isEqualToString: @"OverallDistance"])
     {
-        NSLog(@"OverallDistance");
+        //NSLog(@"OverallDistance");
         
         OverallDistanceViewController *msvc = segue.destinationViewController;
         
         if (([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
         {
             [msvc setDistance:degrees];
+            [msvc setSubLabelTxt:@"Set degrees"];
         }
         else
         {
             [msvc setDistance:inches];
+            [msvc setSubLabelTxt:@"Set inches"];
         }
     }
 }
@@ -1119,7 +1195,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 #pragma mark - BacklashDelegate Methods
 
-- (void)updateBacklash: (NSInteger) value {
+- (void) updateBacklash: (NSInteger) value {
     
 	DDLogDebug(@"Backlash Value: %ld", (long)value);
 
@@ -1142,7 +1218,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     NSLog(@"inv val: %f",inv);
     
-    dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(sender.value * 100)];
+    //dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(sender.value * 100)];
+    
+    int per1 = (int)(sender.value * 100);
+    
+    dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(per1 + (per1 * .2))];
+    
     //dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(adjustedValue * 100)];
     
     [dampeningTimer invalidate];
@@ -1150,7 +1231,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     dampeningTimer = [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(timerName) userInfo:nil repeats:NO];
 }
 
-- (void)timerName {
+- (void) timerName {
     
     float maxAccel = 30000;
     
@@ -1207,7 +1288,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     self.appExecutive.sensitivityNumber = [NSNumber numberWithFloat: sender.value];
 }
 
-- (IBAction)goToPresets:(id)sender {
+- (IBAction) goToPresets:(id)sender {
     
     UIButton *btn = sender;
     
@@ -1218,7 +1299,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [self performSegueWithIdentifier:@"goToPresets" sender:self];
 }
 
-- (IBAction)toogleJoystick:(id)sender {
+- (IBAction) toogleJoystick:(id)sender {
     
     UISwitch *sw = sender;
     
@@ -1258,7 +1339,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(leftTimer) userInfo:nil repeats:NO];
 }
 
-- (void)leftTimer {
+- (void) leftTimer {
 	
     if (!rightEnabled)
     {
@@ -1305,7 +1386,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
 }
 
-- (IBAction)enableRight: (id) sender {
+- (IBAction) enableRight: (id) sender {
     
     [rightAutoTimer invalidate];
     [leftAutoTimer invalidate];
@@ -1326,7 +1407,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(rightTimer) userInfo:nil repeats:NO];
 }
 
-- (void)rightTimer {
+- (void) rightTimer {
     
     if (!leftEnabled)
     {
@@ -1373,7 +1454,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
 }
 
-- (void)handleLeftTimer {
+- (void) handleLeftTimer {
 
     if(lastContinuousValue >= lowerLimit + continuousInterval)
     {
@@ -1389,7 +1470,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber ContinuousSpeed:lastContinuousValue * sensitivityRatio];
 }
 
-- (void)handleRightTimer {
+- (void) handleRightTimer {
 
     if(lastContinuousValue <= upperLimit - continuousInterval)
     {
@@ -1409,7 +1490,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 //if buttons pressed change joystick mode
 
-- (IBAction)handleMicrostepsControl: (UISegmentedControl *) sender {
+- (IBAction) handleMicrostepsControl: (UISegmentedControl *) sender {
     
     NSLog(@"handleMicrostepsControl: %i",microstepSetting);
     
@@ -1498,7 +1579,16 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     NSLog(@"2p start: %i",start);
     NSLog(@"2p end: %i",end);
     
-    distance = start - end;
+    //distance = start - end;
+    
+    if(start > end)
+    {
+        distance = start - end;
+    }
+    else
+    {
+        distance = end - start;
+    }
     
     if ((int)self.motorNumber == 1)
     {
@@ -1520,7 +1610,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [self updateInvertUI];
 }
 
-- (IBAction)handleInvertDirectionSwitch: (UISwitch *) sender {
+- (IBAction) handleInvertDirectionSwitch: (UISwitch *) sender {
     
     if (joystickmode)
     {
@@ -1540,7 +1630,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 	DDLogDebug(@"Invert Direction: %@", value);
 }
 
-- (void)updateInvertUI {
+- (void) updateInvertUI {
 
     //NSString *direction;
     
@@ -1584,9 +1674,22 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         unitsTxt.text = [rp stringByReplacingOccurrencesOfString:@"-" withString:@""];
     }
+    
+    if ((int)self.motorNumber == 1)
+    {
+        [self.appExecutive.defaults setObject: direction forKey: @"slideDirection"];
+    }
+    else if ((int)self.motorNumber == 2)
+    {
+        [self.appExecutive.defaults setObject: direction forKey: @"panDirection"];
+    }
+    else if ((int)self.motorNumber == 3)
+    {
+        [self.appExecutive.defaults setObject: direction forKey: @"tiltDirection"];
+    }
 }
 
-- (IBAction)handlePowerSaveSwitch: (UISwitch *) sender {
+- (IBAction) handlePowerSaveSwitch: (UISwitch *) sender {
     
     if (joystickmode)
     {
@@ -1604,7 +1707,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 	DDLogDebug(@"Power Save: %@", value);
 }
 
-- (IBAction)handleDisableSwitch:(UISwitch *)sender {
+- (IBAction) handleDisableSwitch:(UISwitch *)sender {
     
     if (joystickmode)
     {
@@ -1622,7 +1725,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     DDLogDebug(@"Disabled: %@", value);
 }
 
-- (IBAction)handleBacklashButton: (UIButton *)sender {
+- (IBAction) handleBacklashButton: (UIButton *)sender {
     
     if (joystickmode)
     {
@@ -1640,9 +1743,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 	[self performSegueWithIdentifier: SegueToBacklashViewController sender: self];
 }
 
-- (IBAction)handleOkButton:(id)sender {
+- (IBAction) handleOkButton:(id)sender {
     
-	DDLogDebug(@"OK Button");
+	//DDLogDebug(@"OK Button");
     
     if (joystickmode)
     {
@@ -1691,7 +1794,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [NSTimer scheduledTimerWithTimeInterval:0.250 target:self selector:@selector(okButtonTimer) userInfo:nil repeats:NO];
 }
 
-- (void)okButtonTimer {
+- (void) okButtonTimer {
     
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber SetBacklash: self.backlash];
     
@@ -1700,7 +1803,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 #pragma mark - Textfield Delegate Methods
 
-- (BOOL)textFieldShouldReturn:(UITextField*)textField {
+- (BOOL) textFieldShouldReturn:(UITextField*)textField {
     
     if (textField.text.length == 0)
     {
@@ -1712,7 +1815,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 	return YES;
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
+- (void) textFieldDidBeginEditing:(UITextField *)textField {
     
     if ([textField.restorationIdentifier isEqualToString:@"unitsTxt"])
     {
@@ -1722,7 +1825,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     textField.text = @"";
 }
 
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
+- (BOOL) textFieldShouldEndEditing:(UITextField *)textField {
     
     if ([textField.restorationIdentifier isEqualToString:@"unitsTxt"])
     {

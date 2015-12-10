@@ -13,7 +13,7 @@
 
 @synthesize frame1, frame2, frame3, frame4, frameCount;
 
-- (void)drawRect:(CGRect)rect {
+- (void) drawRect:(CGRect)rect {
     
     float graphWidth = self.frame.size.width;
     float graphHeight = self.frame.size.height;
