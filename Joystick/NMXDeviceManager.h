@@ -32,6 +32,7 @@
 
 @property (atomic, strong) id<NMXDeviceManagerDelegate> delegate;
 @property bool inReview;
+@property bool disconnected;
 
 @end
 

@@ -73,6 +73,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *overallDistanceLbl;
 @property (weak, nonatomic) IBOutlet UISwitch *toggleJoystickSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *dampeningLbl;
+@property (weak, nonatomic) IBOutlet UIImageView *dampeningImg;
 
 - (IBAction) handleReleaseSensitivitySlider: (UISlider *) sender;
 - (IBAction) handleSensitivitySlider: (UISlider *) sender;

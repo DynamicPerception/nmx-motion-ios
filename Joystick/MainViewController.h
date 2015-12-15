@@ -74,8 +74,9 @@
     UIView *batteryView;
     
     bool debugDistance;
-    
-    
+    bool disconnected;
+    int start2pSet;
+    int end2pSet;
 }
 
 @property (weak, nonatomic)	IBOutlet UISwitch *dominantAxisSwitch;
@@ -149,5 +150,7 @@
 - (IBAction) unwindFromSetupViewController: (UIStoryboardSegue *) segue;
 - (IBAction) handleDominantAxisSwitch: (UISwitch *) sender;
 - (IBAction) manage2P:(id)sender;
+
+@property (nonatomic, strong)				NSTimer *			sendMotorsTimer;
 
 @end

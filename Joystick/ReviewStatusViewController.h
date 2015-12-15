@@ -24,6 +24,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "DeviceSettingsViewController.h"
 #import "HelpViewController.h"
+#import "MBProgressHUD.h"
 
 NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewController";
 

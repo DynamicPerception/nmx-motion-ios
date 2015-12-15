@@ -55,7 +55,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 #pragma mark Private Propery Methods
 
-@synthesize leftBtn, rightBtn, okButton, appExecutive, distanceLbl, presetLbl, contentScroll,gearRatioLbl,rigRatioLbl,overallDistanceTxt,leftLbl,rightLbl,unitsLbl,scrollPositionView,unitsTxt,sensitivityValue,sensitivitySlider,joystickResponseLbl,siderealBtn,overallDistanceLbl,toggleJoystickSwitch,dampeningSlider,dampeningLbl;
+@synthesize leftBtn, rightBtn, okButton, appExecutive, distanceLbl, presetLbl, contentScroll,gearRatioLbl,rigRatioLbl,overallDistanceTxt,leftLbl,rightLbl,unitsLbl,scrollPositionView,unitsTxt,sensitivityValue,sensitivitySlider,joystickResponseLbl,siderealBtn,overallDistanceLbl,toggleJoystickSwitch,dampeningSlider,dampeningLbl,dampeningImg;
 
 //------------------------------------------------------------------------------
 
@@ -76,8 +76,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 	// items for IBOutlet objects don't appear until the view is loaded
 
-	self.motorSettingsLabel.text	= [NSString stringWithFormat: @"%@ Settings Channel:", self.motorName];
-	self.motorNumberLabel.text		= [NSString stringWithFormat: @"%ld", (long)self.motorNumber];
+	self.motorSettingsLabel.text = [NSString stringWithFormat: @"%@ Settings Channel:", self.motorName];
+	self.motorNumberLabel.text = [NSString stringWithFormat: @"%ld", (long)self.motorNumber];
     
     [leftBtn addTarget:self action:@selector(enableLeft:) forControlEvents:UIControlEventTouchUpInside];
     [rightBtn addTarget:self action:@selector(enableRight:) forControlEvents:UIControlEventTouchUpInside];
@@ -112,6 +112,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     presetLbl.text = @"-";
     gearRatioLbl.text = @"-";
     rigRatioLbl.text = @"-";
+    leftLbl.text = @"";
+    rightLbl.text = @"";
     
     gearRatio = 0;
     
@@ -230,13 +232,42 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     //dampeningSlider.value = b;
     
-    dampeningSlider.maximumValue = .8;
+    //dampeningSlider.maximumValue = .8; 12-15-15
+    
+    dampeningSlider.minimumValue = .35;
+    dampeningSlider.maximumValue = .715;
     
     dampeningSlider.value = inverseVal;
     
     //dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(dampeningSlider.value * 100)];
     
     int per1 = (int)(dampeningSlider.value * 100);
+    
+    float per2 = dampeningSlider.value/dampeningSlider.maximumValue;
+    
+//    NSLog(@"dampeningSlider.value: %f",dampeningSlider.value);
+//    NSLog(@"per2: %f",per2);
+    
+    if (per2 >= .9)
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening100.png"];
+    }
+    else if (per2 < .9 && per2 >= .75)
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening75.png"];
+    }
+    else if (per2 < .75 && per2 >= .6)
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening50.png"];
+    }
+    else if (per2 < .6 && per2 >= .5)
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening25.png"];
+    }
+    else
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening0.png"];
+    }
     
     dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(per1 + (per1 * .2))];
     
@@ -298,6 +329,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
                 
                 customLinearParam = [self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"];
             }
+            
+            //NSLog(@"self.appExecutive.slideMotor: %i",self.appExecutive.slideMotor);
         }
     }
     else if (self.motorNumber == 2)
@@ -1223,6 +1256,34 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     int per1 = (int)(sender.value * 100);
     
     dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(per1 + (per1 * .2))];
+    
+    
+    float per2 = dampeningSlider.value/dampeningSlider.maximumValue;
+    
+    //NSLog(@"per2: %f",per2);
+    
+    if (per2 >= .9)
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening100.png"];
+    }
+    else if (per2 < .9 && per2 >= .75)
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening75.png"];
+    }
+    else if (per2 < .75 && per2 >= .6)
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening50.png"];
+    }
+    else if (per2 < .6 && per2 >= .5)
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening25.png"];
+    }
+    else
+    {
+        dampeningImg.image = [UIImage imageNamed:@"dampening0.png"];
+    }
+    
+    
     
     //dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(adjustedValue * 100)];
     

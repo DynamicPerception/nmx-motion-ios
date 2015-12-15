@@ -24,7 +24,8 @@ typedef enum : unsigned char {
     NMXRunStatusPaused = 1,
     NMXRunStatusRunning = 2,
     NMXRunStatusDelayTimer = 3,
-    NMXRunStatusKeepAlive = 4
+    NMXRunStatusKeepAlive = 4,
+    NMXRunStatusKeepBadResponse = 128
 } NMXRunStatus;
 
 typedef enum : unsigned char {
@@ -164,8 +165,8 @@ typedef enum : unsigned char {
 - (void) motorSet: (int) motorNumber ContinuousSpeedAccelDecel: (float) speed;
 - (float) motorQueryContinuousAccelDecel: (int) motorNumber;
 - (void) motorSet:(int)motorNumber SetMotorPosition: (UInt32) position;
-- (void) motorSet:(int)motorNumber ResetLimits: (UInt32) position;
 - (void) resetLimits: (int) motorNumber;
+- (void) motorSendToEndPoint: (int) motorNumber;
 
 @end
 

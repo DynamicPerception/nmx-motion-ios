@@ -216,9 +216,16 @@
 
 - (IBAction) handlePanGesture: (UIPanGestureRecognizer *) sender {
     
+    
+    
 	switch (sender.state)
 	{
 		case UIGestureRecognizerStateBegan:
+            [[NSNotificationCenter defaultCenter]
+     postNotificationName:@"enterJSMode"
+     object:nil];
+            
+            break;
 		case UIGestureRecognizerStateChanged:
 			[self updateJoystickDelegate: [sender locationInView: self.joystickView]];
 			break;

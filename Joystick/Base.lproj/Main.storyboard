@@ -550,7 +550,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Dampening" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7iz-jX-bWD" userLabel="Sensitivity Label">
-                                                <rect key="frame" x="61" y="339" width="74" height="17"/>
+                                                <rect key="frame" x="61" y="342" width="74" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -709,12 +709,9 @@
                                                     <action selector="handleDampeningSlider:" destination="E5a-T0-m15" eventType="valueChanged" id="Uih-2P-gMY"/>
                                                 </connections>
                                             </slider>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="100%" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ikF-Zb-veU" userLabel="Sensitivity Value">
-                                                <rect key="frame" x="143" y="339" width="45" height="17"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="dampening.png" translatesAutoresizingMaskIntoConstraints="NO" id="UiL-pd-xB3">
+                                                <rect key="frame" x="153" y="330" width="25" height="25"/>
+                                            </imageView>
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="260" id="qOC-sd-FhZ"/>
@@ -777,7 +774,7 @@
                         <outlet property="backlashLabel" destination="rXF-Nn-9gt" id="Jfs-2B-xIp"/>
                         <outlet property="contentScroll" destination="sZg-Zp-DKc" id="TI2-fP-UiC"/>
                         <outlet property="controlBackground" destination="vGs-MC-Fts" id="urc-j9-eEZ"/>
-                        <outlet property="dampeningLbl" destination="ikF-Zb-veU" id="yJ3-fp-lDB"/>
+                        <outlet property="dampeningImg" destination="UiL-pd-xB3" id="ph9-yw-zPN"/>
                         <outlet property="dampeningSlider" destination="JDz-sM-klZ" id="X8l-cX-UF6"/>
                         <outlet property="gearRatioLbl" destination="kgu-ZF-ftn" id="gK9-AX-wSN"/>
                         <outlet property="invertDirectionSwitch" destination="2gD-gX-gMO" id="F7a-L5-OKp"/>
@@ -3024,7 +3021,7 @@
                                     <constraint firstAttribute="height" constant="34" id="NMr-QD-XgJ"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
-                                <state key="normal" title="Unlock">
+                                <state key="normal" title="Lock">
                                     <color key="titleColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -5502,22 +5499,23 @@ Ramping</string>
     <resources>
         <image name="Lock_Icon.png" width="24" height="23"/>
         <image name="battery.png" width="190" height="383"/>
+        <image name="dampening.png" width="250" height="250"/>
         <image name="down-arrow.png" width="64" height="64"/>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="aFw-MN-OaY"/>
+        <segue reference="gqx-Wd-6xg"/>
         <segue reference="RFH-OB-Gp4"/>
+        <segue reference="aFw-MN-OaY"/>
         <segue reference="PwX-tX-cQi"/>
         <segue reference="vr9-JF-N1x"/>
-        <segue reference="BxP-51-sJV"/>
-        <segue reference="gqx-Wd-6xg"/>
-        <segue reference="k3P-Db-zBC"/>
-        <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="HUL-Rp-DYU"/>
         <segue reference="l1d-eL-qTA"/>
         <segue reference="QDi-9c-Wwb"/>
+        <segue reference="hJv-3d-HgP"/>
+        <segue reference="HUL-Rp-DYU"/>
+        <segue reference="6tH-tQ-8da"/>
+        <segue reference="TNv-a2-D3V"/>
+        <segue reference="k3P-Db-zBC"/>
+        <segue reference="Nk1-9G-Dpm"/>
     </inferredMetricsTieBreakers>
 </document>

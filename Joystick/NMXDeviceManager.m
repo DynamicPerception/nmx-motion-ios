@@ -29,7 +29,7 @@
 
 @implementation NMXDeviceManager
 
-@synthesize inReview;
+@synthesize inReview,disconnected;
 
 
 - (id) init {
@@ -117,10 +117,7 @@
 
 - (void) centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
 
-    //DDLogDebug(@"Peripheral disconnected");
-    
-    NSLog(@"Peripheral disconnected");
-    
+    //DDLogDebug(@"centralManager Peripheral disconnected");
     
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDisconnectDevice:)]))
     {
@@ -130,15 +127,22 @@
     {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             
-            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"Peripheral disconnected Randall"];
+            if (!disconnected) {
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"central didDisconnectPeripheral"];
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
+                                                                message: @"All settings saved on NMX - Tap OK to reconnect"
+                                                               delegate: self
+                                                      cancelButtonTitle: @"OK"
+                                                      otherButtonTitles: nil];
+                
+                [alert show];
+                
+                disconnected = YES;
+            }
+                        
             
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
-                                                            message: @"All settings saved on NMX - Tap OK to reconnect"
-                                                           delegate: self
-                                                  cancelButtonTitle: @"OK"
-                                                  otherButtonTitles: nil];
-            
-            [alert show];
         });
     }
 }
@@ -152,7 +156,7 @@
 
 - (void) startScanning: (BOOL) inLegacyDevices; {
 
-    NSLog(@"startScanning inLegacyDevices");
+    //NSLog(@"startScanning inLegacyDevices");
     
     self.legacyDevices = inLegacyDevices;
     

@@ -115,7 +115,14 @@
 	[super viewWillAppear: animated];
 
     [[AppExecutive sharedInstance].deviceManager setDelegate: self];
-    [[AppExecutive sharedInstance].deviceManager startScanning: false];
+    
+    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameScan) userInfo:nil repeats:NO];
+   
+}
+
+- (void)timerNameScan {
+	
+     [[AppExecutive sharedInstance].deviceManager startScanning: false];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
@@ -181,7 +188,7 @@
             NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
             appExecutive.device = [self.deviceList objectAtIndex: indexPath.row];
         
-            NSLog(@"device name: %@",appExecutive.device.name);
+            //NSLog(@"device name: %@",appExecutive.device.name);
         
         #endif
     }

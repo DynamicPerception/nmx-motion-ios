@@ -329,7 +329,7 @@ ControllerState;
         
         debugTxt.text = [NSString stringWithFormat:@"%@\n start tilt out: %f",debugTxt.text,[n floatValue]];
     }
-    else if (debugInd == 0) {
+    else if (debugInd == 1) {
         
         debugTxt.text = [NSString stringWithFormat:@"%@\n mid tilt out: %f",debugTxt.text,[n floatValue]];
     }
@@ -1020,6 +1020,10 @@ ControllerState;
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
+    
+    NSLog(@"viewWillDisappear");
+    
+    [self.disconnectedTimer invalidate];
 
     [super viewWillDisappear: animated];
     
@@ -1277,6 +1281,8 @@ ControllerState;
     [AppExecutive sharedInstance].device.delegate = self;
     [[AppExecutive sharedInstance].device connect];
     
+    [self.disconnectedTimer invalidate];
+    
     if (self.appExecutive.is3P == YES)
     {
         [self startKeyframeTimer];
@@ -1486,6 +1492,8 @@ ControllerState;
 	self.motorRampingButton.hidden = NO;
 	self.startProgramButton.hidden = NO;
 	self.startProgramButton.enabled = NO;	// disable until hardware reaches start point
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 
 	self.sendMotorsTimer = self.sendMotorsTimer;	// check if the hardware is done moving
     
@@ -1516,6 +1524,11 @@ ControllerState;
         {
             startTimerBtn.hidden = NO;
         }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        });
     }
 }
 
@@ -1858,7 +1871,21 @@ ControllerState;
         }
         default:
         {
-            NSLog(@"something else");
+            NSLog(@"something else: %i",runStatus);
+            
+            [self.statusTimer invalidate];
+            self.statusTimer = nil;
+            
+            keyframeTimer = nil;
+            
+            [self.disconnectedTimer invalidate];
+            self.disconnectedTimer = nil;
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];                
+            });
+            
             break;
         }
     }

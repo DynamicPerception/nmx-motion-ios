@@ -147,6 +147,8 @@
 @property float dampening2;
 @property float dampening3;
 
+@property BOOL resetController;
+
 #pragma mark Class Management
 
 + (AppExecutive *) sharedInstance;

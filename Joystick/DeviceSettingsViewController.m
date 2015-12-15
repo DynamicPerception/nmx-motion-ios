@@ -188,7 +188,8 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 
 - (void) deviceDisconnect: (id) object {
 
-    NSLog(@"deviceDisconnect");
+    NSLog(@"deviceDisconnect dsvc");
+    
 	[self dismissViewControllerAnimated: YES completion: nil];
 }
 

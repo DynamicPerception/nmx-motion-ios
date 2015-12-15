@@ -68,6 +68,7 @@ typedef enum : unsigned char {
     NMXCommandMotorSetProgramAccel = 21,
     NMXCommandMotorSetProgramDecel = 22,
     NMXCommandMotorSendToProgramStartPoint = 23,
+    NMXCommandMotorSendToProgramEndPoint = 24,
     NMXCommandMotorSetLeadOutShotsOrTime = 25,
     NMXCommandMotorResetLimitsProgramStart = 27,
     NMXCommandMotorAutoSetProgramMicrosteps = 28,
@@ -244,7 +245,8 @@ bool waitForResponse;
 
     for (CBService *service in peripheral.services)
     {
-        DDLogDebug(@"Discovered service %@ with UDID %@", service, service.UUID);
+        //DDLogDebug(@"Discovered service %@ with UDID %@", service, service.UUID);
+        
         [peripheral discoverCharacteristics: nil forService: service];
         [self.myServices addObject: service];
     }
@@ -256,7 +258,8 @@ didDiscoverCharacteristicsForService: (CBService *) service
 
     for (CBCharacteristic *characteristic in service.characteristics)
     {
-        DDLogDebug(@"Discovered characteristic %@ of service %@", characteristic, service);
+        //DDLogDebug(@"Discovered characteristic %@ of service %@", characteristic, service);
+        
         if (characteristic.properties & CBCharacteristicPropertyNotify)
         {
             [peripheral setNotifyValue: true forCharacteristic: characteristic];
@@ -310,6 +313,9 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             dispatch_semaphore_signal(self.mySemaphore);
             
             self.myNotifyData = self.myNotifyBuffer;
+            
+            //NSLog(@"self.myNotifyData: %@",self.myNotifyData);
+            
             self.myNotifyBuffer = [NSMutableData dataWithCapacity: 20];
         }
     }
@@ -331,6 +337,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
     //DDLogDebug(@"Device disconnected NMXDevice");
     NSLog(@"Device disconnected NMXDevice");
+    
     self.disconnected = true;
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
@@ -392,7 +399,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         if (waitForResponse)
         {
-             //DDLogDebug(@"Waited for response and sending command %@ expect response", desc); //randall 8-17-15
+             DDLogDebug(@"Waited for response and sending command %@ expect response", desc); //randall 8-17-15
             
             if ([desc containsString:@"Set KeyFrame Position"]) {
                 
@@ -403,7 +410,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         }
         else
         {
-            //DDLogDebug(@"Delayed for response and sending command %@ expect response", desc); //randall 10-20-15
+            DDLogDebug(@"Delayed for response and sending command %@ expect response", desc); //randall 10-20-15
         }
         
         // Be recreating the semaphore we will wait on with each send, we hope to be able to catch back up if we get double responses after a timeout.
@@ -414,11 +421,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         if (waitForResponse)
         {
-            //DDLogDebug(@"Waited for response and sending command %@ no response expected", desc); //randall 8-17-15
+            DDLogDebug(@"Waited for response and sending command %@ no response expected", desc); //randall 8-17-15
         }
         else
         {
-            //DDLogDebug(@"Delayed for response and sending command %@ no response expected", desc); //randall 10-20-15
+            DDLogDebug(@"Delayed for response and sending command %@ no response expected", desc); //randall 10-20-15
         }
     }
     
@@ -448,73 +455,113 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     long semaphoreResult;
     
-    while ((semaphoreResult = dispatch_semaphore_wait(self.mySemaphore, DISPATCH_TIME_NOW)))
+    @try
     {
-        //NSLog(@"semaphoreResult: %li",semaphoreResult);
-        
-        //NSLog(@"self.mySemaphore: %@",self.mySemaphore);
-        
-        CFTimeInterval now = CACurrentMediaTime();
-        
-        if ((now - self.lastCommandTime) < self.lastTimeout)
+        if((semaphoreResult = dispatch_semaphore_wait(self.mySemaphore, DISPATCH_TIME_NOW)))
         {
-            usleep(10000);
-        }
-        else if (self.retryCount < 10)
-        {
-            bool nestedRetry = self.retrying;
-            
-            // We need to retry
-            
-            if (waitForResponse)
+            while ((semaphoreResult = dispatch_semaphore_wait(self.mySemaphore, DISPATCH_TIME_NOW)))
             {
-                dispatch_semaphore_signal(self.mySemaphore);
+                //NSLog(@"semaphoreResult: %li",semaphoreResult);
+                
+                //NSLog(@"self.mySemaphore: %@",self.mySemaphore);
+                
+                CFTimeInterval now = CACurrentMediaTime();
+                
+                if ((now - self.lastCommandTime) < self.lastTimeout)
+                {
+                    usleep(10000);
+                }
+                else if (self.retryCount < 10)
+                {
+                    bool nestedRetry = self.retrying;
+                    
+                    // We need to retry
+                    
+                    if (waitForResponse)
+                    {
+                        dispatch_semaphore_signal(self.mySemaphore);
+                    }
+                    
+                    self.retrying = true;
+                    
+                    [self sendCommand: self.myLastCommand WithDesc: @"Retrying last command" WaitForResponse: waitForResponse WithTimeout: self.lastTimeout];
+                    
+                    self.retrying = nestedRetry;
+                }
+                else// if(!inBackground)
+                {
+                    DDLogDebug(@"Disconnecting because of too many timeouts");
+                    
+                    if(!inBackground)
+                    {
+                        [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+                        
+                        // Send the user back to the connection screen...
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+                    }
+                    
+                    break;
+                }
             }
             
-            self.retrying = true;
-            
-            [self sendCommand: self.myLastCommand WithDesc: @"Retrying last command" WaitForResponse: waitForResponse WithTimeout: self.lastTimeout];
-            
-            self.retrying = nestedRetry;
         }
-        else// if(!inBackground)
+        
+        if ((self.myNotifyData) && ([self.myNotifyData length] > 8) && (0 == semaphoreResult))
         {
-            DDLogDebug(@"Disconnecting because of too many timeouts");
+            // Try to look at success flag.
             
-            if(!inBackground)
+            unsigned char error;
+            
+            memcpy(&error, &self.myNotifyData.bytes[8], sizeof(error));
+            
+            if (1 != error)
             {
-                [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+                DDLogError(@"Bad response %@, last command was %@", self.myNotifyData, self.myLastCommand);
                 
-                // Send the user back to the connection screen...
+                //            dispatch_async(dispatch_get_main_queue(), ^{
+                //
+                //                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+                //            });
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+                
+                
+                
+                dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+                });
+                
+                
+                
+//                @try
+//                {
+//                    waitForResponse = false;
+//                    
+//                    [self sendCommand: self.myLastCommand WithDesc: @"Retrying last command" WaitForResponse: true WithTimeout: self.lastTimeout];
+//                    
+//                    [self waitForResponse];
+//                    
+//                }
+//                @catch (NSException *exception)
+//                {
+//                    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//                        
+//                        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+//                    });
+//                }
+//                @finally {}
             }
+        }        
+    }
+    @catch (NSException *exception)
+    {
+        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            break;
-        }
+            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+        });
     }
     
-    if ((self.myNotifyData) && ([self.myNotifyData length] > 8) && (0 == semaphoreResult))
-    {
-        // Try to look at success flag.
-        
-        unsigned char error;
-        
-        memcpy(&error, &self.myNotifyData.bytes[8], sizeof(error));
-        
-        if (1 != error)
-        {
-            DDLogError(@"Bad response %@, last command was %@", self.myNotifyData, self.myLastCommand);
-        
-            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
-
-            waitForResponse = false;
-            
-            [self sendCommand: self.myLastCommand WithDesc: @"Retrying last command" WaitForResponse: true WithTimeout: self.lastTimeout];
-            
-            [self waitForResponse];            
-        }
-    }
     
     return (0 == semaphoreResult);
 }
@@ -536,66 +583,101 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     //NSLog(@"myNotifyData.bytes: %@",&self.myNotifyData.bytes[10]);
     
-    memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
+//    NSLog(@"sizeof(valueType): %lu",sizeof(valueType));
+//    NSLog(@"valueType: %c",&valueType);
     
-    switch (valueType)
-    {
-        case NMXValueTypeByte:
+    if (self.myNotifyData.length != 0) {
+        
+         memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
+        
+        //    @try {
+        //
+        //        memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
+        //    }
+        //    @catch (NSException * e) {
+        //
+        //        NSLog(@"memcpy Exception: %@", e);
+        //
+        //        dispatch_async(dispatch_get_main_queue(), ^(void) {
+        //
+        //            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"Peripheral disconnected Randall memcpy"];
+        //        });
+        //
+        //    }
+        
+        
+        
+        switch (valueType)
         {
-            UInt8 byteValue;
-            
-            memcpy(&byteValue, &self.myNotifyData.bytes[11], sizeof(valueType));
-            returnedNumber = [NSNumber numberWithUInt8: byteValue];
-            break;
+            case NMXValueTypeByte:
+            {
+                UInt8 byteValue;
+                
+                memcpy(&byteValue, &self.myNotifyData.bytes[11], sizeof(valueType));
+                returnedNumber = [NSNumber numberWithUInt8: byteValue];
+                break;
+            }
+            case NMXValueTypeUInt16:
+            {
+                UInt16  unsignedIntValue;
+                memcpy(&unsignedIntValue, &self.myNotifyData.bytes[11], sizeof(unsignedIntValue));
+                unsignedIntValue = CFSwapInt16(unsignedIntValue);
+                returnedNumber = [NSNumber numberWithUInt16: unsignedIntValue];
+                break;
+            }
+            case NMXValueTypeSInt16:
+            {
+                SInt16  intValue;
+                memcpy(&intValue, &self.myNotifyData.bytes[11], sizeof(intValue));
+                intValue = CFSwapInt16(intValue);
+                returnedNumber = [NSNumber numberWithSInt16: intValue];
+                break;
+            }
+            case NMXValueTypeUInt32:
+            {
+                UInt32  unsignedlongValue;
+                memcpy(&unsignedlongValue, &self.myNotifyData.bytes[11], sizeof(unsignedlongValue));
+                unsignedlongValue = CFSwapInt32(unsignedlongValue);
+                returnedNumber = [NSNumber numberWithUInt32: unsignedlongValue];
+                break;
+            }
+            case NMXValueTypeSInt32:
+            {
+                SInt32  longValue;
+                memcpy(&longValue, &self.myNotifyData.bytes[11], sizeof(longValue));
+                longValue = CFSwapInt32(longValue);
+                returnedNumber = [NSNumber numberWithSInt32: longValue];
+                break;
+            }
+            case NMXValueTypeFloat:
+            {
+                UInt32  unsignedlongValue;
+                memcpy(&unsignedlongValue, &self.myNotifyData.bytes[11], sizeof(unsignedlongValue));
+                unsignedlongValue = CFSwapInt32(unsignedlongValue);
+                float   floatValue = unsignedlongValue / 100.0;
+                returnedNumber = [NSNumber numberWithFloat: floatValue];
+            }
+                break;
+            default:
+                DDLogError(@"ERROR: Camera returned a value Type we don't currently support in extractNumber!!!");
+                returnedNumber = nil;
+                break;
         }
-        case NMXValueTypeUInt16:
-        {
-            UInt16  unsignedIntValue;
-            memcpy(&unsignedIntValue, &self.myNotifyData.bytes[11], sizeof(unsignedIntValue));
-            unsignedIntValue = CFSwapInt16(unsignedIntValue);
-            returnedNumber = [NSNumber numberWithUInt16: unsignedIntValue];
-            break;
-        }
-        case NMXValueTypeSInt16:
-        {
-            SInt16  intValue;
-            memcpy(&intValue, &self.myNotifyData.bytes[11], sizeof(intValue));
-            intValue = CFSwapInt16(intValue);
-            returnedNumber = [NSNumber numberWithSInt16: intValue];
-            break;
-        }
-        case NMXValueTypeUInt32:
-        {
-            UInt32  unsignedlongValue;
-            memcpy(&unsignedlongValue, &self.myNotifyData.bytes[11], sizeof(unsignedlongValue));
-            unsignedlongValue = CFSwapInt32(unsignedlongValue);
-            returnedNumber = [NSNumber numberWithUInt32: unsignedlongValue];
-            break;
-        }
-        case NMXValueTypeSInt32:
-        {
-            SInt32  longValue;
-            memcpy(&longValue, &self.myNotifyData.bytes[11], sizeof(longValue));
-            longValue = CFSwapInt32(longValue);
-            returnedNumber = [NSNumber numberWithSInt32: longValue];
-            break;
-        }
-        case NMXValueTypeFloat:
-        {
-            UInt32  unsignedlongValue;
-            memcpy(&unsignedlongValue, &self.myNotifyData.bytes[11], sizeof(unsignedlongValue));
-            unsignedlongValue = CFSwapInt32(unsignedlongValue);
-            float   floatValue = unsignedlongValue / 100.0;
-            returnedNumber = [NSNumber numberWithFloat: floatValue];
-        }
-            break;
-        default:
-            DDLogError(@"ERROR: Camera returned a value Type we don't currently support in extractNumber!!!");
-            returnedNumber = nil;
-            break;
+        dispatch_semaphore_signal(self.mySemaphore);
+        return returnedNumber;
     }
-    dispatch_semaphore_signal(self.mySemaphore);
-    return returnedNumber;
+    else
+    {
+        NSLog(@"self.myNotifyData.bytes: %lu",(unsigned long)self.myNotifyData.length);
+        
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            
+            //[[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"Peripheral disconnected Randall memcpy"];
+        });
+        
+        return [NSNumber numberWithFloat: 99];
+
+    }
 }
 
 #pragma mark - Main Set
@@ -783,13 +865,28 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     NMXRunStatus    runStatus = NMXRunStatusDelayTimer;
     unsigned char   newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryRunStatus dataLength: 0];
+    
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
     
     [self sendCommand: newData WithDesc: @"Query Run Status" WaitForResponse: true WithTimeout: 0.3];
     
+    
+    
+    
     if ([self waitForResponse])
     {
-        runStatus = [[self extractReturnedNumber] UInt8Value];
+        @try {
+    
+            //NSLog(@"try runstatus");
+            
+            runStatus = [[self extractReturnedNumber] UInt8Value];
+            
+            //NSLog(@"runStatus: %i",runStatus);
+        }
+        @catch (NSException * e) {
+    
+            NSLog(@"na. memcpy Exception: %@", e);
+        }
     }
     
     return runStatus;
@@ -1199,6 +1296,14 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorSendToProgramStartPoint dataLength: 0];
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
     [self sendCommand: newData WithDesc: @"Send Motor To Start Point" WaitForResponse: true WithTimeout: 0.2];
+}
+
+- (void) motorSendToEndPoint: (int) motorNumber {
+    
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorSendToProgramEndPoint dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    [self sendCommand: newData WithDesc: @"Send Motor To End Point" WaitForResponse: true WithTimeout: 0.2];
 }
 
 - (void) motorSet:(int)motorNumber SetLeadInShotsOrTime: (UInt32) leadIn {
