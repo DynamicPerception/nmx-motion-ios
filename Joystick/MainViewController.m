@@ -16,7 +16,7 @@
 #import "JoyButton.h"
 #import "MBProgressHUD.h"
 
-#define kCurrentFirmwareVersion 44
+#define kCurrentFirmwareVersion 45
 
 //------------------------------------------------------------------------------
 
