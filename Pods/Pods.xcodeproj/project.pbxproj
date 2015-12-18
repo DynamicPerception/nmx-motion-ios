@@ -1,0 +1,885 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00F81BBC3EDCDE039944754C /* GAIEcommerceProductAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B54C37066D1CD20174CB9A2 /* GAIEcommerceProductAction.h */; };
+		025310691384FDD5102F83EA /* GAIFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 8114E31C09382B360207818D /* GAIFields.h */; };
+		039D4B515ED8804EFA720BF2 /* DDASLLogCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D663044B8B25A7F179536B /* DDASLLogCapture.h */; };
+		08A0216442F2D4855AA3A01A /* TAGContainerOpener.h in Headers */ = {isa = PBXBuildFile; fileRef = C13683FE93D1877260E42DD4 /* TAGContainerOpener.h */; };
+		09089228D653B405BC8F571C /* DDLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D442D15524C6C53A967ADB7 /* DDLog.h */; };
+		0928FF17EA0B014B83638390 /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 373E3AB8E72139AEAF37B6F0 /* DDLog.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		0B4C9EEF6CD78495D32682DC /* TAGLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 5667D0E88AD57E1DA07D7F17 /* TAGLogger.h */; };
+		1BB53E83FE3EF2C63F160D40 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 4304FF23368123328A78CF4B /* MBProgressHUD.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		1C88D311BD6CBB68B9B6F100 /* DDFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3608A83F027AE136EAACC /* DDFileLogger.h */; };
+		1EFC3739ADFA098E37A85766 /* DDLog+LOGV.h in Headers */ = {isa = PBXBuildFile; fileRef = 4EF84E3486854E76C2F202C8 /* DDLog+LOGV.h */; };
+		2AC85CE2E80B0565A03A41CB /* DDDispatchQueueLogFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 89265DB2D26D3042AC73818B /* DDDispatchQueueLogFormatter.h */; };
+		2ADA699976740FE55FE2803E /* TAGContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 91516A9436D1CCF6B32C50D8 /* TAGContainer.h */; };
+		2B0772643D98E72B57CDAE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B794E3F5BD71DE7F34A7E285 /* Foundation.framework */; };
+		322880C2D10E99DDDCC0885D /* TAGDataLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9EC66D882F8EF01480B47436 /* TAGDataLayer.h */; };
+		346C9FB54F3574131BA3C1FE /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 75276B142CB7CAC43D67E44E /* DDASLLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		369666133A0DB917FBB1D2BB /* DDAbstractDatabaseLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A6E254226FF1A9EDD492465 /* DDAbstractDatabaseLogger.h */; };
+		405D32E9FC81B0DC89654E82 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B794E3F5BD71DE7F34A7E285 /* Foundation.framework */; };
+		43C793E3EBF097F3E9BCF0BF /* GAIDictionaryBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = EED33384E5B2B09FBE47DA5D /* GAIDictionaryBuilder.h */; };
+		4DF24866EF8FB824FE5CCFE9 /* GAITrackedViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = EB807EC744816C20D952A5F4 /* GAITrackedViewController.h */; };
+		54314C2090068C2267170795 /* DDMultiFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 94765850F89CDF2DAFB1B538 /* DDMultiFormatter.h */; };
+		59CC72BF0A074F63A04719DE /* GAI.h in Headers */ = {isa = PBXBuildFile; fileRef = DF3AD04A2CF0D3D107F80A47 /* GAI.h */; };
+		5AEE5F328A82125CD9DC42D0 /* GAIEcommercePromotion.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CF27DCF133332CCF65E00B8 /* GAIEcommercePromotion.h */; };
+		6586C4284F7D58FC5189E714 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 472395431EA76F71D546DFAF /* UIKit.framework */; };
+		6F00CE3B09C281453911B5CF /* GAIEcommerceFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 91F8A9ADE5995A3E8A975DFE /* GAIEcommerceFields.h */; };
+		715574CCCFCF200DB89F19B7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5499255385C5DC28A41F223D /* CoreGraphics.framework */; };
+		7D25947DB127B184B948D4F6 /* Pods-NMX Motion-MBProgressHUD-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C2C0B7336B8B95AF4D1AB45A /* Pods-NMX Motion-MBProgressHUD-dummy.m */; };
+		8169A2F772EEC7CA48C496C8 /* MBProgressHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = E732924CEDA6996EEFCCCE3E /* MBProgressHUD.h */; };
+		89331AF39484B658F7AD3776 /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6242060B75C0B55294A1DC /* DDTTYLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		8B05D9A46CE866DB4EF1D225 /* DDASLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F2743236D826D4159E367C /* DDASLLogger.h */; };
+		9131B8877A077ADB806D85A0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C05490A50009D38C0951BAF /* CoreData.framework */; };
+		94B4399C1DF6FCF22A399D4D /* DDContextFilterLogFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 665CDAB8903450B89BA79D28 /* DDContextFilterLogFormatter.h */; };
+		95B5FC2E4C9EF2F62AD6696F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11E3FDB68148A470793DB8CE /* SystemConfiguration.framework */; };
+		9E424426A618CCB531C075F0 /* DDAbstractDatabaseLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = B959BE789D7DEFBA0A109488 /* DDAbstractDatabaseLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		9F3EA43A3F1A30F6CB5C56C0 /* DDDispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CE3FC6E38D22C5A59C253EC /* DDDispatchQueueLogFormatter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		A005F051B6E0B2CAEABB21B0 /* DDTTYLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E36E556B7E8BEA675406EBE /* DDTTYLogger.h */; };
+		A30D45667A7A518F7B74FFC0 /* DDLogMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = F505EE243EB8816B10382742 /* DDLogMacros.h */; };
+		A89B8D922B46142AC073C9C7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B794E3F5BD71DE7F34A7E285 /* Foundation.framework */; };
+		B3DDC35710C122E172A00C7B /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3341C2C7659A1D797EB13F26 /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-dummy.m */; };
+		B51E6BB80F06E7E092D66482 /* Pods-NMX Motion-CocoaLumberjack-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E7B1D085D4A9427188C1B5 /* Pods-NMX Motion-CocoaLumberjack-dummy.m */; };
+		B6EC33D740299068A0A22760 /* DDASLLogCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF84DEA18A39AC59445372 /* DDASLLogCapture.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		B733F7A1DD5BCE3F9DF91DF9 /* Pods-NMX Motion-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAA46C02849B238D86882C8 /* Pods-NMX Motion-dummy.m */; };
+		B7B37E0B9B5FC045D3BC5CED /* CocoaLumberjack.h in Headers */ = {isa = PBXBuildFile; fileRef = E63AFD022A5933F9C55AB18F /* CocoaLumberjack.h */; };
+		BA6FA538CE206307C22F0FFC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D63457B8C43E6F90FC0CD636 /* CFNetwork.framework */; };
+		C0C7B9E51E97C4913E1E9BB6 /* DDMultiFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = B235863DC9928E7E1961CEBE /* DDMultiFormatter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		C467FD07F13B52B40BAFD3EB /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5E3DF57E1FA41F0F0CA293 /* DDFileLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		CBC9FA73F07BA3698D0E5CD6 /* DDContextFilterLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = CB5681A7D83E361A2C3A76A4 /* DDContextFilterLogFormatter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		D49408FE32484301E9FEA91C /* DDLegacyMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D508EF9F7A067D0F4FB75 /* DDLegacyMacros.h */; };
+		D718B5AA4008B07FB10B90D6 /* TAGManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 74CBADFD972B5204EC923A3C /* TAGManager.h */; };
+		DAE6B762D1B01040AC72835C /* GAIEcommerceProduct.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E16A3321CB1FEA58EA2DC6B /* GAIEcommerceProduct.h */; };
+		E3CED0197C32F7814718662A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B794E3F5BD71DE7F34A7E285 /* Foundation.framework */; };
+		EDFF905B394513C5F629051B /* GAILogger.h in Headers */ = {isa = PBXBuildFile; fileRef = AE0AD2AF04E2D0641457B865 /* GAILogger.h */; };
+		EFD9D8A207D06373E281E05C /* GAITracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A2D26D64F27B30279F31E3A /* GAITracker.h */; };
+		FB9C0A263285D3E97B611C4D /* DDAssertMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D17F947CC7CFBA9F7DE06FF /* DDAssertMacros.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2A5BAC32418E2A2A3023BA0A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B2C261909B9DE4883F75E8E8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AF4A151A08EE1C143A8E832C;
+			remoteInfo = "Pods-NMX Motion-CocoaLumberjack";
+		};
+		5018C419D9BE7B9E5E9890C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B2C261909B9DE4883F75E8E8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3BE8D6F98C956652CC189375;
+			remoteInfo = "Pods-NMX Motion-GoogleAnalytics-iOS-SDK";
+		};
+		6A49C7ABFCAFD60A159EEE74 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B2C261909B9DE4883F75E8E8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4827282E429629116C3C71CC;
+			remoteInfo = "Pods-NMX Motion-MBProgressHUD";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00E7B1D085D4A9427188C1B5 /* Pods-NMX Motion-CocoaLumberjack-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-NMX Motion-CocoaLumberjack-dummy.m"; sourceTree = "<group>"; };
+		0804990F2A23FD84135FEDCB /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NMX Motion-GoogleAnalytics-iOS-SDK.xcconfig"; sourceTree = "<group>"; };
+		0E16A3321CB1FEA58EA2DC6B /* GAIEcommerceProduct.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAIEcommerceProduct.h; path = GoogleAnalytics/Library/GAIEcommerceProduct.h; sourceTree = "<group>"; };
+		0F61ADBE01DA2720A69D124C /* Pods-NMX Motion-CocoaLumberjack.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NMX Motion-CocoaLumberjack.xcconfig"; sourceTree = "<group>"; };
+		11E3FDB68148A470793DB8CE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
+		18F2743236D826D4159E367C /* DDASLLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDASLLogger.h; path = Classes/DDASLLogger.h; sourceTree = "<group>"; };
+		1D442D15524C6C53A967ADB7 /* DDLog.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDLog.h; path = Classes/DDLog.h; sourceTree = "<group>"; };
+		2C05490A50009D38C0951BAF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
+		2D17F947CC7CFBA9F7DE06FF /* DDAssertMacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDAssertMacros.h; path = Classes/DDAssertMacros.h; sourceTree = "<group>"; };
+		2D5E3DF57E1FA41F0F0CA293 /* DDFileLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDFileLogger.m; path = Classes/DDFileLogger.m; sourceTree = "<group>"; };
+		3341C2C7659A1D797EB13F26 /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-NMX Motion-GoogleAnalytics-iOS-SDK-dummy.m"; sourceTree = "<group>"; };
+		373E3AB8E72139AEAF37B6F0 /* DDLog.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDLog.m; path = Classes/DDLog.m; sourceTree = "<group>"; };
+		37B46176D5150E2C27611EE0 /* libPods-NMX Motion-CocoaLumberjack.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NMX Motion-CocoaLumberjack.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E6242060B75C0B55294A1DC /* DDTTYLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDTTYLogger.m; path = Classes/DDTTYLogger.m; sourceTree = "<group>"; };
+		4304FF23368123328A78CF4B /* MBProgressHUD.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		45E73BE74D1F863023AC9E0A /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-Private.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NMX Motion-GoogleAnalytics-iOS-SDK-Private.xcconfig"; sourceTree = "<group>"; };
+		472395431EA76F71D546DFAF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		4A2D26D64F27B30279F31E3A /* GAITracker.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAITracker.h; path = GoogleAnalytics/Library/GAITracker.h; sourceTree = "<group>"; };
+		4CE3FC6E38D22C5A59C253EC /* DDDispatchQueueLogFormatter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDDispatchQueueLogFormatter.m; path = Classes/Extensions/DDDispatchQueueLogFormatter.m; sourceTree = "<group>"; };
+		4EBF84DEA18A39AC59445372 /* DDASLLogCapture.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDASLLogCapture.m; path = Classes/DDASLLogCapture.m; sourceTree = "<group>"; };
+		4EF84E3486854E76C2F202C8 /* DDLog+LOGV.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "DDLog+LOGV.h"; path = "Classes/DDLog+LOGV.h"; sourceTree = "<group>"; };
+		4F97FE5B745CEA97D6431BAF /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		544BA89D09D89BE1FF1D53E9 /* Pods-NMX Motion-MBProgressHUD.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NMX Motion-MBProgressHUD.xcconfig"; sourceTree = "<group>"; };
+		5499255385C5DC28A41F223D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		55C14E1F800556171B6B5348 /* Pods-NMX Motion-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-NMX Motion-acknowledgements.plist"; sourceTree = "<group>"; };
+		5667D0E88AD57E1DA07D7F17 /* TAGLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TAGLogger.h; path = GoogleTagManager/Library/TAGLogger.h; sourceTree = "<group>"; };
+		5B54C37066D1CD20174CB9A2 /* GAIEcommerceProductAction.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAIEcommerceProductAction.h; path = GoogleAnalytics/Library/GAIEcommerceProductAction.h; sourceTree = "<group>"; };
+		5CF27DCF133332CCF65E00B8 /* GAIEcommercePromotion.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAIEcommercePromotion.h; path = GoogleAnalytics/Library/GAIEcommercePromotion.h; sourceTree = "<group>"; };
+		665CDAB8903450B89BA79D28 /* DDContextFilterLogFormatter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDContextFilterLogFormatter.h; path = Classes/Extensions/DDContextFilterLogFormatter.h; sourceTree = "<group>"; };
+		6BB5914BDC58A9728A56E0B0 /* Pods-NMX Motion-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-NMX Motion-acknowledgements.markdown"; sourceTree = "<group>"; };
+		6ED3DE6473CDF65AEF1FDBD6 /* Pods-NMX Motion.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NMX Motion.debug.xcconfig"; sourceTree = "<group>"; };
+		74CBADFD972B5204EC923A3C /* TAGManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TAGManager.h; path = GoogleTagManager/Library/TAGManager.h; sourceTree = "<group>"; };
+		75276B142CB7CAC43D67E44E /* DDASLLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDASLLogger.m; path = Classes/DDASLLogger.m; sourceTree = "<group>"; };
+		7656BB745F498A0A30ABFFFE /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-NMX Motion-GoogleAnalytics-iOS-SDK-prefix.pch"; sourceTree = "<group>"; };
+		8114E31C09382B360207818D /* GAIFields.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAIFields.h; path = GoogleAnalytics/Library/GAIFields.h; sourceTree = "<group>"; };
+		820DBFA50171423EF0E0736E /* Pods-NMX Motion-CocoaLumberjack-Private.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NMX Motion-CocoaLumberjack-Private.xcconfig"; sourceTree = "<group>"; };
+		83D663044B8B25A7F179536B /* DDASLLogCapture.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDASLLogCapture.h; path = Classes/DDASLLogCapture.h; sourceTree = "<group>"; };
+		8616B7A791475219194BBD11 /* Pods-NMX Motion-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-NMX Motion-resources.sh"; sourceTree = "<group>"; };
+		86E3608A83F027AE136EAACC /* DDFileLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDFileLogger.h; path = Classes/DDFileLogger.h; sourceTree = "<group>"; };
+		89265DB2D26D3042AC73818B /* DDDispatchQueueLogFormatter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDDispatchQueueLogFormatter.h; path = Classes/Extensions/DDDispatchQueueLogFormatter.h; sourceTree = "<group>"; };
+		8E36E556B7E8BEA675406EBE /* DDTTYLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDTTYLogger.h; path = Classes/DDTTYLogger.h; sourceTree = "<group>"; };
+		91516A9436D1CCF6B32C50D8 /* TAGContainer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TAGContainer.h; path = GoogleTagManager/Library/TAGContainer.h; sourceTree = "<group>"; };
+		91F8A9ADE5995A3E8A975DFE /* GAIEcommerceFields.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAIEcommerceFields.h; path = GoogleAnalytics/Library/GAIEcommerceFields.h; sourceTree = "<group>"; };
+		94765850F89CDF2DAFB1B538 /* DDMultiFormatter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDMultiFormatter.h; path = Classes/Extensions/DDMultiFormatter.h; sourceTree = "<group>"; };
+		9A6E254226FF1A9EDD492465 /* DDAbstractDatabaseLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDAbstractDatabaseLogger.h; path = Classes/DDAbstractDatabaseLogger.h; sourceTree = "<group>"; };
+		9EC66D882F8EF01480B47436 /* TAGDataLayer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TAGDataLayer.h; path = GoogleTagManager/Library/TAGDataLayer.h; sourceTree = "<group>"; };
+		AE0AD2AF04E2D0641457B865 /* GAILogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAILogger.h; path = GoogleAnalytics/Library/GAILogger.h; sourceTree = "<group>"; };
+		AF3853F7FE598A879F9D8050 /* libPods-NMX Motion-GoogleAnalytics-iOS-SDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NMX Motion-GoogleAnalytics-iOS-SDK.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B235863DC9928E7E1961CEBE /* DDMultiFormatter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDMultiFormatter.m; path = Classes/Extensions/DDMultiFormatter.m; sourceTree = "<group>"; };
+		B794E3F5BD71DE7F34A7E285 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B959BE789D7DEFBA0A109488 /* DDAbstractDatabaseLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDAbstractDatabaseLogger.m; path = Classes/DDAbstractDatabaseLogger.m; sourceTree = "<group>"; };
+		BE7ABA3BF331068DF0ABFBE3 /* Pods-NMX Motion-MBProgressHUD-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-NMX Motion-MBProgressHUD-prefix.pch"; sourceTree = "<group>"; };
+		BFD742B6270174A3E5216270 /* Pods-NMX Motion-MBProgressHUD-Private.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NMX Motion-MBProgressHUD-Private.xcconfig"; sourceTree = "<group>"; };
+		C13683FE93D1877260E42DD4 /* TAGContainerOpener.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TAGContainerOpener.h; path = GoogleTagManager/Library/TAGContainerOpener.h; sourceTree = "<group>"; };
+		C2C0B7336B8B95AF4D1AB45A /* Pods-NMX Motion-MBProgressHUD-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-NMX Motion-MBProgressHUD-dummy.m"; sourceTree = "<group>"; };
+		C90FFDB172FB1BB1708AF030 /* Pods-NMX Motion.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NMX Motion.release.xcconfig"; sourceTree = "<group>"; };
+		CB5681A7D83E361A2C3A76A4 /* DDContextFilterLogFormatter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDContextFilterLogFormatter.m; path = Classes/Extensions/DDContextFilterLogFormatter.m; sourceTree = "<group>"; };
+		D63457B8C43E6F90FC0CD636 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
+		DBAA46C02849B238D86882C8 /* Pods-NMX Motion-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-NMX Motion-dummy.m"; sourceTree = "<group>"; };
+		DF3AD04A2CF0D3D107F80A47 /* GAI.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAI.h; path = GoogleAnalytics/Library/GAI.h; sourceTree = "<group>"; };
+		E1CC595C057F6E4D644F9C39 /* libPods-NMX Motion-MBProgressHUD.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NMX Motion-MBProgressHUD.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E63AFD022A5933F9C55AB18F /* CocoaLumberjack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CocoaLumberjack.h; path = Classes/CocoaLumberjack.h; sourceTree = "<group>"; };
+		E732924CEDA6996EEFCCCE3E /* MBProgressHUD.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		E73C02842BA32F749C270284 /* Pods-NMX Motion-environment.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-NMX Motion-environment.h"; sourceTree = "<group>"; };
+		EB807EC744816C20D952A5F4 /* GAITrackedViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAITrackedViewController.h; path = GoogleAnalytics/Library/GAITrackedViewController.h; sourceTree = "<group>"; };
+		EED33384E5B2B09FBE47DA5D /* GAIDictionaryBuilder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GAIDictionaryBuilder.h; path = GoogleAnalytics/Library/GAIDictionaryBuilder.h; sourceTree = "<group>"; };
+		F48D508EF9F7A067D0F4FB75 /* DDLegacyMacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDLegacyMacros.h; path = Classes/DDLegacyMacros.h; sourceTree = "<group>"; };
+		F505EE243EB8816B10382742 /* DDLogMacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDLogMacros.h; path = Classes/DDLogMacros.h; sourceTree = "<group>"; };
+		F571161BC0DC09E67B0CA105 /* Pods-NMX Motion-CocoaLumberjack-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-NMX Motion-CocoaLumberjack-prefix.pch"; sourceTree = "<group>"; };
+		FB702758B19F52412F7D8F1D /* libPods-NMX Motion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NMX Motion.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3F32FBFBF9C8F4191D4F7B47 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B0772643D98E72B57CDAE06 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B08F4D7E1C35D1AF82F4E9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BA6FA538CE206307C22F0FFC /* CFNetwork.framework in Frameworks */,
+				9131B8877A077ADB806D85A0 /* CoreData.framework in Frameworks */,
+				405D32E9FC81B0DC89654E82 /* Foundation.framework in Frameworks */,
+				95B5FC2E4C9EF2F62AD6696F /* SystemConfiguration.framework in Frameworks */,
+				6586C4284F7D58FC5189E714 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48F21AE7BB61B5139A6A5902 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3CED0197C32F7814718662A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C541772F9E2F8F80CE13FF77 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				715574CCCFCF200DB89F19B7 /* CoreGraphics.framework in Frameworks */,
+				A89B8D922B46142AC073C9C7 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		18E26ACBB1B8ECDFD21E3D6D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				50D86F7DC4DE4B7CE1DF3ADE /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2080503F8B36C3CFC67B5FED /* CocoaLumberjack */ = {
+			isa = PBXGroup;
+			children = (
+				E28384DCE23A17DC12322D47 /* Core */,
+				2EE790DB09056BDE18A54656 /* Default */,
+				ED5F514052E8B0654D394C19 /* Extensions */,
+				C8078AB0A8A86230B73DDC8E /* Support Files */,
+			);
+			path = CocoaLumberjack;
+			sourceTree = "<group>";
+		};
+		2EE790DB09056BDE18A54656 /* Default */ = {
+			isa = PBXGroup;
+			children = (
+				E63AFD022A5933F9C55AB18F /* CocoaLumberjack.h */,
+			);
+			name = Default;
+			sourceTree = "<group>";
+		};
+		312109E67C99739547651DAC = {
+			isa = PBXGroup;
+			children = (
+				4F97FE5B745CEA97D6431BAF /* Podfile */,
+				18E26ACBB1B8ECDFD21E3D6D /* Frameworks */,
+				FC33824264D388D5963DE253 /* Pods */,
+				379A5EA073BC6FDE33FD58EF /* Products */,
+				FD112472B00E06CF3205BC86 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		379A5EA073BC6FDE33FD58EF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FB702758B19F52412F7D8F1D /* libPods-NMX Motion.a */,
+				37B46176D5150E2C27611EE0 /* libPods-NMX Motion-CocoaLumberjack.a */,
+				AF3853F7FE598A879F9D8050 /* libPods-NMX Motion-GoogleAnalytics-iOS-SDK.a */,
+				E1CC595C057F6E4D644F9C39 /* libPods-NMX Motion-MBProgressHUD.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		50D86F7DC4DE4B7CE1DF3ADE /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				D63457B8C43E6F90FC0CD636 /* CFNetwork.framework */,
+				2C05490A50009D38C0951BAF /* CoreData.framework */,
+				5499255385C5DC28A41F223D /* CoreGraphics.framework */,
+				B794E3F5BD71DE7F34A7E285 /* Foundation.framework */,
+				11E3FDB68148A470793DB8CE /* SystemConfiguration.framework */,
+				472395431EA76F71D546DFAF /* UIKit.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		54355102D4FDBA81B014F473 /* GoogleAnalytics-iOS-SDK */ = {
+			isa = PBXGroup;
+			children = (
+				6940DCE2943C95F45D9C7EFF /* Core */,
+				8BE98421718A7B01B7BDDABF /* Support Files */,
+			);
+			path = "GoogleAnalytics-iOS-SDK";
+			sourceTree = "<group>";
+		};
+		6940DCE2943C95F45D9C7EFF /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				DF3AD04A2CF0D3D107F80A47 /* GAI.h */,
+				EED33384E5B2B09FBE47DA5D /* GAIDictionaryBuilder.h */,
+				91F8A9ADE5995A3E8A975DFE /* GAIEcommerceFields.h */,
+				0E16A3321CB1FEA58EA2DC6B /* GAIEcommerceProduct.h */,
+				5B54C37066D1CD20174CB9A2 /* GAIEcommerceProductAction.h */,
+				5CF27DCF133332CCF65E00B8 /* GAIEcommercePromotion.h */,
+				8114E31C09382B360207818D /* GAIFields.h */,
+				AE0AD2AF04E2D0641457B865 /* GAILogger.h */,
+				EB807EC744816C20D952A5F4 /* GAITrackedViewController.h */,
+				4A2D26D64F27B30279F31E3A /* GAITracker.h */,
+				91516A9436D1CCF6B32C50D8 /* TAGContainer.h */,
+				C13683FE93D1877260E42DD4 /* TAGContainerOpener.h */,
+				9EC66D882F8EF01480B47436 /* TAGDataLayer.h */,
+				5667D0E88AD57E1DA07D7F17 /* TAGLogger.h */,
+				74CBADFD972B5204EC923A3C /* TAGManager.h */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		8BE98421718A7B01B7BDDABF /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				0804990F2A23FD84135FEDCB /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK.xcconfig */,
+				45E73BE74D1F863023AC9E0A /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-Private.xcconfig */,
+				3341C2C7659A1D797EB13F26 /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-dummy.m */,
+				7656BB745F498A0A30ABFFFE /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/Pods-NMX Motion-GoogleAnalytics-iOS-SDK";
+			sourceTree = "<group>";
+		};
+		C8078AB0A8A86230B73DDC8E /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				0F61ADBE01DA2720A69D124C /* Pods-NMX Motion-CocoaLumberjack.xcconfig */,
+				820DBFA50171423EF0E0736E /* Pods-NMX Motion-CocoaLumberjack-Private.xcconfig */,
+				00E7B1D085D4A9427188C1B5 /* Pods-NMX Motion-CocoaLumberjack-dummy.m */,
+				F571161BC0DC09E67B0CA105 /* Pods-NMX Motion-CocoaLumberjack-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/Pods-NMX Motion-CocoaLumberjack";
+			sourceTree = "<group>";
+		};
+		D578FFDE184BF8C84956B49C /* MBProgressHUD */ = {
+			isa = PBXGroup;
+			children = (
+				E732924CEDA6996EEFCCCE3E /* MBProgressHUD.h */,
+				4304FF23368123328A78CF4B /* MBProgressHUD.m */,
+				DCD3E6E030B96A3ACDB6C1A1 /* Support Files */,
+			);
+			path = MBProgressHUD;
+			sourceTree = "<group>";
+		};
+		DCD3E6E030B96A3ACDB6C1A1 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				544BA89D09D89BE1FF1D53E9 /* Pods-NMX Motion-MBProgressHUD.xcconfig */,
+				BFD742B6270174A3E5216270 /* Pods-NMX Motion-MBProgressHUD-Private.xcconfig */,
+				C2C0B7336B8B95AF4D1AB45A /* Pods-NMX Motion-MBProgressHUD-dummy.m */,
+				BE7ABA3BF331068DF0ABFBE3 /* Pods-NMX Motion-MBProgressHUD-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/Pods-NMX Motion-MBProgressHUD";
+			sourceTree = "<group>";
+		};
+		DF25F7B39BE7EC46EB641039 /* Pods-NMX Motion */ = {
+			isa = PBXGroup;
+			children = (
+				6BB5914BDC58A9728A56E0B0 /* Pods-NMX Motion-acknowledgements.markdown */,
+				55C14E1F800556171B6B5348 /* Pods-NMX Motion-acknowledgements.plist */,
+				DBAA46C02849B238D86882C8 /* Pods-NMX Motion-dummy.m */,
+				E73C02842BA32F749C270284 /* Pods-NMX Motion-environment.h */,
+				8616B7A791475219194BBD11 /* Pods-NMX Motion-resources.sh */,
+				6ED3DE6473CDF65AEF1FDBD6 /* Pods-NMX Motion.debug.xcconfig */,
+				C90FFDB172FB1BB1708AF030 /* Pods-NMX Motion.release.xcconfig */,
+			);
+			name = "Pods-NMX Motion";
+			path = "Target Support Files/Pods-NMX Motion";
+			sourceTree = "<group>";
+		};
+		E28384DCE23A17DC12322D47 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				83D663044B8B25A7F179536B /* DDASLLogCapture.h */,
+				4EBF84DEA18A39AC59445372 /* DDASLLogCapture.m */,
+				18F2743236D826D4159E367C /* DDASLLogger.h */,
+				75276B142CB7CAC43D67E44E /* DDASLLogger.m */,
+				9A6E254226FF1A9EDD492465 /* DDAbstractDatabaseLogger.h */,
+				B959BE789D7DEFBA0A109488 /* DDAbstractDatabaseLogger.m */,
+				2D17F947CC7CFBA9F7DE06FF /* DDAssertMacros.h */,
+				86E3608A83F027AE136EAACC /* DDFileLogger.h */,
+				2D5E3DF57E1FA41F0F0CA293 /* DDFileLogger.m */,
+				F48D508EF9F7A067D0F4FB75 /* DDLegacyMacros.h */,
+				1D442D15524C6C53A967ADB7 /* DDLog.h */,
+				373E3AB8E72139AEAF37B6F0 /* DDLog.m */,
+				4EF84E3486854E76C2F202C8 /* DDLog+LOGV.h */,
+				F505EE243EB8816B10382742 /* DDLogMacros.h */,
+				8E36E556B7E8BEA675406EBE /* DDTTYLogger.h */,
+				3E6242060B75C0B55294A1DC /* DDTTYLogger.m */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		ED5F514052E8B0654D394C19 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				665CDAB8903450B89BA79D28 /* DDContextFilterLogFormatter.h */,
+				CB5681A7D83E361A2C3A76A4 /* DDContextFilterLogFormatter.m */,
+				89265DB2D26D3042AC73818B /* DDDispatchQueueLogFormatter.h */,
+				4CE3FC6E38D22C5A59C253EC /* DDDispatchQueueLogFormatter.m */,
+				94765850F89CDF2DAFB1B538 /* DDMultiFormatter.h */,
+				B235863DC9928E7E1961CEBE /* DDMultiFormatter.m */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		FC33824264D388D5963DE253 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2080503F8B36C3CFC67B5FED /* CocoaLumberjack */,
+				54355102D4FDBA81B014F473 /* GoogleAnalytics-iOS-SDK */,
+				D578FFDE184BF8C84956B49C /* MBProgressHUD */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		FD112472B00E06CF3205BC86 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				DF25F7B39BE7EC46EB641039 /* Pods-NMX Motion */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		5BB707C661D90CC52EB9D94C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8169A2F772EEC7CA48C496C8 /* MBProgressHUD.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A918CDCECBF6B9BA0422437B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7B37E0B9B5FC045D3BC5CED /* CocoaLumberjack.h in Headers */,
+				039D4B515ED8804EFA720BF2 /* DDASLLogCapture.h in Headers */,
+				8B05D9A46CE866DB4EF1D225 /* DDASLLogger.h in Headers */,
+				369666133A0DB917FBB1D2BB /* DDAbstractDatabaseLogger.h in Headers */,
+				FB9C0A263285D3E97B611C4D /* DDAssertMacros.h in Headers */,
+				94B4399C1DF6FCF22A399D4D /* DDContextFilterLogFormatter.h in Headers */,
+				2AC85CE2E80B0565A03A41CB /* DDDispatchQueueLogFormatter.h in Headers */,
+				1C88D311BD6CBB68B9B6F100 /* DDFileLogger.h in Headers */,
+				D49408FE32484301E9FEA91C /* DDLegacyMacros.h in Headers */,
+				1EFC3739ADFA098E37A85766 /* DDLog+LOGV.h in Headers */,
+				09089228D653B405BC8F571C /* DDLog.h in Headers */,
+				A30D45667A7A518F7B74FFC0 /* DDLogMacros.h in Headers */,
+				54314C2090068C2267170795 /* DDMultiFormatter.h in Headers */,
+				A005F051B6E0B2CAEABB21B0 /* DDTTYLogger.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E662F0979B28D03DBEC4C2DA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59CC72BF0A074F63A04719DE /* GAI.h in Headers */,
+				43C793E3EBF097F3E9BCF0BF /* GAIDictionaryBuilder.h in Headers */,
+				6F00CE3B09C281453911B5CF /* GAIEcommerceFields.h in Headers */,
+				DAE6B762D1B01040AC72835C /* GAIEcommerceProduct.h in Headers */,
+				00F81BBC3EDCDE039944754C /* GAIEcommerceProductAction.h in Headers */,
+				5AEE5F328A82125CD9DC42D0 /* GAIEcommercePromotion.h in Headers */,
+				025310691384FDD5102F83EA /* GAIFields.h in Headers */,
+				EDFF905B394513C5F629051B /* GAILogger.h in Headers */,
+				4DF24866EF8FB824FE5CCFE9 /* GAITrackedViewController.h in Headers */,
+				EFD9D8A207D06373E281E05C /* GAITracker.h in Headers */,
+				2ADA699976740FE55FE2803E /* TAGContainer.h in Headers */,
+				08A0216442F2D4855AA3A01A /* TAGContainerOpener.h in Headers */,
+				322880C2D10E99DDDCC0885D /* TAGDataLayer.h in Headers */,
+				0B4C9EEF6CD78495D32682DC /* TAGLogger.h in Headers */,
+				D718B5AA4008B07FB10B90D6 /* TAGManager.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		3BE8D6F98C956652CC189375 /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 03D0CB8C6C42DD19A8D021AA /* Build configuration list for PBXNativeTarget "Pods-NMX Motion-GoogleAnalytics-iOS-SDK" */;
+			buildPhases = (
+				AF9EE16EE08D94DFE46226F4 /* Sources */,
+				43B08F4D7E1C35D1AF82F4E9 /* Frameworks */,
+				E662F0979B28D03DBEC4C2DA /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-NMX Motion-GoogleAnalytics-iOS-SDK";
+			productName = "Pods-NMX Motion-GoogleAnalytics-iOS-SDK";
+			productReference = AF3853F7FE598A879F9D8050 /* libPods-NMX Motion-GoogleAnalytics-iOS-SDK.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		4827282E429629116C3C71CC /* Pods-NMX Motion-MBProgressHUD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 77444C68DA74A918BFE0EA07 /* Build configuration list for PBXNativeTarget "Pods-NMX Motion-MBProgressHUD" */;
+			buildPhases = (
+				EE1C46441D02E4DEA3E53B74 /* Sources */,
+				C541772F9E2F8F80CE13FF77 /* Frameworks */,
+				5BB707C661D90CC52EB9D94C /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-NMX Motion-MBProgressHUD";
+			productName = "Pods-NMX Motion-MBProgressHUD";
+			productReference = E1CC595C057F6E4D644F9C39 /* libPods-NMX Motion-MBProgressHUD.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		AF4A151A08EE1C143A8E832C /* Pods-NMX Motion-CocoaLumberjack */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 28C9DD5ABFC7A368414368DA /* Build configuration list for PBXNativeTarget "Pods-NMX Motion-CocoaLumberjack" */;
+			buildPhases = (
+				EF3D51B3246F0F0BD9B44965 /* Sources */,
+				48F21AE7BB61B5139A6A5902 /* Frameworks */,
+				A918CDCECBF6B9BA0422437B /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-NMX Motion-CocoaLumberjack";
+			productName = "Pods-NMX Motion-CocoaLumberjack";
+			productReference = 37B46176D5150E2C27611EE0 /* libPods-NMX Motion-CocoaLumberjack.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		F5C182326EBC0EF9DBC98986 /* Pods-NMX Motion */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2069FECD2B6A37CD6CA967A /* Build configuration list for PBXNativeTarget "Pods-NMX Motion" */;
+			buildPhases = (
+				51EECAD74D84D36872732A28 /* Sources */,
+				3F32FBFBF9C8F4191D4F7B47 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FDAF8F590229122026C0C8A8 /* PBXTargetDependency */,
+				EAA667AD7B4C7C7410B6E648 /* PBXTargetDependency */,
+				6CD0C8A485D883EC02EF9067 /* PBXTargetDependency */,
+			);
+			name = "Pods-NMX Motion";
+			productName = "Pods-NMX Motion";
+			productReference = FB702758B19F52412F7D8F1D /* libPods-NMX Motion.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B2C261909B9DE4883F75E8E8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+			};
+			buildConfigurationList = DCE3DBA7751EE8F7AEDA17BD /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 312109E67C99739547651DAC;
+			productRefGroup = 379A5EA073BC6FDE33FD58EF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F5C182326EBC0EF9DBC98986 /* Pods-NMX Motion */,
+				AF4A151A08EE1C143A8E832C /* Pods-NMX Motion-CocoaLumberjack */,
+				3BE8D6F98C956652CC189375 /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK */,
+				4827282E429629116C3C71CC /* Pods-NMX Motion-MBProgressHUD */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		51EECAD74D84D36872732A28 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B733F7A1DD5BCE3F9DF91DF9 /* Pods-NMX Motion-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AF9EE16EE08D94DFE46226F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3DDC35710C122E172A00C7B /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE1C46441D02E4DEA3E53B74 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BB53E83FE3EF2C63F160D40 /* MBProgressHUD.m in Sources */,
+				7D25947DB127B184B948D4F6 /* Pods-NMX Motion-MBProgressHUD-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EF3D51B3246F0F0BD9B44965 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6EC33D740299068A0A22760 /* DDASLLogCapture.m in Sources */,
+				346C9FB54F3574131BA3C1FE /* DDASLLogger.m in Sources */,
+				9E424426A618CCB531C075F0 /* DDAbstractDatabaseLogger.m in Sources */,
+				CBC9FA73F07BA3698D0E5CD6 /* DDContextFilterLogFormatter.m in Sources */,
+				9F3EA43A3F1A30F6CB5C56C0 /* DDDispatchQueueLogFormatter.m in Sources */,
+				C467FD07F13B52B40BAFD3EB /* DDFileLogger.m in Sources */,
+				0928FF17EA0B014B83638390 /* DDLog.m in Sources */,
+				C0C7B9E51E97C4913E1E9BB6 /* DDMultiFormatter.m in Sources */,
+				89331AF39484B658F7AD3776 /* DDTTYLogger.m in Sources */,
+				B51E6BB80F06E7E092D66482 /* Pods-NMX Motion-CocoaLumberjack-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6CD0C8A485D883EC02EF9067 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Pods-NMX Motion-MBProgressHUD";
+			target = 4827282E429629116C3C71CC /* Pods-NMX Motion-MBProgressHUD */;
+			targetProxy = 6A49C7ABFCAFD60A159EEE74 /* PBXContainerItemProxy */;
+		};
+		EAA667AD7B4C7C7410B6E648 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Pods-NMX Motion-GoogleAnalytics-iOS-SDK";
+			target = 3BE8D6F98C956652CC189375 /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK */;
+			targetProxy = 5018C419D9BE7B9E5E9890C9 /* PBXContainerItemProxy */;
+		};
+		FDAF8F590229122026C0C8A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Pods-NMX Motion-CocoaLumberjack";
+			target = AF4A151A08EE1C143A8E832C /* Pods-NMX Motion-CocoaLumberjack */;
+			targetProxy = 2A5BAC32418E2A2A3023BA0A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		17720983D464A7E2C59D7D09 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2630C406A783E52D135B37DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BFD742B6270174A3E5216270 /* Pods-NMX Motion-MBProgressHUD-Private.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Pods-NMX Motion-MBProgressHUD/Pods-NMX Motion-MBProgressHUD-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		2CFF8EB083CB31F59892D4A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45E73BE74D1F863023AC9E0A /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-Private.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Pods-NMX Motion-GoogleAnalytics-iOS-SDK/Pods-NMX Motion-GoogleAnalytics-iOS-SDK-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		2D53B4D5A324CDEB910E75FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BFD742B6270174A3E5216270 /* Pods-NMX Motion-MBProgressHUD-Private.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Pods-NMX Motion-MBProgressHUD/Pods-NMX Motion-MBProgressHUD-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		57F065EF397F7BE614A99E04 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 820DBFA50171423EF0E0736E /* Pods-NMX Motion-CocoaLumberjack-Private.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Pods-NMX Motion-CocoaLumberjack/Pods-NMX Motion-CocoaLumberjack-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		5B9D811D4D4F66705B16E7D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C90FFDB172FB1BB1708AF030 /* Pods-NMX Motion.release.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		67AD442C3B436C4D1588BFC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45E73BE74D1F863023AC9E0A /* Pods-NMX Motion-GoogleAnalytics-iOS-SDK-Private.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Pods-NMX Motion-GoogleAnalytics-iOS-SDK/Pods-NMX Motion-GoogleAnalytics-iOS-SDK-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		725FFF01625499CA93EB1827 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED3DE6473CDF65AEF1FDBD6 /* Pods-NMX Motion.debug.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		B91E321A7E49DE778CFFD1EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 820DBFA50171423EF0E0736E /* Pods-NMX Motion-CocoaLumberjack-Private.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Pods-NMX Motion-CocoaLumberjack/Pods-NMX Motion-CocoaLumberjack-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		E81DBF75065F3888F028BF7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		03D0CB8C6C42DD19A8D021AA /* Build configuration list for PBXNativeTarget "Pods-NMX Motion-GoogleAnalytics-iOS-SDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				67AD442C3B436C4D1588BFC6 /* Debug */,
+				2CFF8EB083CB31F59892D4A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		28C9DD5ABFC7A368414368DA /* Build configuration list for PBXNativeTarget "Pods-NMX Motion-CocoaLumberjack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57F065EF397F7BE614A99E04 /* Debug */,
+				B91E321A7E49DE778CFFD1EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		77444C68DA74A918BFE0EA07 /* Build configuration list for PBXNativeTarget "Pods-NMX Motion-MBProgressHUD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D53B4D5A324CDEB910E75FF /* Debug */,
+				2630C406A783E52D135B37DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DCE3DBA7751EE8F7AEDA17BD /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E81DBF75065F3888F028BF7B /* Debug */,
+				17720983D464A7E2C59D7D09 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2069FECD2B6A37CD6CA967A /* Build configuration list for PBXNativeTarget "Pods-NMX Motion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				725FFF01625499CA93EB1827 /* Debug */,
+				5B9D811D4D4F66705B16E7D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B2C261909B9DE4883F75E8E8 /* Project object */;
+}
