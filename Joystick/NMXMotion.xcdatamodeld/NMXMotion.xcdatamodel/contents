@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14C2055" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="PresetOb" representedClassName="PresetOb" syncable="YES">
+        <attribute name="buffer" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="delay" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="exposure" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="focus" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="fps" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="frames" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="interval" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pandecrease" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="panincrease" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shotduration" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="slidedecrease" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="slideincrease" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="smscontinuous" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
+        <attribute name="tiltdecrease" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tiltincrease" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timelapsevideo" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
+        <attribute name="trigger" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="videolength" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="PresetOb" positionX="-63" positionY="-18" width="128" height="330"/>
+    </elements>
+</model>
