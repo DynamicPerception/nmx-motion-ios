@@ -55,7 +55,7 @@ typedef enum : unsigned char {
 
 @end
 
-@interface NMXDevice : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
+@interface NMXDevice : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate, NMXDeviceDelegate>
 
 - (id) initWithPeripheral: (CBPeripheral *) peripheral andCentralManager: (CBCentralManager *) centralManager;
 - (void) connect;
@@ -143,6 +143,8 @@ typedef enum : unsigned char {
 @property (assign) unsigned char panMotor;
 @property (assign) unsigned char tiltMotor;
 @property bool inBackground;
+@property (readonly) UInt16 fwVersion;
+@property (readonly) BOOL fwVersionUpdateAvailable;
 
 - (void) setHomePosition : (int) motor;
 

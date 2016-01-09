@@ -159,6 +159,12 @@
 		23F95D981A24CE8300E3D7DA /* JoyButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F95D971A24CE8300E3D7DA /* JoyButton.m */; };
 		23FD81081A23D78800FD9D49 /* CameraSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23FD81071A23D78800FD9D49 /* CameraSettingsViewController.m */; };
 		23FD810B1A23D8FC00FD9D49 /* ReviewStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23FD810A1A23D8FC00FD9D49 /* ReviewStatusViewController.m */; };
+		3048A1121C40657C00855EB0 /* DeviceState_Ready.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */; };
+		3048A1131C40657C00855EB0 /* DeviceState_Ready@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */; };
+		3048A1141C40657C00855EB0 /* DeviceState_Indeterminate.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */; };
+		3048A1151C40657C00855EB0 /* DeviceState_Indeterminate@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */; };
+		3048A1161C40657C00855EB0 /* DeviceState_Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1101C40657C00855EB0 /* DeviceState_Warning.png */; };
+		3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */; };
 		3F49EEA01B70FB97000899A6 /* upload-dsym.sh in Resources */ = {isa = PBXBuildFile; fileRef = 3F49EE9E1B70FB97000899A6 /* upload-dsym.sh */; };
 		3F49EEA11B70FB98000899A6 /* libTestFairy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F49EE9F1B70FB97000899A6 /* libTestFairy.a */; };
 		3F51E8B41B66A73900E1E2D5 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F51E8B21B66A73900E1E2D5 /* CoreMedia.framework */; };
@@ -388,6 +394,12 @@
 		23FD81071A23D78800FD9D49 /* CameraSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsViewController.m; sourceTree = "<group>"; };
 		23FD81091A23D8FC00FD9D49 /* ReviewStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReviewStatusViewController.h; sourceTree = "<group>"; };
 		23FD810A1A23D8FC00FD9D49 /* ReviewStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReviewStatusViewController.m; sourceTree = "<group>"; };
+		3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Ready.png; sourceTree = "<group>"; };
+		3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Ready@2x.png"; sourceTree = "<group>"; };
+		3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Indeterminate.png; sourceTree = "<group>"; };
+		3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Indeterminate@2x.png"; sourceTree = "<group>"; };
+		3048A1101C40657C00855EB0 /* DeviceState_Warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Warning.png; sourceTree = "<group>"; };
+		3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Warning@2x.png"; sourceTree = "<group>"; };
 		3F49EE9D1B70FB97000899A6 /* TestFairy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFairy.h; sourceTree = "<group>"; };
 		3F49EE9E1B70FB97000899A6 /* upload-dsym.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "upload-dsym.sh"; sourceTree = "<group>"; };
 		3F49EE9F1B70FB97000899A6 /* libTestFairy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFairy.a; sourceTree = "<group>"; };
@@ -742,6 +754,12 @@
 		5D6A79A11B27556200F93B71 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */,
+				3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */,
+				3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */,
+				3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */,
+				3048A1101C40657C00855EB0 /* DeviceState_Warning.png */,
+				3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */,
 				3F9C16681B63D82600D7D51B /* thumbBlue@2x.png */,
 				3F9C16691B63D82600D7D51B /* thumbBlue.png */,
 				3F9C16661B63D5FD00D7D51B /* thumb3@2x.png */,
@@ -876,7 +894,7 @@
 				TargetAttributes = {
 					2389AC1519DD938100FB2679 = {
 						CreatedOnToolsVersion = 6.0.1;
-						DevelopmentTeam = HSDRC688QJ;
+						DevelopmentTeam = 2UW4RDK2E7;
 					};
 				};
 			};
@@ -912,6 +930,7 @@
 				10CF71D01BC02C85004ED48C /* parabolic.png in Resources */,
 				2390DCE31AFE8ED600A00738 /* Lock_Icon@2x.png in Resources */,
 				10B3C5371BFE6A5400996BAF /* battery@2x.png in Resources */,
+				3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */,
 				10AA775F1C208053000B7249 /* dampening25@2x.png in Resources */,
 				5DAEBE4A19F4504F000AC7AA /* thumb.png in Resources */,
 				10CF737B1BD7F9BC004ED48C /* slot.png in Resources */,
@@ -919,6 +938,7 @@
 				10CF73511BD1949F004ED48C /* degree_circleLeft@2x.png in Resources */,
 				10CF73521BD1949F004ED48C /* degree_circleRight.png in Resources */,
 				10CF73531BD1949F004ED48C /* degree_circleTop.png in Resources */,
+				3048A1151C40657C00855EB0 /* DeviceState_Indeterminate@2x.png in Resources */,
 				10CF731D1BCC6703004ED48C /* max-track@2x.png in Resources */,
 				5DAEBE4C19F4508F000AC7AA /* thumb@2x.png in Resources */,
 				10AA775B1C208053000B7249 /* dampening100@2x.png in Resources */,
@@ -928,6 +948,7 @@
 				10CF72B91BC4ABDB004ED48C /* gradient-bg.png in Resources */,
 				106615861BA2118B00A85529 /* down-arrow.png in Resources */,
 				10CF735C1BD57984004ED48C /* max-track2@2x.png in Resources */,
+				3048A1121C40657C00855EB0 /* DeviceState_Ready.png in Resources */,
 				10CF739B1BD80F56004ED48C /* white-joystickP.png in Resources */,
 				10CF738F1BD80BFA004ED48C /* white-joystick6.png in Resources */,
 				10CF73431BCFF65A004ED48C /* degree_circle@2x.png in Resources */,
@@ -935,7 +956,9 @@
 				10CF73801BD80811004ED48C /* white-thumb@2x.png in Resources */,
 				10CF72BF1BC58247004ED48C /* bl0.png in Resources */,
 				3F9C16641B63D4E400D7D51B /* thumb4.png in Resources */,
+				3048A1141C40657C00855EB0 /* DeviceState_Indeterminate.png in Resources */,
 				10AA774D1C207B9F000B7249 /* dampening@2x.png in Resources */,
+				3048A1131C40657C00855EB0 /* DeviceState_Ready@2x.png in Resources */,
 				10D5EBBA1B94CEEC006125E1 /* doneup1.png in Resources */,
 				10D5EBB91B94CEEC006125E1 /* done1.png in Resources */,
 				10CF73421BCFF65A004ED48C /* degree_circle.png in Resources */,
@@ -982,6 +1005,7 @@
 				10CF73981BD80F04004ED48C /* white-joystick@2x.png in Resources */,
 				3F49EEA01B70FB97000899A6 /* upload-dsym.sh in Resources */,
 				10CF71C91BC02C79004ED48C /* linear@2x.png in Resources */,
+				3048A1161C40657C00855EB0 /* DeviceState_Warning.png in Resources */,
 				10B3C5301BFD102300996BAF /* Instagram@2x.png in Resources */,
 				10CF73691BD586C7004ED48C /* max-track3.png in Resources */,
 				10CF734E1BD1949F004ED48C /* degree_circleRight@2x.png in Resources */,
@@ -1230,6 +1254,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Joystick/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1254,6 +1279,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dynamicpercption.nmxcontroller;
 				PRODUCT_NAME = "$(TARGET_NAME) 3.0";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1271,6 +1297,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Joystick/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1295,6 +1322,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dynamicpercption.nmxcontroller;
 				PRODUCT_NAME = "$(TARGET_NAME) 3.0";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

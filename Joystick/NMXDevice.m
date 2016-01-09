@@ -20,6 +20,8 @@
 #define kDefaultsMotorPanInvert        @"MotorPanInvert"
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
 
+#define kCurrentSupportedFirmwareVersion 45
+
 
 typedef enum : unsigned char {
 
@@ -226,6 +228,8 @@ bool waitForResponse;
         self.disconnected = false;
         
         waitForResponse = true;
+        
+        [self initFirmware];
     }
     
     return self;
@@ -251,6 +255,37 @@ bool waitForResponse;
         [self.myServices addObject: service];
     }
 }
+
+#pragma mark device firmware initialization
+
+- (void) initFirmware
+{
+    self.delegate = self;
+
+    [self connect];
+}
+
+- (void) didConnect: (NMXDevice *) device
+{
+    // Initialize the device state and query firmware
+    
+    [self mainSetAppMode: true];
+    [self mainSetJoystickMode: false];
+    
+    _fwVersion = [self mainQueryFirmwareVersion];
+    if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
+    
+    [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+
+}
+
+- (void) didDisconnectDevice: (CBPeripheral *) peripheral
+{
+    // Do nothing, we expect this disconnect after querying the version number
+}
+
+
+#pragma mark device connection
 
 - (void) peripheral: (CBPeripheral *) peripheral
 didDiscoverCharacteristicsForService: (CBService *) service
@@ -373,6 +408,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
+    
+    //NSLog(@"******************************   Send Command %@", desc); // MM
     
     if (true == self.disconnected)
     {
@@ -682,8 +719,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 #pragma mark - Main Set
 
+- (BOOL) checkFWMinRequiredVersion: (UInt16) minVersionRequiredForCommand {
+    return self.fwVersion >= minVersionRequiredForCommand;
+}
+
 - (void) mainDebugLEDToggle {
-    
     unsigned char newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainDebugLEDToggle dataLength: 0];
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
@@ -714,7 +754,6 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (void) mainPausePlannedMove {
-    
     unsigned char newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainPausePlannedMove dataLength: 0];
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
@@ -854,9 +893,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     if ([self waitForResponse])
     {
+        NSLog(@"mainQueryFirmwareVersion Waiting for version");
         fwVerison = [[self extractReturnedNumber] UInt16Value];
     }
-    
+
+    NSLog(@"mainQueryFirmwareVersion = %i", fwVerison);
     return fwVerison;
 }
 
@@ -1887,6 +1928,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) setCurrentKeyFrameAxis: (UInt16) value {
     
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
+    
     unsigned char newDataBytes[16];
     
     [self setupBuffer: newDataBytes subAddress: 5 command: NMXSetAxis dataLength: 2];
@@ -1904,6 +1947,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (void) setKeyFrameCount: (UInt16) value {
+
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
     
     unsigned char newDataBytes[16];
     
@@ -1922,6 +1967,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (void) setKeyFrameAbscissa: (float) value {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
     
     unsigned char newDataBytes[16];
     
@@ -1942,6 +1989,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (void) setKeyFramePosition: (float) value {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
     
     char newDataBytes[16];
     
@@ -1964,6 +2013,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) setKeyFrameVelocity: (float) value {
     
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
+    
     unsigned char newDataBytes[16];
     
     [self setupBuffer: newDataBytes subAddress: 5 command: NMXKeyFrameVelocity dataLength: 4];
@@ -1983,7 +2034,9 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 //- (void) setKeyFrameVideoTime: (UInt16) value {
-//    
+//
+//    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
+//
 //    unsigned char newDataBytes[16];
 //    
 //    [self setupBuffer: newDataBytes subAddress: 5 command: NMXKeyFrameContinuousVideoTime dataLength: 4];
@@ -2003,6 +2056,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 //}
 
 - (void) setKeyFrameVideoTime: (UInt32) value {
+  
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
     
     unsigned char newDataBytes[16];
     
@@ -2024,6 +2079,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) endKeyFrameTransmission {
     
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
+    
     unsigned char newDataBytes[16];
     
     [self setupBuffer: newDataBytes subAddress: 5 command: NMXKeyFrameEndTransmission dataLength: 0];
@@ -2034,6 +2091,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (void) startKeyFrameProgram {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
     
     unsigned char newDataBytes[16];
     
@@ -2046,6 +2105,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) stopKeyFrameProgram {
     
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
+    
     unsigned char newDataBytes[16];
     
     [self setupBuffer: newDataBytes subAddress: 5 command: NMXStopKeyFrameProgram dataLength: 0];
@@ -2057,6 +2118,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) pauseKeyFrameProgram {
     
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return;
+    
     unsigned char newDataBytes[16];
     
     [self setupBuffer: newDataBytes subAddress: 5 command: NMXPauseKeyFrameProgram dataLength: 0];
@@ -2067,6 +2130,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (UInt32) queryKeyFrameProgramRunState {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return 0;
     
     UInt32    runState;
     unsigned char newDataBytes[16];
@@ -2089,6 +2154,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (UInt32) queryKeyFrameProgramCurrentTime {
     
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return 0;
+    
     UInt32    currentTime;
     unsigned char newDataBytes[16];
     
@@ -2108,6 +2175,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (UInt32) queryKeyFrameProgramMaxTime {
     
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return 0;
+    
     UInt32    maxTime;
     unsigned char newDataBytes[16];
     
@@ -2126,6 +2195,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (UInt32) queryKeyFramePercentComplete {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 46]) return 0;
     
     UInt32    percentComplete;
     unsigned char newDataBytes[16];

@@ -16,7 +16,6 @@
 #import "JoyButton.h"
 #import "MBProgressHUD.h"
 
-#define kCurrentFirmwareVersion 45
 
 //------------------------------------------------------------------------------
 
@@ -1825,11 +1824,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         
         dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            [device mainSetAppMode: true];
-            [device mainSetJoystickMode: false];
-            
             queryStatus = [device mainQueryRunStatus];
-            queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
             
             if (queryStatus == 99) {
                 
@@ -1851,62 +1846,46 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             }
             else
             {
-            
-            if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
-                    {
-                        appExecutive.is3P = YES;
-                        [switch2P setOn:YES];
-                    }
-                        
-                    self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
-                    self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
-                    self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
-                    [self showVoltage];
-                    [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
-                });
-            }
-            else
-            {
-                [device motorEnable: device.sledMotor];
-                [device motorEnable: device.panMotor];
-                [device motorEnable: device.tiltMotor];
-                
-                [self setupMicrosteps];
-                int version = [device mainQueryFirmwareVersion];
-                
-             //NSLog(@"version: %i",version);
-                
-                if (version < kCurrentFirmwareVersion)
+                queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
+
+                if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
                 {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"New Firmware Version"
-                                                                            message: @"New firmware is available for the NMX, please update the NMX firmware asap"
-                                                                           delegate: nil
-                                                                  cancelButtonTitle: @"OK"
-                                                                  otherButtonTitles: nil];
-                        [alert show];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+                        {
+                            appExecutive.is3P = YES;
+                            [switch2P setOn:YES];
+                        }
+                        
+                        self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
+                        self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
+                        self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
+                        [self showVoltage];
+                        [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
                     });
                 }
-                
-                [self enterJoystickMode];
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if (NMXRunStatusStopped == queryStatus)
+                else
                 {
-                    [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
+                    [device motorEnable: device.sledMotor];
+                    [device motorEnable: device.panMotor];
+                    [device motorEnable: device.tiltMotor];
+                    
+                    [self setupMicrosteps];
+                    [self enterJoystickMode];
                 }
-            });
-            
-            
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    
+                    if (NMXRunStatusStopped == queryStatus)
+                    {
+                        [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
+                    }
+                });
+                
+                
             }
             
             

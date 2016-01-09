@@ -174,8 +174,52 @@
     cell.textLabel.text = [[AppExecutive sharedInstance] stringWithHandleForDeviceName: device.name];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
+
+    NSString *deviceImage = @"DeviceState_Indeterminate.png";
+    if (device.fwVersion)
+    {
+        deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+    }
+    cell.imageView.image = [UIImage imageNamed: deviceImage];
     
     return cell;
+}
+
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if ([identifier isEqualToString:@"showMainView"] || [identifier isEqualToString: @"simulatorShowMainView"])
+    {
+#if !TARGET_IPHONE_SIMULATOR
+        
+        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+        NMXDevice *device = [self.deviceList objectAtIndex: indexPath.row];
+        
+        if (device.fwVersionUpdateAvailable)
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"New Firmware Version"
+                                                            message: @"New firmware is available for the NMX, please update the NMX firmware asap.  If you continue some features will be disabled."
+                                                           delegate: self
+                                                  cancelButtonTitle: @"Cancel"
+                                                  otherButtonTitles: @"Continue", nil];
+            [alert show];
+            return NO;
+        }
+#endif
+    }
+    
+    return YES;
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex == 0)
+    {
+        [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+    }
+    else
+    {
+        [self performSegueWithIdentifier:@"showMainView" sender:self];
+    }
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -198,5 +242,29 @@
 
     [super didReceiveMemoryWarning];
 }
+
+- (void) didDisconnectDevice: (CBPeripheral *) peripheral
+{
+    // Called after the device has been queried for the firmware version number and disconnected
+
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+
+    
+        NSArray *cells = [self.tableView visibleCells];
+        for (UITableViewCell *cell in cells)
+        {
+            if ([cell.textLabel.text containsString: peripheral.name])
+            {
+                NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+                NMXDevice *device = [self.deviceList objectAtIndex: indexPath.row];
+                
+                NSString *deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+                cell.imageView.image = [UIImage imageNamed: deviceImage];
+            }
+        }
+    });
+        
+}
+
 
 @end
