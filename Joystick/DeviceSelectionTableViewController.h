@@ -16,3 +16,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *notificationLbl;
 
 @end
+
+@interface DeviceTableViewCell : UITableViewCell
+
+@property (strong, nonatomic) IBOutlet UIButton *settingsButton;
+@property (strong, nonatomic) NMXDevice *device;
+
+@end

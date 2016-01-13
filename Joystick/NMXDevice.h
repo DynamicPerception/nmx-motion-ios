@@ -49,9 +49,14 @@ typedef enum : unsigned char {
 
 @protocol NMXDeviceDelegate <NSObject>
 
+@optional
+
+- (void) peripheralWasConnected: (CBPeripheral *) peripheral;
+
 @required
 
 - (void) didConnect: (NMXDevice *) device;
+
 
 @end
 

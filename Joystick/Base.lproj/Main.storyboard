@@ -26,8 +26,8 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6tZ-KF-5ag" userLabel="Email Log File" customClass="JoyButton">
-                                <rect key="frame" x="188" y="378" width="225" height="34"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6tZ-KF-5ag" userLabel="Email Log File" customClass="JoyButton">
+                                <rect key="frame" x="188" y="379" width="225" height="34"/>
                                 <color key="backgroundColor" red="0.27450980392156865" green="0.27450980392156865" blue="0.27450980392156865" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="CBO-uY-9AO"/>
@@ -42,8 +42,8 @@
                                     <action selector="handleEmailLogFileButton:" destination="O3i-3h-ccc" eventType="touchUpInside" id="ZDc-xU-gEn"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="App Version:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bbl-GQ-8gG" userLabel="App Version Label">
-                                <rect key="frame" x="0.0" y="788" width="48" height="10"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="App Version:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bbl-GQ-8gG" userLabel="App Version Label">
+                                <rect key="frame" x="0.0" y="788" width="51" height="10"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -64,13 +64,13 @@
                                 <rect key="frame" x="16" y="57" width="568" height="278"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Device Information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V4h-m5-ybJ">
-                                        <rect key="frame" x="206" y="15" width="157" height="22"/>
+                                        <rect key="frame" x="199" y="15" width="164" height="22"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Device Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3b5-oP-6no" userLabel="DeviceName  Label">
-                                        <rect key="frame" x="8" y="51" width="110" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Device Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3b5-oP-6no" userLabel="DeviceName  Label">
+                                        <rect key="frame" x="8" y="52" width="110" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="110" id="cE2-0D-wyw"/>
                                         </constraints>
@@ -89,8 +89,8 @@
                                             <action selector="handleDeviceNameButton:" destination="O3i-3h-ccc" eventType="touchUpInside" id="aJD-W8-b9B"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="DeviceName" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="FpZ-71-Zwd" userLabel="DeviceName">
-                                        <rect key="frame" x="134" y="51" width="426" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DeviceName" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="FpZ-71-Zwd" userLabel="DeviceName">
+                                        <rect key="frame" x="134" y="52" width="418" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="18" id="IUW-lw-LfX"/>
                                         </constraints>
@@ -107,14 +107,14 @@
                                         <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="DeviceID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="4vD-le-23x" userLabel="DeviceID">
-                                        <rect key="frame" x="134" y="84" width="426" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DeviceID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="4vD-le-23x" userLabel="DeviceID">
+                                        <rect key="frame" x="134" y="85" width="418" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="3.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4fC-eq-naB" userLabel="Voltage">
-                                        <rect key="frame" x="134" y="152" width="22" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4fC-eq-naB" userLabel="Voltage">
+                                        <rect key="frame" x="134" y="153" width="24" height="18"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -131,14 +131,14 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="*Device Name only displays on this iOS device" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BOh-U4-m3X" userLabel="Device Name Comment">
-                                        <rect key="frame" x="8" y="251" width="218" height="12"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="*Device Name only displays on this iOS device" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BOh-U4-m3X" userLabel="Device Name Comment">
+                                        <rect key="frame" x="8" y="252" width="225" height="12"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Current Voltage" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7mw-SZ-3cf" userLabel="Voltage Label">
-                                        <rect key="frame" x="8" y="152" width="110" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Voltage" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7mw-SZ-3cf" userLabel="Voltage Label">
+                                        <rect key="frame" x="8" y="153" width="110" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="110" id="N75-iK-VWj"/>
                                         </constraints>
@@ -146,8 +146,8 @@
                                         <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Voltage High" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2ys-yG-eDD" userLabel="Voltage Label">
-                                        <rect key="frame" x="8" y="218" width="110" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Voltage High" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2ys-yG-eDD" userLabel="Voltage Label">
+                                        <rect key="frame" x="8" y="219" width="110" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="110" id="91w-eD-lTo"/>
                                         </constraints>
@@ -167,8 +167,8 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation"/>
                                     </textField>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Voltage Low" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AY8-r8-d3e" userLabel="Voltage Label">
-                                        <rect key="frame" x="8" y="185" width="110" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Voltage Low" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AY8-r8-d3e" userLabel="Voltage Label">
+                                        <rect key="frame" x="8" y="186" width="110" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="110" id="Xt9-dE-nZ3"/>
                                         </constraints>
@@ -229,7 +229,7 @@
                                 </variation>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UJg-rm-kdh" customClass="JoyButton">
-                                <rect key="frame" x="16" y="421" width="568" height="34"/>
+                                <rect key="frame" x="20" y="422" width="560" height="34"/>
                                 <color key="backgroundColor" red="0.27450980390000002" green="0.27450980390000002" blue="0.27450980390000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                 <state key="normal" title="OK">
@@ -321,15 +321,39 @@
                                 <rect key="frame" x="0.0" y="80" width="600" height="673"/>
                                 <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeviceCell" id="Rpv-vC-3D1">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeviceCell" id="Rpv-vC-3D1" customClass="DeviceTableViewCell">
                                         <rect key="frame" x="0.0" y="22" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Rpv-vC-3D1" id="wHa-sY-OnA">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mdj-KL-le4" userLabel="Settings Button">
+                                                    <rect key="frame" x="279" y="1" width="41" height="41"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="41" id="FJo-W9-aSj"/>
+                                                        <constraint firstAttribute="height" constant="41" id="bFW-rv-TDb"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                                    <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <state key="normal" title="#"/>
+                                                    <connections>
+                                                        <action selector="settingsButtonSelected:" destination="Rpv-vC-3D1" eventType="touchUpInside" id="DxI-io-dA2"/>
+                                                        <segue destination="O3i-3h-ccc" kind="presentation" id="7H3-V6-M3H"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MWK-ht-AGQ">
+                                                    <rect key="frame" x="319" y="7" width="64" height="30"/>
+                                                    <state key="normal" title="Connect"/>
+                                                    <connections>
+                                                        <action selector="connectButtonSelected:" destination="Rpv-vC-3D1" eventType="touchUpInside" id="ssd-ba-is7"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
                                             <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="settingsButton" destination="mdj-KL-le4" id="7Vw-IW-nQU"/>
                                             <segue destination="BYZ-38-t0r" kind="show" identifier="showMainView" id="K6t-E6-71o"/>
                                         </connections>
                                     </tableViewCell>
@@ -3234,7 +3258,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GkH-Cg-WfF" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="6xR-xb-HcH" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1856" y="169"/>
+            <point key="canvasLocation" x="1975" y="127"/>
         </scene>
         <!--Review Status View Controller-->
         <scene sceneID="PHP-3o-Q0d">
@@ -5507,18 +5531,18 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="IfY-aS-7xa"/>
-        <segue reference="RFH-OB-Gp4"/>
-        <segue reference="aFw-MN-OaY"/>
-        <segue reference="vr9-JF-N1x"/>
-        <segue reference="PwX-tX-cQi"/>
-        <segue reference="gqx-Wd-6xg"/>
-        <segue reference="l1d-eL-qTA"/>
-        <segue reference="QDi-9c-Wwb"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="TNv-a2-D3V"/>
         <segue reference="k3P-Db-zBC"/>
+        <segue reference="5Fi-kf-KP0"/>
+        <segue reference="6SS-hE-J9g"/>
+        <segue reference="6tH-tQ-8da"/>
+        <segue reference="oNZ-l0-vdW"/>
+        <segue reference="p4Z-EB-hlS"/>
+        <segue reference="RMu-iv-gcK"/>
+        <segue reference="rGc-Y0-TPg"/>
         <segue reference="Nk1-9G-Dpm"/>
+        <segue reference="RFH-OB-Gp4"/>
+        <segue reference="7H3-V6-M3H"/>
+        <segue reference="IfY-aS-7xa"/>
+        <segue reference="PwX-tX-cQi"/>
     </inferredMetricsTieBreakers>
 </document>

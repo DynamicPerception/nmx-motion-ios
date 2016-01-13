@@ -18,6 +18,23 @@
 @property NSArray *             deviceList;
 @end
 
+@implementation DeviceTableViewCell
+
+- (IBAction) settingsButtonSelected: (id) sender
+{
+    AppExecutive * appExecutive = [AppExecutive sharedInstance];
+    appExecutive.device = self.device;
+}
+
+- (IBAction) connectButtonSelected: (id) sender
+{
+    UIButton *button = (UIButton *)sender;
+    [button setTitle:@"Go" forState:UIControlStateNormal];
+    self.settingsButton.enabled = YES;
+}
+
+@end
+
 @implementation DeviceSelectionTableViewController
 
 @synthesize notificationLbl,shareBtn;
@@ -140,6 +157,18 @@
     [[AppExecutive sharedInstance].deviceManager startScanning: sender.on];
 }
 
+- (NSString *)getImageForDeviceStatus: (NMXDevice *)device
+{
+    //    NSString *deviceImage = @"DeviceState_Indeterminate.png";
+    NSString *deviceImage = @"DeviceState_Off.png";
+    if (device.fwVersion)
+    {
+        deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+    }
+
+    return deviceImage;
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
@@ -168,19 +197,19 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceCell" forIndexPath:indexPath];
+    DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceCell" forIndexPath:indexPath];
 
     NMXDevice * device = [self.deviceList objectAtIndex: indexPath.row];
     cell.textLabel.text = [[AppExecutive sharedInstance] stringWithHandleForDeviceName: device.name];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
+    [cell.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
+    cell.device = device;
 
-    NSString *deviceImage = @"DeviceState_Indeterminate.png";
-    if (device.fwVersion)
-    {
-        deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
-    }
+    NSString *deviceImage = [self getImageForDeviceStatus: device];
     cell.imageView.image = [UIImage imageNamed: deviceImage];
+    
+    NSLog(@"Populating table with device image %@", deviceImage);
     
     return cell;
 }
@@ -201,6 +230,16 @@
                                                            delegate: self
                                                   cancelButtonTitle: @"Cancel"
                                                   otherButtonTitles: @"Continue", nil];
+            [alert show];
+            return NO;
+        }
+        else if (0 == device.fwVersion)
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Device not ready"
+                                                            message: @"The device is being initialized, please wait."
+                                                           delegate: self
+                                                  cancelButtonTitle: @"OK"
+                                                  otherButtonTitles: nil];
             [alert show];
             return NO;
         }
@@ -247,6 +286,8 @@
 {
     // Called after the device has been queried for the firmware version number and disconnected
 
+    NSLog(@"Device disconnected from initFirmware");
+    
     dispatch_async(dispatch_get_main_queue(), ^(void) {
 
     
@@ -257,9 +298,11 @@
             {
                 NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
                 NMXDevice *device = [self.deviceList objectAtIndex: indexPath.row];
-                
-                NSString *deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+
+                NSString *deviceImage = [self getImageForDeviceStatus: device];
                 cell.imageView.image = [UIImage imageNamed: deviceImage];
+                
+                NSLog(@"Updating image after firmware check %@", deviceImage);
             }
         }
     });

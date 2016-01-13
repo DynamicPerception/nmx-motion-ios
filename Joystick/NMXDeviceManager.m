@@ -112,6 +112,16 @@
    didConnectPeripheral: (CBPeripheral *) peripheral {
 
     DDLogDebug(@"Peripheral connected");
+    
+    if (peripheral.delegate)
+    {
+        NMXDevice *peripheralDelegate = (NMXDevice *)peripheral.delegate;
+        if ([peripheralDelegate respondsToSelector:@selector(peripheralWasConnected:)])
+        {
+            [peripheralDelegate peripheralWasConnected: peripheral];
+        }
+    }
+    
     [peripheral discoverServices:nil];
 }
 

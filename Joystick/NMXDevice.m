@@ -169,6 +169,7 @@ typedef enum: unsigned char {
 @property (assign) int retryCount;
 @property (assign) bool retrying;
 @property (assign) bool disconnected;
+@property (atomic) int serviceDiscoveryRetryCount;
 @property (assign) float lastTimeout;
 @property (atomic, strong) dispatch_semaphore_t mySemaphore;
 @property (atomic, strong) NSData *myLastCommand;
@@ -200,6 +201,7 @@ bool waitForResponse;
         self.myServices = [NSMutableArray arrayWithCapacity: 3];
         self.myNotifyBuffer = [NSMutableData dataWithCapacity: 20];
         self.myNotifyData = 0;
+        self.serviceDiscoveryRetryCount = 3;
         
         moving[0] = NMXMovingStopped;
         moving[1] = NMXMovingStopped;
@@ -247,13 +249,58 @@ bool waitForResponse;
 
 - (void) peripheral: (CBPeripheral *) peripheral didDiscoverServices: (NSError *) error {
 
+    NSLog(@"MM didDiscoverServices ********************"); // MM
+    
+    self.serviceDiscoveryRetryCount = 0;
+    
     for (CBService *service in peripheral.services)
     {
-        //DDLogDebug(@"Discovered service %@ with UDID %@", service, service.UUID);
+        // MM uncommented
+        DDLogDebug(@"Discovered service %@ with UDID %@", service, service.UUID);
         
         [peripheral discoverCharacteristics: nil forService: service];
         [self.myServices addObject: service];
     }
+}
+
+- (void) retryServiceDiscoveryForPeripheral:(CBPeripheral *) peripheral
+{
+    if (self.serviceDiscoveryRetryCount <= 0)
+    {
+        DDLogDebug(@"Cannot connect to device, bailing out");
+        return;
+    }
+    
+    NSTimeInterval delaySeconds = 3;
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, delaySeconds*NSEC_PER_SEC);
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);
+    
+    dispatch_after(delay,queue, ^{
+        // Something went wrong, we never discovered the services, retry.
+        if (self.serviceDiscoveryRetryCount > 0)
+        {
+            self.serviceDiscoveryRetryCount -= 1;
+            DDLogDebug(@"Failed to discover services, retrying");
+            [self retryServiceDiscoveryForPeripheral: peripheral];  // FIXME: only retry 3 times
+            //            [peripheral discoverServices:nil];
+            
+            [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+            
+            NSTimeInterval delaySeconds = .5;
+            dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, delaySeconds*NSEC_PER_SEC);
+            dispatch_after(delay,queue, ^{
+                [self initFirmware];
+            });
+        }
+    });
+    
+}
+
+- (void) peripheralWasConnected: (CBPeripheral *) peripheral
+{
+    NSLog(@"Delegate .... peripheral Was connected");
+    
+    [self retryServiceDiscoveryForPeripheral:peripheral];
 }
 
 #pragma mark device firmware initialization
@@ -269,14 +316,19 @@ bool waitForResponse;
 {
     // Initialize the device state and query firmware
     
-    [self mainSetAppMode: true];
-    [self mainSetJoystickMode: false];
-    
-    _fwVersion = [self mainQueryFirmwareVersion];
-    if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
-    
-    [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+    int64_t delay = 3.0; // In seconds
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
+    dispatch_after(time, dispatch_get_main_queue(), ^(void) {
 
+        [self mainSetAppMode: true];
+        [self mainSetJoystickMode: false];
+        
+        _fwVersion = [self mainQueryFirmwareVersion];
+        if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
+        
+        [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+
+    });
 }
 
 - (void) didDisconnectDevice: (CBPeripheral *) peripheral
@@ -294,6 +346,7 @@ didDiscoverCharacteristicsForService: (CBService *) service
     for (CBCharacteristic *characteristic in service.characteristics)
     {
         //DDLogDebug(@"Discovered characteristic %@ of service %@", characteristic, service);
+        NSLog(@"MM **** Discovered characteristic %@ of service %@ UUID %@", characteristic, service, characteristic.UUID);
         
         if (characteristic.properties & CBCharacteristicPropertyNotify)
         {
@@ -409,10 +462,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
-    //NSLog(@"******************************   Send Command %@", desc); // MM
+    NSLog(@"MM ******************************   Send Command %@", desc); // MM
     
     if (true == self.disconnected)
     {
+        NSLog(@"MM ******************************   Send Command %@ --------- Disonnected", desc); // MM
         [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
         return;
     }
@@ -420,10 +474,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     if (false == waitForResponse)
     {
         CFTimeInterval now = CACurrentMediaTime();
-        
+        NSLog(@"MM ******************************   Send Command %@ --------- wait", desc); // MM
         if ((now - self.lastCommandTime) < self.lastTimeout)
         {
             useconds_t sleepTime = (self.lastCommandTime - now + self.lastTimeout) * 1000000;
+            NSLog(@"MM ******************************   Send Command %@ --------- sleep %ul", desc, sleepTime); // MM
             usleep(sleepTime);
         }
     }
@@ -469,6 +524,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     waitForResponse = inWaitForResponse;
     
     //DDLogDebug(@"Sending %@", commandData); //randall 8-17-15
+    
+    NSLog(@"MM ******************************   Send Command %@ -------------- WRITING Stuff", desc); // MM
     
     [self.myPeripheral writeValue: commandData forCharacteristic: self.myOutputCharacteristic type: CBCharacteristicWriteWithResponse];
     
