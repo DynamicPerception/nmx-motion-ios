@@ -190,7 +190,6 @@
     self.scanInProcess = false;
     self.scanRequested = false;
     [self.myCBCentralManager stopScan];
-    self.myDevices = [NSMutableArray arrayWithCapacity: 3];
 }
 
 - (void) isInReview {

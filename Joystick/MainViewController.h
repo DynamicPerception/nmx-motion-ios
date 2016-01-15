@@ -14,11 +14,8 @@
 #import "JoystickSlider.h"
 #import "HelpViewController.h"
 
-@interface MainViewController : UIViewController <JoystickOutput, NMXDeviceDelegate> {
+@interface MainViewController : UIViewController <JoystickOutput> {
 
-    int queryStatus;
-    int queryStatusKeyFrame;
-    
     bool animated1;
     
     float distance1;

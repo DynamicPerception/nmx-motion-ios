@@ -131,10 +131,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     [[NSUserDefaults standardUserDefaults] setValue:@(NO) forKey:@"_UIConstraintBasedLayoutLogUnsatisfiable"];
 
-    self.appExecutive.device.delegate = self;
-    
-    [self.appExecutive.device connect];
-
     self.joystickModeActive = false;
     self.showingModalScreen = false;
 
@@ -361,6 +357,41 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     UITapGestureRecognizer *gestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(enterJoystickMode)];
     [self.joystickViewController.view addGestureRecognizer:gestureRecognizer1];
     gestureRecognizer.cancelsTouchesInView = NO;
+    
+    
+    NMXDevice *device = self.appExecutive.device;
+    
+    int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
+    int queryStatus = [device mainQueryRunStatus];
+
+    if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+    {
+        if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+        {
+            appExecutive.is3P = YES;
+            [switch2P setOn:YES];
+        }
+        
+        self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
+        self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
+        self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
+        [self showVoltage];
+        [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
+    }
+    else
+    {
+        [device motorEnable: device.sledMotor];
+        [device motorEnable: device.panMotor];
+        [device motorEnable: device.tiltMotor];
+        
+        [self setupMicrosteps];
+        [self enterJoystickMode];
+    }
+    
+    if (NMXRunStatusStopped == queryStatus)
+    {
+        [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
+    }
     
     [super viewDidLoad];
 }
@@ -1812,85 +1843,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         [self.appExecutive.device mainSetJoystickMode: false];
         self.joystickModeActive = false;
     }
-}
-
-- (void) didConnect: (NMXDevice *) device {
-
-    // For now, we are doing all of our device communication on the main queue.  Would be good to move it to it's own queue...
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            
-            queryStatus = [device mainQueryRunStatus];
-            
-            if (queryStatus == 99) {
-                
-                NSLog(@"stop everything");
-                
-                self.appExecutive.resetController = YES;
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    
-                    
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Connection Error"
-                                                                    message: @"Please reset controller"
-                                                                   delegate: nil
-                                                          cancelButtonTitle: @"OK"
-                                                          otherButtonTitles: nil];
-                    [alert show];
-                });
-            }
-            else
-            {
-                queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
-
-                if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
-                {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        
-                        if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
-                        {
-                            appExecutive.is3P = YES;
-                            [switch2P setOn:YES];
-                        }
-                        
-                        self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
-                        self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
-                        self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
-                        [self showVoltage];
-                        [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
-                    });
-                }
-                else
-                {
-                    [device motorEnable: device.sledMotor];
-                    [device motorEnable: device.panMotor];
-                    [device motorEnable: device.tiltMotor];
-                    
-                    [self setupMicrosteps];
-                    [self enterJoystickMode];
-                }
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    [MBProgressHUD hideHUDForView:self.view animated:YES];
-                    
-                    if (NMXRunStatusStopped == queryStatus)
-                    {
-                        [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
-                    }
-                });
-                
-                
-            }
-            
-            
-        });
-    });
 }
 
 - (void) handleEnteredBackground: (NSNotification *) notification {

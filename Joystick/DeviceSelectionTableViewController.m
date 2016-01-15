@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Dynamic Perception. All rights reserved.
 //
 
+#import <CocoaLumberjack/CocoaLumberjack.h>
 #import "DeviceSelectionTableViewController.h"
 #import "AppExecutive.h"
 #import "NMXDeviceManager.h"
@@ -22,16 +23,124 @@
 
 - (IBAction) settingsButtonSelected: (id) sender
 {
+#if !TARGET_IPHONE_SIMULATOR
+
     AppExecutive * appExecutive = [AppExecutive sharedInstance];
     appExecutive.device = self.device;
+    
+    [self.tableView performSegueWithIdentifier:@"showSettingsView" sender:self];
+#endif
 }
 
 - (IBAction) connectButtonSelected: (id) sender
 {
-    UIButton *button = (UIButton *)sender;
-    [button setTitle:@"Go" forState:UIControlStateNormal];
-    self.settingsButton.enabled = YES;
+    if (self.device.disconnected)
+    {
+        [self.tableView disconnectAll];
+        
+        [self initFirmware];
+    
+        [self.activityIndicator startAnimating];
+    
+        UIButton *button = (UIButton *)sender;
+        button.hidden = YES;
+    }
+    else
+    {
+        [self.tableView navigateToMainViewWithDevice: self.device];
+    }
 }
+
+
+
+#pragma mark device firmware initialization
+
+- (void) initFirmware
+{
+    self.device.delegate = self;
+    
+    [self.device connect];
+}
+
+- (NSString *)getImageForDeviceStatus: (NMXDevice *)device
+{
+    //    NSString *deviceImage = @"DeviceState_Indeterminate.png";
+    NSString *deviceImage = @"DeviceState_Off.png";
+    if (device.fwVersion)
+    {
+        deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+    }
+    
+    return deviceImage;
+}
+
+- (void) didConnect: (NMXDevice *) device
+{
+    // Initialize the device state and query firmware
+
+    // For now, we are doing all of our device communication on the main queue.  Would be good to move it to it's own queue...
+    
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+        int queryStatus = [device mainQueryRunStatus];
+        AppExecutive *ae = [AppExecutive sharedInstance];
+            
+        if (queryStatus == 99) {
+            
+            NSLog(@"stop everything");
+                
+            ae.resetController = YES;  // FIX ME: This needs to be handled
+                
+            dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Connection Error"
+                                                                message: @"Please reset controller"
+                                                               delegate: nil
+                                                      cancelButtonTitle: @"OK"
+                                                      otherButtonTitles: nil];
+                [alert show];
+            });
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self.activityIndicator stopAnimating];
+                [self.connectGoButton setTitle:@"Go >" forState:UIControlStateNormal];
+                self.connectGoButton.hidden = NO;
+                self.settingsButton.enabled = YES;
+                self.settingsButton.hidden = NO;
+                
+                NSString *deviceImage = [self getImageForDeviceStatus: device];
+                self.imageView.image = [UIImage imageNamed: deviceImage];
+                
+                NSLog(@"Updating image after firmware check %@", deviceImage);
+
+            });
+        }
+    });
+
+    
+}
+
+- (void) didDisconnectDevice: (CBPeripheral *) peripheral
+{
+    // Do nothing, we expect this disconnect after querying the version number
+}
+
+- (void) disconnectDevice
+{
+    if (NO == self.device.disconnected)
+    {
+        [self.device disconnect];
+        
+        [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+        self.settingsButton.enabled = NO;
+        self.settingsButton.hidden = YES;
+        
+        self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
+    }
+}
+
 
 @end
 
@@ -102,6 +211,15 @@
     notificationLbl.text = pNotification.object;
 }
 
+- (void) disconnectAll
+{
+    NSArray *cells = [self.tableView visibleCells];
+    for (DeviceTableViewCell *cell in cells)
+    {
+        [cell disconnectDevice];
+    }
+}
+
 - (void) timerName {
 	
     if ([[[AppExecutive sharedInstance].defaults stringForKey: @"didDisconnect"] isEqualToString:@"yes"]) {
@@ -134,6 +252,12 @@
     [[AppExecutive sharedInstance].deviceManager setDelegate: self];
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameScan) userInfo:nil repeats:NO];
+    
+    [self.tableView reloadData];
+    [self.tableView setNeedsDisplay];
+
+    // Hide separator lines between rows
+    // [self.tableView setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
    
 }
 
@@ -157,17 +281,6 @@
     [[AppExecutive sharedInstance].deviceManager startScanning: sender.on];
 }
 
-- (NSString *)getImageForDeviceStatus: (NMXDevice *)device
-{
-    //    NSString *deviceImage = @"DeviceState_Indeterminate.png";
-    NSString *deviceImage = @"DeviceState_Off.png";
-    if (device.fwVersion)
-    {
-        deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
-    }
-
-    return deviceImage;
-}
 
 #pragma mark - Table view data source
 
@@ -204,9 +317,14 @@
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
     [cell.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
+    if (device.disconnected)
+    {
+        cell.settingsButton.hidden = YES;
+    }
     cell.device = device;
+    cell.tableView = self;
 
-    NSString *deviceImage = [self getImageForDeviceStatus: device];
+    NSString *deviceImage = [cell getImageForDeviceStatus: device];
     cell.imageView.image = [UIImage imageNamed: deviceImage];
     
     NSLog(@"Populating table with device image %@", deviceImage);
@@ -214,99 +332,71 @@
     return cell;
 }
 
-- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+- (void) navigateToMainViewWithDevice: (NMXDevice *)device
 {
-    if ([identifier isEqualToString:@"showMainView"] || [identifier isEqualToString: @"simulatorShowMainView"])
-    {
 #if !TARGET_IPHONE_SIMULATOR
-        
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NMXDevice *device = [self.deviceList objectAtIndex: indexPath.row];
-        
-        if (device.fwVersionUpdateAvailable)
-        {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"New Firmware Version"
-                                                            message: @"New firmware is available for the NMX, please update the NMX firmware asap.  If you continue some features will be disabled."
-                                                           delegate: self
-                                                  cancelButtonTitle: @"Cancel"
-                                                  otherButtonTitles: @"Continue", nil];
-            [alert show];
-            return NO;
-        }
-        else if (0 == device.fwVersion)
-        {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Device not ready"
-                                                            message: @"The device is being initialized, please wait."
-                                                           delegate: self
-                                                  cancelButtonTitle: @"OK"
-                                                  otherButtonTitles: nil];
-            [alert show];
-            return NO;
-        }
-#endif
-    }
     
-    return YES;
-}
+    AppExecutive * appExecutive = [AppExecutive sharedInstance];
+    appExecutive.device = device;
+#endif
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if(buttonIndex == 0)
+    if (device.fwVersionUpdateAvailable)
     {
-        [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"New Firmware Version"
+                                                        message: @"New firmware is available for the NMX, please update the NMX firmware asap.  If you continue some features will be disabled."
+                                                       delegate: self
+                                              cancelButtonTitle: @"Cancel"
+                                              otherButtonTitles: @"Continue", nil];
+        [alert show];
+    }
+    else if (0 == device.fwVersion)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Device not ready"
+                                                        message: @"The device is being initialized, please wait."
+                                                       delegate: self
+                                              cancelButtonTitle: @"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
     }
     else
     {
         [self performSegueWithIdentifier:@"showMainView" sender:self];
     }
+    
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex != 0)
+    {
+        [self performSegueWithIdentifier:@"showMainView" sender:self];
+    }
+}
+
+- (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if ([identifier isEqualToString:@"showSettingsView"])
+    {
+        // The segue is executed automatically as deviced in the storyboard.  However, we need to do some setup fist in the button action handler so perform the seque from there instead
+        // See settingsButtonSelected
+        return NO;
+    }
+    
+    return YES;
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    if ([[segue identifier] isEqualToString:@"showMainView"] || [[segue identifier] isEqualToString: @"simulatorShowMainView"])
+    if ([[segue identifier] isEqualToString:@"showMainView"] || [[segue identifier] isEqualToString: @"simulatorShowMainView"] ||
+        [[segue identifier] isEqualToString:@"showSettingsView"])
     {
-        #if !TARGET_IPHONE_SIMULATOR
-        
-            AppExecutive * appExecutive = [AppExecutive sharedInstance];
-            NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-            appExecutive.device = [self.deviceList objectAtIndex: indexPath.row];
-        
             //NSLog(@"device name: %@",appExecutive.device.name);
-        
-        #endif
     }
 }
 
 - (void) didReceiveMemoryWarning {
 
     [super didReceiveMemoryWarning];
-}
-
-- (void) didDisconnectDevice: (CBPeripheral *) peripheral
-{
-    // Called after the device has been queried for the firmware version number and disconnected
-
-    NSLog(@"Device disconnected from initFirmware");
-    
-    dispatch_async(dispatch_get_main_queue(), ^(void) {
-
-    
-        NSArray *cells = [self.tableView visibleCells];
-        for (UITableViewCell *cell in cells)
-        {
-            if ([cell.textLabel.text containsString: peripheral.name])
-            {
-                NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-                NMXDevice *device = [self.deviceList objectAtIndex: indexPath.row];
-
-                NSString *deviceImage = [self getImageForDeviceStatus: device];
-                cell.imageView.image = [UIImage imageNamed: deviceImage];
-                
-                NSLog(@"Updating image after firmware check %@", deviceImage);
-            }
-        }
-    });
-        
 }
 
 

@@ -169,10 +169,10 @@ typedef enum: unsigned char {
 @property (assign) int retryCount;
 @property (assign) bool retrying;
 @property (assign) bool disconnected;
-@property (atomic) int serviceDiscoveryRetryCount;
 @property (assign) float lastTimeout;
 @property (atomic, strong) dispatch_semaphore_t mySemaphore;
 @property (atomic, strong) NSData *myLastCommand;
+@property (atomic) int serviceDiscoveryRetryCount;
 
 @end
 
@@ -201,7 +201,6 @@ bool waitForResponse;
         self.myServices = [NSMutableArray arrayWithCapacity: 3];
         self.myNotifyBuffer = [NSMutableData dataWithCapacity: 20];
         self.myNotifyData = 0;
-        self.serviceDiscoveryRetryCount = 3;
         
         moving[0] = NMXMovingStopped;
         moving[1] = NMXMovingStopped;
@@ -227,11 +226,11 @@ bool waitForResponse;
         self.lastTimeout = 0.0;
         self.retryCount = 0;
         self.retrying = false;
-        self.disconnected = false;
+        self.disconnected = true;
         
         waitForResponse = true;
         
-        [self initFirmware];
+        self.serviceDiscoveryRetryCount = 3;
     }
     
     return self;
@@ -249,93 +248,14 @@ bool waitForResponse;
 
 - (void) peripheral: (CBPeripheral *) peripheral didDiscoverServices: (NSError *) error {
 
-    NSLog(@"MM didDiscoverServices ********************"); // MM
-    
-    self.serviceDiscoveryRetryCount = 0;
-    
     for (CBService *service in peripheral.services)
     {
-        // MM uncommented
-        DDLogDebug(@"Discovered service %@ with UDID %@", service, service.UUID);
+        //DDLogDebug(@"Discovered service %@ with UDID %@", service, service.UUID);
         
         [peripheral discoverCharacteristics: nil forService: service];
         [self.myServices addObject: service];
     }
 }
-
-- (void) retryServiceDiscoveryForPeripheral:(CBPeripheral *) peripheral
-{
-    if (self.serviceDiscoveryRetryCount <= 0)
-    {
-        DDLogDebug(@"Cannot connect to device, bailing out");
-        return;
-    }
-    
-    NSTimeInterval delaySeconds = 3;
-    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, delaySeconds*NSEC_PER_SEC);
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);
-    
-    dispatch_after(delay,queue, ^{
-        // Something went wrong, we never discovered the services, retry.
-        if (self.serviceDiscoveryRetryCount > 0)
-        {
-            self.serviceDiscoveryRetryCount -= 1;
-            DDLogDebug(@"Failed to discover services, retrying");
-            [self retryServiceDiscoveryForPeripheral: peripheral];  // FIXME: only retry 3 times
-            //            [peripheral discoverServices:nil];
-            
-            [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
-            
-            NSTimeInterval delaySeconds = .5;
-            dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, delaySeconds*NSEC_PER_SEC);
-            dispatch_after(delay,queue, ^{
-                [self initFirmware];
-            });
-        }
-    });
-    
-}
-
-- (void) peripheralWasConnected: (CBPeripheral *) peripheral
-{
-    NSLog(@"Delegate .... peripheral Was connected");
-    
-    [self retryServiceDiscoveryForPeripheral:peripheral];
-}
-
-#pragma mark device firmware initialization
-
-- (void) initFirmware
-{
-    self.delegate = self;
-
-    [self connect];
-}
-
-- (void) didConnect: (NMXDevice *) device
-{
-    // Initialize the device state and query firmware
-    
-    int64_t delay = 3.0; // In seconds
-    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
-    dispatch_after(time, dispatch_get_main_queue(), ^(void) {
-
-        [self mainSetAppMode: true];
-        [self mainSetJoystickMode: false];
-        
-        _fwVersion = [self mainQueryFirmwareVersion];
-        if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
-        
-        [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
-
-    });
-}
-
-- (void) didDisconnectDevice: (CBPeripheral *) peripheral
-{
-    // Do nothing, we expect this disconnect after querying the version number
-}
-
 
 #pragma mark device connection
 
@@ -346,7 +266,6 @@ didDiscoverCharacteristicsForService: (CBService *) service
     for (CBCharacteristic *characteristic in service.characteristics)
     {
         //DDLogDebug(@"Discovered characteristic %@ of service %@", characteristic, service);
-        NSLog(@"MM **** Discovered characteristic %@ of service %@ UUID %@", characteristic, service, characteristic.UUID);
         
         if (characteristic.properties & CBCharacteristicPropertyNotify)
         {
@@ -368,10 +287,24 @@ didDiscoverCharacteristicsForService: (CBService *) service
                     self.disconnected = false;
                     waitForResponse = false;
 
+                    [self initFirmware];
+
                     [self.delegate didConnect: self];
                 });
             }
         }
+    }
+}
+
+- (void) initFirmware
+{
+    if (0 == _fwVersion)
+    {
+        [self mainSetAppMode: true];
+        [self mainSetJoystickMode: false];
+    
+        _fwVersion = [self mainQueryFirmwareVersion];
+        if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
     }
 }
 
@@ -409,6 +342,49 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     }
 }
 
+// Bug workaround: sometimes we never get a callback after the attempt to discover services for the device.
+// Disconnect and reconnect if we don't get a response after a specific amount of time.
+- (void) retryServiceDiscoveryForPeripheral:(CBPeripheral *) peripheral
+{
+    if (self.disconnected == NO) return;
+    
+    if (self.serviceDiscoveryRetryCount <= 0)
+    {
+        DDLogDebug(@"Cannot connect to device, bailing out");
+        return;
+    }
+    
+    NSTimeInterval delaySeconds = 3;
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, delaySeconds*NSEC_PER_SEC);
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);
+    
+    dispatch_after(delay,queue, ^{
+        // Something went wrong, we never discovered the services, retry.
+        if (self.serviceDiscoveryRetryCount > 0 && self.disconnected)
+        {
+            self.serviceDiscoveryRetryCount -= 1;
+            DDLogDebug(@"Failed to discover services, retrying");
+            [self retryServiceDiscoveryForPeripheral: peripheral];  // FIXME: only retry 3 times
+            
+            [self disconnect];
+            
+            NSTimeInterval delaySeconds = .5;
+            dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, delaySeconds*NSEC_PER_SEC);
+            dispatch_after(delay,queue, ^{
+                [self connect];
+            });
+        }
+    });
+    
+}
+
+- (void) peripheralWasConnected: (CBPeripheral *) peripheral
+{
+    NSLog(@"Delegate .... peripheral Was connected");
+    
+    [self retryServiceDiscoveryForPeripheral:peripheral];
+}
+
 - (void) connect {
 
     DDLogDebug(@"state = %d", (int)self.myCBCentralManager.state);
@@ -421,10 +397,15 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
                                                object: nil];
 }
 
+- (void) disconnect
+{
+    [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+}
+
+// Handle notification that the device was disconnected
 - (void) deviceDisconnect: (id) object {
 
-    //DDLogDebug(@"Device disconnected NMXDevice");
-    NSLog(@"Device disconnected NMXDevice");
+    DDLogDebug(@"Device disconnected NMXDevice");
     
     self.disconnected = true;
     [[NSNotificationCenter defaultCenter] removeObserver: self];
@@ -462,11 +443,9 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
-    NSLog(@"MM ******************************   Send Command %@", desc); // MM
-    
     if (true == self.disconnected)
     {
-        NSLog(@"MM ******************************   Send Command %@ --------- Disonnected", desc); // MM
+        NSAssert(0, @"Attempting to send a command to a disconnected device");
         [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
         return;
     }
@@ -474,11 +453,10 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     if (false == waitForResponse)
     {
         CFTimeInterval now = CACurrentMediaTime();
-        NSLog(@"MM ******************************   Send Command %@ --------- wait", desc); // MM
+
         if ((now - self.lastCommandTime) < self.lastTimeout)
         {
             useconds_t sleepTime = (self.lastCommandTime - now + self.lastTimeout) * 1000000;
-            NSLog(@"MM ******************************   Send Command %@ --------- sleep %ul", desc, sleepTime); // MM
             usleep(sleepTime);
         }
     }
