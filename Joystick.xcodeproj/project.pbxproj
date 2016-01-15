@@ -167,6 +167,7 @@
 		3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */; };
 		30B8EE9F1C45D0A100DCF15C /* DeviceState_Off.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */; };
 		30B8EEA01C45D0A100DCF15C /* DeviceState_Off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */; };
+		30B8EEA31C48924800DCF15C /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B8EEA21C48924800DCF15C /* DeviceTableViewCell.m */; };
 		3F49EEA01B70FB97000899A6 /* upload-dsym.sh in Resources */ = {isa = PBXBuildFile; fileRef = 3F49EE9E1B70FB97000899A6 /* upload-dsym.sh */; };
 		3F49EEA11B70FB98000899A6 /* libTestFairy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F49EE9F1B70FB97000899A6 /* libTestFairy.a */; };
 		3F51E8B41B66A73900E1E2D5 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F51E8B21B66A73900E1E2D5 /* CoreMedia.framework */; };
@@ -404,6 +405,8 @@
 		3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Warning@2x.png"; sourceTree = "<group>"; };
 		30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Off.png; sourceTree = "<group>"; };
 		30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Off@2x.png"; sourceTree = "<group>"; };
+		30B8EEA11C48924800DCF15C /* DeviceTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceTableViewCell.h; sourceTree = "<group>"; };
+		30B8EEA21C48924800DCF15C /* DeviceTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceTableViewCell.m; sourceTree = "<group>"; };
 		3F49EE9D1B70FB97000899A6 /* TestFairy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFairy.h; sourceTree = "<group>"; };
 		3F49EE9E1B70FB97000899A6 /* upload-dsym.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "upload-dsym.sh"; sourceTree = "<group>"; };
 		3F49EE9F1B70FB97000899A6 /* libTestFairy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFairy.a; sourceTree = "<group>"; };
@@ -727,6 +730,8 @@
 			children = (
 				5DAEBE4F19F6080A000AC7AA /* DeviceSelectionTableViewController.h */,
 				5DAEBE5019F6080A000AC7AA /* DeviceSelectionTableViewController.m */,
+				30B8EEA11C48924800DCF15C /* DeviceTableViewCell.h */,
+				30B8EEA21C48924800DCF15C /* DeviceTableViewCell.m */,
 				2389AC2019DD938100FB2679 /* MainViewController.h */,
 				2389AC2119DD938100FB2679 /* MainViewController.m */,
 				23A14CEA19E46CC500295312 /* SetupViewController.h */,
@@ -1128,6 +1133,7 @@
 				10871B641B8B997400B1D017 /* NMXMotion.xcdatamodeld in Sources */,
 				23FD81081A23D78800FD9D49 /* CameraSettingsViewController.m in Sources */,
 				10F9DE311BEBC0C20059A727 /* ELCAssetCell.m in Sources */,
+				30B8EEA31C48924800DCF15C /* DeviceTableViewCell.m in Sources */,
 				10CF71D31BC388E3004ED48C /* HelpViewController.m in Sources */,
 				3FB4A5671B61F0B4006CFF1F /* NotificationTest.m in Sources */,
 				10F9DE331BEBC0C20059A727 /* ELCImagePickerController.m in Sources */,

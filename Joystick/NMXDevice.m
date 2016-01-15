@@ -501,9 +501,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     waitForResponse = inWaitForResponse;
     
-    //DDLogDebug(@"Sending %@", commandData); //randall 8-17-15
-    
-    NSLog(@"MM ******************************   Send Command %@ -------------- WRITING Stuff", desc); // MM
+    //DDLogDebug(@"Sending Command %@ with data %@", desc, commandData); //randall 8-17-15
     
     [self.myPeripheral writeValue: commandData forCharacteristic: self.myOutputCharacteristic type: CBCharacteristicWriteWithResponse];
     
