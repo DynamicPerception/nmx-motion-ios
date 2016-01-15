@@ -358,41 +358,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     [self.joystickViewController.view addGestureRecognizer:gestureRecognizer1];
     gestureRecognizer.cancelsTouchesInView = NO;
     
-    
-    NMXDevice *device = self.appExecutive.device;
-    
-    int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
-    int queryStatus = [device mainQueryRunStatus];
-
-    if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
-    {
-        if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
-        {
-            appExecutive.is3P = YES;
-            [switch2P setOn:YES];
-        }
-        
-        self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
-        self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
-        self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
-        [self showVoltage];
-        [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
-    }
-    else
-    {
-        [device motorEnable: device.sledMotor];
-        [device motorEnable: device.panMotor];
-        [device motorEnable: device.tiltMotor];
-        
-        [self setupMicrosteps];
-        [self enterJoystickMode];
-    }
-    
-    if (NMXRunStatusStopped == queryStatus)
-    {
-        [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
-    }
-    
     [super viewDidLoad];
 }
 
@@ -863,6 +828,41 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         
         self.showingModalScreen = false;
     }
+    
+    NMXDevice *device = self.appExecutive.device;
+    
+    int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
+    int queryStatus = [device mainQueryRunStatus];
+    
+    if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+    {
+        if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+        {
+            appExecutive.is3P = YES;
+            [switch2P setOn:YES];
+        }
+        
+        self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
+        self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
+        self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
+        [self showVoltage];
+        [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
+    }
+    else
+    {
+        [device motorEnable: device.sledMotor];
+        [device motorEnable: device.panMotor];
+        [device motorEnable: device.tiltMotor];
+        
+        [self setupMicrosteps];
+        [self enterJoystickMode];
+    }
+    
+    if (NMXRunStatusStopped == queryStatus)
+    {
+        [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
+    }
+
 }
 
 - (void) doubleEnterJoystickTimer{
