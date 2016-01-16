@@ -4700,7 +4700,7 @@ Ramping</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rD3-ze-RZW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1527" y="284"/>
+            <point key="canvasLocation" x="-1298" y="500"/>
         </scene>
         <!--Notification Test-->
         <scene sceneID="dsJ-RS-Qa1">
@@ -5546,18 +5546,18 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="IfY-aS-7xa"/>
+        <segue reference="gqx-Wd-6xg"/>
         <segue reference="K6t-E6-71o"/>
-        <segue reference="7H3-V6-M3H"/>
+        <segue reference="IfY-aS-7xa"/>
+        <segue reference="kyO-dy-beu"/>
+        <segue reference="B0O-MD-mVD"/>
         <segue reference="AeQ-9g-E8b"/>
         <segue reference="PwX-tX-cQi"/>
-        <segue reference="TNv-a2-D3V"/>
-        <segue reference="5Fi-kf-KP0"/>
-        <segue reference="6SS-hE-J9g"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="p4Z-EB-hlS"/>
-        <segue reference="rGc-Y0-TPg"/>
+        <segue reference="aFw-MN-OaY"/>
         <segue reference="k3P-Db-zBC"/>
+        <segue reference="rGc-Y0-TPg"/>
+        <segue reference="p4Z-EB-hlS"/>
         <segue reference="Nk1-9G-Dpm"/>
+        <segue reference="QhG-wT-13E"/>
     </inferredMetricsTieBreakers>
 </document>
