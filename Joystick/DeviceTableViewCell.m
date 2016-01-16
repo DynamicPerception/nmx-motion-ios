@@ -27,7 +27,7 @@
 {
     if (self.device.disconnected)
     {
-        [self.tableView disconnectAll];
+        [self.tableView preDevicesStateChange];
         
         [self initFirmware];
         
@@ -49,7 +49,7 @@
 - (void) initFirmware
 {
     self.device.delegate = self;
-    
+    self.device.serviceDiscoveryRetryCount = 3;  // Retry connection 3 times
     [self.device connect];
 }
 
@@ -74,6 +74,8 @@
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
         int queryStatus = [device mainQueryRunStatus];
+        int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
+        
         AppExecutive *ae = [AppExecutive sharedInstance];
         
         if (queryStatus == 99) {
@@ -104,7 +106,12 @@
                 NSString *deviceImage = [self getImageForDeviceStatus: device];
                 self.imageView.image = [UIImage imageNamed: deviceImage];
                 
-                NSLog(@"Updating image after firmware check %@", deviceImage);
+                if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+                {
+                    [self.tableView navigateToMainViewWithDevice: self.device];
+                }
+                
+                [self.tableView postDevicesStateChange];
                 
             });
         }
@@ -118,8 +125,10 @@
     // Do nothing, we expect this disconnect after querying the version number
 }
 
-- (void) disconnectDevice
+- (void) preDeviceStateChange
 {
+    self.connectGoButton.enabled = NO;
+    
     if (NO == self.device.disconnected)
     {
         [self.device disconnect];
@@ -132,5 +141,9 @@
     }
 }
 
+- (void) postDeviceStateChange
+{
+    self.connectGoButton.enabled = YES;
+}
 
 @end

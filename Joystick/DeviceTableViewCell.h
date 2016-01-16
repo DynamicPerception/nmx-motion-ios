@@ -19,7 +19,8 @@
 @property (strong, nonatomic) IBOutlet UIButton *connectGoButton;
 @property (weak) DeviceSelectionTableViewController *tableView;
 
-- (void) disconnectDevice;
+- (void) preDeviceStateChange;
+- (void) postDeviceStateChange;
 - (NSString *)getImageForDeviceStatus: (NMXDevice *)device;
 
 @end

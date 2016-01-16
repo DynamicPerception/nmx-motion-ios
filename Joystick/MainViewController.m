@@ -481,6 +481,21 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (IBAction) manage2P:(id)sender {
     
+    NMXDevice *device = self.appExecutive.device;
+    if (device.fwVersion < 46 && switch2P.on)
+    {
+        switch2P.on = NO;
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Firmware Version"
+                                                        message: @"The firmare version installed on the NMX device does not support this feature.  Install the latest firmware to access 3P mode."
+                                                       delegate: nil
+                                              cancelButtonTitle: @"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+        return;
+    }
+
+    
     [self enterJoystickMode];
     
     [self hideButtonViews];

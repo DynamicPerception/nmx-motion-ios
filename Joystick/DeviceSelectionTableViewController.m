@@ -88,14 +88,32 @@
     notificationLbl.text = pNotification.object;
 }
 
-- (void) disconnectAll
+- (void) preDevicesStateChange;
+{
+    [AppExecutive sharedInstance].deviceManager.delegate = self;
+
+    NSArray *cells = [self.tableView visibleCells];
+    for (DeviceTableViewCell *cell in cells)
+    {
+        [cell preDeviceStateChange];
+    }
+}
+
+- (void) postDevicesStateChange;
 {
     NSArray *cells = [self.tableView visibleCells];
     for (DeviceTableViewCell *cell in cells)
     {
-        [cell disconnectDevice];
+        [cell postDeviceStateChange];
     }
 }
+
+
+- (void) didDisconnectDevice: (CBPeripheral *) peripheral
+{
+    // Do nothing, we expect this disconnect after disconnecting devices
+}
+
 
 - (void) timerName {
 	

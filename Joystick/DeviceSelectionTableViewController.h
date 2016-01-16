@@ -16,7 +16,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *notificationLbl;
 
 - (void) navigateToMainViewWithDevice: (NMXDevice *)device;
-- (void) disconnectAll;
+- (void) preDevicesStateChange;
+- (void) postDevicesStateChange;
 
 @end
 

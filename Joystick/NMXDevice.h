@@ -148,6 +148,7 @@ typedef enum : unsigned char {
 @property (readonly) UInt16 fwVersion;
 @property (readonly) BOOL fwVersionUpdateAvailable;
 @property (readonly) bool disconnected;
+@property (atomic) int serviceDiscoveryRetryCount;
 
 - (void) setHomePosition : (int) motor;
 

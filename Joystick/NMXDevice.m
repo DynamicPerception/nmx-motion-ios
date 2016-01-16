@@ -172,7 +172,7 @@ typedef enum: unsigned char {
 @property (assign) float lastTimeout;
 @property (atomic, strong) dispatch_semaphore_t mySemaphore;
 @property (atomic, strong) NSData *myLastCommand;
-@property (atomic) int serviceDiscoveryRetryCount;
+@property (atomic, strong) NSTimer *connectionTimer;
 
 @end
 
@@ -278,6 +278,8 @@ didDiscoverCharacteristicsForService: (CBService *) service
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
+                    [self abortConnectionRetry];
+                    
                     self.myNotifyBuffer = [NSMutableData dataWithCapacity: 20];
                     self.myNotifyData = 0;
                     self.lastCommandTime = 0;
@@ -347,41 +349,59 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) retryServiceDiscoveryForPeripheral:(CBPeripheral *) peripheral
 {
     if (self.disconnected == NO) return;
-    
+ 
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+        self.connectionTimer = [NSTimer scheduledTimerWithTimeInterval:3.0
+                                                                target:self
+                                                              selector:@selector(retryConnect)
+                                                              userInfo:nil
+                                                               repeats:YES];
+    });
+}
+
+- (void) abortConnectionRetry
+{
+    [self.connectionTimer invalidate];
+    self.connectionTimer = nil;
+}
+
+
+- (void) retryConnect
+{
     if (self.serviceDiscoveryRetryCount <= 0)
     {
         DDLogDebug(@"Cannot connect to device, bailing out");
+        [self abortConnectionRetry];
+        return;
+    }
+    else if (NO == self.disconnected)
+    {
+        [self abortConnectionRetry];
         return;
     }
     
-    NSTimeInterval delaySeconds = 3;
+    // Something went wrong, we never discovered the services, retry.
+    self.serviceDiscoveryRetryCount -= 1;
+    DDLogDebug(@"Failed to discover services, retrying");
+        
+    [self disconnect];
+        
+    NSTimeInterval delaySeconds = .5;
     dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, delaySeconds*NSEC_PER_SEC);
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);
-    
+
     dispatch_after(delay,queue, ^{
-        // Something went wrong, we never discovered the services, retry.
-        if (self.serviceDiscoveryRetryCount > 0 && self.disconnected)
-        {
-            self.serviceDiscoveryRetryCount -= 1;
-            DDLogDebug(@"Failed to discover services, retrying");
-            [self retryServiceDiscoveryForPeripheral: peripheral];  // FIXME: only retry 3 times
-            
-            [self disconnect];
-            
-            NSTimeInterval delaySeconds = .5;
-            dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, delaySeconds*NSEC_PER_SEC);
-            dispatch_after(delay,queue, ^{
-                [self connect];
-            });
-        }
+        [self connect];
     });
-    
+
 }
 
 - (void) peripheralWasConnected: (CBPeripheral *) peripheral
 {
     NSLog(@"Delegate .... peripheral Was connected");
     
+    [self abortConnectionRetry];
     [self retryServiceDiscoveryForPeripheral:peripheral];
 }
 
@@ -400,6 +420,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) disconnect
 {
     [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
 }
 
 // Handle notification that the device was disconnected
