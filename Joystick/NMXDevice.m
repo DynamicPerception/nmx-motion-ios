@@ -466,7 +466,6 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     if (true == self.disconnected)
     {
-        NSAssert(0, @"Attempting to send a command to a disconnected device");
         [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
         return;
     }

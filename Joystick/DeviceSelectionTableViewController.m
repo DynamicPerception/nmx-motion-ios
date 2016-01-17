@@ -153,7 +153,6 @@
 
     // Hide separator lines between rows
     // [self.tableView setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-   
 }
 
 - (void)timerNameScan {
@@ -215,6 +214,7 @@
     if (device.disconnected)
     {
         cell.settingsButton.hidden = YES;
+        [cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
     }
     cell.device = device;
     cell.tableView = self;

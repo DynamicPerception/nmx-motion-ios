@@ -846,6 +846,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     NMXDevice *device = self.appExecutive.device;
     
+    [device mainSetAppMode: true];
+    [device mainSetJoystickMode: false];
+    
     int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
     int queryStatus = [device mainQueryRunStatus];
     

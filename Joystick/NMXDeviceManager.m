@@ -142,7 +142,7 @@
                 [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"central didDisconnectPeripheral"];
                 
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
-                                                                message: @"All settings saved on NMX - Tap OK to reconnect"
+                                                                message: @"All settings saved on NMX - Tap Connect to reconnect"
                                                                delegate: self
                                                       cancelButtonTitle: @"OK"
                                                       otherButtonTitles: nil];

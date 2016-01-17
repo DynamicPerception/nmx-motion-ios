@@ -57,7 +57,7 @@
 {
     //    NSString *deviceImage = @"DeviceState_Indeterminate.png";
     NSString *deviceImage = @"DeviceState_Off.png";
-    if (device.fwVersion)
+    if (device.fwVersion && NO == device.disconnected)
     {
         deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
     }
@@ -85,6 +85,15 @@
             ae.resetController = YES;  // FIX ME: This needs to be handled
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self.activityIndicator stopAnimating];
+                [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+                self.connectGoButton.hidden = NO;
+                self.settingsButton.hidden = YES;
+                
+                NSString *deviceImage = [self getImageForDeviceStatus: device];
+                self.imageView.image = [UIImage imageNamed: deviceImage];
+
                 
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Connection Error"
                                                                 message: @"Please reset controller"
