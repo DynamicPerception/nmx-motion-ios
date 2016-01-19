@@ -129,6 +129,14 @@
 
     //DDLogDebug(@"centralManager Peripheral disconnected");
     
+    for (NMXDevice *device in self.myDevices)
+    {
+        if ([device.name isEqualToString: peripheral.name])
+        {
+            [self.myDevices removeObject: device];
+        }
+    }
+
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDisconnectDevice:)]))
     {
         [self.delegate didDisconnectDevice: peripheral];

@@ -139,8 +139,9 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
 }
 
 - (void) deviceDisconnect: (id) object {
-    
-    [self dismissViewControllerAnimated: YES completion: nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self dismissViewControllerAnimated: YES completion: nil];
+    });
 }
 
 

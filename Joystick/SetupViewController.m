@@ -375,13 +375,13 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) deviceDisconnect: (id) object {
     
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"showNotificationHost"
-     object:self.restorationIdentifier];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"showNotificationHost" object:self.restorationIdentifier];
     
     NSLog(@"deviceDisconnect setupview");
     
-    [self.navigationController popToRootViewControllerAnimated: true];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController popToRootViewControllerAnimated: true];
+    });
 }
 
 - (void) setSegmentedControllerAttributes {

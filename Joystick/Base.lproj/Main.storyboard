@@ -344,8 +344,11 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MWK-ht-AGQ">
-                                                    <rect key="frame" x="290" y="1" width="59" height="41"/>
-                                                    <state key="normal" title="Connect"/>
+                                                    <rect key="frame" x="285" y="1" width="75" height="41"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="17"/>
+                                                    <state key="normal" title="Connect">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
                                                     <connections>
                                                         <action selector="connectButtonSelected:" destination="Rpv-vC-3D1" eventType="touchUpInside" id="ssd-ba-is7"/>
                                                     </connections>
@@ -5546,15 +5549,15 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="k3P-Db-zBC"/>
         <segue reference="gqx-Wd-6xg"/>
         <segue reference="K6t-E6-71o"/>
+        <segue reference="7H3-V6-M3H"/>
         <segue reference="IfY-aS-7xa"/>
-        <segue reference="kyO-dy-beu"/>
-        <segue reference="B0O-MD-mVD"/>
         <segue reference="AeQ-9g-E8b"/>
+        <segue reference="kyO-dy-beu"/>
         <segue reference="PwX-tX-cQi"/>
         <segue reference="aFw-MN-OaY"/>
-        <segue reference="k3P-Db-zBC"/>
         <segue reference="rGc-Y0-TPg"/>
         <segue reference="p4Z-EB-hlS"/>
         <segue reference="Nk1-9G-Dpm"/>

@@ -1889,14 +1889,14 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 //        
 //        [self.navigationController popToRootViewControllerAnimated: true];
 //    });
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [self.navigationController popToRootViewControllerAnimated: true];
-    });
-     
+
         disconnected = YES;
         self.appExecutive.resetController = YES;
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.navigationController popToRootViewControllerAnimated: true];
+        });
+     
     }
 
 //    [[NSNotificationCenter defaultCenter]

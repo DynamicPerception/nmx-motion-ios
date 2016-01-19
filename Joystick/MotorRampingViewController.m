@@ -735,13 +735,12 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) deviceDisconnect: (id) object {
     
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"showNotificationHost"
-     object:self.restorationIdentifier];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"showNotificationHost" object:self.restorationIdentifier];
     
     NSLog(@"deviceDisconnect motor ramping");
-    
-    [self.navigationController popToRootViewControllerAnimated: true];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController popToRootViewControllerAnimated: true];
+    });
 }
 
 - (void) didReceiveMemoryWarning {

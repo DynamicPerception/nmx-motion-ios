@@ -83,6 +83,7 @@
     notificationLbl.hidden = YES;
 }
 
+
 - (void) handleNotificationNotificationHost:(NSNotification *)pNotification {
 	
     notificationLbl.text = pNotification.object;
@@ -106,12 +107,6 @@
     {
         [cell postDeviceStateChange];
     }
-}
-
-
-- (void) didDisconnectDevice: (CBPeripheral *) peripheral
-{
-    // Do nothing, we expect this disconnect after disconnecting devices
 }
 
 

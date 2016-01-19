@@ -10,6 +10,12 @@
 #import "DeviceSelectionTableViewController.h"
 #import "AppExecutive.h"
 
+@interface DeviceTableViewCell()
+
+@property (atomic, strong) NSTimer *connectionTimer;
+
+@end
+
 @implementation DeviceTableViewCell
 
 - (IBAction) settingsButtonSelected: (id) sender
@@ -27,6 +33,12 @@
 {
     if (self.device.disconnected)
     {
+        self.connectionTimer = [NSTimer scheduledTimerWithTimeInterval:15.0
+                                                                target:self
+                                                              selector:@selector(connectionTimeout)
+                                                              userInfo:nil
+                                                               repeats:YES];
+        
         [self.tableView preDevicesStateChange];
         
         [self initFirmware];
@@ -42,7 +54,10 @@
     }
 }
 
-
+- (void) connectionTimeout
+{
+    [self handleConnectionError];
+}
 
 #pragma mark device firmware initialization
 
@@ -65,6 +80,30 @@
     return deviceImage;
 }
 
+- (void) handleConnectionError
+{
+    [self.connectionTimer invalidate];
+    self.connectionTimer = nil;
+
+    [self.activityIndicator stopAnimating];
+    [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+    self.connectGoButton.hidden = NO;
+    self.connectGoButton.enabled = YES;
+    self.settingsButton.hidden = YES;
+    
+    NSString *deviceImage = [self getImageForDeviceStatus: self.device];
+    self.imageView.image = [UIImage imageNamed: deviceImage];
+    
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Connection Error"
+                                                    message: @"Please reset controller"
+                                                   delegate: nil
+                                          cancelButtonTitle: @"OK"
+                                          otherButtonTitles: nil];
+    [alert show];
+
+}
+
 - (void) didConnect: (NMXDevice *) device
 {
     // Initialize the device state and query firmware
@@ -85,27 +124,14 @@
             ae.resetController = YES;  // FIX ME: This needs to be handled
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [self.activityIndicator stopAnimating];
-                [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
-                self.connectGoButton.hidden = NO;
-                self.settingsButton.hidden = YES;
-                
-                NSString *deviceImage = [self getImageForDeviceStatus: device];
-                self.imageView.image = [UIImage imageNamed: deviceImage];
-
-                
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Connection Error"
-                                                                message: @"Please reset controller"
-                                                               delegate: nil
-                                                      cancelButtonTitle: @"OK"
-                                                      otherButtonTitles: nil];
-                [alert show];
+                [self handleConnectionError];
             });
         }
         else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 
+                [self.connectionTimer invalidate];
+                self.connectionTimer = nil;
                 [self.activityIndicator stopAnimating];
                 [self.connectGoButton setTitle:@"Go >" forState:UIControlStateNormal];
                 self.connectGoButton.hidden = NO;
@@ -129,10 +155,6 @@
     
 }
 
-- (void) didDisconnectDevice: (CBPeripheral *) peripheral
-{
-    // Do nothing, we expect this disconnect after querying the version number
-}
 
 - (void) preDeviceStateChange
 {

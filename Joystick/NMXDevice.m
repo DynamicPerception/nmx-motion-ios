@@ -300,14 +300,11 @@ didDiscoverCharacteristicsForService: (CBService *) service
 
 - (void) initFirmware
 {
-    if (0 == _fwVersion)
-    {
-        [self mainSetAppMode: true];
-        [self mainSetJoystickMode: false];
+    [self mainSetAppMode: true];
+    [self mainSetJoystickMode: false];
     
-        _fwVersion = [self mainQueryFirmwareVersion];
-        if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
-    }
+    _fwVersion = [self mainQueryFirmwareVersion];
+    if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
 }
 
 - (void) peripheral: (CBPeripheral *) peripheral
