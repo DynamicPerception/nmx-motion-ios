@@ -14,15 +14,12 @@
 
 
 #define kDynamicPerceptionServiceUDID   @"a3a9eb86-c0fd-4a5c-b191-bff60a7f9ea7"
-#define kDynamicPerceptionOldServiceUDID    @"B8E06067-62AD-41BA-9231-206AE80AB550"     // DP needs to change this.
-
 
 @interface NMXDeviceManager()
 @property (atomic, strong) CBCentralManager* myCBCentralManager;
 @property (atomic, strong) NSMutableArray * myDevices;
 @property (assign)	BOOL			scanRequested;
 @property (assign)	BOOL			scanInProcess;
-@property (assign)  BOOL            legacyDevices;
 @end
 
 
@@ -58,12 +55,8 @@
     {
         if ((true == self.scanRequested) && (false == self.scanInProcess))
         {
-            if (self.legacyDevices)
-                [self.myCBCentralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString: kDynamicPerceptionOldServiceUDID]]
-                                                                options:nil];
-            else
-                [self.myCBCentralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString: kDynamicPerceptionServiceUDID]]
-                                                                options:nil];
+            [self.myCBCentralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString: kDynamicPerceptionServiceUDID]]
+                                                            options:nil];
             self.scanInProcess = true;
             self.scanRequested = false;
             
@@ -172,20 +165,14 @@
     //[[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
 }
 
-- (void) startScanning: (BOOL) inLegacyDevices; {
+- (void) startScanning {
 
-    //NSLog(@"startScanning inLegacyDevices");
-    
-    self.legacyDevices = inLegacyDevices;
+    //NSLog(@"startScanning");
     
     if ((self.myCBCentralManager.state == CBCentralManagerStatePoweredOn) && (false == self.scanInProcess))
     {
-        if (self.legacyDevices)
-            [self.myCBCentralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString: kDynamicPerceptionOldServiceUDID]]
-                                                            options:nil];
-        else
-            [self.myCBCentralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString: kDynamicPerceptionServiceUDID]]
-                                                            options:nil];
+        [self.myCBCentralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString: kDynamicPerceptionServiceUDID]]
+                                                        options:nil];
         self.scanInProcess = true;
         DDLogDebug(@"Starting Scanning for dynamic perception peripherals");
     }

@@ -308,8 +308,27 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bwh-ra-M9H">
+                                        <rect key="frame" x="19" y="755" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="5R2-Ox-72Q"/>
+                                            <constraint firstAttribute="width" constant="30" id="z2T-lS-5xB"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <state key="normal" title="?">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <segue destination="AAN-fp-3bo" kind="presentation" identifier="helpDeviceManagement" id="X7X-ZC-NQI"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="bwh-ra-M9H" secondAttribute="bottom" constant="15" id="nnQ-5d-8KQ"/>
+                                    <constraint firstItem="bwh-ra-M9H" firstAttribute="leading" secondItem="mVs-8r-HaY" secondAttribute="leading" constant="19" id="qX0-x5-H0q"/>
+                                </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="NMX Motion Controller Selection" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hpt-OD-gyr" userLabel="Program Setup">
                                 <rect key="frame" x="174" y="30" width="252" height="21"/>
@@ -381,36 +400,19 @@
                                     <outlet property="delegate" destination="cXZ-wl-Mot" id="5IB-fz-5tE"/>
                                 </connections>
                             </tableView>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vsX-Lw-jlR">
-                                <rect key="frame" x="150" y="761" width="51" height="31"/>
-                                <color key="onTintColor" red="0.38431372549999998" green="0.66666666669999997" blue="0.96470588239999999" alpha="1" colorSpace="calibratedRGB"/>
-                                <connections>
-                                    <action selector="legacyDeviceChanged:" destination="cXZ-wl-Mot" eventType="valueChanged" id="A2S-uM-uDb"/>
-                                </connections>
-                            </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Legacy Devices:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qZf-Ap-0GU">
-                                <rect key="frame" x="16" y="766" width="126" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="mVs-8r-HaY" firstAttribute="top" secondItem="IFI-GM-j8r" secondAttribute="bottom" id="0ZF-Rf-z9w"/>
                             <constraint firstAttribute="centerX" secondItem="Hpt-OD-gyr" secondAttribute="centerX" id="BBd-RV-wqV"/>
                             <constraint firstItem="Hpt-OD-gyr" firstAttribute="top" secondItem="IFI-GM-j8r" secondAttribute="bottom" constant="10" id="BjK-ZD-ozp"/>
-                            <constraint firstItem="qZf-Ap-0GU" firstAttribute="leading" secondItem="w4t-kh-SG8" secondAttribute="leadingMargin" id="C8S-y4-d5z"/>
                             <constraint firstItem="mVs-8r-HaY" firstAttribute="leading" secondItem="w4t-kh-SG8" secondAttribute="leadingMargin" id="DsM-fQ-foO"/>
                             <constraint firstAttribute="trailingMargin" secondItem="mVs-8r-HaY" secondAttribute="trailing" id="Gn6-2q-mEy"/>
                             <constraint firstItem="sVC-fM-BKZ" firstAttribute="top" secondItem="mVs-8r-HaY" secondAttribute="bottom" id="HAr-Zb-BJ9"/>
-                            <constraint firstItem="NEs-9r-rle" firstAttribute="top" secondItem="qZf-Ap-0GU" secondAttribute="bottom" constant="13" id="Med-Ed-hJU"/>
                             <constraint firstItem="sVC-fM-BKZ" firstAttribute="leading" secondItem="w4t-kh-SG8" secondAttribute="leadingMargin" constant="5" id="N7f-dn-jfo"/>
-                            <constraint firstItem="vsX-Lw-jlR" firstAttribute="top" secondItem="sVC-fM-BKZ" secondAttribute="bottom" constant="8" id="Nk8-Yt-uNN"/>
                             <constraint firstItem="NEs-9r-rle" firstAttribute="top" secondItem="mVs-8r-HaY" secondAttribute="bottom" id="Qm2-bM-kEL"/>
                             <constraint firstItem="mVs-8r-HaY" firstAttribute="top" secondItem="w4t-kh-SG8" secondAttribute="topMargin" id="U45-pF-DtV"/>
-                            <constraint firstItem="NEs-9r-rle" firstAttribute="top" secondItem="vsX-Lw-jlR" secondAttribute="bottom" constant="8" id="bJu-xt-Q7R"/>
-                            <constraint firstItem="vsX-Lw-jlR" firstAttribute="leading" secondItem="qZf-Ap-0GU" secondAttribute="trailing" constant="8" id="j8T-Je-rEq"/>
+                            <constraint firstItem="sVC-fM-BKZ" firstAttribute="bottom" secondItem="bwh-ra-M9H" secondAttribute="top" id="Yoq-Bh-kKd"/>
                             <constraint firstAttribute="centerY" secondItem="Hpt-OD-gyr" secondAttribute="centerY" id="p2M-7R-aY9"/>
                             <constraint firstItem="sVC-fM-BKZ" firstAttribute="top" secondItem="w4t-kh-SG8" secondAttribute="topMargin" constant="80" id="xHf-Cg-BiP"/>
                             <constraint firstAttribute="trailingMargin" secondItem="sVC-fM-BKZ" secondAttribute="trailing" constant="5" id="yX5-Ey-OS6"/>
@@ -427,7 +429,6 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="800"/>
                     <connections>
-                        <outlet property="legacyDeviceSwitch" destination="vsX-Lw-jlR" id="4zF-WG-egA"/>
                         <outlet property="notificationLbl" destination="CIn-2z-ukO" id="7nU-c8-Oe8"/>
                         <outlet property="shareBtn" destination="6LY-Mf-Hjo" id="EDL-Cg-QMg"/>
                         <outlet property="tableView" destination="sVC-fM-BKZ" id="nOk-Ir-Vsk"/>
@@ -437,7 +438,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UEf-jC-T2A" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-517" y="173"/>
+            <point key="canvasLocation" x="-239" y="-945"/>
         </scene>
         <!--Motor Settings View Controller-->
         <scene sceneID="bGl-hf-KvF">
@@ -5549,18 +5550,18 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="k3P-Db-zBC"/>
-        <segue reference="gqx-Wd-6xg"/>
-        <segue reference="K6t-E6-71o"/>
+        <segue reference="uS0-Tr-f5Z"/>
+        <segue reference="5Fi-kf-KP0"/>
+        <segue reference="6SS-hE-J9g"/>
+        <segue reference="l1d-eL-qTA"/>
+        <segue reference="6tH-tQ-8da"/>
+        <segue reference="hJv-3d-HgP"/>
+        <segue reference="Nk1-9G-Dpm"/>
         <segue reference="7H3-V6-M3H"/>
         <segue reference="IfY-aS-7xa"/>
+        <segue reference="X7X-ZC-NQI"/>
+        <segue reference="K6t-E6-71o"/>
         <segue reference="AeQ-9g-E8b"/>
-        <segue reference="kyO-dy-beu"/>
         <segue reference="PwX-tX-cQi"/>
-        <segue reference="aFw-MN-OaY"/>
-        <segue reference="rGc-Y0-TPg"/>
-        <segue reference="p4Z-EB-hlS"/>
-        <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="QhG-wT-13E"/>
     </inferredMetricsTieBreakers>
 </document>

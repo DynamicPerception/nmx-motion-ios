@@ -353,7 +353,7 @@
 		2362F62A19EEF1F500C85368 /* AppExecutive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppExecutive.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		236621071A39FA520009EB85 /* FrameRateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameRateViewController.h; sourceTree = "<group>"; };
 		236621081A39FA520009EB85 /* FrameRateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameRateViewController.m; sourceTree = "<group>"; };
-		2389AC1619DD938100FB2679 /* NMX Motion 3.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NMX Motion 3.0.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2389AC1619DD938100FB2679 /* NMX Motion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NMX Motion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2389AC1A19DD938100FB2679 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2389AC1B19DD938100FB2679 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2389AC1D19DD938100FB2679 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -632,7 +632,7 @@
 		2389AC1719DD938100FB2679 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2389AC1619DD938100FB2679 /* NMX Motion 3.0.app */,
+				2389AC1619DD938100FB2679 /* NMX Motion.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -891,7 +891,7 @@
 			);
 			name = "NMX Motion";
 			productName = Joystick;
-			productReference = 2389AC1619DD938100FB2679 /* NMX Motion 3.0.app */;
+			productReference = 2389AC1619DD938100FB2679 /* NMX Motion.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1294,7 +1294,7 @@
 					"\"UIKit\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamicpercption.nmxcontroller;
-				PRODUCT_NAME = "$(TARGET_NAME) 3.0";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1337,7 +1337,7 @@
 					"\"UIKit\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamicpercption.nmxcontroller;
-				PRODUCT_NAME = "$(TARGET_NAME) 3.0";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_ROOT)/../IntermediateBuildFilesPath/UninstalledProducts/include";

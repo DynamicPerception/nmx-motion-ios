@@ -11,11 +11,11 @@
 #import "AppExecutive.h"
 #import "NMXDeviceManager.h"
 #import "DeviceTableViewCell.h"
+#import "HelpViewController.h"
 
 @interface DeviceSelectionTableViewController ()
 
 @property (nonatomic, strong)	IBOutlet UITableView* tableView;
-@property (weak, nonatomic)     IBOutlet UISwitch *legacyDeviceSwitch;
 
 @property NSArray *             deviceList;
 @end
@@ -152,7 +152,7 @@
 
 - (void)timerNameScan {
 	
-     [[AppExecutive sharedInstance].deviceManager startScanning: false];
+     [[AppExecutive sharedInstance].deviceManager startScanning];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
@@ -162,14 +162,6 @@
     [[AppExecutive sharedInstance].deviceManager stopScanning];
     [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
 }
-
-- (IBAction) legacyDeviceChanged: (UISwitch *) sender {
-
-    [[AppExecutive sharedInstance].deviceManager stopScanning];
-    [self.tableView reloadData];
-    [[AppExecutive sharedInstance].deviceManager startScanning: sender.on];
-}
-
 
 #pragma mark - Table view data source
 
@@ -281,6 +273,11 @@
         [[segue identifier] isEqualToString:@"showSettingsView"])
     {
             //NSLog(@"device name: %@",appExecutive.device.name);
+    }
+    else if ([[segue identifier] isEqualToString:@"helpDeviceManagement"])
+    {
+        HelpViewController *msvc = segue.destinationViewController;
+        [msvc setScreenInd:6];
     }
 }
 
