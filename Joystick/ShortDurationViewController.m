@@ -448,7 +448,7 @@ NSArray static	*tenthsStrings = nil;
 	switch (component)
 	{
 		case 0: case 1:
-			return  55.0;
+			return  65.0;
 
 		case 2:
 			return 35.0;

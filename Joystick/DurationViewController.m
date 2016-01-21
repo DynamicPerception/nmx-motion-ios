@@ -280,7 +280,7 @@ NSArray static	*secondsStrings = nil;
 	switch (component)
 	{
 		case 0: case 1: case 2:
-			return  55.0;
+			return  70.0;
 
 		default:
 			return 35.0;
@@ -325,9 +325,9 @@ NSArray static	*secondsStrings = nil;
     
 	switch (component)
 	{
-		case 0: return hoursNumbers.count;
-		case 1: return minutesNumbers.count;
-		case 2: return secondsNumbers.count;
+		case 0: return hoursStrings.count;
+		case 1: return minutesStrings.count;
+		case 2: return secondsStrings.count;
 
 		default: break;
 	}
