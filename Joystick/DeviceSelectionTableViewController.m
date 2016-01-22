@@ -177,7 +177,11 @@
     //NSLog(@"device list");
     
     self.deviceList = [[AppExecutive sharedInstance].deviceManager deviceList];
-    return [self.deviceList count];
+    NSInteger count = [self.deviceList count];
+    
+    if (0 == count) return 1;
+    
+    return count;
 }
 
 - (void) didDiscoverDevice: (NMXDevice *) device {
@@ -191,25 +195,39 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
+    BOOL isMessageCell = [self.deviceList count] ? NO : YES;
+    
     DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceCell" forIndexPath:indexPath];
-
-    NMXDevice * device = [self.deviceList objectAtIndex: indexPath.row];
-    cell.textLabel.text = [[AppExecutive sharedInstance] stringWithHandleForDeviceName: device.name];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
-    [cell.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
-    if (device.disconnected)
+
+    if (isMessageCell)
     {
         cell.settingsButton.hidden = YES;
-        [cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+        cell.imageView.hidden = YES;
+        cell.textLabel.text = @"No Devices Found";
+        cell.connectGoButton.hidden = YES;
     }
-    cell.device = device;
-    cell.tableView = self;
+    else
+    {
+        NMXDevice * device = [self.deviceList objectAtIndex: indexPath.row];
+        cell.textLabel.text = [[AppExecutive sharedInstance] stringWithHandleForDeviceName: device.name];
+        [cell.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
+        if (device.disconnected)
+        {
+            cell.settingsButton.hidden = YES;
+            [cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+        }
+        cell.connectGoButton.hidden = NO;
+        cell.device = device;
+        cell.tableView = self;
 
-    NSString *deviceImage = [cell getImageForDeviceStatus: device];
-    cell.imageView.image = [UIImage imageNamed: deviceImage];
+        NSString *deviceImage = [cell getImageForDeviceStatus: device];
+        cell.imageView.image = [UIImage imageNamed: deviceImage];
+        cell.imageView.hidden = NO;
     
-    NSLog(@"Populating table with device image %@", deviceImage);
+        NSLog(@"Populating table with device image %@", deviceImage);
+    }
     
     return cell;
 }
