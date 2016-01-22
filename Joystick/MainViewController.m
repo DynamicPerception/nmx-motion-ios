@@ -630,6 +630,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) viewWillAppear: (BOOL) animated {
     
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
     [[NSNotificationCenter defaultCenter]
      addObserver:self
      selector:@selector(handleNotificationJSMode:)
@@ -880,7 +882,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     {
         [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
     }
-
+    else
+    {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }
 }
 
 - (void) doubleEnterJoystickTimer{
@@ -1259,6 +1264,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     [self showVoltage];
     [self updateLabels];
     [self enterJoystickMode];
+    
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 
 - (void) showVoltage {

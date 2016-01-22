@@ -10,6 +10,7 @@
 #import "MotorSettingsViewController.h"
 #import "AppExecutive.h"
 #import "JoyButton.h"
+#import "MBProgressHUD.h"
 
 
 //------------------------------------------------------------------------------
@@ -60,6 +61,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 //------------------------------------------------------------------------------
 
 - (void) viewDidLoad {
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
@@ -277,7 +280,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     //dampeningSlider.transform = CGAffineTransformRotate(dampeningSlider.transform, 180.0/180*M_PI);
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
-    
+ 
     [super viewDidLoad];
 }
 
@@ -1123,6 +1126,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     [self getDistance];
     [self updateInvertUI];
+    
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
