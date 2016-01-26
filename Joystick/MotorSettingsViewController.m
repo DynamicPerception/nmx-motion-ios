@@ -1706,15 +1706,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     {
         if (self.invertDirectionSwitch.isOn)
         {
-            direction = @"CW";
+            direction = @"UP";
         }
         else
         {
-            direction = @"CCW";
+            direction = @"DOWN";
         }
         
-        leftLbl.text = @"CW";
-        rightLbl.text = @"CCW";
+        leftLbl.text = @"UP";
+        rightLbl.text = @"DOWN";
         
         unitsLbl.text = [NSString stringWithFormat:@"%.02f Deg %@", degrees, direction];
         
