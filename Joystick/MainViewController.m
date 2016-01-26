@@ -16,7 +16,6 @@
 #import "JoyButton.h"
 #import "MBProgressHUD.h"
 
-#define kCurrentFirmwareVersion 45
 
 //------------------------------------------------------------------------------
 
@@ -131,10 +130,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 - (void) viewDidLoad {
     
     [[NSUserDefaults standardUserDefaults] setValue:@(NO) forKey:@"_UIConstraintBasedLayoutLogUnsatisfiable"];
-
-    self.appExecutive.device.delegate = self;
-    
-    [self.appExecutive.device connect];
 
     self.joystickModeActive = false;
     self.showingModalScreen = false;
@@ -486,6 +481,21 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (IBAction) manage2P:(id)sender {
     
+    NMXDevice *device = self.appExecutive.device;
+    if (device.fwVersion < 46 && switch2P.on)
+    {
+        switch2P.on = NO;
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Firmware Version"
+                                                        message: @"The firmare version installed on the NMX device does not support this feature.  Install the latest firmware to access 3P mode."
+                                                       delegate: nil
+                                              cancelButtonTitle: @"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+        return;
+    }
+
+    
     [self enterJoystickMode];
     
     [self hideButtonViews];
@@ -833,6 +843,44 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         
         self.showingModalScreen = false;
     }
+    
+    NMXDevice *device = self.appExecutive.device;
+    
+    [device mainSetAppMode: true];
+    [device mainSetJoystickMode: false];
+    
+    int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
+    int queryStatus = [device mainQueryRunStatus];
+    
+    if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+    {
+        if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+        {
+            appExecutive.is3P = YES;
+            [switch2P setOn:YES];
+        }
+        
+        self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
+        self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
+        self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
+        [self showVoltage];
+        [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
+    }
+    else
+    {
+        [device motorEnable: device.sledMotor];
+        [device motorEnable: device.panMotor];
+        [device motorEnable: device.tiltMotor];
+        
+        [self setupMicrosteps];
+        [self enterJoystickMode];
+    }
+    
+    if (NMXRunStatusStopped == queryStatus)
+    {
+        [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
+    }
+
 }
 
 - (void) doubleEnterJoystickTimer{
@@ -1815,105 +1863,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
 }
 
-- (void) didConnect: (NMXDevice *) device {
-
-    // For now, we are doing all of our device communication on the main queue.  Would be good to move it to it's own queue...
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            
-            [device mainSetAppMode: true];
-            [device mainSetJoystickMode: false];
-            
-            queryStatus = [device mainQueryRunStatus];
-            queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
-            
-            if (queryStatus == 99) {
-                
-                NSLog(@"stop everything");
-                
-                self.appExecutive.resetController = YES;
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    
-                    
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Connection Error"
-                                                                    message: @"Please reset controller"
-                                                                   delegate: nil
-                                                          cancelButtonTitle: @"OK"
-                                                          otherButtonTitles: nil];
-                    [alert show];
-                });
-            }
-            else
-            {
-            
-            if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
-                    {
-                        appExecutive.is3P = YES;
-                        [switch2P setOn:YES];
-                    }
-                        
-                    self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
-                    self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
-                    self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
-                    [self showVoltage];
-                    [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
-                });
-            }
-            else
-            {
-                [device motorEnable: device.sledMotor];
-                [device motorEnable: device.panMotor];
-                [device motorEnable: device.tiltMotor];
-                
-                [self setupMicrosteps];
-                int version = [device mainQueryFirmwareVersion];
-                
-             //NSLog(@"version: %i",version);
-                
-                if (version < kCurrentFirmwareVersion)
-                {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"New Firmware Version"
-                                                                            message: @"New firmware is available for the NMX, please update the NMX firmware asap"
-                                                                           delegate: nil
-                                                                  cancelButtonTitle: @"OK"
-                                                                  otherButtonTitles: nil];
-                        [alert show];
-                    });
-                }
-                
-                [self enterJoystickMode];
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                
-                if (NMXRunStatusStopped == queryStatus)
-                {
-                    [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
-                }
-            });
-            
-            
-            }
-            
-            
-        });
-    });
-}
-
 - (void) handleEnteredBackground: (NSNotification *) notification {
 
     DDLogDebug(@"handleEnteredBackground");
@@ -1940,14 +1889,14 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 //        
 //        [self.navigationController popToRootViewControllerAnimated: true];
 //    });
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [self.navigationController popToRootViewControllerAnimated: true];
-    });
-     
+
         disconnected = YES;
         self.appExecutive.resetController = YES;
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.navigationController popToRootViewControllerAnimated: true];
+        });
+     
     }
 
 //    [[NSNotificationCenter defaultCenter]

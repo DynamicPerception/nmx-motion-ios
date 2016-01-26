@@ -191,23 +191,7 @@
 
 - (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 
-    UITouch *t = [[event allTouches] anyObject];
-    CGPoint loc = [t locationInView:[t view]];
-    
-    float loc2 = loc.x/graphWidth;
-    
-    NSLog(@"loc x: %f",loc.x);
-    NSLog(@"loc2 x: %.02f",loc2);
-    
-    frame2Pixel = loc2;
-    
-    self.layer.sublayers = nil;
-    
-    //CGContextRef context = UIGraphicsGetCurrentContext();
-    //CGContextClearRect(context,self.frame);
-    
-    //[self go];
-    //[self setNeedsDisplay];
+
 }
 
 @end

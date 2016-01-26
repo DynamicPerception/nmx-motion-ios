@@ -763,7 +763,7 @@ NSArray *defaultRampingValues() {
     
     if (deviceHandle)
     {
-        return [NSString stringWithFormat: @"%@ (%@)", deviceHandle, deviceName];
+        return deviceHandle;
     }
 
     return deviceName;

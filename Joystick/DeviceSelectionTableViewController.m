@@ -6,9 +6,11 @@
 //  Copyright (c) 2014 Dynamic Perception. All rights reserved.
 //
 
+#import <CocoaLumberjack/CocoaLumberjack.h>
 #import "DeviceSelectionTableViewController.h"
 #import "AppExecutive.h"
 #import "NMXDeviceManager.h"
+#import "DeviceTableViewCell.h"
 
 @interface DeviceSelectionTableViewController ()
 
@@ -17,6 +19,7 @@
 
 @property NSArray *             deviceList;
 @end
+
 
 @implementation DeviceSelectionTableViewController
 
@@ -80,10 +83,32 @@
     notificationLbl.hidden = YES;
 }
 
+
 - (void) handleNotificationNotificationHost:(NSNotification *)pNotification {
 	
     notificationLbl.text = pNotification.object;
 }
+
+- (void) preDevicesStateChange;
+{
+    [AppExecutive sharedInstance].deviceManager.delegate = self;
+
+    NSArray *cells = [self.tableView visibleCells];
+    for (DeviceTableViewCell *cell in cells)
+    {
+        [cell preDeviceStateChange];
+    }
+}
+
+- (void) postDevicesStateChange;
+{
+    NSArray *cells = [self.tableView visibleCells];
+    for (DeviceTableViewCell *cell in cells)
+    {
+        [cell postDeviceStateChange];
+    }
+}
+
 
 - (void) timerName {
 	
@@ -117,7 +142,12 @@
     [[AppExecutive sharedInstance].deviceManager setDelegate: self];
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameScan) userInfo:nil repeats:NO];
-   
+    
+    [self.tableView reloadData];
+    [self.tableView setNeedsDisplay];
+
+    // Hide separator lines between rows
+    // [self.tableView setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
 }
 
 - (void)timerNameScan {
@@ -139,6 +169,7 @@
     [self.tableView reloadData];
     [[AppExecutive sharedInstance].deviceManager startScanning: sender.on];
 }
+
 
 #pragma mark - Table view data source
 
@@ -168,29 +199,88 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceCell" forIndexPath:indexPath];
+    DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceCell" forIndexPath:indexPath];
 
     NMXDevice * device = [self.deviceList objectAtIndex: indexPath.row];
     cell.textLabel.text = [[AppExecutive sharedInstance] stringWithHandleForDeviceName: device.name];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
+    [cell.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
+    if (device.disconnected)
+    {
+        cell.settingsButton.hidden = YES;
+        [cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+    }
+    cell.device = device;
+    cell.tableView = self;
+
+    NSString *deviceImage = [cell getImageForDeviceStatus: device];
+    cell.imageView.image = [UIImage imageNamed: deviceImage];
+    
+    NSLog(@"Populating table with device image %@", deviceImage);
     
     return cell;
 }
 
+- (void) navigateToMainViewWithDevice: (NMXDevice *)device
+{
+#if !TARGET_IPHONE_SIMULATOR
+    
+    AppExecutive * appExecutive = [AppExecutive sharedInstance];
+    appExecutive.device = device;
+#endif
+
+    if (device.fwVersionUpdateAvailable)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"New Firmware Version"
+                                                        message: @"New firmware is available for the NMX, please update the NMX firmware asap.  If you continue some features will be disabled."
+                                                       delegate: self
+                                              cancelButtonTitle: @"Cancel"
+                                              otherButtonTitles: @"Continue", nil];
+        [alert show];
+    }
+    else if (0 == device.fwVersion)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Device not ready"
+                                                        message: @"The device is being initialized, please wait."
+                                                       delegate: self
+                                              cancelButtonTitle: @"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+    }
+    else
+    {
+        [self performSegueWithIdentifier:@"showMainView" sender:self];
+    }
+    
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex != 0)
+    {
+        [self performSegueWithIdentifier:@"showMainView" sender:self];
+    }
+}
+
+- (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if ([identifier isEqualToString:@"showSettingsView"])
+    {
+        // The segue is executed automatically as deviced in the storyboard.  However, we need to do some setup fist in the button action handler so perform the seque from there instead
+        // See settingsButtonSelected
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    if ([[segue identifier] isEqualToString:@"showMainView"] || [[segue identifier] isEqualToString: @"simulatorShowMainView"])
+    if ([[segue identifier] isEqualToString:@"showMainView"] || [[segue identifier] isEqualToString: @"simulatorShowMainView"] ||
+        [[segue identifier] isEqualToString:@"showSettingsView"])
     {
-        #if !TARGET_IPHONE_SIMULATOR
-        
-            AppExecutive * appExecutive = [AppExecutive sharedInstance];
-            NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-            appExecutive.device = [self.deviceList objectAtIndex: indexPath.row];
-        
             //NSLog(@"device name: %@",appExecutive.device.name);
-        
-        #endif
     }
 }
 
@@ -198,5 +288,6 @@
 
     [super didReceiveMemoryWarning];
 }
+
 
 @end

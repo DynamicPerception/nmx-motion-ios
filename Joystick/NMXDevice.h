@@ -53,12 +53,14 @@ typedef enum : unsigned char {
 
 - (void) didConnect: (NMXDevice *) device;
 
+
 @end
 
 @interface NMXDevice : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
 - (id) initWithPeripheral: (CBPeripheral *) peripheral andCentralManager: (CBCentralManager *) centralManager;
 - (void) connect;
+- (void) disconnect;
 
 - (UInt32) mainQueryStartHere;
 
@@ -143,6 +145,10 @@ typedef enum : unsigned char {
 @property (assign) unsigned char panMotor;
 @property (assign) unsigned char tiltMotor;
 @property bool inBackground;
+@property (readonly) UInt16 fwVersion;
+@property (readonly) BOOL fwVersionUpdateAvailable;
+@property (readonly) bool disconnected;
+@property (atomic) int serviceDiscoveryRetryCount;
 
 - (void) setHomePosition : (int) motor;
 
@@ -167,6 +173,8 @@ typedef enum : unsigned char {
 - (void) motorSet:(int)motorNumber SetMotorPosition: (UInt32) position;
 - (void) resetLimits: (int) motorNumber;
 - (void) motorSendToEndPoint: (int) motorNumber;
+
+- (void) peripheralWasConnected: (CBPeripheral *) peripheral;
 
 @end
 

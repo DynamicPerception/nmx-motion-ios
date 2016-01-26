@@ -1134,7 +1134,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void) deviceDisconnect: (id) object {
     
-    [self dismissViewControllerAnimated: YES completion: nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self dismissViewControllerAnimated: YES completion: nil];
+    });
 }
 
 - (void) setSegmentedControllerAttributes {

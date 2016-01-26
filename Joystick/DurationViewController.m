@@ -198,8 +198,9 @@ NSArray static	*secondsStrings = nil;
 }
 
 - (void) deviceDisconnect: (id) object {
-    
-    [self dismissViewControllerAnimated: YES completion: nil];
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        [self dismissViewControllerAnimated: YES completion: nil];
+    });
 }
 
 //------------------------------------------------------------------------------

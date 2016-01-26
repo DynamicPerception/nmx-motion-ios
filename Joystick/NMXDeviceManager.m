@@ -112,6 +112,16 @@
    didConnectPeripheral: (CBPeripheral *) peripheral {
 
     DDLogDebug(@"Peripheral connected");
+    
+    if (peripheral.delegate)
+    {
+        NMXDevice *peripheralDelegate = (NMXDevice *)peripheral.delegate;
+        if ([peripheralDelegate respondsToSelector:@selector(peripheralWasConnected:)])
+        {
+            [peripheralDelegate peripheralWasConnected: peripheral];
+        }
+    }
+    
     [peripheral discoverServices:nil];
 }
 
@@ -119,6 +129,14 @@
 
     //DDLogDebug(@"centralManager Peripheral disconnected");
     
+    for (NMXDevice *device in self.myDevices)
+    {
+        if ([device.name isEqualToString: peripheral.name])
+        {
+            [self.myDevices removeObject: device];
+        }
+    }
+
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDisconnectDevice:)]))
     {
         [self.delegate didDisconnectDevice: peripheral];
@@ -132,7 +150,7 @@
                 [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"central didDisconnectPeripheral"];
                 
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
-                                                                message: @"All settings saved on NMX - Tap OK to reconnect"
+                                                                message: @"All settings saved on NMX - Tap Connect to reconnect"
                                                                delegate: self
                                                       cancelButtonTitle: @"OK"
                                                       otherButtonTitles: nil];
@@ -180,7 +198,6 @@
     self.scanInProcess = false;
     self.scanRequested = false;
     [self.myCBCentralManager stopScan];
-    self.myDevices = [NSMutableArray arrayWithCapacity: 3];
 }
 
 - (void) isInReview {

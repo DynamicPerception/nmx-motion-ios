@@ -10,9 +10,14 @@
 #import "NMXDeviceManager.h"
 #import "JoyButton.h"
 
-@interface DeviceSelectionTableViewController : UIViewController <NMXDeviceManagerDelegate>
+@interface DeviceSelectionTableViewController : UIViewController <NMXDeviceManagerDelegate, UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet JoyButton *shareBtn;
 @property (weak, nonatomic) IBOutlet UILabel *notificationLbl;
 
+- (void) navigateToMainViewWithDevice: (NMXDevice *)device;
+- (void) preDevicesStateChange;
+- (void) postDevicesStateChange;
+
 @end
+
