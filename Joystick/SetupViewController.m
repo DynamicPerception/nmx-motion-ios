@@ -974,19 +974,72 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     
 	if (FALSE == [number isEqualToNumber: self.appExecutive.exposureNumber])
 	{
-        //self.appExecutive.delayNumber = number; //randall 8-9-15
-        
-        self.appExecutive.exposureNumber = number;
-		[self.appExecutive resetFocusTime];
-		[self.appExecutive resetTriggerTime];
+        if ([self.appExecutive validExposureNumber: number])
+        {
+            self.appExecutive.exposureNumber = number;
+            
+            NSInteger focus		= [self.appExecutive.focusNumber integerValue];
+            NSInteger trigger	= [self.appExecutive.triggerNumber integerValue];
+            NSInteger interval		= [self.appExecutive.intervalNumber integerValue];
+            NSInteger exposure	    = [self.appExecutive.exposureNumber integerValue];
+
+            NSInteger buffer;
+            if (exposure > (interval - focus))
+            {
+                buffer = focus;
+                interval = exposure + focus;
+                
+                self.appExecutive.intervalNumber = [NSNumber numberWithInteger: interval];
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Interval Setting"
+                                                                message: @"Interval has been changed to maintain minimum buffer time."
+                                                               delegate: self
+                                                      cancelButtonTitle: @"OK"
+                                                      otherButtonTitles: nil];
+                [alert show];
+
+            }
+            else
+            {
+                buffer = interval - exposure;
+            }
+
+            self.appExecutive.bufferNumber = [NSNumber numberWithInteger: buffer];
+            
+            NSInteger delay = exposure - (focus + trigger);
+            
+            if (delay < 100)
+            {
+                delay = 100;
+                focus = exposure - (delay + trigger);
+                
+                if (focus < 100)
+                {
+                    focus = 100;
+
+                    trigger = exposure - (delay + focus);
+                    trigger = MAX(100, trigger);
+                    self.appExecutive.triggerNumber = [NSNumber numberWithInteger: trigger];
+                }
+                
+                self.appExecutive.focusNumber = [NSNumber numberWithInteger: focus];
+            }
+            
+            self.appExecutive.delayNumber = [NSNumber numberWithInteger: delay];
+            
+            self.exposureValue.text = [NSString stringWithFormat: @"%@ s", [ExposureViewController stringForExposure: exposure]];
+        }
+        else
+        {
+            UIAlertView *alert = [[UIAlertView alloc]
+                                  initWithTitle:@""
+                                  message:@"The selected exposure value is not allowed"
+                                  delegate:nil
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles:nil];
+            [alert show];
+        }
 	}
-
-	[self updateViewFields];
-}
-
-- (void) updateExposureString: (NSString *) string {
-
-	self.exposureValue.text = [NSString stringWithFormat: @"%@ s", string];
 }
 
 //------------------------------------------------------------------------------
@@ -1056,11 +1109,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     appExecutive.focusNumber = preset.focus;
     appExecutive.triggerNumber = preset.trigger;
     appExecutive.delayNumber = preset.delay;
-    
-//    recordModeControl.selectedSegmentIndex = preset.timelapsevideo;
-//    timelapseModeControl.selectedSegmentIndex = preset.smscontinuous;
-    
-    [self.appExecutive computeDelayTime];
     
     [self updateViewFields];
     

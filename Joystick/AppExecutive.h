@@ -167,9 +167,13 @@
 
 #pragma mark Object Operations
 
-- (void) resetFocusTime;
-- (void) resetTriggerTime;
-- (void) computeDelayTime;
 - (void) setPoints;
+
+#pragma mark validation
+
+- (BOOL) validExposureNumber: (NSNumber *) number;
+- (BOOL) validDelayNumber: (NSNumber *) number;
+- (BOOL) validFocusNumber: (NSNumber *) number;
+- (BOOL) validTriggerNumber: (NSNumber *) number;
 
 @end

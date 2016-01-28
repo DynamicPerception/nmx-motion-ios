@@ -19,6 +19,9 @@
 
 #pragma mark - Private Interface
 
+NSString	static	*kSetSecondsForFocus		= @"kSetSecondsForFocus";
+NSString	static	*kSetSecondsForTrigger		= @"kSetSecondsForTrigger";
+NSString	static	*kSetSecondsForDelay		= @"kSetSecondsForDelay";
 
 @interface CameraSettingsViewController () {
 
@@ -36,6 +39,8 @@
 @property (nonatomic, strong)	IBOutlet	UILabel *			intervalValueLabel;
 @property (nonatomic, strong)	IBOutlet	UILabel *			bufferValueLabel;
 @property (nonatomic, strong)	IBOutlet	JoyButton *			okButton;
+
+@property (nonatomic, assign) NSString *settingValueFor;
 
 @end
 
@@ -195,6 +200,158 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
 	[super didReceiveMemoryWarning];	
 }
 
+#pragma mark SecondsViewDelegate
+
+
+- (NSInteger) getIntegerValueForSecondsView {
+    
+    if ([self.settingValueFor isEqualToString:kSetSecondsForFocus]) {
+        return [self.appExecutive.focusNumber integerValue];
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForTrigger]) {
+        return [self.appExecutive.triggerNumber integerValue];
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForDelay]) {
+        return [self.appExecutive.delayNumber integerValue];
+    }
+    
+    return 0;
+}
+
+- (void) intervalChangedAlert {
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Interval Setting"
+                                                    message: @"Interval has been changed to maintain minimum buffer time."
+                                                   delegate: self
+                                          cancelButtonTitle: @"OK"
+                                          otherButtonTitles: nil];
+    [alert show];
+}
+
+- (void) setNumberValueForSecondsView : (NSNumber *)number {
+
+    BOOL numberIsValid = YES;
+    
+    if ([self.settingValueFor isEqualToString:kSetSecondsForFocus]) {
+        numberIsValid = [self.appExecutive validFocusNumber: number];
+        if (numberIsValid)
+        {
+            self.appExecutive.focusNumber = number;
+        }
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForTrigger]) {
+        numberIsValid = [self.appExecutive validTriggerNumber: number];
+        if (numberIsValid)
+        {
+            self.appExecutive.triggerNumber = number;
+        }
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForDelay]) {
+
+        numberIsValid = [self.appExecutive validDelayNumber: number];
+        if (numberIsValid)
+        {
+            self.appExecutive.delayNumber = number;
+        }
+    }
+    
+    if (numberIsValid)
+    {
+        // Recalculate the new exposure based on the updated delay value
+        NSInteger focus		= [self.appExecutive.focusNumber integerValue];
+        NSInteger trigger	= [self.appExecutive.triggerNumber integerValue];
+        NSInteger delay		= [self.appExecutive.delayNumber integerValue];
+        NSInteger exposure	= focus + trigger + delay;
+        self.appExecutive.exposureNumber = [NSNumber numberWithInteger: exposure];
+        
+        // Recalculate the new buffer value based on the updated delay value
+        NSInteger interval = [self.appExecutive.intervalNumber integerValue];
+        NSInteger buffer = interval - exposure;
+        if (buffer < 100)
+        {
+            buffer = 100;
+            interval = exposure + buffer;
+            self.appExecutive.intervalNumber = [NSNumber numberWithInteger: interval];
+            [self intervalChangedAlert];
+        }
+        self.appExecutive.bufferNumber = [NSNumber numberWithInteger: buffer];
+    }
+    else
+    {
+        NSString *valueName = [self getTitleTextForSecondsView];
+        NSString *alertMessage = [NSString stringWithFormat:@"The selected %@ is not allowed.", valueName];
+        
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle:@""
+                              message:alertMessage
+                              delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
+- (NSString *) getTitleTextForSecondsView {
+    
+    if ([self.settingValueFor isEqualToString:kSetSecondsForFocus]) {
+        return @"Focus";
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForTrigger]) {
+        return @"Trigger";
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForDelay]) {
+        return @"Delay";
+    }
+
+    return nil;
+}
+
+- (int) getTensLimitForSecondsView {
+    if ([self.settingValueFor isEqualToString:kSetSecondsForFocus]) {
+        return 0;
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForTrigger]) {
+        return 9;
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForDelay]) {
+        return 6;
+    }
+
+    return 0;
+}
+
+- (int) getOnesLimitForSecondsView {
+    if ([self.settingValueFor isEqualToString:kSetSecondsForFocus]) {
+        return 9;
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForTrigger]) {
+        return 9;
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForDelay]) {
+        return 9;
+    }
+    
+    return 0;
+}
+
+
+- (int)  getMaximumMillisecondsForSecondsView
+{
+    if ([self.settingValueFor isEqualToString:kSetSecondsForFocus]) {
+        return 10 * 1000;
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForTrigger]) {
+        return 100 * 1000;
+    }
+    else if ([self.settingValueFor isEqualToString:kSetSecondsForDelay]) {
+        return 60 * 1000;
+    }
+    
+    return 1000000;
+}
+
+
+
 
 //------------------------------------------------------------------------------
 
@@ -206,22 +363,22 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
 	if ([segue.identifier isEqualToString: kSegueForCameraSettingsFocusInput])
 	{
 		SetSecondsViewController *ssvc = segue.destinationViewController;
-
-		ssvc.variableToSet = kSetSecondsForFocus;
+        ssvc.delegate = self;
+        self.settingValueFor = kSetSecondsForFocus;
 	}
 
 	else if ([segue.identifier isEqualToString: kSegueForCameraSettingsTriggerInput])
 	{
 		SetSecondsViewController *ssvc = segue.destinationViewController;
-
-		ssvc.variableToSet = kSetSecondsForTrigger;
+        ssvc.delegate = self;
+		self.settingValueFor = kSetSecondsForTrigger;
 	}
 
 	else if ([segue.identifier isEqualToString: kSegueForCameraSettingsDelayInput])
 	{
 		SetSecondsViewController *ssvc = segue.destinationViewController;
-
-		ssvc.variableToSet = kSetSecondsForDelay;
+        ssvc.delegate = self;
+		self.settingValueFor = kSetSecondsForDelay;
 	}
 
 	else if ([segue.identifier isEqualToString: kSegueForCameraSettingsIntervalInput])
@@ -238,21 +395,21 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
 
 - (IBAction) handleFocusButton: (id) sender {
 
-	DDLogDebug(@"Focus Button");
+    //DDLogDebug(@"Focus Button");
 
 	[self performSegueWithIdentifier: kSegueForCameraSettingsFocusInput sender: self];
 }
 
 - (IBAction) handleTriggerButton: (id) sender {
 
-	DDLogDebug(@"Trigger Button");
+    //DDLogDebug(@"Trigger Button");
 
 	[self performSegueWithIdentifier: kSegueForCameraSettingsTriggerInput sender: self];
 }
 
 - (IBAction) handleDelayButton: (id) sender {
 
-	DDLogDebug(@"Delay Button");
+    //DDLogDebug(@"Delay Button");
 
 	[self performSegueWithIdentifier: kSegueForCameraSettingsDelayInput sender: self];
 }

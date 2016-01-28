@@ -192,8 +192,6 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
     
     NSInteger	interval	= [self getPickerValue];
     
-    //self.appExecutive.intervalNumber = [NSNumber numberWithInteger: interval];
-    
     float convert = (float)interval/1000;
     
     [[NSNotificationCenter defaultCenter]

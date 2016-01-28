@@ -171,6 +171,29 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
 
 	NSInteger	interval	= [self getPickerValue];
 
+    NSInteger exposure	= [self.appExecutive.exposureNumber	integerValue];
+    NSInteger buffer	= interval - exposure;
+    
+    // Ajust the buffer to accomdate the new interval
+    if (buffer < 100)
+    {
+        buffer = 100;
+        interval = exposure + buffer;
+        self.appExecutive.bufferNumber	= [NSNumber numberWithInteger: buffer];
+        self.appExecutive.intervalNumber	= [NSNumber numberWithInteger: interval];
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Interval Setting"
+                                                        message: @"Interval has been changed to maintain minimum buffer time."
+                                                       delegate: self
+                                              cancelButtonTitle: @"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+    }
+    else
+    {
+        self.appExecutive.bufferNumber = [NSNumber numberWithInteger: buffer];
+    }
+
 	self.appExecutive.intervalNumber = [NSNumber numberWithInteger: interval];
 	[self dismissViewControllerAnimated: YES completion: nil];
 }

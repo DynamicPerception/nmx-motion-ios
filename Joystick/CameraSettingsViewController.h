@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SetSecondsViewController.h"
 
-@interface CameraSettingsViewController : UIViewController
+@interface CameraSettingsViewController : UIViewController <SecondsViewDelegate>
 
 @end

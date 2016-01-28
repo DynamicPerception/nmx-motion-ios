@@ -8,13 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
-NSString	static	*kSetSecondsForFocus		= @"kSetSecondsForFocus";
-NSString	static	*kSetSecondsForTrigger		= @"kSetSecondsForTrigger";
-NSString	static	*kSetSecondsForDelay		= @"kSetSecondsForDelay";
+@protocol SecondsViewDelegate <NSObject>
+
+- (NSInteger)  getIntegerValueForSecondsView;
+- (void)       setNumberValueForSecondsView : (NSNumber *)number;
+- (NSString *) getTitleTextForSecondsView;
+- (int)        getTensLimitForSecondsView;
+- (int)        getOnesLimitForSecondsView;
+- (int)        getMaximumMillisecondsForSecondsView;
+
+@end
 
 
 @interface SetSecondsViewController : UIViewController <UIPickerViewDelegate, UIPickerViewDataSource>
 
-@property (nonatomic, assign)	NSString *	variableToSet;
+@property (nonatomic, weak) id<SecondsViewDelegate> delegate;
 
 @end

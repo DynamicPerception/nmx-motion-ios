@@ -102,7 +102,7 @@ NSArray static	*exposureStrings = nil;
 
 #pragma mark - Class Query
 
-
+// exposure is expressed in milliseconds
 + (NSString *) stringForExposure: (NSInteger) exposure {
 
 	NSNumber *	number	= [NSNumber numberWithInteger: exposure];
@@ -185,7 +185,6 @@ NSArray static	*exposureStrings = nil;
     NSLog(@"string: %@",string);
 
 	[self.delegate updateExposureNumber: number];
-	[self.delegate updateExposureString: string];
     
 	[self dismissViewControllerAnimated: YES completion: nil];
 }
