@@ -999,11 +999,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     
     int n = (int)a2;
-    int ab = abs(n);
-    
-    //int newPos = start + ab;
-    //int newPos = start - n;
-    
     int newPos;
     
     if(start > end)
@@ -1713,9 +1708,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             direction = @"DOWN";
         }
         
-        leftLbl.text = @"UP";
-        rightLbl.text = @"DOWN";
-        
         unitsLbl.text = [NSString stringWithFormat:@"%.02f Deg %@", degrees, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f Deg %@", degrees, direction];
@@ -1749,10 +1741,16 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     else if ((int)self.motorNumber == 2)
     {
+        leftLbl.text = @"CW";
+        rightLbl.text = @"CCW";
+
         [self.appExecutive.defaults setObject: direction forKey: @"panDirection"];
     }
     else if ((int)self.motorNumber == 3)
     {
+        leftLbl.text = @"UP";
+        rightLbl.text = @"DOWN";
+
         [self.appExecutive.defaults setObject: direction forKey: @"tiltDirection"];
     }
 }
