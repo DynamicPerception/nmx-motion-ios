@@ -1731,6 +1731,13 @@
                                                     <action selector="handleExposureButton:" destination="7dG-qm-POv" eventType="touchUpInside" id="Deh-TM-c1q"/>
                                                 </connections>
                                             </button>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zf9-BT-LqV">
+                                                <rect key="frame" x="267" y="66" width="43" height="6"/>
+                                                <color key="backgroundColor" red="0.074509803921568626" green="0.13333333333333333" blue="0.34901960784313724" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="6" id="H81-lc-gnb"/>
+                                                </constraints>
+                                            </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Buffer" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GN9-XX-Ofn" userLabel="Buffer Label">
                                                 <rect key="frame" x="197" y="48" width="182" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1985,7 +1992,9 @@
                                             <constraint firstAttribute="trailingMargin" secondItem="kck-tL-tbn" secondAttribute="trailing" constant="10" id="6le-Ac-IDd"/>
                                             <constraint firstItem="OK1-Lb-uHG" firstAttribute="top" secondItem="sbs-If-zNZ" secondAttribute="bottom" constant="16" id="7T5-6r-nS0"/>
                                             <constraint firstItem="sbs-If-zNZ" firstAttribute="centerX" secondItem="bpB-uC-NOT" secondAttribute="centerX" id="7p2-0K-Lao"/>
+                                            <constraint firstItem="zf9-BT-LqV" firstAttribute="top" secondItem="GN9-XX-Ofn" secondAttribute="bottom" constant="1" id="7sZ-8F-buv"/>
                                             <constraint firstAttribute="centerX" secondItem="Hl4-cK-RGw" secondAttribute="centerX" constant="-45" id="8FY-OR-z2P"/>
+                                            <constraint firstItem="zf9-BT-LqV" firstAttribute="width" secondItem="bpB-uC-NOT" secondAttribute="width" id="91L-yL-vMs"/>
                                             <constraint firstItem="1bq-hc-Jo1" firstAttribute="width" secondItem="4hb-N1-kFM" secondAttribute="width" id="96o-oi-Ydu"/>
                                             <constraint firstItem="sbs-If-zNZ" firstAttribute="height" secondItem="bpB-uC-NOT" secondAttribute="height" constant="20" id="9FL-qx-qGT"/>
                                             <constraint firstItem="4hb-N1-kFM" firstAttribute="top" secondItem="re9-yZ-FWz" secondAttribute="bottom" id="9LF-ML-Xcc"/>
@@ -1994,6 +2003,7 @@
                                             <constraint firstItem="bpB-uC-NOT" firstAttribute="top" secondItem="GN9-XX-Ofn" secondAttribute="bottom" constant="7" id="Bef-6s-ej1"/>
                                             <constraint firstAttribute="centerX" secondItem="GN9-XX-Ofn" secondAttribute="centerX" id="Bkb-tu-wCj"/>
                                             <constraint firstItem="T83-FY-Hh4" firstAttribute="bottom" secondItem="4hb-N1-kFM" secondAttribute="bottom" id="CJ8-2J-pQZ"/>
+                                            <constraint firstItem="zf9-BT-LqV" firstAttribute="centerX" secondItem="bpB-uC-NOT" secondAttribute="centerX" id="Cpi-Tj-gnI"/>
                                             <constraint firstItem="EUp-21-T6b" firstAttribute="top" secondItem="gfq-Wi-Fdk" secondAttribute="top" id="Dy3-SA-qrd"/>
                                             <constraint firstItem="GN9-XX-Ofn" firstAttribute="centerX" secondItem="bpB-uC-NOT" secondAttribute="centerX" id="FLe-HP-d42"/>
                                             <constraint firstItem="lJm-20-zkN" firstAttribute="top" secondItem="INN-Ku-RHw" secondAttribute="bottom" constant="20" id="FcY-Tn-kfH"/>
@@ -2029,6 +2039,7 @@
                                             <constraint firstItem="Weq-BN-feX" firstAttribute="width" secondItem="bpB-uC-NOT" secondAttribute="width" id="aiZ-9X-Dr7"/>
                                             <constraint firstItem="wRr-19-z5w" firstAttribute="centerX" secondItem="sa8-7Q-DBr" secondAttribute="centerX" id="cL8-Bn-GXN"/>
                                             <constraint firstItem="wRr-19-z5w" firstAttribute="bottom" secondItem="sa8-7Q-DBr" secondAttribute="bottom" id="cPQ-UY-KE3"/>
+                                            <constraint firstItem="zf9-BT-LqV" firstAttribute="centerY" secondItem="bpB-uC-NOT" secondAttribute="centerY" id="cem-0E-Lag"/>
                                             <constraint firstItem="sbs-If-zNZ" firstAttribute="width" secondItem="bpB-uC-NOT" secondAttribute="width" id="fkZ-8N-yaW"/>
                                             <constraint firstItem="GN9-XX-Ofn" firstAttribute="width" secondItem="3Sn-CI-wE3" secondAttribute="width" id="frd-yx-Wt0"/>
                                             <constraint firstItem="GN9-XX-Ofn" firstAttribute="top" secondItem="EUp-21-T6b" secondAttribute="bottom" constant="20" id="gar-qB-evq"/>
@@ -2061,6 +2072,11 @@
                                             <constraint firstItem="T83-FY-Hh4" firstAttribute="width" secondItem="4hb-N1-kFM" secondAttribute="width" id="yj9-pj-LAs"/>
                                             <constraint firstItem="aIR-a8-d6K" firstAttribute="top" secondItem="EUp-21-T6b" secondAttribute="bottom" constant="28" id="zy3-N2-WwL"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="cem-0E-Lag"/>
+                                            </mask>
+                                        </variation>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WmM-8S-BSo">
                                         <rect key="frame" x="0.0" y="4" width="30" height="30"/>
@@ -5565,18 +5581,18 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="PwX-tX-cQi"/>
-        <segue reference="K6t-E6-71o"/>
         <segue reference="5Fi-kf-KP0"/>
         <segue reference="6SS-hE-J9g"/>
-        <segue reference="HUL-Rp-DYU"/>
         <segue reference="6tH-tQ-8da"/>
         <segue reference="k3P-Db-zBC"/>
-        <segue reference="rGc-Y0-TPg"/>
         <segue reference="p4Z-EB-hlS"/>
+        <segue reference="rGc-Y0-TPg"/>
         <segue reference="RMu-iv-gcK"/>
         <segue reference="oNZ-l0-vdW"/>
         <segue reference="br4-PB-JjF"/>
         <segue reference="Nk1-9G-Dpm"/>
+        <segue reference="PwX-tX-cQi"/>
+        <segue reference="K6t-E6-71o"/>
+        <segue reference="IfY-aS-7xa"/>
     </inferredMetricsTieBreakers>
 </document>
