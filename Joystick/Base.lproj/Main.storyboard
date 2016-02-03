@@ -1765,6 +1765,13 @@
                                                     <action selector="handleBufferButton:" destination="7dG-qm-POv" eventType="touchUpInside" id="VyI-sp-8H2"/>
                                                 </connections>
                                             </button>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1e1-i5-uzU">
+                                                <rect key="frame" x="464" y="66" width="43" height="6"/>
+                                                <color key="backgroundColor" red="0.078431372549019607" green="0.031372549019607843" blue="0.35686274509803922" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="6" id="n6X-7u-a7t"/>
+                                                </constraints>
+                                            </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="03L-Yk-jjc" userLabel="Interval Label">
                                                 <rect key="frame" x="395" y="48" width="181" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1988,6 +1995,7 @@
                                         <color key="tintColor" red="0.098039215686274508" green="0.19215686274509802" blue="0.41960784313725491" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstItem="u3d-Vk-vgd" firstAttribute="centerY" secondItem="Hl4-cK-RGw" secondAttribute="centerY" id="04G-Tc-oG6"/>
+                                            <constraint firstItem="1e1-i5-uzU" firstAttribute="centerX" secondItem="Weq-BN-feX" secondAttribute="centerX" id="0tM-B3-1p9"/>
                                             <constraint firstItem="sbs-If-zNZ" firstAttribute="centerY" secondItem="bpB-uC-NOT" secondAttribute="centerY" constant="-10" id="5zl-5f-sJh"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="kck-tL-tbn" secondAttribute="trailing" constant="10" id="6le-Ac-IDd"/>
                                             <constraint firstItem="OK1-Lb-uHG" firstAttribute="top" secondItem="sbs-If-zNZ" secondAttribute="bottom" constant="16" id="7T5-6r-nS0"/>
@@ -2066,8 +2074,10 @@
                                             <constraint firstItem="dyf-hl-bCs" firstAttribute="centerX" secondItem="wRr-19-z5w" secondAttribute="centerX" id="u5c-jZ-epQ"/>
                                             <constraint firstItem="GN9-XX-Ofn" firstAttribute="width" secondItem="03L-Yk-jjc" secondAttribute="width" id="u8k-bk-sIj"/>
                                             <constraint firstAttribute="centerX" secondItem="OK1-Lb-uHG" secondAttribute="centerX" constant="-65" id="vHc-Se-P0F"/>
+                                            <constraint firstItem="1e1-i5-uzU" firstAttribute="top" secondItem="03L-Yk-jjc" secondAttribute="bottom" constant="1" id="vUK-Df-0U4"/>
                                             <constraint firstItem="Yr4-0G-wBf" firstAttribute="width" secondItem="Jv3-Ot-JO6" secondAttribute="width" id="w8Z-0W-8dT"/>
                                             <constraint firstItem="03L-Yk-jjc" firstAttribute="top" secondItem="EUp-21-T6b" secondAttribute="bottom" constant="20" id="whL-8r-R4p"/>
+                                            <constraint firstItem="1e1-i5-uzU" firstAttribute="width" secondItem="Weq-BN-feX" secondAttribute="width" id="wiH-uX-Vt0"/>
                                             <constraint firstItem="aIR-a8-d6K" firstAttribute="trailing" secondItem="gfq-Wi-Fdk" secondAttribute="trailing" multiplier="0.7" id="yWv-Eh-Lxh"/>
                                             <constraint firstItem="T83-FY-Hh4" firstAttribute="width" secondItem="4hb-N1-kFM" secondAttribute="width" id="yj9-pj-LAs"/>
                                             <constraint firstItem="aIR-a8-d6K" firstAttribute="top" secondItem="EUp-21-T6b" secondAttribute="bottom" constant="28" id="zy3-N2-WwL"/>
