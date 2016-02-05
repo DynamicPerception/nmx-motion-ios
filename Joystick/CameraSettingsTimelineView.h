@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CameraSettingsTimelineView : UIView
+@interface CameraSettingsTimelineView : UIControl
 
 - (void) setCameraTimesForFocus:(float) focus trigger:(float)trigger delay:(float)delay buffer:(float)bufer animated:(BOOL)animated;
 - (void) startPlayheadAnimation;

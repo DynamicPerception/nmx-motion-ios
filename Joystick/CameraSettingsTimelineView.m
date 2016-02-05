@@ -81,6 +81,13 @@
     self.playheadView.backgroundColor = [UIColor colorWithRed: 1. green: 1. blue: 1. alpha:1.0];
     [self addSubview: self.playheadView];
     
+    self.focusBarView.userInteractionEnabled = NO;
+    self.triggerBarView.userInteractionEnabled = NO;
+    self.delayBarView.userInteractionEnabled = NO;
+    self.intervalBarView.userInteractionEnabled = NO;
+    self.exposureBarView.userInteractionEnabled = NO;
+    self.playheadView.userInteractionEnabled = NO;
+    
 }
 
 - (id)initWithCoder:(NSCoder *)aCoder{
@@ -187,6 +194,8 @@
      }];
     
 }
+
+
 
 
 /*

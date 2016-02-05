@@ -1672,6 +1672,13 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gfq-Wi-Fdk" userLabel="Timelapse View">
                                         <rect key="frame" x="0.0" y="91" width="576" height="299"/>
                                         <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SLp-Sh-nMO" customClass="CameraSettingsTimelineView">
+                                                <rect key="frame" x="25" y="97" width="526" height="40"/>
+                                                <color key="backgroundColor" red="0.074509803921568626" green="0.13333333333333333" blue="0.34901960784313724" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="fEu-lm-aR0"/>
+                                                </constraints>
+                                            </view>
                                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="EUp-21-T6b" userLabel="Timelapse Mode">
                                                 <rect key="frame" x="16" y="0.0" width="544" height="29"/>
                                                 <color key="backgroundColor" red="0.21568627450980393" green="0.21568627450980393" blue="0.21568627450980393" alpha="1" colorSpace="calibratedRGB"/>
@@ -1823,7 +1830,7 @@
                                                 </state>
                                                 <connections>
                                                     <action selector="handleAdvancedCameraSettingsButton:" destination="7dG-qm-POv" eventType="touchUpInside" id="PLx-X6-Nxy"/>
-                                                    <segue destination="V0V-VZ-Zl0" kind="presentation" id="nVh-q7-jb4"/>
+                                                    <segue destination="V0V-VZ-Zl0" kind="presentation" identifier="SegueToCameraSettingsViewController" id="nVh-q7-jb4"/>
                                                 </connections>
                                             </button>
                                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OK1-Lb-uHG" customClass="JoyButton">
@@ -1990,13 +1997,6 @@
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SLp-Sh-nMO" customClass="CameraSettingsTimelineView">
-                                                <rect key="frame" x="25" y="97" width="526" height="40"/>
-                                                <color key="backgroundColor" red="0.074509803921568626" green="0.13333333333333333" blue="0.34901960784313724" alpha="1" colorSpace="calibratedRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="40" id="fEu-lm-aR0"/>
-                                                </constraints>
-                                            </view>
                                         </subviews>
                                         <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.098039215686274508" green="0.19215686274509802" blue="0.41960784313725491" alpha="1" colorSpace="calibratedRGB"/>

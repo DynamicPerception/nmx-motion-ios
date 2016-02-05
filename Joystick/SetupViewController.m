@@ -92,6 +92,7 @@ NSString	static	*kSegueForVideoShotDurationInput	= @"SegueForVideoShotDurationIn
 NSString	static	*kSegueForFrameRateInput			= @"SegueForFrameRateInput";
 NSString	static	*kSegueForTestCameraModalView		= @"SegueForTestCameraModalView";
 NSString	static	*kSegueForAboutView					= @"SegueForAboutView";
+NSString    static  *kSequeForCameraSettingsView        = @"SegueToCameraSettingsViewController";
 
 NSString	static	*kShotDurationName		= @"kShotDurationName";
 NSString	static	*kVideoLengthName		= @"kVideoLengthName";
@@ -251,6 +252,8 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 //    NSLog(@"ms1: %i",self.appExecutive.microstep1);
 //    NSLog(@"ms2: %i",self.appExecutive.microstep2);
 //    NSLog(@"ms3: %i",self.appExecutive.microstep3);
+    
+    [self.cameraSettingsTimelineView addTarget:self action:@selector(touchedTimeline:) forControlEvents:UIControlEventTouchUpInside];
     
     [super viewDidLoad];
 }
@@ -623,6 +626,13 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 //------------------------------------------------------------------------------
 
 #pragma mark - IBAction Methods
+
+- (void) touchedTimeline: (id)control
+{
+    [self performSegueWithIdentifier: kSequeForCameraSettingsView sender: self];
+}
+
+
 
 - (IBAction) handleRecordModeControl: (UISegmentedControl *) sender {
 
