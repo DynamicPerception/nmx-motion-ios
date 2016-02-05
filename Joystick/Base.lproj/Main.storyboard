@@ -1997,6 +1997,12 @@
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="tap interval timeline for advanced setup" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GIc-b4-psQ">
+                                                <rect key="frame" x="25" y="139" width="526" height="17"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.098039215686274508" green="0.19215686274509802" blue="0.41960784313725491" alpha="1" colorSpace="calibratedRGB"/>
@@ -2037,6 +2043,7 @@
                                             <constraint firstItem="GN9-XX-Ofn" firstAttribute="leading" secondItem="3Sn-CI-wE3" secondAttribute="trailing" constant="8" id="Lv8-7s-GbS"/>
                                             <constraint firstItem="3Sn-CI-wE3" firstAttribute="leading" secondItem="gfq-Wi-Fdk" secondAttribute="leadingMargin" id="Mfw-PT-0KS"/>
                                             <constraint firstItem="OK1-Lb-uHG" firstAttribute="width" secondItem="INN-Ku-RHw" secondAttribute="width" id="Ojg-vc-BDW"/>
+                                            <constraint firstItem="GIc-b4-psQ" firstAttribute="centerX" secondItem="SLp-Sh-nMO" secondAttribute="centerX" id="QXS-te-hME"/>
                                             <constraint firstItem="Weq-BN-feX" firstAttribute="centerX" secondItem="iTD-EM-K6c" secondAttribute="centerX" id="Qhp-z8-TkZ"/>
                                             <constraint firstItem="zXD-nb-irs" firstAttribute="top" secondItem="lJm-20-zkN" secondAttribute="bottom" constant="8" id="Qyf-El-RoG"/>
                                             <constraint firstItem="3Sn-CI-wE3" firstAttribute="centerX" secondItem="kcl-3v-tYm" secondAttribute="centerX" id="Rhk-8r-05x"/>
@@ -2052,6 +2059,7 @@
                                             <constraint firstItem="dgY-JR-dbv" firstAttribute="leading" secondItem="gfq-Wi-Fdk" secondAttribute="trailing" multiplier="0.24" constant="20.159999999999997" id="aYT-ce-UDN"/>
                                             <constraint firstItem="INN-Ku-RHw" firstAttribute="top" secondItem="sbs-If-zNZ" secondAttribute="bottom" constant="16" id="aZU-Pf-t2T"/>
                                             <constraint firstItem="Weq-BN-feX" firstAttribute="width" secondItem="bpB-uC-NOT" secondAttribute="width" id="aiZ-9X-Dr7"/>
+                                            <constraint firstItem="GIc-b4-psQ" firstAttribute="top" secondItem="SLp-Sh-nMO" secondAttribute="bottom" constant="2" id="bFt-QO-QFT"/>
                                             <constraint firstItem="wRr-19-z5w" firstAttribute="centerX" secondItem="sa8-7Q-DBr" secondAttribute="centerX" id="cL8-Bn-GXN"/>
                                             <constraint firstItem="wRr-19-z5w" firstAttribute="bottom" secondItem="sa8-7Q-DBr" secondAttribute="bottom" id="cPQ-UY-KE3"/>
                                             <constraint firstItem="zf9-BT-LqV" firstAttribute="centerY" secondItem="bpB-uC-NOT" secondAttribute="centerY" id="cem-0E-Lag"/>
@@ -2074,6 +2082,7 @@
                                             <constraint firstItem="u3d-Vk-vgd" firstAttribute="centerX" secondItem="Hl4-cK-RGw" secondAttribute="centerX" id="ok9-yh-281"/>
                                             <constraint firstItem="u3d-Vk-vgd" firstAttribute="width" secondItem="Hl4-cK-RGw" secondAttribute="width" id="peC-Fa-k8i"/>
                                             <constraint firstItem="wRr-19-z5w" firstAttribute="width" secondItem="sa8-7Q-DBr" secondAttribute="width" id="pvF-6j-sFZ"/>
+                                            <constraint firstItem="GIc-b4-psQ" firstAttribute="width" secondItem="SLp-Sh-nMO" secondAttribute="width" id="pxc-lM-Qe8"/>
                                             <constraint firstItem="u3d-Vk-vgd" firstAttribute="baseline" secondItem="zXD-nb-irs" secondAttribute="baseline" id="qdG-bo-smt"/>
                                             <constraint firstItem="1bq-hc-Jo1" firstAttribute="centerX" secondItem="fMp-VN-yAj" secondAttribute="centerX" id="rPm-rf-cDx"/>
                                             <constraint firstAttribute="trailing" secondItem="03L-Yk-jjc" secondAttribute="trailing" id="rah-2i-8S5"/>
