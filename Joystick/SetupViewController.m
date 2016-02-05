@@ -16,6 +16,7 @@
 #import "JoyButton.h"
 #import "NMXDevice.h"
 #import "MBProgressHUD.h"
+#import "CameraSettingsTimelineView.h"
 
 
 //------------------------------------------------------------------------------
@@ -27,6 +28,7 @@
 
 	UIAlertView *		intervalAlert;
 	UIAlertView *		frameCountAlert;
+    BOOL                isVisible;
 }
 
 @property (nonatomic, strong)				AppExecutive *				appExecutive;
@@ -39,6 +41,7 @@
 @property (nonatomic, strong)	IBOutlet	JoyButton *					joystickButton;
 @property (nonatomic, strong)	IBOutlet	JoyButton *					nextButton;
 
+@property (strong, nonatomic)   IBOutlet    CameraSettingsTimelineView *cameraSettingsTimelineView;
 
 // Timelapse view container
 
@@ -479,14 +482,39 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 	NSInteger frameRate = [self.appExecutive.frameRateNumber integerValue];
 	self.frameRateValue.text = [NSString stringWithFormat: @"%ld", (long)frameRate];
+    
+    [self.cameraSettingsTimelineView stopPlayheadAnimation];
+    [self.cameraSettingsTimelineView setCameraTimesForFocus:[self.appExecutive.focusNumber integerValue]
+                                                    trigger:[self.appExecutive.triggerNumber integerValue]
+                                                      delay:[self.appExecutive.delayNumber integerValue]
+                                                     buffer:[self.appExecutive.bufferNumber integerValue]
+                                                   animated:isVisible];
+}
+
+- (void) viewDidLayoutSubviews
+{
+    [self.cameraSettingsTimelineView setCameraTimesForFocus:[self.appExecutive.focusNumber integerValue]
+                                                    trigger:[self.appExecutive.triggerNumber integerValue]
+                                                      delay:[self.appExecutive.delayNumber integerValue]
+                                                     buffer:[self.appExecutive.bufferNumber integerValue]
+                                                   animated:NO];
+}
+
+- (void) viewDidDisappear:(BOOL)animated
+{
+    isVisible = NO;
+    [self.cameraSettingsTimelineView stopPlayheadAnimation];
 }
 
 - (void) viewDidAppear: (BOOL) animated {
     
 	[super viewDidAppear: animated];
+    isVisible = YES;
 
 	[self handleRecordModeControl: self.recordModeControl];
 
+    [self.cameraSettingsTimelineView startPlayheadAnimation];
+    
 	if (getenv("GOTO_ABOUT"))
 	{
 		[self performSegueWithIdentifier: kSegueForAboutView sender: self];

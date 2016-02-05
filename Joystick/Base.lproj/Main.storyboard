@@ -1805,7 +1805,7 @@
                                                     <action selector="handleIntervalButton:" destination="7dG-qm-POv" eventType="touchUpInside" id="xTM-Ad-D5g"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="INN-Ku-RHw" userLabel="Advanced Camera Settings" customClass="JoyButton">
+                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="INN-Ku-RHw" userLabel="Advanced Camera Settings" customClass="JoyButton">
                                                 <rect key="frame" x="161" y="109" width="125" height="28"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="125" id="e6a-pt-ue1"/>
@@ -1826,7 +1826,7 @@
                                                     <segue destination="V0V-VZ-Zl0" kind="presentation" id="nVh-q7-jb4"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OK1-Lb-uHG" customClass="JoyButton">
+                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OK1-Lb-uHG" customClass="JoyButton">
                                                 <rect key="frame" x="291" y="109" width="125" height="28"/>
                                                 <state key="normal">
                                                     <attributedString key="attributedTitle">
@@ -1990,6 +1990,13 @@
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SLp-Sh-nMO" customClass="CameraSettingsTimelineView">
+                                                <rect key="frame" x="25" y="97" width="526" height="40"/>
+                                                <color key="backgroundColor" red="0.074509803921568626" green="0.13333333333333333" blue="0.34901960784313724" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="fEu-lm-aR0"/>
+                                                </constraints>
+                                            </view>
                                         </subviews>
                                         <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.098039215686274508" green="0.19215686274509802" blue="0.41960784313725491" alpha="1" colorSpace="calibratedRGB"/>
@@ -2060,6 +2067,7 @@
                                             <constraint firstItem="1bq-hc-Jo1" firstAttribute="width" secondItem="fMp-VN-yAj" secondAttribute="width" id="jUr-wt-rcX"/>
                                             <constraint firstAttribute="centerX" secondItem="zXD-nb-irs" secondAttribute="centerX" constant="60" id="kGT-Gs-LMH"/>
                                             <constraint firstItem="wRr-19-z5w" firstAttribute="top" secondItem="dyf-hl-bCs" secondAttribute="bottom" id="mDQ-pF-K7v"/>
+                                            <constraint firstItem="SLp-Sh-nMO" firstAttribute="leading" secondItem="gfq-Wi-Fdk" secondAttribute="leading" constant="25" id="ns4-at-rcC"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="lJm-20-zkN" secondAttribute="trailing" constant="10" id="oLG-I2-xTh"/>
                                             <constraint firstItem="v0T-7m-xYB" firstAttribute="top" secondItem="kck-tL-tbn" secondAttribute="bottom" constant="20" id="odB-47-3iz"/>
                                             <constraint firstItem="dyf-hl-bCs" firstAttribute="leading" secondItem="gfq-Wi-Fdk" secondAttribute="leadingMargin" constant="32" id="ogi-Xx-jH6"/>
@@ -2070,6 +2078,7 @@
                                             <constraint firstItem="1bq-hc-Jo1" firstAttribute="centerX" secondItem="fMp-VN-yAj" secondAttribute="centerX" id="rPm-rf-cDx"/>
                                             <constraint firstAttribute="trailing" secondItem="03L-Yk-jjc" secondAttribute="trailing" id="rah-2i-8S5"/>
                                             <constraint firstItem="Weq-BN-feX" firstAttribute="bottom" secondItem="iTD-EM-K6c" secondAttribute="bottom" id="s6j-wK-nWf"/>
+                                            <constraint firstItem="SLp-Sh-nMO" firstAttribute="top" secondItem="Jv3-Ot-JO6" secondAttribute="bottom" constant="4" id="tVE-Um-Vgq"/>
                                             <constraint firstAttribute="trailing" secondItem="EUp-21-T6b" secondAttribute="trailing" constant="16" id="tcO-oD-Bsm"/>
                                             <constraint firstItem="dyf-hl-bCs" firstAttribute="centerX" secondItem="wRr-19-z5w" secondAttribute="centerX" id="u5c-jZ-epQ"/>
                                             <constraint firstItem="GN9-XX-Ofn" firstAttribute="width" secondItem="03L-Yk-jjc" secondAttribute="width" id="u8k-bk-sIj"/>
@@ -2078,6 +2087,7 @@
                                             <constraint firstItem="Yr4-0G-wBf" firstAttribute="width" secondItem="Jv3-Ot-JO6" secondAttribute="width" id="w8Z-0W-8dT"/>
                                             <constraint firstItem="03L-Yk-jjc" firstAttribute="top" secondItem="EUp-21-T6b" secondAttribute="bottom" constant="20" id="whL-8r-R4p"/>
                                             <constraint firstItem="1e1-i5-uzU" firstAttribute="width" secondItem="Weq-BN-feX" secondAttribute="width" id="wiH-uX-Vt0"/>
+                                            <constraint firstAttribute="trailing" secondItem="SLp-Sh-nMO" secondAttribute="trailing" constant="25" id="xJ8-Gc-SXp"/>
                                             <constraint firstItem="aIR-a8-d6K" firstAttribute="trailing" secondItem="gfq-Wi-Fdk" secondAttribute="trailing" multiplier="0.7" id="yWv-Eh-Lxh"/>
                                             <constraint firstItem="T83-FY-Hh4" firstAttribute="width" secondItem="4hb-N1-kFM" secondAttribute="width" id="yj9-pj-LAs"/>
                                             <constraint firstItem="aIR-a8-d6K" firstAttribute="top" secondItem="EUp-21-T6b" secondAttribute="bottom" constant="28" id="zy3-N2-WwL"/>
@@ -2214,6 +2224,7 @@
                         <outlet property="advancedCameraSettingsButton" destination="INN-Ku-RHw" id="KxA-Yc-kO7"/>
                         <outlet property="batteryIcon" destination="Iq0-eS-XCZ" id="EFu-9S-SHZ"/>
                         <outlet property="bufferValue" destination="bpB-uC-NOT" id="VT8-O7-iom"/>
+                        <outlet property="cameraSettingsTimelineView" destination="SLp-Sh-nMO" id="dfU-sm-rKw"/>
                         <outlet property="exposureValue" destination="kcl-3v-tYm" id="g99-CK-rBR"/>
                         <outlet property="frameCountValue" destination="wRr-19-z5w" id="oiG-lK-boh"/>
                         <outlet property="frameRateValue" destination="1bq-hc-Jo1" id="US8-da-F3M"/>
@@ -5591,18 +5602,18 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="5Fi-kf-KP0"/>
-        <segue reference="6SS-hE-J9g"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="k3P-Db-zBC"/>
-        <segue reference="p4Z-EB-hlS"/>
-        <segue reference="rGc-Y0-TPg"/>
-        <segue reference="RMu-iv-gcK"/>
-        <segue reference="oNZ-l0-vdW"/>
-        <segue reference="br4-PB-JjF"/>
-        <segue reference="Nk1-9G-Dpm"/>
         <segue reference="PwX-tX-cQi"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="IfY-aS-7xa"/>
+        <segue reference="5Fi-kf-KP0"/>
+        <segue reference="6SS-hE-J9g"/>
+        <segue reference="6tH-tQ-8da"/>
+        <segue reference="p4Z-EB-hlS"/>
+        <segue reference="k3P-Db-zBC"/>
+        <segue reference="oNZ-l0-vdW"/>
+        <segue reference="rGc-Y0-TPg"/>
+        <segue reference="RMu-iv-gcK"/>
+        <segue reference="br4-PB-JjF"/>
+        <segue reference="Nk1-9G-Dpm"/>
     </inferredMetricsTieBreakers>
 </document>
