@@ -58,7 +58,6 @@
 @property (nonatomic, strong)	IBOutlet	UILabel *					frameRateValue;
 
 @property (nonatomic, strong)	IBOutlet	JoyButton *					advancedCameraSettingsButton;
-@property (nonatomic, strong)	IBOutlet	JoyButton *					testCameraButton;
 
 @property (nonatomic, strong)	IBOutlet	UIButton *					settingsButton;
 
@@ -70,6 +69,11 @@
 @property (nonatomic, strong)	IBOutlet	UISegmentedControl *		videoModeControl;
 
 @property (nonatomic, strong)	IBOutlet	UILabel *					videoShotDurationValue;	// same value as videoLengthValue
+
+@property (strong, nonatomic) IBOutlet UIView *exposureColorBarView;
+@property (strong, nonatomic) IBOutlet UIView *bufferColorBarView;
+@property (strong, nonatomic) IBOutlet UIView *intervalColorBarView;
+
 
 @end
 
@@ -126,7 +130,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 @synthesize frameRateValue;
 
 @synthesize advancedCameraSettingsButton;
-@synthesize testCameraButton;
 
 @synthesize settingsButton;
 
@@ -209,6 +212,10 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     buttonView.hidden = YES;
+    
+    self.exposureColorBarView.backgroundColor = [CameraSettingsTimelineView exposureColor];
+    self.bufferColorBarView.backgroundColor = [CameraSettingsTimelineView bufferColor];
+    self.intervalColorBarView.backgroundColor = [CameraSettingsTimelineView intervalColor];
     
     [[NSNotificationCenter defaultCenter]
      addObserver:self
@@ -720,22 +727,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 	DDLogDebug(@"Interval Button");
 
 	[self performSegueWithIdentifier: kSegueForIntervalInput sender: self];
-}
-
-- (IBAction) handleTestCameraButton: (UIButton *) sender {
-
-	DDLogDebug(@"Test Camera Button");
-	// go to modal view
-    
-    NMXDevice * device = [AppExecutive sharedInstance].device;
-    
-    [device cameraSetEnable: true];
-    [device cameraSetTriggerTime: (UInt32)[self.appExecutive.triggerNumber unsignedIntegerValue]];
-    [device cameraSetFocusTime: (UInt16)[self.appExecutive.focusNumber unsignedIntegerValue]];
-    [device cameraSetExposureDelay: (UInt16)[self.appExecutive.delayNumber unsignedIntegerValue]];
-    [device cameraSetInterval: (UInt32)[self.appExecutive.intervalNumber unsignedIntegerValue]];
-
-    [device cameraSetTestMode: true];
 }
 
 - (IBAction) handleAdvancedCameraSettingsButton: (UIButton *) sender {

@@ -31,12 +31,44 @@
 
 @implementation CameraSettingsTimelineView
 
++ (UIColor *)focusColor
+{
+    return [UIColor colorWithRed:0.41 green:0.42 blue:0.10 alpha:1.0];
+}
+
++ (UIColor *)triggerColor
+{
+    return [UIColor colorWithRed:0.42 green:0.22 blue:0.09 alpha:1.0];
+}
+
++ (UIColor *)delayColor
+{
+    return [UIColor colorWithRed:0.10 green:0.41 blue:0.42 alpha:1.0];
+}
+
++ (UIColor *)bufferColor
+{
+    return [UIColor colorWithRed:0.10 green:0.20 blue:0.42 alpha:1.0];
+}
+
++ (UIColor *)intervalColor
+{
+    return [UIColor colorWithRed:0.10 green:0.11 blue:0.42 alpha:1.0];
+}
+
++ (UIColor *)exposureColor
+{
+    return [UIColor colorWithRed:0.10 green:0.30 blue:0.42 alpha:1.0];
+}
+
+
+
 - (void)initialize
 {
     self.stopped = YES;
     
     float borderWidth = 1.f;
-    self.backgroundColor =  [UIColor colorWithRed:0.10 green:0.20 blue:0.42 alpha:1.0];
+    self.backgroundColor = [CameraSettingsTimelineView bufferColor];
     
     self.layer.borderColor = [UIColor colorWithRed:0.38 green:0.66 blue:0.96 alpha:1.0].CGColor;       // self.tintColor.CGColor;
     self.layer.borderWidth = borderWidth;
@@ -48,32 +80,32 @@
     CGSize size = self.frame.size;
     
     self.focusBarView = [[UIView alloc] initWithFrame:CGRectMake(0, borderWidth, size.width*subExposureDefPct, size.height*exposureHtPct)];
-    self.focusBarView.backgroundColor =  [UIColor colorWithRed:0.41 green:0.42 blue:0.10 alpha:1.0];
+    self.focusBarView.backgroundColor = [CameraSettingsTimelineView focusColor];
     [self addSubview: self.focusBarView];
     
     self.triggerBarView = [[UIView alloc] initWithFrame:CGRectMake(self.focusBarView.frame.origin.x+self.focusBarView.frame.size.width,
                                                                    borderWidth,
                                                                    size.width*subExposureDefPct,
                                                                    self.focusBarView.frame.size.height)];
-    self.triggerBarView.backgroundColor =  [UIColor colorWithRed:0.42 green:0.22 blue:0.09 alpha:1.0];
+    self.triggerBarView.backgroundColor = [CameraSettingsTimelineView triggerColor];
     [self addSubview: self.triggerBarView];
     
     self.delayBarView = [[UIView alloc] initWithFrame:CGRectMake(self.triggerBarView.frame.origin.x+self.triggerBarView.frame.size.width, borderWidth,
                                                                  size.width*subExposureDefPct, self.focusBarView.frame.size.height)];
-    self.delayBarView.backgroundColor =  [UIColor colorWithRed:0.10 green:0.41 blue:0.42 alpha:1.0];
+    self.delayBarView.backgroundColor = [CameraSettingsTimelineView delayColor];
     [self addSubview: self.delayBarView];
     
     self.exposureBarView = [[UIView alloc] initWithFrame:CGRectMake(self.focusBarView.frame.origin.x, self.focusBarView.frame.origin.y+self.focusBarView.frame.size.height,
                                                                     self.focusBarView.frame.size.width+self.triggerBarView.frame.size.width+self.delayBarView.frame.size.width,
                                                                     self.focusBarView.frame.size.height)];
-    self.exposureBarView.backgroundColor =  [UIColor colorWithRed:0.10 green:0.30 blue:0.42 alpha:1.0];
+    self.exposureBarView.backgroundColor = [CameraSettingsTimelineView exposureColor];
     [self addSubview: self.exposureBarView];
     
     self.intervalBarView = [[UIView alloc] initWithFrame:CGRectMake(0,
                                                                     self.exposureBarView.frame.origin.y+self.exposureBarView.frame.size.height,
                                                                     size.width,
                                                                     size.height*(1.-2*exposureHtPct))];
-    self.intervalBarView.backgroundColor =  [UIColor colorWithRed:0.10 green:0.11 blue:0.42 alpha:1.0];
+    self.intervalBarView.backgroundColor = [CameraSettingsTimelineView intervalColor];
     [self addSubview: self.intervalBarView];
     
     float playheadWidth = 4;

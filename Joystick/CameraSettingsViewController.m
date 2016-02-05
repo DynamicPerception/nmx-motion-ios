@@ -13,6 +13,7 @@
 #import "IntervalViewController.h"
 #import "AppExecutive.h"
 #import "JoyButton.h"
+#import "CameraSettingsTimelineView.h"
 
 
 //------------------------------------------------------------------------------
@@ -41,6 +42,12 @@ NSString	static	*kSetSecondsForDelay		= @"kSetSecondsForDelay";
 @property (nonatomic, strong)	IBOutlet	JoyButton *			okButton;
 
 @property (nonatomic, assign) NSString *settingValueFor;
+
+@property (strong, nonatomic) IBOutlet UIView *delayColorBarView;
+@property (strong, nonatomic) IBOutlet UIView *bufferColorBarView;
+@property (strong, nonatomic) IBOutlet UIView *intervalColorBarView;
+@property (strong, nonatomic) IBOutlet UIView *focusColorBarView;
+@property (strong, nonatomic) IBOutlet UIView *triggerColorBarView;
 
 @end
 
@@ -133,6 +140,12 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
 - (void) viewDidLoad {
 
 	[super viewDidLoad];
+    
+    self.delayColorBarView.backgroundColor = [CameraSettingsTimelineView delayColor];
+    self.bufferColorBarView.backgroundColor = [CameraSettingsTimelineView bufferColor];
+    self.intervalColorBarView.backgroundColor = [CameraSettingsTimelineView intervalColor];
+    self.focusColorBarView.backgroundColor = [CameraSettingsTimelineView focusColor];
+    self.triggerColorBarView.backgroundColor = [CameraSettingsTimelineView triggerColor];
 }
 
 - (void) viewWillAppear: (BOOL) animated {
@@ -392,6 +405,20 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
 
 #pragma mark - IBAction Methods
 
+- (IBAction)handleTestCameraSettings:(id)sender {
+    DDLogDebug(@"Test Camera Button");
+    // go to modal view
+    
+    NMXDevice * device = [AppExecutive sharedInstance].device;
+    
+    [device cameraSetEnable: true];
+    [device cameraSetTriggerTime: (UInt32)[self.appExecutive.triggerNumber unsignedIntegerValue]];
+    [device cameraSetFocusTime: (UInt16)[self.appExecutive.focusNumber unsignedIntegerValue]];
+    [device cameraSetExposureDelay: (UInt16)[self.appExecutive.delayNumber unsignedIntegerValue]];
+    [device cameraSetInterval: (UInt32)[self.appExecutive.intervalNumber unsignedIntegerValue]];
+    
+    [device cameraSetTestMode: true];
+}
 
 - (IBAction) handleFocusButton: (id) sender {
 

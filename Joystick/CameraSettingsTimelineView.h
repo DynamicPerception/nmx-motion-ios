@@ -14,4 +14,12 @@
 - (void) startPlayheadAnimation;
 - (void) stopPlayheadAnimation;
 
++ (UIColor *)focusColor;
++ (UIColor *)triggerColor;
++ (UIColor *)delayColor;
++ (UIColor *)bufferColor;
++ (UIColor *)intervalColor;
++ (UIColor *)exposureColor;
+
+
 @end
