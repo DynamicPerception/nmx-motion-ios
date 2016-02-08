@@ -7,6 +7,7 @@
 //
 
 #import "CameraSettingsTimelineView.h"
+#import "AppExecutive.h"
 
 
 @interface CameraSettingsTimelineView()
@@ -53,7 +54,7 @@
 
 + (UIColor *)intervalColor
 {
-    return [UIColor colorWithRed:0.10 green:0.11 blue:0.42 alpha:1.0];
+    return [UIColor colorWithRed:0.30 green:0.51 blue:0.72 alpha:1.0];
 }
 
 + (UIColor *)exposureColor
@@ -136,7 +137,6 @@
     return self;
 }
 
-
 - (void) sizeViews
 {
     
@@ -163,6 +163,7 @@
     CGRect triggerFrame = self.triggerBarView.frame;
     CGRect delayFrame = self.delayBarView.frame;
     CGRect exposureFrame = self.exposureBarView.frame;
+    CGRect intervalFrame = self.intervalBarView.frame;
     
     float viewWidth = self.frame.size.width;
     
@@ -172,6 +173,7 @@
     delayFrame.size.width = viewWidth * delayPct;
     delayFrame.origin.x = triggerFrame.origin.x+triggerFrame.size.width;
     exposureFrame.size.width = focusFrame.size.width+triggerFrame.size.width+delayFrame.size.width;
+    intervalFrame.size.width = self.frame.size.width;
     
     float duration = animated ? 1.0 : 0.0;
     [UIView animateWithDuration: duration
@@ -181,6 +183,7 @@
          self.triggerBarView.frame = triggerFrame;
          self.delayBarView.frame = delayFrame;
          self.exposureBarView.frame = exposureFrame;
+         self.intervalBarView.frame = intervalFrame;
      }
      completion:^(BOOL finished)
      {

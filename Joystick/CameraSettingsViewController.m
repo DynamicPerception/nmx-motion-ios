@@ -30,6 +30,8 @@ NSString	static	*kSetSecondsForDelay		= @"kSetSecondsForDelay";
 	UIAlertView *	delayAlert;
 	UIAlertView *	focusAlert;
 	UIAlertView *	intervalAlert;
+    
+    BOOL           _isVisible;
 }
 
 @property (nonatomic, strong)				AppExecutive *		appExecutive;
@@ -48,6 +50,7 @@ NSString	static	*kSetSecondsForDelay		= @"kSetSecondsForDelay";
 @property (strong, nonatomic) IBOutlet UIView *intervalColorBarView;
 @property (strong, nonatomic) IBOutlet UIView *focusColorBarView;
 @property (strong, nonatomic) IBOutlet UIView *triggerColorBarView;
+@property (strong, nonatomic) IBOutlet CameraSettingsTimelineView *cameraSettingsTimelineView;
 
 @end
 
@@ -151,7 +154,7 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
 - (void) viewWillAppear: (BOOL) animated {
 
 	[super viewWillAppear: animated];
-	
+
 	[self.view sendSubviewToBack: self.controlBackground];
 	
 	[self setFieldColors];
@@ -163,10 +166,23 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
                                                object: nil];
 }
 
+- (void) viewDidAppear:(BOOL)animated
+{
+    _isVisible = YES;
+    [self.cameraSettingsTimelineView startPlayheadAnimation];
+}
+
+- (void) viewDidDisappear:(BOOL)animated
+{
+    _isVisible = NO;
+    [self.cameraSettingsTimelineView stopPlayheadAnimation];
+}
+
+
 - (void) viewWillDisappear:(BOOL)animated {
 
     [super viewWillDisappear: animated];
-    
+
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
@@ -177,6 +193,14 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
     });
 }
 
+- (void) viewDidLayoutSubviews
+{
+    [self.cameraSettingsTimelineView setCameraTimesForFocus:[self.appExecutive.focusNumber integerValue]
+                                                    trigger:[self.appExecutive.triggerNumber integerValue]
+                                                      delay:[self.appExecutive.delayNumber integerValue]
+                                                     buffer:[self.appExecutive.bufferNumber integerValue]
+                                                   animated:NO];
+}
 - (void) updateViewFields {
 
 	NSInteger trigger = [self.appExecutive.triggerNumber integerValue];
@@ -193,6 +217,13 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
 
 	NSInteger buffer = [self.appExecutive.bufferNumber integerValue];
 	self.bufferValueLabel.text = [CameraSettingsViewController stringForTimeDisplay: buffer];
+    
+    [self.cameraSettingsTimelineView stopPlayheadAnimation];
+    [self.cameraSettingsTimelineView setCameraTimesForFocus:[self.appExecutive.focusNumber integerValue]
+                                                    trigger:[self.appExecutive.triggerNumber integerValue]
+                                                      delay:[self.appExecutive.delayNumber integerValue]
+                                                     buffer:[self.appExecutive.bufferNumber integerValue]
+                                                   animated:_isVisible];
 }
 
 - (void) setFieldColors {
