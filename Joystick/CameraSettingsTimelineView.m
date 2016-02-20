@@ -54,7 +54,7 @@
 
 + (UIColor *)intervalColor
 {
-    return [UIColor colorWithRed:0.30 green:0.51 blue:0.72 alpha:1.0];
+    return [UIColor colorWithRed:0.86 green:0.86 blue:0.86 alpha:1.0];
 }
 
 + (UIColor *)exposureColor
