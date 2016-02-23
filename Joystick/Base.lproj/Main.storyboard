@@ -2293,7 +2293,7 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GNL-VY-0Ov">
-                                        <rect key="frame" x="280" y="199" width="50" height="6"/>
+                                        <rect key="frame" x="200" y="199" width="130" height="6"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="6" id="XN2-rw-XK3"/>
@@ -2492,8 +2492,8 @@
                         </subviews>
                         <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="GNL-VY-0Ov" firstAttribute="leading" secondItem="LRq-wu-VcJ" secondAttribute="leading" id="0gC-tw-GSe"/>
                             <constraint firstItem="ukD-vr-HzT" firstAttribute="leading" secondItem="dYL-Ey-4jj" secondAttribute="trailing" id="0xI-nW-WOo"/>
-                            <constraint firstItem="GNL-VY-0Ov" firstAttribute="width" secondItem="9FA-Dm-QE2" secondAttribute="width" id="11D-6W-oxE"/>
                             <constraint firstItem="0Xs-74-j1V" firstAttribute="height" secondItem="Dc9-8j-rdh" secondAttribute="height" id="27n-JP-cqg"/>
                             <constraint firstItem="0Xs-74-j1V" firstAttribute="leading" secondItem="Dc9-8j-rdh" secondAttribute="leading" id="4rK-Mc-sm3"/>
                             <constraint firstItem="dYL-Ey-4jj" firstAttribute="leading" secondItem="dA6-NV-OVr" secondAttribute="leading" id="5hA-Aq-pql"/>
@@ -2514,7 +2514,6 @@
                             <constraint firstItem="kPq-su-8OU" firstAttribute="leading" secondItem="FQc-p9-RX0" secondAttribute="trailing" id="M3g-W0-WAt"/>
                             <constraint firstAttribute="trailingMargin" secondItem="w0c-hL-nEt" secondAttribute="trailing" id="S07-mp-Uuq"/>
                             <constraint firstItem="bfB-Sv-wHk" firstAttribute="width" secondItem="0Xs-74-j1V" secondAttribute="width" id="S12-zC-sIu"/>
-                            <constraint firstItem="GNL-VY-0Ov" firstAttribute="centerX" secondItem="9FA-Dm-QE2" secondAttribute="centerX" id="St5-Zm-FqA"/>
                             <constraint firstItem="7oJ-zo-PFQ" firstAttribute="leading" secondItem="wB9-og-ftR" secondAttribute="leadingMargin" id="T1Q-YN-QSL"/>
                             <constraint firstItem="5dt-Qm-XQY" firstAttribute="bottom" secondItem="ukD-vr-HzT" secondAttribute="top" id="TPB-aC-WXH"/>
                             <constraint firstItem="bfB-Sv-wHk" firstAttribute="width" secondItem="9FA-Dm-QE2" secondAttribute="width" id="U3O-Wh-0nk"/>
@@ -2548,6 +2547,7 @@
                             <constraint firstItem="zEy-kN-RY6" firstAttribute="top" secondItem="LRq-wu-VcJ" secondAttribute="bottom" constant="185" id="rLf-qI-Q7W"/>
                             <constraint firstItem="w0c-hL-nEt" firstAttribute="leading" secondItem="wB9-og-ftR" secondAttribute="leadingMargin" id="rSU-up-k5b"/>
                             <constraint firstItem="dYL-Ey-4jj" firstAttribute="leading" secondItem="LRq-wu-VcJ" secondAttribute="leading" id="rTO-Bg-OsA"/>
+                            <constraint firstItem="GNL-VY-0Ov" firstAttribute="trailing" secondItem="bfB-Sv-wHk" secondAttribute="trailing" id="sEN-fC-CvT"/>
                             <constraint firstItem="Hnj-kL-BaQ" firstAttribute="bottom" secondItem="wP2-bj-eY0" secondAttribute="top" id="sOZ-QC-4dC"/>
                             <constraint firstItem="P1l-4D-IDc" firstAttribute="centerX" secondItem="Dc9-8j-rdh" secondAttribute="centerX" id="sXi-r7-xzl"/>
                             <constraint firstItem="bfB-Sv-wHk" firstAttribute="bottom" secondItem="9FA-Dm-QE2" secondAttribute="bottom" id="tBY-sQ-ROA"/>
@@ -2776,16 +2776,28 @@
                                     <action selector="handleStopCameraTestButton:" destination="S7L-qc-4AE" eventType="touchUpInside" id="JMo-w9-SsD"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OUY-B9-lkO" customClass="CameraSettingsTimelineView">
+                                <rect key="frame" x="30" y="282" width="540" height="40"/>
+                                <color key="backgroundColor" red="0.074509803920000006" green="0.1333333333" blue="0.34901960780000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Bw4-Bx-BYn"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="OUY-B9-lkO" firstAttribute="leading" secondItem="UE7-iA-oSl" secondAttribute="leadingMargin" constant="10" id="28u-mJ-uMQ"/>
+                            <constraint firstItem="3uC-I3-e2j" firstAttribute="top" secondItem="OUY-B9-lkO" secondAttribute="bottom" constant="63" id="3hV-c2-Zxz"/>
                             <constraint firstAttribute="centerY" secondItem="3uC-I3-e2j" secondAttribute="centerY" id="Nhz-n2-4rz"/>
+                            <constraint firstItem="OUY-B9-lkO" firstAttribute="centerX" secondItem="UE7-iA-oSl" secondAttribute="centerX" id="TKQ-q2-RgN"/>
                             <constraint firstAttribute="centerX" secondItem="3uC-I3-e2j" secondAttribute="centerX" id="h7P-95-TZf"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="OUY-B9-lkO" secondAttribute="trailing" constant="10" id="jja-JY-vXp"/>
                         </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="800"/>
                     <connections>
+                        <outlet property="cameraTimelineView" destination="OUY-B9-lkO" id="yyn-pp-HBP"/>
                         <outlet property="stopCameraTestButton" destination="3uC-I3-e2j" id="OO4-DP-tNu"/>
                     </connections>
                 </viewController>

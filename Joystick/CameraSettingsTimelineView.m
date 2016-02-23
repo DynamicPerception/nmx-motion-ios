@@ -184,6 +184,10 @@
          self.delayBarView.frame = delayFrame;
          self.exposureBarView.frame = exposureFrame;
          self.intervalBarView.frame = intervalFrame;
+         
+         //NSLog(@"Frame self = %@     focus = %@  trigger = %@   delay = %@   exp = %@  interv = %@",
+         //      NSStringFromCGRect(self.frame), NSStringFromCGRect(focusFrame), NSStringFromCGRect(triggerFrame),
+         //      NSStringFromCGRect(delayFrame), NSStringFromCGRect(exposureFrame), NSStringFromCGRect(intervalFrame));
      }
      completion:^(BOOL finished)
      {

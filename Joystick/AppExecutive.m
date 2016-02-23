@@ -187,6 +187,16 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 	return bufferNumber;
 }
 
+- (void) setBufferNumber: (NSNumber *) number {
+    
+    if (FALSE == [number isEqualToNumber: self.bufferNumber])
+    {
+        bufferNumber = number;
+        [self saveValue: bufferNumber forKey: kDefaultsBuffer];
+    }
+}
+
+
 - (NSNumber *) shotDurationNumber {
 
 	if (shotDurationNumber == nil)

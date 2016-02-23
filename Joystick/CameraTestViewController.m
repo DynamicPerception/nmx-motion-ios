@@ -12,6 +12,7 @@
 #import "JoyButton.h"
 #import "AppExecutive.h"
 #import "NMXDevice.h"
+#import "CameraSettingsTimelineView.h"
 
 
 //------------------------------------------------------------------------------
@@ -22,6 +23,7 @@
 @interface CameraTestViewController ()
 
 @property (nonatomic, strong)	IBOutlet	JoyButton *		stopCameraTestButton;
+@property (strong, nonatomic) IBOutlet CameraSettingsTimelineView *cameraTimelineView;
 
 @end
 
@@ -48,8 +50,26 @@
 
 
 - (void) viewDidLoad {
-
 	[super viewDidLoad];
+    
+    AppExecutive *appExec = [AppExecutive sharedInstance];
+    [self.cameraTimelineView setCameraTimesForFocus:[appExec.focusNumber integerValue]
+                                            trigger:[appExec.triggerNumber integerValue]
+                                              delay:[appExec.delayNumber integerValue]
+                                             buffer:[appExec.bufferNumber integerValue]
+                                           animated:NO];
+
+}
+
+- (void) viewDidLayoutSubviews
+{
+    AppExecutive *appExec = [AppExecutive sharedInstance];
+    
+    [self.cameraTimelineView setCameraTimesForFocus:[appExec.focusNumber integerValue]
+                                            trigger:[appExec.triggerNumber integerValue]
+                                              delay:[appExec.delayNumber integerValue]
+                                             buffer:[appExec.bufferNumber integerValue]
+                                           animated:NO];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -61,6 +81,14 @@
                                                  name: kDeviceDisconnectedNotification
                                                object: nil];
 }
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear: animated];
+    
+    [self.cameraTimelineView startPlayheadAnimation];
+}
+
 
 - (void) viewWillDisappear:(BOOL)animated {
 
