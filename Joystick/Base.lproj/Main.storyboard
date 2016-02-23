@@ -2762,36 +2762,47 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3uC-I3-e2j" customClass="JoyButton">
-                                <rect key="frame" x="230" y="385" width="140" height="30"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hSR-a2-ir1" userLabel="Control Background">
+                                <rect key="frame" x="20" y="136" width="560" height="200"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OUY-B9-lkO" customClass="CameraSettingsTimelineView">
+                                        <rect key="frame" x="10" y="44" width="540" height="40"/>
+                                        <color key="backgroundColor" red="0.074509803920000006" green="0.1333333333" blue="0.34901960780000002" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="Bw4-Bx-BYn"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3uC-I3-e2j" customClass="JoyButton">
+                                        <rect key="frame" x="210" y="139" width="140" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="140" id="Lqo-b6-RQY"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" title="Stop Camera Test">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="handleStopCameraTestButton:" destination="S7L-qc-4AE" eventType="touchUpInside" id="JMo-w9-SsD"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="140" id="Lqo-b6-RQY"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Stop Camera Test">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="handleStopCameraTestButton:" destination="S7L-qc-4AE" eventType="touchUpInside" id="JMo-w9-SsD"/>
-                                </connections>
-                            </button>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OUY-B9-lkO" customClass="CameraSettingsTimelineView">
-                                <rect key="frame" x="30" y="282" width="540" height="40"/>
-                                <color key="backgroundColor" red="0.074509803920000006" green="0.1333333333" blue="0.34901960780000002" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="Bw4-Bx-BYn"/>
+                                    <constraint firstItem="OUY-B9-lkO" firstAttribute="centerX" secondItem="hSR-a2-ir1" secondAttribute="centerX" id="AVg-OS-NrI"/>
+                                    <constraint firstItem="OUY-B9-lkO" firstAttribute="leading" secondItem="hSR-a2-ir1" secondAttribute="leading" constant="10" id="Nwq-mg-oS5"/>
+                                    <constraint firstAttribute="height" constant="200" id="Xu9-03-wId"/>
+                                    <constraint firstItem="OUY-B9-lkO" firstAttribute="top" secondItem="hSR-a2-ir1" secondAttribute="top" constant="44" id="ZeE-UE-0JI"/>
+                                    <constraint firstAttribute="bottom" secondItem="3uC-I3-e2j" secondAttribute="bottom" constant="31" id="axv-ZS-K3n"/>
+                                    <constraint firstItem="3uC-I3-e2j" firstAttribute="centerX" secondItem="hSR-a2-ir1" secondAttribute="centerX" id="tvn-iQ-HBw"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="OUY-B9-lkO" firstAttribute="leading" secondItem="UE7-iA-oSl" secondAttribute="leadingMargin" constant="10" id="28u-mJ-uMQ"/>
-                            <constraint firstItem="3uC-I3-e2j" firstAttribute="top" secondItem="OUY-B9-lkO" secondAttribute="bottom" constant="63" id="3hV-c2-Zxz"/>
-                            <constraint firstAttribute="centerY" secondItem="3uC-I3-e2j" secondAttribute="centerY" id="Nhz-n2-4rz"/>
-                            <constraint firstItem="OUY-B9-lkO" firstAttribute="centerX" secondItem="UE7-iA-oSl" secondAttribute="centerX" id="TKQ-q2-RgN"/>
-                            <constraint firstAttribute="centerX" secondItem="3uC-I3-e2j" secondAttribute="centerX" id="h7P-95-TZf"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="OUY-B9-lkO" secondAttribute="trailing" constant="10" id="jja-JY-vXp"/>
+                            <constraint firstItem="hSR-a2-ir1" firstAttribute="width" secondItem="UE7-iA-oSl" secondAttribute="width" constant="-40" id="aob-Y7-fsh"/>
+                            <constraint firstItem="hSR-a2-ir1" firstAttribute="centerX" secondItem="UE7-iA-oSl" secondAttribute="centerX" id="mcq-cF-lPy"/>
+                            <constraint firstItem="hSR-a2-ir1" firstAttribute="top" secondItem="pKt-S6-fUj" secondAttribute="bottom" constant="116" id="nRl-0f-Lgw"/>
                         </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
