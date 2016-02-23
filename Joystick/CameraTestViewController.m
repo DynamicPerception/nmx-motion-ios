@@ -22,8 +22,9 @@
 
 @interface CameraTestViewController ()
 
-@property (nonatomic, strong)	IBOutlet	JoyButton *		stopCameraTestButton;
+@property (nonatomic, strong) IBOutlet JoyButton                  *stopCameraTestButton;
 @property (strong, nonatomic) IBOutlet CameraSettingsTimelineView *cameraTimelineView;
+@property (nonatomic, strong)          NSTimer                    *statusTimer;
 
 @end
 
@@ -51,6 +52,15 @@
 
 - (void) viewDidLoad {
 	[super viewDidLoad];
+
+    [self handleStatusTimer: nil];
+    
+    self.statusTimer = [NSTimer scheduledTimerWithTimeInterval: 5.0
+                                                        target: self
+                                                      selector: @selector(handleStatusTimer:)
+                                                      userInfo: nil
+                                                       repeats: YES];
+
     
     AppExecutive *appExec = [AppExecutive sharedInstance];
     [self.cameraTimelineView setCameraTimesForFocus:[appExec.focusNumber integerValue]
@@ -104,6 +114,26 @@
 }
 
 
+- (void) handleStatusTimer: (NSTimer *) sender
+{
+    NMXDevice *device = [AppExecutive sharedInstance].device;
+
+    NMXRunStatus runStatus = [device mainQueryRunStatus];
+    
+    if  (runStatus == NMXRunStatusRunning)
+    {
+        UInt32 lastRunTime = [device mainQueryRunTime];
+            
+        NSInteger intervalTime = [[AppExecutive sharedInstance] intervalNumber].integerValue;
+        UInt32 timeIntoCycle = lastRunTime % intervalTime;
+        
+        [self.cameraTimelineView syncPlayheadToTime:timeIntoCycle];
+    }
+}
+
+
+
+
 //------------------------------------------------------------------------------
 
 #pragma mark - IBAction Methods
@@ -111,6 +141,11 @@
 
 - (IBAction) handleStopCameraTestButton: (id) sender {
 
+    [self.statusTimer invalidate];
+    self.statusTimer = nil;
+    
+    [self.cameraTimelineView stopPlayheadAnimation];
+    
 	DDLogDebug(@"Stop Camera Test Button");
     [[AppExecutive sharedInstance].device cameraSetTestMode: false];
 

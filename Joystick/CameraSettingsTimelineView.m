@@ -27,6 +27,8 @@
 
 @property BOOL stopped;
 
+@property UInt32 resyncAt;
+
 @end
 
 
@@ -221,20 +223,93 @@
      }
      completion:^(BOOL finished)
      {
-         CGRect frame = self.playheadView.frame;
-         frame.origin.x = self.layer.borderWidth;
-
-         self.playheadView.frame = frame;
-         
-         if (self.stopped == NO)
+         if (self.resyncAt > 0)   // We end up here if we stop animation because we need to resync the playhead
          {
-             [self performSelector: @selector(startPlayheadAnimation) withObject:nil afterDelay:0.005];
+             
+             // Calculate a new duration to animate to the end of the timeline to catch up with the device
+             float duration = MAX(0,self.focusTime + self.triggerTime + self.delayTime + self.bufferTime-self.resyncAt);
+             duration /= 1000;  // convert milliseconds to seconds
+             
+             self.resyncAt = 0;
+             
+             CGRect frame = self.playheadView.frame;
+             frame.origin.x = self.frame.size.width-frame.size.width-self.layer.borderWidth;
+
+             [UIView animateWithDuration: duration
+                                   delay: 0
+                                 options: UIViewAnimationOptionCurveLinear
+                              animations:
+              ^{
+                  self.playheadView.frame = frame;
+              }
+              completion:^(BOOL finished)
+              {
+                  // Continue animation, should should now be sync'ed with the device
+                  [self performSelector: @selector(startPlayheadAnimation) withObject:nil afterDelay:0.005];
+              }];
+
+         }
+         else
+         {
+             CGRect frame = self.playheadView.frame;
+             frame.origin.x = self.layer.borderWidth;
+             
+             self.playheadView.frame = frame;
+             
+             if (self.stopped == NO || self.resyncAt > 0)
+             {
+                 [self performSelector: @selector(startPlayheadAnimation) withObject:nil afterDelay:0.005];
+             }
          }
      }];
     
 }
 
+- (UInt32) getPlayheadTime
+{
+    CGPoint presentationPosition = [[self.playheadView.layer presentationLayer] position];
+    float pct = presentationPosition.x / self.frame.size.width;
+    
+    float exposure = self.focusTime + self.triggerTime + self.delayTime;
+    float interval = exposure + self.bufferTime;
 
+    return pct * interval;
+}
+
+- (BOOL) playheadOutOfSync: (UInt32)newPlayheadTime
+{
+    long outOfSyncTime = 300;  // resync if we are 300ms different between playheads
+    
+    long playheadTime = (long)[self getPlayheadTime];
+    long diff = labs((long)newPlayheadTime-playheadTime);
+
+    float interval = [self getTotalIntervalTime];
+    
+    if (diff > outOfSyncTime && diff < interval-outOfSyncTime)
+    {
+        CGRect frame = [[self.playheadView.layer presentationLayer] frame];
+        self.playheadView.frame = frame;
+        
+        return YES;
+    }
+    
+    return NO;
+}
+
+- (float) getTotalIntervalTime
+{
+    return self.focusTime + self.triggerTime + self.delayTime + self.bufferTime;
+}
+
+- (void) syncPlayheadToTime: (UInt32)newPlayheadTime
+{
+    if ([self playheadOutOfSync:newPlayheadTime])
+    {
+        self.resyncAt = newPlayheadTime;
+        
+        [self stopPlayheadAnimation];
+    }
+}
 
 
 /*

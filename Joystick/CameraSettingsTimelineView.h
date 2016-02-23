@@ -13,6 +13,8 @@
 - (void) setCameraTimesForFocus:(float) focus trigger:(float)trigger delay:(float)delay buffer:(float)bufer animated:(BOOL)animated;
 - (void) startPlayheadAnimation;
 - (void) stopPlayheadAnimation;
+- (UInt32) getPlayheadTime;
+- (void) syncPlayheadToTime: (UInt32)newPlayheadTime;
 
 + (UIColor *)focusColor;
 + (UIColor *)triggerColor;
