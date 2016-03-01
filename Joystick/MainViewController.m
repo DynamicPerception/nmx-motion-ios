@@ -1497,6 +1497,22 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 //    NSLog(@"panRig: %@",panRig);
 //    NSLog(@"panGear: %f",panGear);
     
+    // Restore saved label values for direction
+    if([appExecutive.defaults objectForKey:@"slideDirectionMode"] != nil)
+    {
+        self.slideDirectionMode = [appExecutive.defaults objectForKey:@"slideDirectionMode"] ;
+    }
+    
+    if([appExecutive.defaults objectForKey:@"panDirectionMode"] != nil)
+    {
+        self.panDirectionMode = [appExecutive.defaults objectForKey:@"panDirectionMode"] ;
+    }
+    
+    if([appExecutive.defaults objectForKey:@"tiltDirectionMode"] != nil)
+    {
+        self.tiltDirectionMode = [appExecutive.defaults objectForKey:@"tiltDirectionMode"];
+    }
+    
     if (distance1 != 0 || distance2 != 0 || distance3 != 0)
     {
         NSLog(@"\n");
@@ -1531,22 +1547,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         NSLog(@"getdistance dict2: %@",b);
         NSLog(@"getdistance dict3: %@",c);
             
-        }
-        
-        // Restore saved label values for direction
-        if([appExecutive.defaults objectForKey:@"slideDirectionMode"] != nil)
-        {
-            self.slideDirectionMode = [appExecutive.defaults objectForKey:@"slideDirectionMode"] ;
-        }
-        
-        if([appExecutive.defaults objectForKey:@"panDirectionMode"] != nil)
-        {
-            self.panDirectionMode = [appExecutive.defaults objectForKey:@"panDirectionMode"] ;
-        }
-        
-        if([appExecutive.defaults objectForKey:@"tiltDirectionMode"] != nil)
-        {
-            self.tiltDirectionMode = [appExecutive.defaults objectForKey:@"tiltDirectionMode"];
         }
         
         distanceSlideLbl.text = [self updateInvertUI:

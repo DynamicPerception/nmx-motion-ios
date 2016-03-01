@@ -2037,6 +2037,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         [appExecutive.defaults setObject:self.directionLabelMode forKey:defaultsKey];
         [self.appExecutive.defaults synchronize];
+        
+        [self updateInvertUI];
     }
 }
 
