@@ -22,6 +22,6 @@
 + (UIColor *)bufferColor;
 + (UIColor *)intervalColor;
 + (UIColor *)exposureColor;
-
++ (UIColor *)motorMoveColor;
 
 @end

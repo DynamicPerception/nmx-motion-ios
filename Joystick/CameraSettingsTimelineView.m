@@ -22,6 +22,8 @@
 @property UIView *delayBarView;
 @property UIView *exposureBarView;
 @property UIView *intervalBarView;
+@property UIView *motorMoveView;
+@property UILabel *motorMoveLabel;
 
 @property UIView *playheadView;
 
@@ -64,6 +66,10 @@
     return [UIColor colorWithRed:0.10 green:0.30 blue:0.42 alpha:1.0];
 }
 
++ (UIColor *)motorMoveColor
+{
+    return [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+}
 
 
 - (void)initialize
@@ -103,13 +109,31 @@
                                                                     self.focusBarView.frame.size.height)];
     self.exposureBarView.backgroundColor = [CameraSettingsTimelineView exposureColor];
     [self addSubview: self.exposureBarView];
-    
+
     self.intervalBarView = [[UIView alloc] initWithFrame:CGRectMake(0,
                                                                     self.exposureBarView.frame.origin.y+self.exposureBarView.frame.size.height,
                                                                     size.width,
                                                                     size.height*(1.-2*exposureHtPct))];
     self.intervalBarView.backgroundColor = [CameraSettingsTimelineView intervalColor];
     [self addSubview: self.intervalBarView];
+
+    float motorMoveWidth = 2;
+    self.motorMoveView = [[UIView alloc] initWithFrame:CGRectMake(self.exposureBarView.frame.origin.x+self.exposureBarView.frame.size.width,
+                                                                  borderWidth,
+                                                                  motorMoveWidth,
+                                                                  self.intervalBarView.frame.origin.y-borderWidth)];
+    self.motorMoveView.backgroundColor = [CameraSettingsTimelineView motorMoveColor];
+    [self addSubview: self.motorMoveView];
+    
+    self.motorMoveLabel = [UILabel new];
+    self.motorMoveLabel.frame = CGRectMake(self.motorMoveView.frame.origin.x + 10,
+                                           self.motorMoveView.frame.origin.y + 1,
+                                           50, self.frame.size.height-3-self.intervalBarView.frame.size.height);
+    self.motorMoveLabel.text = @"Motors Move";
+    self.motorMoveLabel.textColor = [UIColor whiteColor];
+    self.motorMoveLabel.adjustsFontSizeToFitWidth = YES;
+    self.motorMoveLabel.numberOfLines = 0;
+    [self addSubview: self.motorMoveLabel];
     
     float playheadWidth = 4;
     self.playheadView = [[UIView alloc] initWithFrame:CGRectMake(0, borderWidth, playheadWidth, self.intervalBarView.frame.origin.y-borderWidth)];
@@ -121,6 +145,7 @@
     self.delayBarView.userInteractionEnabled = NO;
     self.intervalBarView.userInteractionEnabled = NO;
     self.exposureBarView.userInteractionEnabled = NO;
+    self.motorMoveView.userInteractionEnabled = NO;
     self.playheadView.userInteractionEnabled = NO;
     
 }
@@ -166,6 +191,8 @@
     CGRect delayFrame = self.delayBarView.frame;
     CGRect exposureFrame = self.exposureBarView.frame;
     CGRect intervalFrame = self.intervalBarView.frame;
+    CGRect motorMoveFrame = self.motorMoveView.frame;
+    CGRect motorMoveLabelFrame = self.motorMoveLabel.frame;
     
     float viewWidth = self.frame.size.width;
     
@@ -175,6 +202,8 @@
     delayFrame.size.width = viewWidth * delayPct;
     delayFrame.origin.x = triggerFrame.origin.x+triggerFrame.size.width;
     exposureFrame.size.width = focusFrame.size.width+triggerFrame.size.width+delayFrame.size.width;
+    motorMoveFrame.origin.x = exposureFrame.origin.x + exposureFrame.size.width;
+    motorMoveLabelFrame.origin.x = motorMoveFrame.origin.x + 3;
     intervalFrame.size.width = self.frame.size.width;
     
     float duration = animated ? 1.0 : 0.0;
@@ -186,6 +215,8 @@
          self.delayBarView.frame = delayFrame;
          self.exposureBarView.frame = exposureFrame;
          self.intervalBarView.frame = intervalFrame;
+         self.motorMoveLabel.frame = motorMoveLabelFrame;
+         self.motorMoveView.frame = motorMoveFrame;
          
          //NSLog(@"Frame self = %@     focus = %@  trigger = %@   delay = %@   exp = %@  interv = %@",
          //      NSStringFromCGRect(self.frame), NSStringFromCGRect(focusFrame), NSStringFromCGRect(triggerFrame),
