@@ -610,10 +610,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 - (void) confirmRigAndDirectionLablesAreCompatible
 {
     BOOL isDegreeBasedMotor = [rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"];
-    BOOL isDegreeBasedLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kClockwiseCounterClockwiseLabel]];
+    BOOL isCWLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kClockwiseCounterClockwiseLabel]];
+    BOOL isInOutLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kInOutLabel]];
     
-    if ((isDegreeBasedLabel && !isDegreeBasedMotor) ||
-        (!isDegreeBasedLabel && isDegreeBasedMotor))
+    if ((isDegreeBasedMotor && isInOutLabel) ||
+        (!isDegreeBasedMotor && isCWLabel))
     {
         NSString *err = [NSString stringWithFormat:
                          @"Direction label %@ is incompatible with rig ratio %@.  Select Fix it and we will select a compatible label for you or you can ignore this error.",
@@ -2007,9 +2008,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     if ([title isEqualToString: @"Fix it"])
     {
         BOOL isDegreeBasedMotor = [rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"];
-
+        BOOL isInOutLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kInOutLabel]];
+        
         int newLabelIdx;
-        if (isDegreeBasedMotor)
+        if (isDegreeBasedMotor && isInOutLabel)
         {
             newLabelIdx = kClockwiseCounterClockwiseLabel;
         }
