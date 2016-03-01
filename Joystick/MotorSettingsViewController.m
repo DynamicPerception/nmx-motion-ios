@@ -609,12 +609,13 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void) confirmRigAndDirectionLablesAreCompatible
 {
-    BOOL isDegreeBasedMotor = [rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"];
+    BOOL isRotaryBasedMotor = [rigRatioLbl.text containsString:@"Rotary Custom"];
+    BOOL isLinearMotor = [rigRatioLbl.text containsString:@"Linear Custom"];
     BOOL isCWLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kClockwiseCounterClockwiseLabel]];
     BOOL isInOutLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kInOutLabel]];
     
-    if ((isDegreeBasedMotor && isInOutLabel) ||
-        (!isDegreeBasedMotor && isCWLabel))
+    if ((isRotaryBasedMotor && isInOutLabel) ||
+        (isLinearMotor && isCWLabel))
     {
         NSString *err = [NSString stringWithFormat:
                          @"Direction label %@ is incompatible with rig ratio %@.  Select Fix it and we will select a compatible label for you or you can ignore this error.",
@@ -2007,17 +2008,24 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
     if ([title isEqualToString: @"Fix it"])
     {
-        BOOL isDegreeBasedMotor = [rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"];
+        BOOL isRotaryBasedMotor = [rigRatioLbl.text containsString:@"Rotary Custom"];
+        BOOL isLinearMotor = [rigRatioLbl.text containsString:@"Linear Custom"];
+        BOOL isCWLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kClockwiseCounterClockwiseLabel]];
         BOOL isInOutLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kInOutLabel]];
         
         int newLabelIdx;
-        if (isDegreeBasedMotor && isInOutLabel)
+        if (isRotaryBasedMotor && isInOutLabel)
         {
             newLabelIdx = kClockwiseCounterClockwiseLabel;
         }
-        else
+        else if (isLinearMotor && isCWLabel)
         {
             newLabelIdx = kLeftRightLabel;
+        }
+        else
+        {
+            NSLog(@"Attempting to fix a combination with no remedy");
+            return;
         }
 
         self.directionLabelMode = [NSNumber numberWithInt: newLabelIdx];
