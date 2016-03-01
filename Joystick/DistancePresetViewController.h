@@ -12,6 +12,17 @@
 #import "PresetOb.h"
 #import "LinearRotaryViewController.h"
 
+
+typedef enum
+{
+    kLeftRightLabel,
+    kClockwiseCounterClockwiseLabel,
+    kUpDownLabel,
+    kInOutLabel,
+} DirectionLabels;
+
+
+
 @protocol DistancePresetDelegate
 
 - (void) updateBacklash: (NSInteger) value;
@@ -36,5 +47,10 @@
 @property float currentCustomVal;
 
 - (IBAction) cancel:(id)sender;
+
++ (NSString *) leftDirectionLabelForIndex: (int) labelIndex;
++ (NSString *) rightDirectionLabelForIndex: (int) labelIndex;
++ (NSString *) labelForDirectionIndex: (int) index;
++ (int) indexForDirectionLabel: (NSString *) labelString;
 
 @end

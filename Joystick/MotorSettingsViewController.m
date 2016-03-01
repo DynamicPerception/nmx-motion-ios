@@ -12,7 +12,6 @@
 #import "JoyButton.h"
 #import "MBProgressHUD.h"
 
-
 //------------------------------------------------------------------------------
 
 #pragma mark - Private Interface
@@ -117,6 +116,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     rigRatioLbl.text = @"-";
     leftLbl.text = @"";
     rightLbl.text = @"";
+    self.directionLbl.text = @"-";
     
     gearRatio = 0;
     
@@ -138,15 +138,22 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     gearRatioLbl.text = @"19:1";
     
-    if (self.motorNumber == 2 || self.motorNumber == 3)
-    {
-        rigRatioLbl.text = @"Stage R";
-    }
-    else
+
+    if (self.motorNumber == 1)
     {
         rigRatioLbl.text = @"Stage 1/0";
         joystickResponseLbl.text = @"Slider Response";
     }
+    else if (self.motorNumber == 2)
+    {
+        rigRatioLbl.text = @"Stage R";
+    }
+    else if (self.motorNumber == 3)
+    {
+        rigRatioLbl.text = @"Stage R";
+    }
+
+    self.directionLbl.text = [DistancePresetViewController labelForDirectionIndex: [self.directionLabelMode intValue]];
     
     [self setupReturnButtons];
     [self getSavedGearMotorRatios];
@@ -565,6 +572,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [self getDistance];
     [self updateInvertUI];
     
+    [self confirmRigAndDirectionLablesAreCompatible];
+    
     [self dismissViewControllerAnimated: YES completion: nil];
 }
 
@@ -595,6 +604,29 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
 //    [self getDistance];
     [self updateInvertUI];
+}
+
+
+- (void) confirmRigAndDirectionLablesAreCompatible
+{
+    BOOL isDegreeBasedMotor = [rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"];
+    BOOL isDegreeBasedLabel = [self.directionLabelMode isEqualToNumber: [NSNumber numberWithInt: kClockwiseCounterClockwiseLabel]];
+    
+    if ((isDegreeBasedLabel && !isDegreeBasedMotor) ||
+        (!isDegreeBasedLabel && isDegreeBasedMotor))
+    {
+        NSString *err = [NSString stringWithFormat:
+                         @"Direction label %@ is incompatible with rig ratio %@.  Select Fix it and we will select a compatible label for you or you can ignore this error.",
+                         self.directionLbl.text, rigRatioLbl.text];
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Warning"
+                                                        message: err
+                                                       delegate: self
+                                              cancelButtonTitle: @"Ignore"
+                                              otherButtonTitles: @"Fix it", nil];
+        [alert show];
+        
+    }
 }
 
 - (void) handleNotificationDistancePreset:(NSNotification *)pNotification {
@@ -675,9 +707,38 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             NSLog(@"set tiltGear: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltGear"]);
         }
     }
+    if (selectedSetting == 2)  // Direction label changed
+    {
+        self.directionLbl.text = preset;
+        
+        int selectedLabelIndex = [DistancePresetViewController indexForDirectionLabel: self.directionLbl.text];
+        self.directionLabelMode = [NSNumber numberWithInt: selectedLabelIndex];
+        self.directionLbl.text = [DistancePresetViewController labelForDirectionIndex: [self.directionLabelMode intValue]];
+
+        [self confirmRigAndDirectionLablesAreCompatible];
+        
+        NSString *defaultsKey;
+        if (self.motorNumber == 1)
+        {
+            defaultsKey = @"slideDirectionMode";
+        }
+        else if (self.motorNumber == 2)
+        {
+            defaultsKey = @"panDirectionMode";
+        }
+        else if (self.motorNumber == 3)
+        {
+            defaultsKey = @"tiltDirectionMode";
+        }
+        
+        [appExecutive.defaults setObject:self.directionLabelMode forKey:defaultsKey];
+        [self.appExecutive.defaults synchronize];
+    }
     else
     {
         rigRatioLbl.text = preset;
+        
+        [self confirmRigAndDirectionLablesAreCompatible];
         
         if (self.motorNumber == 1)
         {
@@ -1184,6 +1245,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         if (selectedSetting == 0)
         {
             [secView setCurrentSettingString:gearRatioLbl.text];
+        }
+        else if (selectedSetting == 2)
+        {
+            [secView setCurrentSettingString: self.directionLbl.text];
         }
         else
         {
@@ -1695,18 +1760,24 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void) updateInvertUI {
 
-    //NSString *direction;
+    int directionMode = [self.directionLabelMode intValue];
     
+    leftLbl.text = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
+    rightLbl.text = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
+
+    float directionDist = start+end;
+    if ((directionDist >= 0. && self.invertDirectionSwitch.isOn) ||
+        (directionDist < 0. && !self.invertDirectionSwitch.isOn))
+    {
+        direction = leftLbl.text;
+    }
+    else
+    {
+        direction = rightLbl.text;
+    }
+
     if([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"])
     {
-        if (self.invertDirectionSwitch.isOn)
-        {
-            direction = @"UP";
-        }
-        else
-        {
-            direction = @"DOWN";
-        }
         
         unitsLbl.text = [NSString stringWithFormat:@"%.02f Deg %@", degrees, direction];
         
@@ -1716,18 +1787,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     else
     {
-        if (self.invertDirectionSwitch.isOn)
-        {
-            direction = @"L";
-        }
-        else
-        {
-            direction = @"R";
-        }
-        
-        leftLbl.text = @"L";
-        rightLbl.text = @"R";
-        
         unitsLbl.text = [NSString stringWithFormat:@"%.02f In %@", inches, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f In %@", inches, direction];
@@ -1741,18 +1800,13 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     else if ((int)self.motorNumber == 2)
     {
-        leftLbl.text = @"CW";
-        rightLbl.text = @"CCW";
-
         [self.appExecutive.defaults setObject: direction forKey: @"panDirection"];
     }
     else if ((int)self.motorNumber == 3)
     {
-        leftLbl.text = @"UP";
-        rightLbl.text = @"DOWN";
-
         [self.appExecutive.defaults setObject: direction forKey: @"tiltDirection"];
     }
+    
 }
 
 - (IBAction) handlePowerSaveSwitch: (UISwitch *) sender {
@@ -1940,5 +1994,51 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     return appExecutive;
 }
+
+//------------------------------------------------------------------------------
+
+#pragma mark - UIAlertViewDelegate Methods
+
+
+- (void) alertView: (UIAlertView *) alertView clickedButtonAtIndex: (NSInteger) buttonIndex {
+    
+    NSString *title = [alertView buttonTitleAtIndex: buttonIndex];
+        
+    if ([title isEqualToString: @"Fix it"])
+    {
+        BOOL isDegreeBasedMotor = [rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"];
+
+        int newLabelIdx;
+        if (isDegreeBasedMotor)
+        {
+            newLabelIdx = kClockwiseCounterClockwiseLabel;
+        }
+        else
+        {
+            newLabelIdx = kLeftRightLabel;
+        }
+
+        self.directionLabelMode = [NSNumber numberWithInt: newLabelIdx];
+        self.directionLbl.text = [DistancePresetViewController labelForDirectionIndex: [self.directionLabelMode intValue]];
+        
+        NSString *defaultsKey;
+        if (self.motorNumber == 1)
+        {
+            defaultsKey = @"slideDirectionMode";
+        }
+        else if (self.motorNumber == 2)
+        {
+            defaultsKey = @"panDirectionMode";
+        }
+        else if (self.motorNumber == 3)
+        {
+            defaultsKey = @"tiltDirectionMode";
+        }
+        
+        [appExecutive.defaults setObject:self.directionLabelMode forKey:defaultsKey];
+        [self.appExecutive.defaults synchronize];
+    }
+}
+
 
 @end

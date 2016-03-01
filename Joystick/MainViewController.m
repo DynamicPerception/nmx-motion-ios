@@ -175,9 +175,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     panLinearCustom = 0.00;
     tiltLinearCustom = 0.00;
     
-    slideDirection = @"CCW";
+    slideDirection = @"R";
     panDirection = @"CCW";
-    tiltDirection = @"CCW";
+    tiltDirection = @"UP";
     
     slideRig = @"Stage 1/0";
     panRig = @"Stage R";
@@ -191,10 +191,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     float e = [self.appExecutive.defaults floatForKey:@"panMotorCustomValue"];//panLinearCustom = 0.00;
     float f = [self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"];//tiltLinearCustom = 0.00;
     
-    NSString *g = [appExecutive.defaults objectForKey:@"slideDirection"];
-//    int h = (int)[self.appExecutive.defaults integerForKey:@"panMotor"];
-//    int i = (int)[self.appExecutive.defaults integerForKey:@"tiltMotor"];
-    
     NSLog(@"slideMotor: %i",a);
 //    NSLog(@"b: %i",b);
 //    NSLog(@"c: %i",c);
@@ -202,8 +198,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 //    NSLog(@"d: %f",d);
 //    NSLog(@"e: %f",e);
 //    NSLog(@"f: %f",f);
-    
-    NSLog(@"slideDirection: %@",g);
     
     if([appExecutive.defaults objectForKey:@"slideMotor"] != nil)
     {
@@ -271,7 +265,41 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     {
         tiltDirection = [appExecutive.defaults objectForKey:@"tiltDirection"];
     }
+
     
+    self.slideDirectionMode = [NSNumber numberWithInt:kLeftRightLabel];
+    self.panDirectionMode = [NSNumber numberWithInt:kClockwiseCounterClockwiseLabel];
+    self.tiltDirectionMode = [NSNumber numberWithInt:kUpDownLabel];
+
+    // Restore saved label values for direction
+    if([appExecutive.defaults objectForKey:@"slideDirectionMode"] != nil)
+    {
+        self.slideDirectionMode = [appExecutive.defaults objectForKey:@"slideDirectionMode"] ;
+    }
+    else
+    {
+        [appExecutive.defaults setObject:self.slideDirectionMode forKey:@"slideDirectionMode"];
+    }
+    
+    if([appExecutive.defaults objectForKey:@"panDirectionMode"] != nil)
+    {
+        self.panDirectionMode = [appExecutive.defaults objectForKey:@"panDirectionMode"] ;
+    }
+    else
+    {
+        [appExecutive.defaults setObject:self.panDirectionMode forKey:@"panDirectionMode"];
+    }
+    
+    if([appExecutive.defaults objectForKey:@"tiltDirectionMode"] != nil)
+    {
+        self.tiltDirectionMode = [appExecutive.defaults objectForKey:@"tiltDirectionMode"];
+    }
+    else
+    {
+        [appExecutive.defaults setObject:self.tiltDirectionMode forKey:@"tiltDirectionMode"];
+    }
+
+
 //    float fc = [self.appExecutive.frameCountNumber floatValue];
 //    
 //    NSLog(@"fc: %f",fc);
@@ -870,6 +898,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
+        inverted1 = [device motorQueryInvertDirection: 1];
+        inverted2 = [device motorQueryInvertDirection: 2];
+        inverted3 = [device motorQueryInvertDirection: 3];
+        
         [device motorEnable: device.sledMotor];
         [device motorEnable: device.panMotor];
         [device motorEnable: device.tiltMotor];
@@ -1501,6 +1533,22 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             
         }
         
+        // Restore saved label values for direction
+        if([appExecutive.defaults objectForKey:@"slideDirectionMode"] != nil)
+        {
+            self.slideDirectionMode = [appExecutive.defaults objectForKey:@"slideDirectionMode"] ;
+        }
+        
+        if([appExecutive.defaults objectForKey:@"panDirectionMode"] != nil)
+        {
+            self.panDirectionMode = [appExecutive.defaults objectForKey:@"panDirectionMode"] ;
+        }
+        
+        if([appExecutive.defaults objectForKey:@"tiltDirectionMode"] != nil)
+        {
+            self.tiltDirectionMode = [appExecutive.defaults objectForKey:@"tiltDirectionMode"];
+        }
+        
         distanceSlideLbl.text = [self updateInvertUI:
                                            inverted1:
                                  [[a objectForKey:@"degrees"] floatValue]:
@@ -1535,18 +1583,19 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
     NSString *direction;
     NSString *displayString;
-    
+
+    int directionMode = [self.slideDirectionMode intValue];
+    if (inverted1 == 1)
+    {
+        direction = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
+    }
+    else
+    {
+        direction = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
+    }
+
     if([slideRig containsString:@"Stage R"] || [slideRig containsString:@"Rotary Custom"])
     {
-        if (inverted1 == 1)
-        {
-            direction = @"CW";
-        }
-        else
-        {
-            direction = @"CCW";
-        }
-        
         displayString = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
@@ -1555,15 +1604,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
-        if (inverted1 == 1)
-        {
-            direction = @"L";
-        }
-        else
-        {
-            direction = @"R";
-        }
-        
         displayString = [NSString stringWithFormat:@"%.02f In %@", 0.0, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f In %@", 0.0, direction];
@@ -1572,18 +1612,19 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     
     distanceSlideLbl.text = displayString;
-    
+
+    directionMode = [self.panDirectionMode intValue];
+    if (inverted2 == 1)
+    {
+        direction = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
+    }
+    else
+    {
+        direction = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
+    }
+
     if([panRig containsString:@"Stage R"] || [panRig containsString:@"Rotary Custom"])
     {
-        if (inverted1 == 1)
-        {
-            direction = @"CW";
-        }
-        else
-        {
-            direction = @"CCW";
-        }
-        
         displayString = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
@@ -1592,15 +1633,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
-        if (inverted1 == 1)
-        {
-            direction = @"L";
-        }
-        else
-        {
-            direction = @"R";
-        }
-        
         displayString = [NSString stringWithFormat:@"%.02f In %@", 0.0, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f In %@", 0.0, direction];
@@ -1609,18 +1641,20 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     
     distancePanLbl.text = displayString;
+
+    
+    directionMode = [self.tiltDirectionMode intValue];
+    if (inverted3 == 1)
+    {
+        direction = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
+    }
+    else
+    {
+        direction = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
+    }
     
     if([tiltRig containsString:@"Stage R"] || [tiltRig containsString:@"Rotary Custom"])
     {
-        if (inverted1 == 1)
-        {
-            direction = @"CW";
-        }
-        else
-        {
-            direction = @"CCW";
-        }
-        
         displayString = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
@@ -1629,15 +1663,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
-        if (inverted1 == 1)
-        {
-            direction = @"L";
-        }
-        else
-        {
-            direction = @"R";
-        }
-        
         displayString = [NSString stringWithFormat:@"%.02f In %@", 0.0, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f In %@", 0.0, direction];
@@ -1779,24 +1804,42 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (NSString *)updateInvertUI : (int)inverted : (float)degrees : (float)inches : (NSString *)direction : (NSString *)rigRatioLbl : (int)motor {
     
-    if (debugDistance) {
-    
-    NSLog(@"updateInvertUI rigRatioLbl: %@ motor: %i",rigRatioLbl,motor);
-    NSLog(@"updateInvertUI degrees: %f motor: %i",degrees,motor);
+    if (debugDistance)
+    {
         
+        NSLog(@"updateInvertUI rigRatioLbl: %@ motor: %i",rigRatioLbl,motor);
+        NSLog(@"updateInvertUI degrees: %f motor: %i",degrees,motor);
+        
+    }
+
+    int directionMode;
+    if (motor == 1)
+    {
+        directionMode = [self.slideDirectionMode intValue];
+    }
+    else if (motor == 2)
+    {
+        directionMode = [self.panDirectionMode intValue];
+    }
+    else
+    {
+        directionMode = [self.tiltDirectionMode intValue];
     }
     
     NSString *displayString;
     
     if([rigRatioLbl containsString:@"Stage R"] || [rigRatioLbl containsString:@"Rotary Custom"])
     {
-        if (inverted == 1)
+        float directionDist = degrees;
+        
+        if ((directionDist >= 0. && inverted) ||
+            (directionDist < 0. && !inverted))
         {
-            direction = @"CW";
+            direction = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
         }
         else
         {
-            direction = @"CCW";
+            direction = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
         }
         
         displayString = [NSString stringWithFormat:@"%.02f Deg %@", degrees, direction];
@@ -1807,15 +1850,18 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
-        if (inverted == 1)
+        float directionDist = inches;
+        
+        if ((directionDist >= 0. && inverted) ||
+            (directionDist < 0. && !inverted))
         {
-            direction = @"L";
+            direction = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
         }
         else
         {
-            direction = @"R";
+            direction = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
         }
-        
+
         displayString = [NSString stringWithFormat:@"%.02f In %@", inches, direction];
         
         NSString *rp = [NSString stringWithFormat:@"%.02f In %@", inches, direction];
@@ -1825,8 +1871,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     if (debugDistance) {
         
-    NSLog(@"displayString: %@",displayString);
-    NSLog(@"\n");
+        NSLog(@"displayString: %@",displayString);
+        NSLog(@"\n");
         
     }
     
@@ -1944,6 +1990,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 		msvc.motorName = @"Slide";
 		msvc.motorNumber = self.appExecutive.device.sledMotor;
+        msvc.directionLabelMode = self.slideDirectionMode;
         
         [self exitJoystickMode];
         self.showingModalScreen = true;
@@ -1954,6 +2001,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 		msvc.motorName = @"Pan";
 		msvc.motorNumber = self.appExecutive.device.panMotor;
+        msvc.directionLabelMode = self.panDirectionMode;
 
         [self exitJoystickMode];
         self.showingModalScreen = true;
@@ -1964,7 +2012,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 		msvc.motorName = @"Tilt";
 		msvc.motorNumber = self.appExecutive.device.tiltMotor;
-
+        msvc.directionLabelMode = self.tiltDirectionMode;
+        
         [self exitJoystickMode];
         self.showingModalScreen = true;
     }
