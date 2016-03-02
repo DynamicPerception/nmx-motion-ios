@@ -40,7 +40,7 @@
 NSArray	static	*intervalOnes	= nil;
 NSArray	static	*intervalTenths	= nil;
 
-NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
+NSInteger static	minimumTimeValue	= 0;	//  minimum time value in milliseconds
 
 
 #pragma mark Public Propery Synthesis
