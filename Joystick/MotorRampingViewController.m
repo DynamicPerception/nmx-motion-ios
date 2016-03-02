@@ -149,20 +149,8 @@ NSArray static	*frameCountStrings = nil;
     }
     else
     {
-        if(programMode == NMXProgramModeSMS)
-        {
-            //NSLog(@"NMXProgramModeSMS");
-            
-            selectedFrameCount = [self.appExecutive.frameCountNumber intValue]; //300
-            frameCount	= [self.appExecutive.frameCountNumber integerValue];
-        }
-        else
-        {
-            //NSLog(@"NMXProgramContinuous");
-            
-            selectedFrameCount = [self.appExecutive.shotDurationNumber intValue];
-            frameCount	= [self.appExecutive.shotDurationNumber integerValue];
-        }
+        selectedFrameCount = [self.appExecutive.frameCountNumber intValue]; //300
+        frameCount	= [self.appExecutive.frameCountNumber integerValue];
     }
     
     //NSLog(@"programMode: %i",programMode);
