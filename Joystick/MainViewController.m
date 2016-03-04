@@ -882,9 +882,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
     int queryStatus = [device mainQueryRunStatus];
     
-    if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+    if (NMXRunStatusStopped != queryStatus || NMXRunStatusStopped != queryStatusKeyFrame)
     {
-        if (NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+        if (NMXRunStatusKeyframe & queryStatusKeyFrame)
         {
             appExecutive.is3P = YES;
             [switch2P setOn:YES];

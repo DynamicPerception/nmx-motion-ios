@@ -41,7 +41,7 @@ typedef enum : unsigned char {
     NMXCommandMainSetAppMode = 51,
     NMXCommandMainFlipStartStopPoints = 29,
     NMXCommandMainQueryFirmwareVersion = 100,
-    NMXCommandMainQueryRunStatus = 101,
+    NMXCommandMainQueryRunStatus_DEPRECATED = 101,        // deprecated in v. 0.51
     NMXCommandMainQueryRunTime = 102,
     NMXCommandMainQueryVoltage = 107,
     NMXCommandMainQueryDelayTimer = 117,
@@ -49,7 +49,9 @@ typedef enum : unsigned char {
     NMXCommandMainQueryPowerCycle = 119,
     NMXCommandMainQueryPingPongMode = 121,
     NMXCommandMainQueryProgramPercentComplete = 123,
-    NMXCommandMainQueryTotalRunTime = 125
+    NMXCommandMainQueryTotalRunTime = 125,
+    NMXCommandMainQueryFPS = 127,
+    NMXCommandMainQueryRunStatus = 140,    // introduced in firmware v. 0.51
     
 } NMXCommandMain;
 
@@ -150,7 +152,7 @@ typedef enum: unsigned char {
     NMXStartResumeKeyFrameProgram = 20,
     NMXPauseKeyFrameProgram = 21,
     NMXStopKeyFrameProgram = 22,
-    NMXQueryKeyFrameProgramRunState = 120,
+    NMXQueryKeyFrameProgramRunState_DEPRECATED = 120,   // deprecated in v. 0.51
     NMXQueryKeyFrameCurrentRunTime = 121,
     NMXQueryKeyFrameMaxRunTime = 122,
     NMXQueryKeyFramePercentComplete = 123
@@ -870,6 +872,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     [self sendCommand: newData WithDesc: @"Set Ping Pong Mode" WaitForResponse: true WithTimeout: 0.2];
 }
 
+
 - (void) mainSendMotorsToStart {
     
     unsigned char newDataBytes[16];
@@ -916,7 +919,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) mainSetFPS: (NMXFPS) fps {
     
     unsigned char newDataBytes[16];
-    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainSetPingPongMode dataLength: 1];
+    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainSetFPS dataLength: 1];
     newDataBytes[10] = fps;
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
     [self sendCommand: newData WithDesc: @"Set FPS" WaitForResponse: true WithTimeout: 0.2];
@@ -951,18 +954,97 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     return fwVerison;
 }
 
+
+- (NMXRunStatus) runStatusFromOldRunStatus:(_Deprecated_NMXRunStatus) runStatus
+{
+    NMXRunStatus newStatus;
+    switch (runStatus)
+    {
+        case _Deprecated_NMXRunStatusStopped :
+            newStatus = NMXRunStatusStopped;
+            break;
+        case _Deprecated_NMXRunStatusPaused :
+            newStatus = NMXRunStatusPaused;
+            break;
+        case  _Deprecated_NMXRunStatusRunning:
+            newStatus = NMXRunStatusRunning;
+            break;
+        case _Deprecated_NMXRunStatusDelayTimer:
+            newStatus = NMXRunStatusDelayTimer;
+            break;
+        case _Deprecated_NMXRunStatusKeepAlive:
+            newStatus = NMXRunStatusKeepAlive;
+            break;
+        default:
+            newStatus = 99;
+            break;
+    }
+    
+    return newStatus;
+}
+
+- (NMXRunStatus) runStatusFromOldKeyframRunStatus:(_Deprecated_NMXKeyFrameRunStatus) runStatus
+{
+    
+    NMXRunStatus newStatus;
+    switch (runStatus)
+    {
+        case _Deprecated_NMXKeyFrameRunStatusStopped :
+            newStatus = NMXRunStatusStopped;
+            break;
+        case _Deprecated_NMXKeyFrameRunStatusPaused :
+            newStatus = NMXRunStatusPaused;
+            break;
+        case  _Deprecated_NMXKeyFrameRunStatusRunning:
+            newStatus = NMXRunStatusRunning;
+            break;
+        case _Deprecated_NMXKeyFrameRunStatusDelayTimer:
+            newStatus = NMXRunStatusDelayTimer;
+            break;
+        case _Deprecated_NMXKeyFrameRunStatusKeepAlive:
+            newStatus = NMXRunStatusKeepAlive;
+            break;
+        case _Deprecated_NMXKeyFrameRunStatusPingPong:
+            newStatus = NMXRunStatusPingPong;
+            break;
+        default:
+            newStatus = 99;
+            break;
+    }
+    
+    return newStatus;
+}
+
+
+- (NSString*) bitString:(unsigned char) mask{
+    NSString *str = @"";
+    for (NSUInteger i = 0; i < 8 ; i++) {
+        // Prepend "0" or "1", depending on the bit
+        str = [NSString stringWithFormat:@"%@%@",
+               mask & 1 ? @"1" : @"0", str];
+        mask >>= 1;
+    }
+    return str;
+}
+
 - (NMXRunStatus) mainQueryRunStatus {
     
-    NMXRunStatus    runStatus = NMXRunStatusDelayTimer;
+    unsigned char command = NMXCommandMainQueryRunStatus;
+    
+    BOOL oldFirmwareForRunStatus = NO;
+    if (_fwVersion < 51 )
+    {
+        oldFirmwareForRunStatus = YES;
+        command = NMXCommandMainQueryRunStatus_DEPRECATED;
+    }
+    
+    NMXRunStatus    runStatus;
     unsigned char   newDataBytes[16];
-    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryRunStatus dataLength: 0];
+    [self setupBuffer: newDataBytes subAddress: 0 command: command dataLength: 0];
     
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
     
     [self sendCommand: newData WithDesc: @"Query Run Status" WaitForResponse: true WithTimeout: 0.3];
-    
-    
-    
     
     if ([self waitForResponse])
     {
@@ -972,6 +1054,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             
             runStatus = [[self extractReturnedNumber] UInt8Value];
             
+            if (oldFirmwareForRunStatus)
+            {
+                runStatus = [self runStatusFromOldRunStatus:(_Deprecated_NMXRunStatus)runStatus];
+            }
+
             //NSLog(@"runStatus: %i",runStatus);
         }
         @catch (NSException * e) {
@@ -979,6 +1066,9 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             NSLog(@"na. memcpy Exception: %@", e);
         }
     }
+    
+    NSString *bin = [self bitString:runStatus];
+    NSLog(@"*********     Run Status = %@", bin);
     
     return runStatus;
 }
@@ -1096,9 +1186,10 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (NMXFPS) mainQueryFPS {
     
+    //mm -- FIXME  -- this was using NMXCommandMainQueryRunStatus BUG!  Confirming from Michael the correct return value
     NMXFPS          fps;
     unsigned char   newDataBytes[16];
-    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryRunStatus dataLength: 0];
+    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryFPS dataLength: 0];
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
     
     [self sendCommand: newData WithDesc: @"Query FPS" WaitForResponse: true WithTimeout: 0.2];
@@ -1974,6 +2065,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
 }
 
+
 #pragma mark - Keyframe Program
 
 - (void) setCurrentKeyFrameAxis: (UInt16) value {
@@ -2181,12 +2273,19 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (UInt32) queryKeyFrameProgramRunState {
     
+    if (_fwVersion >= 51 )
+    {
+        return [self mainQueryRunStatus];
+    }
+    
+    // command 5.120 was deprecated in firmware v. .51
+    
     if (NO ==[self checkFWMinRequiredVersion: 46]) return 0;
     
     UInt32    runState;
     unsigned char newDataBytes[16];
     
-    [self setupBuffer: newDataBytes subAddress: 5 command: NMXQueryKeyFrameProgramRunState dataLength: 0];
+    [self setupBuffer: newDataBytes subAddress: 5 command: NMXQueryKeyFrameProgramRunState_DEPRECATED dataLength: 0];
     
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
     
@@ -2195,6 +2294,13 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     if ([self waitForResponse])
     {
         runState = [[self extractReturnedNumber] UInt32Value];
+        
+        runState = [self runStatusFromOldKeyframRunStatus:(_Deprecated_NMXKeyFrameRunStatus)runState];
+        
+        if (runState != NMXRunStatusStopped)
+        {
+            runState |= NMXRunStatusKeyframe;  // We are running in keyframe mode so set the bit flag
+        }
         
         //NSLog(@"query stopPoint %i: %i",motor,stopPoint);
     }

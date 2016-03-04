@@ -120,7 +120,7 @@
 
     NMXRunStatus runStatus = [device mainQueryRunStatus];
     
-    if  (runStatus == NMXRunStatusRunning)
+    if  (runStatus & NMXRunStatusRunning)
     {
         UInt32 lastRunTime = [device mainQueryRunTime];
             

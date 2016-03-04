@@ -361,7 +361,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     //NSLog(@"viewwillappear setup");
 
     if (NMXRunStatusStopped != [[AppExecutive sharedInstance].device mainQueryRunStatus] ||
-        NMXKeyFrameRunStatusStopped != [[AppExecutive sharedInstance].device queryKeyFrameProgramRunState])
+        NMXRunStatusStopped != [[AppExecutive sharedInstance].device queryKeyFrameProgramRunState])
     {
         //NSLog(@"randall load status not stopped setupVC: %i",[[AppExecutive sharedInstance].device queryKeyFrameProgramRunState]);
         

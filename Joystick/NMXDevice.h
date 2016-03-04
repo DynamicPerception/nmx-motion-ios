@@ -18,24 +18,39 @@ typedef enum : unsigned char {
     NMXProgramModeVideo = 2
 } NMXProgramMode;
 
+// Deprecated
 typedef enum : unsigned char {
 
-    NMXRunStatusStopped = 0,
-    NMXRunStatusPaused = 1,
-    NMXRunStatusRunning = 2,
-    NMXRunStatusDelayTimer = 3,
-    NMXRunStatusKeepAlive = 4,
-    NMXRunStatusKeepBadResponse = 128
+    _Deprecated_NMXRunStatusStopped = 0,
+    _Deprecated_NMXRunStatusPaused =  1,
+    _Deprecated_NMXRunStatusRunning = 2,
+    _Deprecated_NMXRunStatusDelayTimer = 3,
+    _Deprecated_NMXRunStatusKeepAlive = 4,
+} _Deprecated_NMXRunStatus;
+
+// Deprecated
+typedef enum : unsigned char {
+
+    _Deprecated_NMXKeyFrameRunStatusStopped = 0,
+    _Deprecated_NMXKeyFrameRunStatusRunning = 1,
+    _Deprecated_NMXKeyFrameRunStatusPaused = 2,
+    _Deprecated_NMXKeyFrameRunStatusDelayTimer = 3,
+    _Deprecated_NMXKeyFrameRunStatusKeepAlive = 4,
+    _Deprecated_NMXKeyFrameRunStatusPingPong = 5,
+} _Deprecated_NMXKeyFrameRunStatus;
+
+
+typedef enum : unsigned char {
+    
+    NMXRunStatusStopped   = 0,
+    NMXRunStatusRunning   = 1 << 0,
+    NMXRunStatusPaused    = 1 << 1,
+    NMXRunStatusKeyframe  = 1 << 2,
+    NMXRunStatusDelayTimer= 1 << 3,
+    NMXRunStatusKeepAlive = 1 << 4,
+    NMXRunStatusPingPong  = 1 << 5,
 } NMXRunStatus;
 
-typedef enum : unsigned char {
-
-    NMXKeyFrameRunStatusStopped = 0,
-    NMXKeyFrameRunStatusRunning = 1,
-    NMXKeyFrameRunStatusPaused = 2,
-    NMXKeyFrameRunStatusDelayTimer = 3,
-    NMXKeyFrameRunStatusKeepAlive = 4
-} NMXKeyFrameRunStatus;
 
 typedef enum : unsigned char {
 
