@@ -1933,7 +1933,14 @@ typedef enum{
     {
         if (self.totalRunTime > 0)
         {
-            self.lastRunTime = [device mainQueryRunTime];
+            if (self.appExecutive.is3P)
+            {
+                self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
+            }
+            else
+            {
+                self.lastRunTime = [device mainQueryRunTime];
+            }
 
             runningBackwards = ((int)((float)self.lastRunTime/(float)self.totalRunTime)) % 2;
         }
