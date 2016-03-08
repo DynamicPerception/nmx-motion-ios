@@ -84,7 +84,6 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
 @property (strong, nonatomic) IBOutlet JoyButton *cancelBtn;
 @property (strong, nonatomic) IBOutlet UIView *keepAliveView;
 @property (strong, nonatomic) IBOutlet UIButton *startTimerBtn;
-//mm @property (strong, nonatomic) IBOutlet UISwitch *keepAliveSwitch;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *atProgramEndControl;
 @property (strong, nonatomic) IBOutlet UIView *timerContainer;
 @property (strong, nonatomic) IBOutlet UILabel *timerLbl;
@@ -100,7 +99,6 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
 @property (weak, nonatomic) IBOutlet UIView *contentBG;
 @property (weak, nonatomic) IBOutlet UITextView *debugTxt;
 
-//mm - (IBAction) manageKeepAlive:(id)sender;
 - (IBAction) simulateDisconnect:(id)sender;
 - (IBAction) shareScene:(id)sender;
 

@@ -81,6 +81,9 @@ typedef enum{
 @property (nonatomic, assign)               float               timePerFrame;
 @property (nonatomic, assign)               NMXProgramMode      programMode;
 
+@property                                   float               previousPercentage;
+@property                                   BOOL                reversing;
+
 @end
 
 
@@ -119,7 +122,6 @@ typedef enum{
 @synthesize statusTimer;
 
 @synthesize graphView, panGraph, tiltGraph, appExecutive, graphViewContainer, playhead, goBtn, cancelBtn, keepAliveView, startTimerBtn,
-//mm keepAliveSwitch,
             timerContainer, timerLbl, disconnectStatusLbl, disconnectBtn,graph3P,dic,shareBtn,settingsButton,batteryIcon,contentBG,shareBtn2,debugTxt;
 
 #pragma mark Public Propery Methods
@@ -277,6 +279,7 @@ typedef enum{
     timerContainer.hidden = YES;
     startTimerBtn.hidden = YES;
     keepAliveView.hidden = YES;
+    self.previousPercentage = 0.f;
     
     //http://stackoverflow.com/questions/13155461/creating-a-stopwatch-in-iphone
     
@@ -414,6 +417,13 @@ typedef enum{
     countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(countDownTimerFired:) userInfo:nil repeats:YES];
 }
 
+- (void) showKeepAliveView
+{
+    self.atProgramEndControl.enabled = YES;
+    keepAliveView.hidden = NO;
+}
+
+
 - (void) countDownTimerFired:(id)sender {
     
     NSLog(@"countDownTimerFired secondsLeft: %i",secondsLeft);
@@ -442,10 +452,9 @@ typedef enum{
         goBtn.hidden = YES;
         pauseProgramButton.hidden = NO;
         
-        if (!self.appExecutive.is3P)
-        {
-            keepAliveView.hidden = NO;
-        }
+        [self showKeepAliveView];
+        self.reversing = NO;
+        self.previousPercentage = 0.f;
     }
 }
 
@@ -518,9 +527,11 @@ typedef enum{
     
     [[AppExecutive sharedInstance].device mainStartPlannedMove];
     
-    if(self.programMode != NMXProgramModeVideo && !self.appExecutive.is3P)
+    if(self.programMode != NMXProgramModeVideo)
     {
-        keepAliveView.hidden = NO;
+        [self showKeepAliveView];
+        self.reversing = NO;
+        self.previousPercentage = 0.f;
     }
     
     startTimerBtn.hidden = YES;
@@ -561,13 +572,12 @@ typedef enum{
     
     [self transitionToState: ControllerStatePauseProgram];
     
-    if(self.programMode != NMXProgramModeVideo && !self.appExecutive.is3P)
+    if(self.programMode != NMXProgramModeVideo)
     {
-        keepAliveView.hidden = NO;
+        [self showKeepAliveView];
+        self.reversing = NO;
+        self.previousPercentage = 0.f;
     }
-    
-    
-    //    [device keepAlive: 1]; //mm TESTING
     
     startTimerBtn.hidden = YES;
 }
@@ -705,28 +715,39 @@ typedef enum{
             self.statusTimer = self.statusTimer;
         }
         else if(runStatus & NMXRunStatusRunning ||
-                runStatus & NMXRunStatusPaused ||
-                runStatus & NMXRunStatusKeepAlive)
+                runStatus & NMXRunStatusPaused)
         {
-            //mm            [keepAliveSwitch setOn:[appExecutive.defaults integerForKey: @"keepAlive"]];
-            [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndKeepAlive];
-            
-            keepAliveView.hidden = NO;
-            
-            self.statusTimer = self.statusTimer;
-        }
-        else if(runStatus & NMXRunStatusPingPong)
-        {
-            [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
-            keepAliveView.hidden = NO;
-        }
-        
-        if (runStatus & NMXRunStatusKeepAlive)
-        {
-            [self transitionToPauseProgramState];
-            
+            [self showKeepAliveView];
+            self.reversing = NO;
+            self.previousPercentage = 0.f;
+
             self.motorRampingButton.hidden = YES;
             self.sendMotorsToStartButton.hidden = YES;
+
+            if(runStatus & NMXRunStatusPingPong)
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
+            }
+            else if (runStatus & NMXRunStatusKeepAlive)
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndKeepAlive];
+            }
+            else
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
+            }
+
+            if (runStatus & NMXRunStatusPaused)
+            {
+                [self transitionToResumeOrStopProgramState];
+            }
+            else
+            {
+                [self transitionToPauseProgramState];
+            }
+            
+            self.statusTimer = self.statusTimer;
+            
         }
     }
     else
@@ -736,14 +757,35 @@ typedef enum{
         {
             //NSLog(@"review NMXKeyFrameRunStatusRunning/Paused");
             
-            //mm    [keepAliveSwitch setOn:[appExecutive.defaults integerForKey: @"keepAlive"]];
-            [self.atProgramEndControl setSelectedSegmentIndex:[appExecutive.defaults integerForKey: @"keepAlive"]];
-            
-            if (!self.appExecutive.is3P)
+            [self showKeepAliveView];
+            self.reversing = NO;
+            self.previousPercentage = 0.f;
+
+            self.motorRampingButton.hidden = YES;
+            self.sendMotorsToStartButton.hidden = YES;
+
+            if(runStatusKeyFrame & NMXRunStatusPingPong)
             {
-                keepAliveView.hidden = NO;
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
             }
-            
+            else if (runStatusKeyFrame & NMXRunStatusKeepAlive)
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndKeepAlive];
+            }
+            else
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
+            }
+
+            if (runStatus & NMXRunStatusPaused)
+            {
+                [self transitionToResumeOrStopProgramState];
+            }
+            else
+            {
+                [self transitionToPauseProgramState];
+            }
+
             self.totalRunTime = [device queryKeyFrameProgramMaxTime];
             
             [self startKeyframeTimer];
@@ -1088,20 +1130,6 @@ typedef enum{
 
 #pragma mark - IBAction Methods
 
-//mm
-/*
-- (IBAction) manageKeepAlive:(id)sender {
-    
-    //mm    [appExecutive.defaults setObject: [NSNumber numberWithInt:keepAliveSwitch.isOn] forKey: @"keepAlive"];
-    [appExecutive.defaults setObject: [NSNumber numberWithLong:self.atProgramEndControl.selectedSegmentIndex] forKey: @"keepAlive"];
-    [appExecutive.defaults synchronize];
-    
-     //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
-    
-    [device keepAlive: keepAliveSwitch.isOn];
-}
-*/
-
 - (IBAction)mangeAtProgramEndSelection:(id)sender {
     
     NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
@@ -1111,7 +1139,7 @@ typedef enum{
     
     //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
     
-    //mm  [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
+    [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
     [device mainSetPingPongMode: atEndSelection==AtProgramEndPingPong];
 
 }
@@ -1158,10 +1186,7 @@ typedef enum{
 	
     [[AppExecutive sharedInstance].device mainStartPlannedMove];
     
-    if (!self.appExecutive.is3P)
-    {
-        keepAliveView.hidden = NO;
-    }
+    [self showKeepAliveView];
     
     [self transitionToPauseProgramState];
 }
@@ -1252,7 +1277,7 @@ typedef enum{
     
     [device keepAlive:0];
     [device mainSetPingPongMode: NO];
-    //mm [keepAliveSwitch setOn:NO animated:NO];
+
     [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
     
     [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
@@ -1302,10 +1327,7 @@ typedef enum{
     [device1 mainSetAppMode: true];
     [device1 mainSetJoystickMode: false];
     
-    if (!self.appExecutive.is3P)
-    {
-        keepAliveView.hidden = NO;
-    }
+    [self showKeepAliveView];
     
     [self setupAfterConnection];
 }
@@ -1559,18 +1581,39 @@ typedef enum{
             timeRemaining = 0;
         }
         
+        if (self.previousPercentage > percentComplete)  // we are reversing direction
+        {
+            NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
+            if (atEndSelection==AtProgramEndPingPong)
+            {
+                self.reversing = !self.reversing;
+            }
+        }
+        
+        if (percentComplete >= 1.f || self.reversing)
+        {
+            self.atProgramEndControl.enabled = NO;
+        }
+        
+        self.previousPercentage = percentComplete;
+        
+        if (self.reversing)
+        {
+            percentComplete = 1. - percentComplete;
+        }
+
+        
         if (NMXProgramModeVideo == self.programMode)
         {
             self.videoProgressView.progress = percentComplete;
             self.videoTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
             
-            float percentComplete2 = (float)self.lastRunTime/self.totalRunTime;
-            
-            NSLog(@"keyframe video percentComplete2: %f",percentComplete2);
+            //float percentComplete2 = (float)self.lastRunTime/self.totalRunTime;
+            //NSLog(@"keyframe video percentComplete2: %f",percentComplete2);
             
             if(percentComplete <= 1.0)
             {
-                percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
+                percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
             }
             
             NSLog(@"keyframe video percentCompletePosition: %f",percentCompletePosition);
@@ -1595,13 +1638,11 @@ typedef enum{
             self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
             self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
             
-            float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
+            NSLog(@"%%    percentComplete per device: %g",percentComplete);
             
-            NSLog(@"keyframe percentComplete: %f",percentComplete2);
-            
-            if(percentComplete2 <= 1.0)
+            if(percentComplete <= 1.0)
             {
-                percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
+                percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
             }
             
             NSLog(@"keyframe percentCompletePosition: %f",percentCompletePosition);
@@ -1775,9 +1816,9 @@ typedef enum{
     else if (runStatus & NMXRunStatusRunning) {
         timerContainer.hidden = YES;
             
-        NSLog(@"NMXRunStatusRunning");
+        //NSLog(@"NMXRunStatusRunning");
             
-        float percentComplete = [device mainQueryProgramPercentComplete] / (float)100;
+        float percentComplete = MIN(1.0, [device mainQueryProgramPercentComplete] / (float)100);
         self.lastRunTime = [device mainQueryRunTime];
         self.timeOfLastRunTime = time(nil);
         
@@ -1786,6 +1827,27 @@ typedef enum{
         if (timeRemaining < 0)
         {
             timeRemaining = 0;
+        }
+        
+        if (self.previousPercentage > percentComplete)  // we are reversing direction
+        {
+            NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
+            if (atEndSelection==AtProgramEndPingPong)
+            {
+                self.reversing = !self.reversing;
+            }
+        }
+        
+        if (percentComplete >= 1.f || self.reversing)
+        {
+            self.atProgramEndControl.enabled = NO;
+        }
+        
+        self.previousPercentage = percentComplete;
+
+        if (self.reversing)
+        {
+            percentComplete = 1. - percentComplete;
         }
         
         if (NMXProgramModeVideo == self.programMode)
@@ -1799,14 +1861,13 @@ typedef enum{
             //                NSLog(@"lastRunTime: %u",(unsigned int)self.lastRunTime);
             //                NSLog(@"timeRemaining: %li",(long)timeRemaining);
             
-            float percentComplete2 = (float)self.lastRunTime/self.totalRunTime;
-            
-            NSLog(@"percentComplete2 orig: %f",percentComplete2);
+            //float percentComplete2 = (float)self.lastRunTime/self.totalRunTime;
+            //NSLog(@"percentComplete2 orig: %f",percentComplete2);
             
             if(percentComplete <= 1.0)
             {
                 //percentCompletePosition = (graphWidth * percentComplete)*screenRatio;
-                percentCompletePosition = (graphWidth * percentComplete2)*screenRatio;
+                percentCompletePosition = (graphWidth * percentComplete)*screenRatio;
             }
             
             NSLog(@"percentCompletePosition orig: %f",percentCompletePosition);
@@ -1826,20 +1887,15 @@ typedef enum{
             self.timelapseTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
             self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
             self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
+
+            //NSLog(@"%%    percentComplete per device: %g   frames = %d  framesPerProg = %d",percentComplete, framesShot, [self.appExecutive.frameCountNumber intValue]);
             
-            NSLog(@"percentComplete per device: %f",percentComplete);
-            
-            float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
-            
-            NSLog(@"percentComplete2 orig: %f",percentComplete2);
-            
-            if(percentComplete2 <= 1.0)
+            if(percentComplete <= 1.0)
             {
-                percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
+                percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
             }
             
-            
-            NSLog(@"**********  Runtime = %u   Total runtime = %u", [device mainQueryRunTime], [device mainQueryTotalRunTime]);
+            //NSLog(@"**********  Runtime = %u   Total runtime = %u\n\n", [device mainQueryRunTime], [device mainQueryTotalRunTime]);
             
             //NSLog(@"percentCompletePosition orig: %f",percentCompletePosition);
             
@@ -1867,6 +1923,30 @@ typedef enum{
         });
         
     }
+}
+
+- (void) calculatePingPongReverse
+{
+    int runningBackwards = 0;
+    
+    if (self.programMode == NMXProgramModeVideo)
+    {
+        if (self.totalRunTime > 0)
+        {
+            self.lastRunTime = [device mainQueryRunTime];
+
+            runningBackwards = ((int)((float)self.lastRunTime/(float)self.totalRunTime)) % 2;
+        }
+    }
+    else
+    {
+        unsigned int framesPerRun = [self.appExecutive.frameCountNumber intValue];
+        unsigned int framesShot = [device cameraQueryCurrentShots];
+    
+        runningBackwards = ((int)((float)framesShot/(float)framesPerRun)) % 2;
+    }
+        
+    self.reversing = runningBackwards ? YES: NO;
 }
 
 - (void) transitionToPauseProgramState {
@@ -1903,6 +1983,8 @@ typedef enum{
     {
         self.timePerFrame = self.totalRunTime / [device cameraQueryMaxShots];
     }
+
+    [self calculatePingPongReverse];
 }
 
 - (void) transitionToConfirmPauseProgramState {
@@ -1925,6 +2007,10 @@ typedef enum{
     
 	self.resumeProgramButton.hidden = NO;
 	self.stopProgramButton.hidden = NO;
+    self.confirmPauseProgramButton.hidden = YES;
+    self.pauseProgramButton.hidden = YES;
+    
+    [self calculatePingPongReverse];
 }
 
 #pragma mark - Graph

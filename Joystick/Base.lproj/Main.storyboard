@@ -5768,18 +5768,18 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="uS0-Tr-f5Z"/>
-        <segue reference="5Fi-kf-KP0"/>
+        <segue reference="AeQ-9g-E8b"/>
+        <segue reference="HUL-Rp-DYU"/>
         <segue reference="6SS-hE-J9g"/>
+        <segue reference="5Fi-kf-KP0"/>
+        <segue reference="Nk1-9G-Dpm"/>
+        <segue reference="uS0-Tr-f5Z"/>
+        <segue reference="STE-RU-aG4"/>
         <segue reference="6tH-tQ-8da"/>
         <segue reference="l1d-eL-qTA"/>
-        <segue reference="QDi-9c-Wwb"/>
         <segue reference="hJv-3d-HgP"/>
-        <segue reference="HUL-Rp-DYU"/>
-        <segue reference="FO3-rk-Ih3"/>
-        <segue reference="vEA-W0-628"/>
-        <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="STE-RU-aG4"/>
+        <segue reference="B0O-MD-mVD"/>
+        <segue reference="kyO-dy-beu"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="PwX-tX-cQi"/>
     </inferredMetricsTieBreakers>

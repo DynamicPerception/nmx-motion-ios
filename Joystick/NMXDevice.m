@@ -463,6 +463,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
+    //NSLog(@"Sending command %@   waiting = %d", desc, inWaitForResponse);
+    
     if (true == self.disconnected)
     {
         [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
@@ -488,7 +490,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         if (waitForResponse)
         {
-             DDLogDebug(@"Waited for response and sending command %@ expect response", desc); //randall 8-17-15
+            //DDLogDebug(@"Waited for response and sending command %@ expect response", desc); //randall 8-17-15
             
             if ([desc containsString:@"Set KeyFrame Position"]) {
                 
@@ -499,7 +501,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         }
         else
         {
-            DDLogDebug(@"Delayed for response and sending command %@ expect response", desc); //randall 10-20-15
+            //DDLogDebug(@"Delayed for response and sending command %@ expect response", desc); //randall 10-20-15
         }
         
         // Be recreating the semaphore we will wait on with each send, we hope to be able to catch back up if we get double responses after a timeout.
@@ -510,11 +512,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         if (waitForResponse)
         {
-            DDLogDebug(@"Waited for response and sending command %@ no response expected", desc); //randall 8-17-15
+            //DDLogDebug(@"Waited for response and sending command %@ no response expected", desc); //randall 8-17-15
         }
         else
         {
-            DDLogDebug(@"Delayed for response and sending command %@ no response expected", desc); //randall 10-20-15
+            //DDLogDebug(@"Delayed for response and sending command %@ no response expected", desc); //randall 10-20-15
         }
     }
     
@@ -864,6 +866,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 }
 
 - (void) mainSetPingPongMode: (bool) pingpongMode {
+    
+    //NSLog(@"\n\n\n SETTING PING PONG TO %d *********************************\n\n\n\n\n", pingpongMode);
     
     unsigned char newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainSetPingPongMode dataLength: 1];
