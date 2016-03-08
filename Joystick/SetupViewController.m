@@ -251,9 +251,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         minimumDurationHeaderLbl.hidden = YES;
         minimumDurationSubHeaderLbl.hidden = YES;
         minimuDurationLbl.hidden = YES;
-        
-        videoModeControl.userInteractionEnabled = NO;
-        [videoModeControl removeSegmentAtIndex:1 animated:NO];
     }
         
 //    NSLog(@"ms1: %i",self.appExecutive.microstep1);
