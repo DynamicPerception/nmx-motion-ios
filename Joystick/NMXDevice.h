@@ -140,9 +140,11 @@ typedef enum : unsigned char {
 - (void) cameraSetExposureDelay: (UInt16) delay;
 - (void) cameraSetInterval: (UInt32) interval;
 - (void) cameraSetTestMode: (bool) testMode;
+- (void) cameraSetSlaveMode: (bool) slaveMode;
 - (UInt32) cameraQueryMaxShots;
 - (UInt16) cameraQueryCurrentShots;
 - (UInt32) cameraQueryInterval;
+- (bool) cameraQuerySlaveMode;
 
 
 - (void) rampingSetEasing: (int)value;

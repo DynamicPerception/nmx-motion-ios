@@ -100,7 +100,6 @@ typedef enum : unsigned char {
     
 } NMXCommandProgrammedTravel;
 
-
 typedef enum : unsigned char {
 
     NMXCommandCameraEnable = 2,
@@ -112,9 +111,11 @@ typedef enum : unsigned char {
     NMXCommandCameraSetInterval = 10,
     NMXCommandCameraTestMode = 11,
     NMXCommandCameraKeepAlive = 12,
+    NMXCommandCameraSetSlaveMode = 13,
     NMXCommandCameraQueryMaxShots = 104,
     NMXCommandCameraQueryInterval = 108,
-    NMXCommandCameraQueryCurrentShots = 109
+    NMXCommandCameraQueryCurrentShots = 109,
+    NMXCommandCameraQuerySlaveMode = 112,
     
 } NMXCommandCamera;
 
@@ -1887,6 +1888,16 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     [self sendCommand: newData WithDesc: @"Test Camera Mode" WaitForResponse: true WithTimeout: 0.2];
 }
 
+- (void) cameraSetSlaveMode: (bool) enabled
+{
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: 4 command: NMXCommandCameraSetSlaveMode dataLength: 1];
+    newDataBytes[10] = enabled;
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
+    [self sendCommand: newData WithDesc: @"Slave Mode" WaitForResponse: true WithTimeout: 0.2];
+}
+
+
 #pragma mark - Camera Query
 
 - (UInt32) cameraQueryMaxShots {
@@ -1946,6 +1957,25 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     return currentShots;
 }
+
+
+- (bool) cameraQuerySlaveMode {
+    
+    unsigned char   slaveMode;
+    unsigned char   newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: 4 command: NMXCommandCameraQuerySlaveMode dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"Query Slave Mode" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        slaveMode = [[self extractReturnedNumber] UInt8Value];
+    }
+    
+    return slaveMode;
+}
+
 
 #pragma mark - Randall additions
 
