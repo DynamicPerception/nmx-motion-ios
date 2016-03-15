@@ -292,8 +292,12 @@ typedef enum{
     }
 
     [self setupIcons];
-    
-    if ([device mainQueryPingPongMode])
+
+    if (device.fwVersion < 52)
+    {
+        [self.atProgramEndControl removeSegmentAtIndex:AtProgramEndPingPong animated:NO];
+    }
+    else if ([device mainQueryPingPongMode])
     {
         [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
     }
@@ -834,6 +838,8 @@ typedef enum{
 - (void) initKeyFrameValues {
     
     //for shoot move, absicssa is multiple of 1000
+
+    //slide motor
     
     [appExecutive.device setCurrentKeyFrameAxis:0];
     [appExecutive.device setKeyFrameCount:3];
@@ -891,7 +897,7 @@ typedef enum{
     [appExecutive.device setKeyFramePosition:endSlideOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    [appExecutive.device setKeyFrameVelocity:(float)0];    //mm here is where we set the velocity -- 0.1 works!
     [appExecutive.device setKeyFrameVelocity:(float)0];
     
     [appExecutive.device endKeyFrameTransmission];
@@ -918,7 +924,7 @@ typedef enum{
     [appExecutive.device setKeyFramePosition:endPanOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    [appExecutive.device setKeyFrameVelocity:(float)0];  //mm here is where we set the velocity
     [appExecutive.device setKeyFrameVelocity:(float)0];
     
     [appExecutive.device endKeyFrameTransmission];
@@ -961,7 +967,7 @@ typedef enum{
     [appExecutive.device setKeyFramePosition:endTiltOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    [appExecutive.device setKeyFrameVelocity:(float)0];    //mm here is where we set the velocity
     [appExecutive.device setKeyFrameVelocity:(float)0];
     
     [appExecutive.device endKeyFrameTransmission];
@@ -1140,7 +1146,10 @@ typedef enum{
     //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
     
     [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
-    [device mainSetPingPongMode: atEndSelection==AtProgramEndPingPong];
+    if (device.fwVersion >= 52)
+    {
+        [device mainSetPingPongMode: atEndSelection==AtProgramEndPingPong];
+    }
 
 }
 
@@ -1275,9 +1284,6 @@ typedef enum{
     
 	DDLogDebug(@"Stop Program Button");
     
-    [device keepAlive:0];
-    [device mainSetPingPongMode: NO];
-
     [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
     
     [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
@@ -1298,6 +1304,12 @@ typedef enum{
     else
     {
         [[AppExecutive sharedInstance].device mainStopPlannedMove];
+        
+        [device keepAlive:0];
+        if (device.fwVersion >= 52)
+        {
+            [device mainSetPingPongMode: NO];
+        }
     }
     
     [self clearFields];

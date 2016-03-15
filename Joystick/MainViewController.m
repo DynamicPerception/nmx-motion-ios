@@ -2214,7 +2214,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 }
 
 //midview
-
+//mm --- here is where we set the middle keyframe
 - (IBAction) setMidPoint1:(id)sender {
     
     if (self.appExecutive.is3P == YES)

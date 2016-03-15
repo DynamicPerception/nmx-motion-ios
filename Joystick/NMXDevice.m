@@ -20,7 +20,7 @@
 #define kDefaultsMotorPanInvert        @"MotorPanInvert"
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
 
-#define kCurrentSupportedFirmwareVersion 45
+#define kCurrentSupportedFirmwareVersion 52
 
 
 typedef enum : unsigned char {
@@ -464,7 +464,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
-    //NSLog(@"Sending command %@   waiting = %d", desc, inWaitForResponse);
+    //NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);  //mm
     
     if (true == self.disconnected)
     {
@@ -606,6 +606,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             unsigned char error;
             
             memcpy(&error, &self.myNotifyData.bytes[8], sizeof(error));
+
             
             if (1 != error)
             {
@@ -644,7 +645,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 //                }
 //                @finally {}
             }
-        }        
+            else
+            {
+                //DDLogError(@"GOOD response %@, last command was %@", self.myNotifyData, self.myLastCommand);  //mm
+            }
+        }
     }
     @catch (NSException *exception)
     {
@@ -1072,8 +1077,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         }
     }
     
-    NSString *bin = [self bitString:runStatus];
-    NSLog(@"*********     Run Status = %@", bin);
+    //NSString *bin = [self bitString:runStatus];
+    //NSLog(@"*********     Run Status = %@", bin);  //mm
     
     return runStatus;
 }
@@ -1168,6 +1173,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         if (percentNumber)
             lastPercent = percent = [percentNumber UInt8Value];
     }
+    
+    //NSLog(@"Percent complete = %d", percent); //mm
     
     return percent;
 }
