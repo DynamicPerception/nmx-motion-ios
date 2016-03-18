@@ -855,7 +855,7 @@ typedef enum{
     }
     else
     {
-        hs.velocityIncrement = 10;
+        hs.velocityIncrement = 0.1;
     }
     
     //slide motor
