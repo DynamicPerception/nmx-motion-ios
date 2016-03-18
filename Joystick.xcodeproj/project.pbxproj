@@ -165,6 +165,7 @@
 		3048A1151C40657C00855EB0 /* DeviceState_Indeterminate@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */; };
 		3048A1161C40657C00855EB0 /* DeviceState_Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1101C40657C00855EB0 /* DeviceState_Warning.png */; };
 		3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */; };
+		304ECCFF1C98E1B70094B7B0 /* HSpline.m in Sources */ = {isa = PBXBuildFile; fileRef = 304ECCFE1C98E1B70094B7B0 /* HSpline.m */; };
 		306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */; };
 		30B8EE9F1C45D0A100DCF15C /* DeviceState_Off.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */; };
 		30B8EEA01C45D0A100DCF15C /* DeviceState_Off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */; };
@@ -404,6 +405,8 @@
 		3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Indeterminate@2x.png"; sourceTree = "<group>"; };
 		3048A1101C40657C00855EB0 /* DeviceState_Warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Warning.png; sourceTree = "<group>"; };
 		3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Warning@2x.png"; sourceTree = "<group>"; };
+		304ECCFD1C98E1B70094B7B0 /* HSpline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSpline.h; sourceTree = "<group>"; };
+		304ECCFE1C98E1B70094B7B0 /* HSpline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSpline.m; sourceTree = "<group>"; };
 		306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraSettingsTimelineView.h; sourceTree = "<group>"; };
 		306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsTimelineView.m; sourceTree = "<group>"; };
 		30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Off.png; sourceTree = "<group>"; };
@@ -643,6 +646,7 @@
 		2389AC1819DD938100FB2679 /* Joystick */ = {
 			isa = PBXGroup;
 			children = (
+				304ECCFC1C98E1250094B7B0 /* Utilities */,
 				10F9DE341BEBC1B00059A727 /* reachability */,
 				10F9DE221BEBC0B40059A727 /* imagepicker */,
 				10D5EBB61B94CEE2006125E1 /* assets */,
@@ -691,6 +695,15 @@
 				2389AC3419DD938100FB2679 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		304ECCFC1C98E1250094B7B0 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				304ECCFD1C98E1B70094B7B0 /* HSpline.h */,
+				304ECCFE1C98E1B70094B7B0 /* HSpline.m */,
+			);
+			name = Utilities;
 			sourceTree = "<group>";
 		};
 		3F51E8AC1B66A69400E1E2D5 /* TestFairy */ = {
@@ -1126,6 +1139,7 @@
 				2389AC4419DDB56800FB2679 /* JoystickView.m in Sources */,
 				23F95D981A24CE8300E3D7DA /* JoyButton.m in Sources */,
 				23EEAD291A44D0BE006EC15C /* IntervalViewController.m in Sources */,
+				304ECCFF1C98E1B70094B7B0 /* HSpline.m in Sources */,
 				5D5C2F781A644C6A0009FE8A /* NSNumber+ASI.m in Sources */,
 				236621091A39FA520009EB85 /* FrameRateViewController.m in Sources */,
 				5DAEBE5119F6080A000AC7AA /* DeviceSelectionTableViewController.m in Sources */,

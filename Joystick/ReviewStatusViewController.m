@@ -15,7 +15,7 @@
 #import "DurationViewController.h"
 #import "ShortDurationViewController.h"
 #import "NMXDevice.h"
-
+#import "HSpline.h"
 
 //------------------------------------------------------------------------------
 
@@ -839,7 +839,27 @@ typedef enum{
     
     //for shoot move, absicssa is multiple of 1000
 
+    // Initialize keyframe arrays to be used in midpoint velocity calculation
+    NSMutableArray<KeyFrameModel *> *keyframeArray;
+    KeyFrameModel *kfm;
+    keyframeArray = [NSMutableArray arrayWithCapacity:3];
+    for (int point = 0; point < 3; point++)
+    {
+        KeyFrameModel *kfm = [KeyFrameModel new];
+        [keyframeArray addObject: kfm];
+    }
+    HSpline *hs = [HSpline new];
+    if (self.programMode == NMXProgramModeVideo)
+    {
+        hs.velocityIncrement = 0.1;
+    }
+    else
+    {
+        hs.velocityIncrement = 10;
+    }
+    
     //slide motor
+    
     
     [appExecutive.device setCurrentKeyFrameAxis:0];
     [appExecutive.device setKeyFrameCount:3];
@@ -876,29 +896,47 @@ typedef enum{
         val3 = (float)((int)(self.appExecutive.slide3PVal3 * [self.appExecutive.intervalNumber intValue]));
     }
     
-    [appExecutive.device setKeyFrameAbscissa:val1]; //15
-    [appExecutive.device setKeyFrameAbscissa:val2]; //100
-    [appExecutive.device setKeyFrameAbscissa:val3]; //250
-    
-    NSLog(@"val1: %f",(float)val1);
-    NSLog(@"val2: %f",(float)val2);
-    NSLog(@"val3: %f",(float)val3);
-    
-    NSLog(@"appExecutive.microstep1: %f",(float)appExecutive.microstep1);
-
     float conversionFactor = (float)appExecutive.microstep1 / 16;
     
     float startSlideOut = self.appExecutive.scaledStart3PSlideDistance * conversionFactor;
     float midSlideOut = self.appExecutive.scaledMid3PSlideDistance * conversionFactor;
     float endSlideOut = self.appExecutive.scaledEnd3PSlideDistance * conversionFactor;
+
+    kfm = keyframeArray[0];
+    kfm.time = val1;
+    kfm.position = startSlideOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[1];
+    kfm.time = val2;
+    kfm.position = midSlideOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[2];
+    kfm.time = val3;
+    kfm.position = endSlideOut;
+    kfm.velocity = 0;
+    
+    [appExecutive.device setKeyFrameAbscissa:val1];
+    [appExecutive.device setKeyFrameAbscissa:val2];
+    [appExecutive.device setKeyFrameAbscissa:val3];
+    [hs optimizePointVelForAxis:keyframeArray];
+
+    NSLog(@"Slider Motor keyframes");
+    NSLog(@"val1: %f   position : %g",(float)val1, startSlideOut);
+    NSLog(@"val2: %f   position : %g",(float)val2, midSlideOut);
+    NSLog(@"val3: %f   position : %g",(float)val3, endSlideOut);
+    
+    NSLog(@"appExecutive.microstep1: %f",(float)appExecutive.microstep1);
+
     
     [appExecutive.device setKeyFramePosition:startSlideOut];
     [appExecutive.device setKeyFramePosition:midSlideOut];
     [appExecutive.device setKeyFramePosition:endSlideOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];    //mm here is where we set the velocity -- 0.1 works!
+    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    
+    NSLog(@"mid slide Velocity: %g",keyframeArray[1].velocity);
     
     [appExecutive.device endKeyFrameTransmission];
     
@@ -919,13 +957,28 @@ typedef enum{
     float midPanOut = self.appExecutive.scaledMid3PPanDistance * conversionFactor2;
     float endPanOut = self.appExecutive.scaledEnd3PPanDistance * conversionFactor2;
     
+    kfm = keyframeArray[0];
+    kfm.time = val1;
+    kfm.position = startPanOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[1];
+    kfm.time = val2;
+    kfm.position = midPanOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[2];
+    kfm.time = val3;
+    kfm.position = endPanOut;
+    kfm.velocity = 0;
+
     [appExecutive.device setKeyFramePosition:startPanOut];
     [appExecutive.device setKeyFramePosition:midPanOut];
     [appExecutive.device setKeyFramePosition:endPanOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];  //mm here is where we set the velocity
+    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    
+    NSLog(@"mid pan Velocity: %g",keyframeArray[1].velocity);
     
     [appExecutive.device endKeyFrameTransmission];
     
@@ -962,13 +1015,28 @@ typedef enum{
     
     debugTxt.text = [NSString stringWithFormat:@"%@\n start tilt in: %f\n mid tilt in: %f\n end tilt in: %f",debugTxt.text, startTiltOut,midTiltOut,endTiltOut];
     
+    kfm = keyframeArray[0];
+    kfm.time = val1;
+    kfm.position = startTiltOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[1];
+    kfm.time = val2;
+    kfm.position = midTiltOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[2];
+    kfm.time = val3;
+    kfm.position = endTiltOut;
+    kfm.velocity = 0;
+    
     [appExecutive.device setKeyFramePosition:startTiltOut];
     [appExecutive.device setKeyFramePosition:midTiltOut];
     [appExecutive.device setKeyFramePosition:endTiltOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];    //mm here is where we set the velocity
+    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    
+    NSLog(@"mid tilt Velocity: %g",keyframeArray[1].velocity);
     
     [appExecutive.device endKeyFrameTransmission];
         
@@ -1941,6 +2009,13 @@ typedef enum{
 {
     int runningBackwards = 0;
     
+    if (AtProgramEndPingPong != self.atProgramEndControl.selectedSegmentIndex)
+    {
+        self.reversing = NO;
+        return;
+    }
+
+    
     if (self.programMode == NMXProgramModeVideo)
     {
         if (self.totalRunTime > 0)
@@ -1964,7 +2039,9 @@ typedef enum{
     
         runningBackwards = ((int)((float)framesShot/(float)framesPerRun)) % 2;
     }
-        
+    
+    //NSLog(@"Total Run Time = %g     Last Run Time = %g", (float)self.totalRunTime, (float)self.lastRunTime);
+    
     self.reversing = runningBackwards ? YES: NO;
 }
 
