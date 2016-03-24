@@ -970,6 +970,8 @@ typedef enum{
     kfm.position = endPanOut;
     kfm.velocity = 0;
 
+    [hs optimizePointVelForAxis:keyframeArray];
+    
     [appExecutive.device setKeyFramePosition:startPanOut];
     [appExecutive.device setKeyFramePosition:midPanOut];
     [appExecutive.device setKeyFramePosition:endPanOut];
@@ -1027,6 +1029,8 @@ typedef enum{
     kfm.time = val3;
     kfm.position = endTiltOut;
     kfm.velocity = 0;
+    
+    [hs optimizePointVelForAxis:keyframeArray];
     
     [appExecutive.device setKeyFramePosition:startTiltOut];
     [appExecutive.device setKeyFramePosition:midTiltOut];
