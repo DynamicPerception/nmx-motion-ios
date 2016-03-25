@@ -102,6 +102,10 @@ NSString		static *kDefaultsTiltDecreaseValues		= @"kDefaultsTiltDecreaseValues";
 NSString		static *kDefaultsSlideIncreaseValues	= @"kDefaultsSlideIncreaseValues";
 NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues";
 
+#define kDefaultsMotorSledMicrosteps   @"MotorSledMicrosteps"
+#define kDefaultsMotorPanMicrosteps   @"MotorPanMicrosteps"
+#define kDefaultsMotorTiltMicrosteps   @"MotorTiltMicrosteps"
+
 
 #pragma mark Public Property Synthesis
 
@@ -137,13 +141,16 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 @synthesize slideIncreaseValues;
 @synthesize slideDecreaseValues;
 
+@synthesize microstep1 = _microstep1;
+@synthesize microstep2 = _microstep2;
+@synthesize microstep3 = _microstep3;
 
 #pragma mark Private Property Synthesis
 
 @synthesize defaults;
 @synthesize forFrameRate;
 
-@synthesize selectedMotorFrame, startPoint1,endPoint1, startPoint2,endPoint2, startPoint3, endPoint3, microstep1, microstep2, microstep3, stopMicrostep1, stopMicrostep2, stopMicrostep3, motor2MicrostepChanged,motor3MicrostepChanged, appBlueColor, is3P,slide3PVal1,slide3PVal3,slide3PVal2,pan3PVal1,pan3PVal2,pan3PVal3,tilt3PVal1,tilt3PVal2,tilt3PVal3,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,midSet,start3PSlideDistance,start3PPanDistance,start3PTiltDistance,mid3PSlideDistance,mid3PPanDistance,mid3PTiltDistance,end3PSlideDistance,end3PPanDistance,end3PTiltDistance,useJoystick,start3PSet,mid3PSet,end3PSet,isContinuous,voltageHigh,voltageLow,voltage,scaledEnd3PPanDistance,scaledMid3PPanDistance,scaledStart3PPanDistance,scaledEnd3PSlideDistance,scaledEnd3PTiltDistance,scaledMid3PSlideDistance,scaledMid3PTiltDistance,scaledStart3PSlideDistance,scaledStart3PTiltDistance,isVideo,printTilt,dampening1,dampening2,dampening3,resetController;
+@synthesize selectedMotorFrame, startPoint1,endPoint1, startPoint2,endPoint2, startPoint3, endPoint3, stopMicrostep1, stopMicrostep2, stopMicrostep3, motor2MicrostepChanged,motor3MicrostepChanged, appBlueColor, is3P,slide3PVal1,slide3PVal3,slide3PVal2,pan3PVal1,pan3PVal2,pan3PVal3,tilt3PVal1,tilt3PVal2,tilt3PVal3,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,midSet,start3PSlideDistance,start3PPanDistance,start3PTiltDistance,mid3PSlideDistance,mid3PPanDistance,mid3PTiltDistance,end3PSlideDistance,end3PPanDistance,end3PTiltDistance,useJoystick,start3PSet,mid3PSet,end3PSet,isContinuous,voltageHigh,voltageLow,voltage,scaledEnd3PPanDistance,scaledMid3PPanDistance,scaledStart3PPanDistance,scaledEnd3PSlideDistance,scaledEnd3PTiltDistance,scaledMid3PSlideDistance,scaledMid3PTiltDistance,scaledStart3PSlideDistance,scaledStart3PTiltDistance,isVideo,printTilt,dampening1,dampening2,dampening3,resetController;
 
 //------------------------------------------------------------------------------
 
@@ -1027,6 +1034,67 @@ NSArray *defaultRampingValues() {
 //            self.setStopButton.selected = YES;
 //        }
 }
+
+- (void) setMicrostep1:(int)microstep1
+{
+    _microstep1 = microstep1;
+    [self.defaults setInteger: microstep1 forKey: kDefaultsMotorSledMicrosteps];
+    [self.defaults synchronize];
+}
+
+- (int) microstep1
+{
+    if (_microstep1 > 0) return _microstep1;
+    
+    _microstep1 = (int)[self.defaults integerForKey: kDefaultsMotorSledMicrosteps];
+    if (0 == _microstep1)
+    {
+        _microstep1 = 4;
+    }
+    
+    return _microstep1;
+}
+
+- (void) setMicrostep2:(int)microstep2
+{
+    _microstep2 = microstep2;
+    [self.defaults setInteger: microstep2 forKey: kDefaultsMotorPanMicrosteps];
+    [self.defaults synchronize];
+}
+
+- (int) microstep2
+{
+    if (_microstep2 > 0) return _microstep2;
+    
+    _microstep2 = (int)[self.defaults integerForKey: kDefaultsMotorPanMicrosteps];
+    if (0 == _microstep2)
+    {
+        _microstep2 = 16;
+    }
+    
+    return self.microstep2;
+}
+
+- (void) setMicrostep3:(int)microstep3
+{
+    _microstep3 = microstep3;
+    [self.defaults setInteger: microstep3 forKey: kDefaultsMotorTiltMicrosteps];
+    [self.defaults synchronize];
+}
+
+- (int) microstep3
+{
+    if (_microstep3 > 0) return _microstep3;
+    
+    _microstep3 = (int)[self.defaults integerForKey: kDefaultsMotorTiltMicrosteps];
+    if (0 == _microstep3)
+    {
+        _microstep3 = 16;
+    }
+    
+    return _microstep3;
+}
+
 
 
 @end

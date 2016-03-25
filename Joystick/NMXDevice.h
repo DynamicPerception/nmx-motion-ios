@@ -120,7 +120,6 @@ typedef enum : unsigned char {
 - (bool) motorQuerySleep: (int) motorNumber;
 - (bool) motorQueryInvertDirection: (int) motorNumber;
 - (bool) motorQueryDisabled: (int) motorNumber;
-- (unsigned char) motorQueryMicrostep: (int) motorNumber;
 - (void) motorSet:(int)motorNumber ProgramStartPoint: (UInt32) position;
 - (void) motorSet:(int)motorNumber ProgramStopPoint: (UInt32) position;
 - (void) motorSendToStartPoint: (int) motorNumber;

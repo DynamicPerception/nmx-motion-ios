@@ -1281,14 +1281,15 @@ typedef enum{
     
 	//DDLogDebug(@"Send Motors To Start Button");
     
-    //NSLog(@"keepAlive 0");
-    
     [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
     [appExecutive.defaults synchronize];
     
-    [device mainSendMotorsToStart];
+    // Set to fastest setting to allow return to home to perform optimally
+    [device motorSet: device.sledMotor Microstep: 4];
+    [device motorSet: device.panMotor Microstep: 4];
+    [device motorSet: device.tiltMotor Microstep: 4];
     
-    NSLog(@"send motors");
+    [device mainSendMotorsToStart];
 
 	[self transitionToState: ControllerStateMotorRampingOrStartProgram];
     
@@ -1626,14 +1627,19 @@ typedef enum{
         [self.sendMotorsTimer invalidate];
         self.sendMotorsTimer = nil;
         
-        self.startProgramButton.enabled = YES;
-        
-        if (!self.appExecutive.is3P)
-        {
-            startTimerBtn.hidden = NO;
-        }
-        
         dispatch_async(dispatch_get_main_queue(), ^{
+            
+            self.startProgramButton.enabled = YES;
+            
+            if (!self.appExecutive.is3P)
+            {
+                startTimerBtn.hidden = NO;
+            }
+
+            // Reset motors to correct microstep values
+            [device motorSet: device.sledMotor Microstep: appExecutive.microstep1];
+            [device motorSet: device.panMotor Microstep: appExecutive.microstep2];
+            [device motorSet: device.tiltMotor Microstep: appExecutive.microstep3];
             
             [MBProgressHUD hideHUDForView:self.view animated:YES];
         });

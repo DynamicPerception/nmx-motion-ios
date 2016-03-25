@@ -1552,28 +1552,8 @@ NSArray static	*frameCountStrings = nil;
             
             [MBProgressHUD hideHUDForView:self.view animated:YES];
             
-            if (appExecutive.is3P == NO) {
-                
-                if ((255 == [device motorAutoSetMicrosteps: device.sledMotor]) ||
-                    (255 == [device motorAutoSetMicrosteps: device.panMotor]) ||
-                    (255 == [device motorAutoSetMicrosteps: device.tiltMotor]))
-                {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
-                                                                    message: @"Reduce ramping or lead in/out time"
-                                                                   delegate: self
-                                                          cancelButtonTitle: @"OK"
-                                                          otherButtonTitles: nil];
-                    [alert show];
-                }
-                else
-                {
-                    [self performSegueWithIdentifier: kSegueToReviewStatusViewController sender: self];
-                }
-            }
-            else
-            {
-                [self performSegueWithIdentifier: kSegueToReviewStatusViewController sender: self];
-            }
+            [self performSegueWithIdentifier: kSegueToReviewStatusViewController sender: self];
+            
         });
     });
 }

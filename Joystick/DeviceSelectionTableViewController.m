@@ -65,9 +65,6 @@
     
     [AppExecutive sharedInstance].deviceManager = [[NMXDeviceManager alloc] init];
     
-    [[AppExecutive sharedInstance].device motorSet: 2 Microstep: 16];
-    [[AppExecutive sharedInstance].device motorSet: 3 Microstep: 16];
-    
     [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(timerName) userInfo:nil repeats:NO];
     
 #if TARGET_IPHONE_SIMULATOR

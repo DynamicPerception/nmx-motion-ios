@@ -70,8 +70,21 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     start = [self.appExecutive.device queryProgramStartPoint:(int)self.motorNumber];
     end = [self.appExecutive.device queryProgramEndPoint:(int)self.motorNumber];
     
-    microstepSetting = [self.appExecutive.device motorQueryMicrostep: (int) self.motorNumber];
-            
+    switch (self.motorNumber) {
+        case 1:
+            microstepSetting = self.appExecutive.microstep1;
+            break;
+        case 2:
+            microstepSetting = self.appExecutive.microstep2;
+            break;
+        case 3:
+            microstepSetting = self.appExecutive.microstep3;
+            break;
+        default:
+            NSAssert(0, @"Bad motor number");
+            break;
+    }
+    
     NSLog(@"start: %i",start);
     NSLog(@"end: %i",end);
     //NSLog(@"viewdidload microstepSetting: %i", microstepSetting);
@@ -1141,8 +1154,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     sensitivitySlider.value	= [self.appExecutive.sensitivityNumber floatValue];
     sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", self.sensitivitySlider.value];
     
-    //microstepSetting = [device motorQueryMicrostep: (int) self.motorNumber];
-        
     switch (microstepSetting)
     {
         case 4:

@@ -931,10 +931,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     //[appExecutive setPoints];
     
-    appExecutive.microstep1 = [appExecutive.device motorQueryMicrostep: 1] * 200;
-    appExecutive.microstep2 = [appExecutive.device motorQueryMicrostep: 2] * 200;
-    appExecutive.microstep3 = [appExecutive.device motorQueryMicrostep: 3] * 200;
-    
 //    if (!self.appExecutive.resetController == YES)
 //    {
 //        self.appExecutive.startPoint1 = [self.appExecutive.device queryProgramStartPoint:1];
@@ -997,6 +993,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     appExecutive.startPoint2 + appExecutive.endPoint2 +
     appExecutive.startPoint3 + appExecutive.endPoint3;
     
+    // initialize microstep based on the device's last settings
     self.appExecutive.microstep1 = [self.appExecutive.device motorQueryMicrostep2:1];
     self.appExecutive.microstep2 = [self.appExecutive.device motorQueryMicrostep2:2];
     self.appExecutive.microstep3 = [self.appExecutive.device motorQueryMicrostep2:3];
@@ -1220,21 +1217,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.appExecutive.slide3PVal1 = [self.appExecutive.defaults floatForKey:@"slide3PVal1"];
         self.appExecutive.slide3PVal2 = [self.appExecutive.defaults floatForKey:@"slide3PVal2"];
         self.appExecutive.slide3PVal3 = [self.appExecutive.defaults floatForKey:@"slide3PVal3"];
-    }
-    
-    if ((![self.appExecutive.defaults integerForKey:@"micro2"] || ![self.appExecutive.defaults integerForKey:@"micro3"]))
-    {
-        [[AppExecutive sharedInstance].device motorSet: 2 Microstep: 16];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"micro2"];
-        [self.appExecutive.defaults synchronize];
-        
-        [[AppExecutive sharedInstance].device motorSet: 3 Microstep: 16];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"micro3"];
-        [self.appExecutive.defaults synchronize];
-        
-        //microstepSetting = 16;
     }
     
 //    //keyframe position
@@ -1887,9 +1869,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 //    
 //    NSLog(@"queryStartHere: %i", queryStartHere);
     
-    [device motorSet: device.sledMotor Microstep: [device motorQueryMicrostep: device.sledMotor]];
-    [device motorSet: device.panMotor Microstep: [device motorQueryMicrostep: device.panMotor]];
-    [device motorSet: device.tiltMotor Microstep: [device motorQueryMicrostep: device.tiltMotor]];
+    [device motorSet: device.sledMotor Microstep: appExecutive.microstep1];
+    [device motorSet: device.panMotor Microstep: appExecutive.microstep2];
+    [device motorSet: device.tiltMotor Microstep: appExecutive.microstep3];
 }
 
 - (void) enterJoystickMode {
@@ -2214,7 +2196,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 }
 
 //midview
-//mm --- here is where we set the middle keyframe
 - (IBAction) setMidPoint1:(id)sender {
     
     if (self.appExecutive.is3P == YES)

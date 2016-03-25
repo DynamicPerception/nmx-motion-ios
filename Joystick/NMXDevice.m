@@ -464,7 +464,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
-    //NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);  //mm
+    //NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);
     
     if (true == self.disconnected)
     {
@@ -647,7 +647,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             }
             else
             {
-                //DDLogError(@"GOOD response %@, last command was %@", self.myNotifyData, self.myLastCommand);  //mm
+                //DDLogError(@"GOOD response %@, last command was %@", self.myNotifyData, self.myLastCommand);
             }
         }
     }
@@ -1078,7 +1078,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     }
     
     //NSString *bin = [self bitString:runStatus];
-    //NSLog(@"*********     Run Status = %@", bin);  //mm
+    //NSLog(@"*********     Run Status = %@", bin);
     
     return runStatus;
 }
@@ -1174,7 +1174,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             lastPercent = percent = [percentNumber UInt8Value];
     }
     
-    //NSLog(@"Percent complete = %d", percent); //mm
+    //NSLog(@"Percent complete = %d", percent);
     
     return percent;
 }
@@ -1298,20 +1298,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
     [self sendCommand: newData WithDesc: @"Set Microstep" WaitForResponse: true WithTimeout: 0.2];
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    switch (motorNumber)
-    {
-        case 1:
-            [defaults setInteger: microstep forKey: kDefaultsMotorSledMicrosteps];
-            break;
-        case 2:
-            [defaults setInteger: microstep forKey: kDefaultsMotorPanMicrosteps];
-            break;
-        case 3:
-            [defaults setInteger: microstep forKey: kDefaultsMotorTiltMicrosteps];
-            break;
-    }
-    [defaults synchronize];
+    NSLog(@"Set motor %d to microstep %d", motorNumber, microstep);
 }
 
 - (void) motorSet: (int) motorNumber ContinuousSpeed: (float) speed {
@@ -1751,35 +1738,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     return disabled[motorNumber];
 }
 
-- (unsigned char) motorQueryMicrostep: (int) motorNumber {
-
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    unsigned char microsteps = 8;
-    
-    switch (motorNumber)
-    {
-        case 1:
-            microsteps = [defaults integerForKey: kDefaultsMotorSledMicrosteps];
-            if (0 == microsteps)
-                microsteps = 4;
-            break;
-        case 2:
-            microsteps = [defaults integerForKey: kDefaultsMotorPanMicrosteps];
-            if (0 == microsteps)
-                microsteps = 8;
-            break;
-        case 3:
-            microsteps = [defaults integerForKey: kDefaultsMotorTiltMicrosteps];
-            if (0 == microsteps)
-                microsteps = 8;
-            break;
-    }
-    return microsteps;
-}
-
 - (UInt16) motorQueryMicrostep2: (int) motorNumber {
-    
-    //NSLog(@"motorQueryMicrostep2");
     
     UInt16    microstep;
     unsigned char newDataBytes[16];
@@ -1794,6 +1753,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         microstep = [[self extractReturnedNumber] UInt16Value];
     }
+
+    NSLog(@"REALLY query for motor = %d    motorQueryMicrostep2 = %d", motorNumber, microstep);
     
     return microstep;
 }

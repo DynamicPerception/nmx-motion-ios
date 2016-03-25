@@ -282,7 +282,7 @@
 
 - (void) testIt
 {
-    NSMutableArray *keyframeArrays;  //mm   // This is an array of keyframe arrays.
+    NSMutableArray *keyframeArrays;
     
     keyframeArrays = [NSMutableArray arrayWithCapacity:6];
     

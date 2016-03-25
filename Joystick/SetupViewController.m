@@ -773,33 +773,9 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) checkProgramAndHandleNext {
     
-    NMXDevice * device = [AppExecutive sharedInstance].device;
-    
-    if (appExecutive.is3P == NO) {
-
-        if ((255 == [device motorAutoSetMicrosteps: device.sledMotor]) ||
-            (255 == [device motorAutoSetMicrosteps: device.panMotor])  ||
-            (255 == [device motorAutoSetMicrosteps: device.tiltMotor]))
-        {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
-                                                            message: @"Increase shot duration"
-                                                           delegate: self
-                                                  cancelButtonTitle: @"OK"
-                                                  otherButtonTitles: nil];
-            [alert show];
-        }
-        else
-        {
-            // If we transition too fast, the hardware gets unhappy...
-            
-            usleep(100);
-            [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
-        }
-    }
-    else
-    {
-        [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
-    }
+    // If we transition too fast, the hardware gets unhappy...
+    usleep(100);
+    [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
 }
 
 - (IBAction) handleNextButton: (UIButton *) sender {

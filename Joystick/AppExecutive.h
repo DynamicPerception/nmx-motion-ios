@@ -67,9 +67,9 @@
 @property int startPoint3;
 @property int endPoint3;
 
-@property int microstep1;
-@property int microstep2;
-@property int microstep3;
+@property (nonatomic) int microstep1;
+@property (nonatomic) int microstep2;
+@property (nonatomic) int microstep3;
 
 @property int stopMicrostep1;
 @property int stopMicrostep2;
