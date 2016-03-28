@@ -20,7 +20,7 @@
 #define kDefaultsMotorPanInvert        @"MotorPanInvert"
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
 
-#define kCurrentSupportedFirmwareVersion 52
+#define kCurrentSupportedFirmwareVersion 54
 
 
 typedef enum : unsigned char {
@@ -87,7 +87,8 @@ typedef enum : unsigned char {
     NMXCommandMotorQueryTravelShotsOrTravelTime = 113,
     NMXCommandMotorQueryLeadInShotsOrTime = 114,
     NMXCommandMotorQuerySleep = 117,
-    NMXCommandMotorQueryLeadOutShotsOrTime = 119
+    NMXCommandMotorQueryLeadOutShotsOrTime = 119,
+    NMXCommandMotorQueryProgramFeasibility = 120,
     
 } NMXCommandMotor;
 
@@ -908,6 +909,28 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     }
     
     return microsteps;
+}
+
+- (bool) motorQueryFeasibility: (int) motorNumber {
+    
+    if (_fwVersion < 54 )
+    {
+        return YES;
+    }
+    
+    unsigned char   isFeasible;
+    unsigned char   newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorQueryProgramFeasibility dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"Query Feasibility" WaitForResponse: true WithTimeout: 3.0];
+    
+    if ([self waitForResponse])
+    {
+        isFeasible = [[self extractReturnedNumber] UInt8Value];
+    }
+    
+    return isFeasible;
 }
 
 - (void) mainSetStartHere {

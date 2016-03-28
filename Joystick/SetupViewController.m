@@ -772,10 +772,35 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 }
 
 - (void) checkProgramAndHandleNext {
+
+    NMXDevice * device = [AppExecutive sharedInstance].device;
     
-    // If we transition too fast, the hardware gets unhappy...
-    usleep(100);
-    [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
+    if (appExecutive.is3P == NO) {
+
+        if ((NO == [device motorQueryFeasibility: device.sledMotor]) ||
+            (NO == [device motorQueryFeasibility: device.panMotor]) ||
+            (NO == [device motorQueryFeasibility: device.tiltMotor]))
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
+                                                            message: @"Increase shot duration"
+                                                           delegate: self
+                                                  cancelButtonTitle: @"OK"
+                                                  otherButtonTitles: nil];
+            [alert show];
+        }
+        else
+        {
+            // If we transition too fast, the hardware gets unhappy...
+            usleep(100);
+            [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
+        }
+    }
+    else
+    {
+        // If we transition too fast, the hardware gets unhappy...
+        usleep(100);
+        [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
+    }
 }
 
 - (IBAction) handleNextButton: (UIButton *) sender {

@@ -124,6 +124,7 @@ typedef enum : unsigned char {
 - (void) motorSet:(int)motorNumber ProgramStopPoint: (UInt32) position;
 - (void) motorSendToStartPoint: (int) motorNumber;
 - (unsigned char) motorAutoSetMicrosteps: (int) motorNumber;
+- (bool) motorQueryFeasibility: (int) motorNumber;
 - (void) motorSetStartHere: (int) motorNumber;
 - (void) motorSetStopHere: (int) motorNumber;
 - (void) motorSet:(int)motorNumber SetLeadInShotsOrTime: (UInt32) leadIn;
