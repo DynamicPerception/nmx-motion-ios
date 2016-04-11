@@ -51,9 +51,6 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
 
 #pragma mark Public Propery Synthesis
 
-@synthesize variableToSet;
-
-
 #pragma mark Private Propery Synthesis
 
 @synthesize appExecutive;
@@ -146,32 +143,14 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
 
 	NSString *format = @"Set %@ in Seconds";
 
-	if ([self.variableToSet isEqualToString: kSetSecondsForFocus])
-	{
-		self.titleLabel.text = @"Focus";
-		self.messageLabel.text = [NSString stringWithFormat: format, @"Focus"];
-		self.secondsTens	= [self digitArrayWithLimit: 0];
-		self.secondsOnes	= [self digitArrayWithLimit: 9];
-		self.secondsTenths	= [self decimalArray];
-	}
-
-	else if ([self.variableToSet isEqualToString: kSetSecondsForTrigger])
-	{
-		self.titleLabel.text = @"Trigger";
-		self.messageLabel.text = [NSString stringWithFormat: format, @"Trigger"];
-		self.secondsTens	= [self digitArrayWithLimit: 9];
-		self.secondsOnes	= [self digitArrayWithLimit: 9];
-		self.secondsTenths	= [self decimalArray];
-	}
-
-	else if ([self.variableToSet isEqualToString: kSetSecondsForDelay])
-	{
-		self.titleLabel.text = @"Delay";
-		self.messageLabel.text = [NSString stringWithFormat: format, @"Delay"];
-		self.secondsTens	= [self digitArrayWithLimit: 6];
-		self.secondsOnes	= [self digitArrayWithLimit: 9];
-		self.secondsTenths	= [self decimalArray];
-	}
+    if (self.delegate)
+    {
+        self.titleLabel.text = [self.delegate getTitleTextForSecondsView];
+        self.messageLabel.text = [NSString stringWithFormat: format, self.titleLabel.text];
+        self.secondsTens	= [self digitArrayWithLimit: [self.delegate getTensLimitForSecondsView]];
+		self.secondsOnes	= [self digitArrayWithLimit: [self.delegate getOnesLimitForSecondsView]];
+        self.secondsTenths	= [self decimalArray];
+    }
 }
 
 - (NSArray *) digitArrayWithLimit: (NSInteger) limit {
@@ -196,30 +175,22 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
 
 - (NSInteger) getVariableValue {
 
-	if ([self.variableToSet isEqualToString: kSetSecondsForFocus])
-		return [self.appExecutive.focusNumber integerValue];
-
-	else if ([self.variableToSet isEqualToString: kSetSecondsForTrigger])
-		return [self.appExecutive.triggerNumber integerValue];
-
-	else if ([self.variableToSet isEqualToString: kSetSecondsForDelay])
-		return  [self.appExecutive.delayNumber integerValue];
+    if (self.delegate)
+    {
+        return [self.delegate getIntegerValueForSecondsView];
+    }
 
 	return 0;
 }
 
 - (void) setVariableValue: (NSInteger) value {
 
-	NSNumber *number = [NSNumber numberWithInteger: value];
+    NSNumber *number = [NSNumber numberWithInteger: value];
 
-	if ([self.variableToSet isEqualToString: kSetSecondsForFocus])
-		self.appExecutive.focusNumber = number;
-
-	else if ([self.variableToSet isEqualToString: kSetSecondsForTrigger])
-		self.appExecutive.triggerNumber = number;
-
-	else if ([self.variableToSet isEqualToString: kSetSecondsForDelay])
-		self.appExecutive.delayNumber = number;
+    if (self.delegate)
+    {
+        [self.delegate setNumberValueForSecondsView : number];
+    }
 }
 
 - (NSInteger) getPickerValue {
@@ -251,7 +222,7 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
 
 - (IBAction) handleOkButton: (id) sender {
 
-	DDLogDebug(@"Dismiss Set Seconds Picker Button");
+    //DDLogDebug(@"Dismiss Set Seconds Picker Button");
 
 	NSInteger	milliseconds	= [self getPickerValue];
 
@@ -306,15 +277,15 @@ NSInteger static	minimumTimeValue	= 100;	//  minimum time value in milliseconds
 
 	NSInteger milliseconds = [self getPickerValue];
 
-	if ([self.variableToSet isEqualToString: kSetSecondsForDelay])
-	{
-		NSInteger maximum = (self.secondsTens.count - 1) * 10000;
+    if (self.delegate)
+    {
+        NSInteger maximum = [self.delegate getMaximumMillisecondsForSecondsView];
 
 		if (milliseconds > maximum)
 			[self setPickerValue: maximum animated: YES];
-	}
-
-	if (milliseconds < minimumTimeValue)
+    }
+	
+    if (milliseconds < minimumTimeValue)
 		[self setPickerValue: minimumTimeValue animated: YES];
 }
 

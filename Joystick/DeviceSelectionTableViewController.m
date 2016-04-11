@@ -11,11 +11,11 @@
 #import "AppExecutive.h"
 #import "NMXDeviceManager.h"
 #import "DeviceTableViewCell.h"
+#import "HelpViewController.h"
 
 @interface DeviceSelectionTableViewController ()
 
 @property (nonatomic, strong)	IBOutlet UITableView* tableView;
-@property (weak, nonatomic)     IBOutlet UISwitch *legacyDeviceSwitch;
 
 @property NSArray *             deviceList;
 @end
@@ -64,9 +64,6 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     [AppExecutive sharedInstance].deviceManager = [[NMXDeviceManager alloc] init];
-    
-    [[AppExecutive sharedInstance].device motorSet: 2 Microstep: 16];
-    [[AppExecutive sharedInstance].device motorSet: 3 Microstep: 16];
     
     [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(timerName) userInfo:nil repeats:NO];
     
@@ -152,7 +149,7 @@
 
 - (void)timerNameScan {
 	
-     [[AppExecutive sharedInstance].deviceManager startScanning: false];
+     [[AppExecutive sharedInstance].deviceManager startScanning];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
@@ -162,14 +159,6 @@
     [[AppExecutive sharedInstance].deviceManager stopScanning];
     [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
 }
-
-- (IBAction) legacyDeviceChanged: (UISwitch *) sender {
-
-    [[AppExecutive sharedInstance].deviceManager stopScanning];
-    [self.tableView reloadData];
-    [[AppExecutive sharedInstance].deviceManager startScanning: sender.on];
-}
-
 
 #pragma mark - Table view data source
 
@@ -185,7 +174,11 @@
     //NSLog(@"device list");
     
     self.deviceList = [[AppExecutive sharedInstance].deviceManager deviceList];
-    return [self.deviceList count];
+    NSInteger count = [self.deviceList count];
+    
+    if (0 == count) return 1;
+    
+    return count;
 }
 
 - (void) didDiscoverDevice: (NMXDevice *) device {
@@ -199,25 +192,39 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
+    BOOL isMessageCell = [self.deviceList count] ? NO : YES;
+    
     DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceCell" forIndexPath:indexPath];
-
-    NMXDevice * device = [self.deviceList objectAtIndex: indexPath.row];
-    cell.textLabel.text = [[AppExecutive sharedInstance] stringWithHandleForDeviceName: device.name];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
-    [cell.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
-    if (device.disconnected)
+
+    if (isMessageCell)
     {
         cell.settingsButton.hidden = YES;
-        [cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+        cell.imageView.hidden = YES;
+        cell.textLabel.text = @"No Devices Found";
+        cell.connectGoButton.hidden = YES;
     }
-    cell.device = device;
-    cell.tableView = self;
+    else
+    {
+        NMXDevice * device = [self.deviceList objectAtIndex: indexPath.row];
+        cell.textLabel.text = [[AppExecutive sharedInstance] stringWithHandleForDeviceName: device.name];
+        [cell.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
+        if (device.disconnected)
+        {
+            cell.settingsButton.hidden = YES;
+            [cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+        }
+        cell.connectGoButton.hidden = NO;
+        cell.device = device;
+        cell.tableView = self;
 
-    NSString *deviceImage = [cell getImageForDeviceStatus: device];
-    cell.imageView.image = [UIImage imageNamed: deviceImage];
+        NSString *deviceImage = [cell getImageForDeviceStatus: device];
+        cell.imageView.image = [UIImage imageNamed: deviceImage];
+        cell.imageView.hidden = NO;
     
-    NSLog(@"Populating table with device image %@", deviceImage);
+        NSLog(@"Populating table with device image %@", deviceImage);
+    }
     
     return cell;
 }
@@ -281,6 +288,11 @@
         [[segue identifier] isEqualToString:@"showSettingsView"])
     {
             //NSLog(@"device name: %@",appExecutive.device.name);
+    }
+    else if ([[segue identifier] isEqualToString:@"helpDeviceManagement"])
+    {
+        HelpViewController *msvc = segue.destinationViewController;
+        [msvc setScreenInd:6];
     }
 }
 

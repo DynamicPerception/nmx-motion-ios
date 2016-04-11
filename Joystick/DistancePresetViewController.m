@@ -133,6 +133,24 @@
 //        
 //        [presetList addObject:dict5];
     }
+    else if (setting == 2)  // Direction label
+    {
+        NSUInteger numLabels = [DistancePresetViewController numDirectionLabels];
+        for (int i = 0; i < numLabels; i++)
+        {
+            NSString *label = [DistancePresetViewController labelForDirectionIndex: i];
+            NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
+                               label, @"val1", nil];
+            [presetList addObject:dict];
+            
+            if ([currentSettingString isEqualToString: label])
+            {
+                [picker selectRow:i inComponent:0 animated:NO];
+                selectedRow = i;
+            }
+
+        }
+    }
     
     
     if (setting == 0)
@@ -153,7 +171,7 @@
             selectedRow = 2;
         }
     }
-    else
+    else if (setting == 1)
     {
         if ([currentSettingString isEqualToString:@"Stage R"])
         {
@@ -181,6 +199,7 @@
 //	 selector:@selector(handleNotificationRotaryPreset:)
 //	 name:@"linearRotaryPreset" object:nil];
 }
+
 
 - (void) handleNotificationRotaryPreset:(NSNotification *)pNotification {
     
@@ -242,7 +261,7 @@
 
 - (IBAction) handleOkButton: (id) sender {
     
-    if (setting == 0)
+    if (setting == 0 || setting == 2)
     {
         [[NSNotificationCenter defaultCenter]
          postNotificationName:@"loadDistancePreset"
@@ -250,7 +269,7 @@
         
         [self dismissViewControllerAnimated: YES completion: nil];
     }
-    else
+    else if (setting == 1)
     {
         if (selectedRow == 2)
         {
@@ -270,6 +289,10 @@
             
              [self dismissViewControllerAnimated: YES completion: nil];
         }
+    }
+    else if (setting == 2)  // direction label
+    {
+        
     }
 }
 
@@ -335,5 +358,80 @@
 
     [super didReceiveMemoryWarning];
 }
+
+#pragma mark direction labels
+
+
++ (int) indexForDirectionLabel: (NSString *) labelString
+{
+    NSRange range = [labelString rangeOfString:@"/"];
+    NSRange lStrRange;
+    lStrRange.location = 0;
+    lStrRange.length = range.location;
+    NSString *lString = [labelString substringWithRange: lStrRange];
+
+    NSArray *leftDirLabels = [DistancePresetViewController leftDirectionLabels];
+    int idx = (int)[leftDirLabels indexOfObject: lString];
+    
+    return  idx;
+
+}
+
+
++ (NSString *) labelForDirectionIndex: (int) index
+{
+    NSArray *leftDirLabels = [DistancePresetViewController leftDirectionLabels];
+    NSArray *rightDirLabels = [DistancePresetViewController rightDirectionLabels];
+
+    NSString *lLabel = leftDirLabels[index];
+    NSString *rLabel = rightDirLabels[index];
+    NSString *label = [NSString stringWithFormat:@"%@/%@", lLabel, rLabel];
+    return label;
+}
+
++ (NSArray *)leftDirectionLabels
+{
+    static NSArray * leftDirectionLabels = nil;
+    
+    @synchronized (leftDirectionLabels)
+    {
+        if (leftDirectionLabels == nil) {
+            leftDirectionLabels = [NSArray arrayWithObjects: @"L", @"CW", @"UP", @"IN", nil];
+        }
+        
+        return leftDirectionLabels;
+    }
+}
+
++ (NSArray *)rightDirectionLabels
+{
+    static NSArray * rightDirectionLabels = nil;
+    
+    @synchronized (rightDirectionLabels)
+    {
+        if (rightDirectionLabels == nil) {
+            rightDirectionLabels = [NSArray arrayWithObjects: @"R", @"CCW", @"DOWN", @"OUT", nil];
+        }
+        
+        return rightDirectionLabels;
+    }
+}
+
+
++ (NSString *)leftDirectionLabelForIndex: (int) labelIndex
+{
+    return [DistancePresetViewController leftDirectionLabels][labelIndex];
+}
+
++ (NSString *)rightDirectionLabelForIndex: (int) labelIndex
+{
+    return [DistancePresetViewController rightDirectionLabels][labelIndex];
+}
+
++ (NSUInteger) numDirectionLabels
+{
+    return [DistancePresetViewController rightDirectionLabels].count;
+}
+
 
 @end

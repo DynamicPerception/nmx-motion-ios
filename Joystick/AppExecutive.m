@@ -102,6 +102,10 @@ NSString		static *kDefaultsTiltDecreaseValues		= @"kDefaultsTiltDecreaseValues";
 NSString		static *kDefaultsSlideIncreaseValues	= @"kDefaultsSlideIncreaseValues";
 NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues";
 
+#define kDefaultsMotorSledMicrosteps   @"MotorSledMicrosteps"
+#define kDefaultsMotorPanMicrosteps   @"MotorPanMicrosteps"
+#define kDefaultsMotorTiltMicrosteps   @"MotorTiltMicrosteps"
+
 
 #pragma mark Public Property Synthesis
 
@@ -137,13 +141,16 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 @synthesize slideIncreaseValues;
 @synthesize slideDecreaseValues;
 
+@synthesize microstep1 = _microstep1;
+@synthesize microstep2 = _microstep2;
+@synthesize microstep3 = _microstep3;
 
 #pragma mark Private Property Synthesis
 
 @synthesize defaults;
 @synthesize forFrameRate;
 
-@synthesize selectedMotorFrame, startPoint1,endPoint1, startPoint2,endPoint2, startPoint3, endPoint3, microstep1, microstep2, microstep3, stopMicrostep1, stopMicrostep2, stopMicrostep3, motor2MicrostepChanged,motor3MicrostepChanged, appBlueColor, is3P,slide3PVal1,slide3PVal3,slide3PVal2,pan3PVal1,pan3PVal2,pan3PVal3,tilt3PVal1,tilt3PVal2,tilt3PVal3,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,midSet,start3PSlideDistance,start3PPanDistance,start3PTiltDistance,mid3PSlideDistance,mid3PPanDistance,mid3PTiltDistance,end3PSlideDistance,end3PPanDistance,end3PTiltDistance,useJoystick,start3PSet,mid3PSet,end3PSet,isContinuous,voltageHigh,voltageLow,voltage,scaledEnd3PPanDistance,scaledMid3PPanDistance,scaledStart3PPanDistance,scaledEnd3PSlideDistance,scaledEnd3PTiltDistance,scaledMid3PSlideDistance,scaledMid3PTiltDistance,scaledStart3PSlideDistance,scaledStart3PTiltDistance,isVideo,printTilt,dampening1,dampening2,dampening3,resetController;
+@synthesize selectedMotorFrame, startPoint1,endPoint1, startPoint2,endPoint2, startPoint3, endPoint3, stopMicrostep1, stopMicrostep2, stopMicrostep3, motor2MicrostepChanged,motor3MicrostepChanged, appBlueColor, is3P,slide3PVal1,slide3PVal3,slide3PVal2,pan3PVal1,pan3PVal2,pan3PVal3,tilt3PVal1,tilt3PVal2,tilt3PVal3,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,midSet,start3PSlideDistance,start3PPanDistance,start3PTiltDistance,mid3PSlideDistance,mid3PPanDistance,mid3PTiltDistance,end3PSlideDistance,end3PPanDistance,end3PTiltDistance,useJoystick,start3PSet,mid3PSet,end3PSet,isContinuous,voltageHigh,voltageLow,voltage,scaledEnd3PPanDistance,scaledMid3PPanDistance,scaledStart3PPanDistance,scaledEnd3PSlideDistance,scaledEnd3PTiltDistance,scaledMid3PSlideDistance,scaledMid3PTiltDistance,scaledStart3PSlideDistance,scaledStart3PTiltDistance,isVideo,printTilt,dampening1,dampening2,dampening3,resetController;
 
 //------------------------------------------------------------------------------
 
@@ -171,23 +178,6 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 	return exposureNumber;
 }
 
-- (void) setExposureNumber: (NSNumber *) number {
-
-    //NSLog(@"setExposureNumber");
-    
-	if (FALSE == [number isEqualToNumber: self.exposureNumber])
-	{
-		if ([self validExposureNumber: number])
-		{
-			exposureNumber	= number;
-            
-			[self computeBufferTime];
-			[self computeIntervalTime];
-			[self saveValue: exposureNumber forKey: kDefaultsExposure];
-		}
-	}
-}
-
 - (NSNumber *) bufferNumber {
 
 	if (bufferNumber == nil)
@@ -203,6 +193,16 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 
 	return bufferNumber;
 }
+
+- (void) setBufferNumber: (NSNumber *) number {
+    
+    if (FALSE == [number isEqualToNumber: self.bufferNumber])
+    {
+        bufferNumber = number;
+        [self saveValue: bufferNumber forKey: kDefaultsBuffer];
+    }
+}
+
 
 - (NSNumber *) shotDurationNumber {
 
@@ -351,8 +351,6 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 		if ([self validTriggerNumber: number])
 		{
 			triggerNumber = number;
-			[self computeExposure];
-			[self computeBufferTime];
 			[self saveValue: triggerNumber forKey: kDefaultsTrigger];
 		}
 	}
@@ -374,19 +372,25 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 	return delayNumber;
 }
 
+
 - (void) setDelayNumber: (NSNumber *) number {
 
 	if (FALSE == [number isEqualToNumber: self.delayNumber])
 	{
-		if ([self validDelayNumber: number])
-		{
-			delayNumber = number;
-			[self computeExposure];
-			[self computeBufferTime];
-			[self saveValue: delayNumber forKey: kDefaultsDelay];
-		}
-	}
+        delayNumber = number;
+        [self saveValue: delayNumber forKey: kDefaultsDelay];
+    }
 }
+ 
+ - (void) setExposureNumber: (NSNumber *) number {
+ 
+	if (FALSE == [number isEqualToNumber: self.exposureNumber])
+	{
+        exposureNumber = number;
+        [self saveValue: exposureNumber forKey: kDefaultsExposure];
+	}
+ }
+ 
 
 - (NSNumber *) focusNumber {
 
@@ -411,16 +415,6 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 		if ([self validFocusNumber: number])
 		{
 			focusNumber = number;
-            
-            NSLog(@"setFocusNumber focusNumber: %@",focusNumber);
-            
-//            if(focusNumber < 0)
-//            {
-//                focusNumber = [NSNumber numberWithFloat:.1];
-//            }
-            
-			[self computeExposure];
-			[self computeBufferTime];
 			[self saveValue: focusNumber forKey: kDefaultsFocus];
 		}
 	}
@@ -449,8 +443,8 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 		if ([self validIntervalNumber: number])
 		{
 			intervalNumber = number;
-			[self computeShotDuration];	// computes frameCount if changed
-			[self computeBufferTime];
+            [self computeShotDuration];	// computes frameCount if changed
+
 			[self saveValue: intervalNumber forKey: kDefaultsInterval];
 		}
 	}
@@ -691,15 +685,6 @@ NSArray *defaultRampingValues() {
 	{
 		self.forFrameRate = DidSetNeither; // TODO: set but not used
         
-        //NSLog(@"init");
-
-		[self computeBufferTime];
-		[self computeIntervalTime];
-		[self computeShotDuration];
-		[self computeFrameCountForShotDurationAndInterval];
-		[self computeVideoLength];
-		[self computeDelayTime];
-        
 		if (getenv("CLEAR_DEVICE_HANDLES"))
 		{
 			[self.defaults removeObjectForKey: kDefaultsDeviceHandles];
@@ -775,60 +760,6 @@ NSArray *defaultRampingValues() {
 #pragma mark - Object Operations
 
 
-- (void) computeExposure {
-
-	NSInteger focus		= [self.focusNumber		integerValue];
-	NSInteger trigger	= [self.triggerNumber	integerValue];
-	NSInteger delay		= [self.delayNumber		integerValue];
-	NSInteger exposure	= focus + trigger + delay;
-
-	self.exposureNumber = [NSNumber numberWithInteger: exposure];
-}
-
-- (void) computeBufferTime {
-
-	//DDLogDebug(@"computeBufferTime");
-
-	NSInteger exposure	= [self.exposureNumber	integerValue];
-	NSInteger interval	= [self.intervalNumber	integerValue];
-	NSInteger buffer	= interval - exposure;
-
-	if (buffer < 100)
-	{
-		buffer = 100;
-		interval = exposure + buffer;
-		self.bufferNumber	= [NSNumber numberWithInteger: buffer];
-		self.intervalNumber	= [NSNumber numberWithInteger: interval];
-
-		[self intervalChangedAlert];
-	}
-	else
-	{
-		self.bufferNumber = [NSNumber numberWithInteger: buffer];
-	}
-}
-
-- (void) intervalChangedAlert {
-
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Interval Setting"
-													message: @"Interval has been changed to maintain minimum buffer time."
-												   delegate: self
-										  cancelButtonTitle: @"OK"
-										  otherButtonTitles: nil];
-	[alert show];
-}
-
-- (void) computeIntervalTime {
-
-	//DDLogDebug(@"computeIntervalTime");
-
-	NSInteger exposure	= [self.exposureNumber	integerValue];
-	NSInteger buffer	= [self.bufferNumber	integerValue];
-	NSInteger interval	= exposure + buffer;
-
-	self.intervalNumber = [NSNumber numberWithInteger: interval];
-}
-
 - (void) computeShotDuration {
 
 	//DDLogDebug(@"computeShotDuration");
@@ -873,61 +804,6 @@ NSArray *defaultRampingValues() {
 
 	self.videoLengthNumber = [NSNumber numberWithInteger: videoLength];    
 }
-
-- (void) computeDelayTime {
-
-	//DDLogDebug(@"computeDelayTime");
-
-	NSInteger	exposure	= [self.exposureNumber integerValue];
-	NSInteger	focus		= [self.focusNumber integerValue];
-	NSInteger	trigger		= [self.triggerNumber integerValue];
-    
-	NSInteger	delay		= exposure - (focus + trigger);
-
-	if (delay < 100)
-	{
-		delay = 100;
-		focus = exposure - (delay + trigger);
-		focusNumber = [NSNumber numberWithInteger: focus];
-	}
-    
-    //randall 8-12-15
-    
-    //NSLog(@"computeDelayTime focusNumber before: %@",focusNumber);
-    
-    int fn = (int)[focusNumber integerValue];
-    
-    if(fn < 100)
-    {
-        //NSLog(@"change it");
-        focusNumber = [NSNumber numberWithInteger: 100];
-    }
-    
-    //NSLog(@"computeDelayTime focusNumber after: %@",focusNumber);
-    
-    //end
-    
-    
-
-    self.delayNumber = [NSNumber numberWithInteger: delay];
-}
-
-- (void) resetFocusTime {
-
-	//DDLogDebug(@"resetFocusTime");
-
-	focusNumber = [NSNumber numberWithInteger: defaultFocusTime];	// bypass setter to avoid recomputing exposure
-	[self computeDelayTime];
-}
-
-- (void) resetTriggerTime {
-
-	//DDLogDebug(@"resetTriggerTime");
-
-	triggerNumber = [NSNumber numberWithInteger: defaultTriggerTime];	// bypass setter to avoid recomputing exposure
-	[self computeDelayTime];
-}
-
 
 //------------------------------------------------------------------------------
 
@@ -1100,8 +976,6 @@ NSArray *defaultRampingValues() {
     sensitivityNumber = [NSNumber numberWithFloat: defaultSensitivity];
     [self.defaults setObject: sensitivityNumber forKey: kDefaultsSensitivity];
     
-    [self computeDelayTime];
-    
     //ramping values
     
     panIncreaseValues = defaultRampingValues();
@@ -1160,6 +1034,67 @@ NSArray *defaultRampingValues() {
 //            self.setStopButton.selected = YES;
 //        }
 }
+
+- (void) setMicrostep1:(int)microstep1
+{
+    _microstep1 = microstep1;
+    [self.defaults setInteger: microstep1 forKey: kDefaultsMotorSledMicrosteps];
+    [self.defaults synchronize];
+}
+
+- (int) microstep1
+{
+    if (_microstep1 > 0) return _microstep1;
+    
+    _microstep1 = (int)[self.defaults integerForKey: kDefaultsMotorSledMicrosteps];
+    if (0 == _microstep1)
+    {
+        _microstep1 = 4;
+    }
+    
+    return _microstep1;
+}
+
+- (void) setMicrostep2:(int)microstep2
+{
+    _microstep2 = microstep2;
+    [self.defaults setInteger: microstep2 forKey: kDefaultsMotorPanMicrosteps];
+    [self.defaults synchronize];
+}
+
+- (int) microstep2
+{
+    if (_microstep2 > 0) return _microstep2;
+    
+    _microstep2 = (int)[self.defaults integerForKey: kDefaultsMotorPanMicrosteps];
+    if (0 == _microstep2)
+    {
+        _microstep2 = 16;
+    }
+    
+    return self.microstep2;
+}
+
+- (void) setMicrostep3:(int)microstep3
+{
+    _microstep3 = microstep3;
+    [self.defaults setInteger: microstep3 forKey: kDefaultsMotorTiltMicrosteps];
+    [self.defaults synchronize];
+}
+
+- (int) microstep3
+{
+    if (_microstep3 > 0) return _microstep3;
+    
+    _microstep3 = (int)[self.defaults integerForKey: kDefaultsMotorTiltMicrosteps];
+    if (0 == _microstep3)
+    {
+        _microstep3 = 16;
+    }
+    
+    return _microstep3;
+}
+
 
 
 @end

@@ -165,6 +165,8 @@
 		3048A1151C40657C00855EB0 /* DeviceState_Indeterminate@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */; };
 		3048A1161C40657C00855EB0 /* DeviceState_Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1101C40657C00855EB0 /* DeviceState_Warning.png */; };
 		3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */; };
+		304ECCFF1C98E1B70094B7B0 /* HSpline.m in Sources */ = {isa = PBXBuildFile; fileRef = 304ECCFE1C98E1B70094B7B0 /* HSpline.m */; };
+		306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */; };
 		30B8EE9F1C45D0A100DCF15C /* DeviceState_Off.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */; };
 		30B8EEA01C45D0A100DCF15C /* DeviceState_Off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */; };
 		30B8EEA31C48924800DCF15C /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B8EEA21C48924800DCF15C /* DeviceTableViewCell.m */; };
@@ -353,7 +355,7 @@
 		2362F62A19EEF1F500C85368 /* AppExecutive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppExecutive.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		236621071A39FA520009EB85 /* FrameRateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameRateViewController.h; sourceTree = "<group>"; };
 		236621081A39FA520009EB85 /* FrameRateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameRateViewController.m; sourceTree = "<group>"; };
-		2389AC1619DD938100FB2679 /* NMX Motion 3.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NMX Motion 3.0.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2389AC1619DD938100FB2679 /* NMX Motion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NMX Motion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2389AC1A19DD938100FB2679 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2389AC1B19DD938100FB2679 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2389AC1D19DD938100FB2679 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -403,6 +405,10 @@
 		3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Indeterminate@2x.png"; sourceTree = "<group>"; };
 		3048A1101C40657C00855EB0 /* DeviceState_Warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Warning.png; sourceTree = "<group>"; };
 		3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Warning@2x.png"; sourceTree = "<group>"; };
+		304ECCFD1C98E1B70094B7B0 /* HSpline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSpline.h; sourceTree = "<group>"; };
+		304ECCFE1C98E1B70094B7B0 /* HSpline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSpline.m; sourceTree = "<group>"; };
+		306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraSettingsTimelineView.h; sourceTree = "<group>"; };
+		306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsTimelineView.m; sourceTree = "<group>"; };
 		30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Off.png; sourceTree = "<group>"; };
 		30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Off@2x.png"; sourceTree = "<group>"; };
 		30B8EEA11C48924800DCF15C /* DeviceTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceTableViewCell.h; sourceTree = "<group>"; };
@@ -632,7 +638,7 @@
 		2389AC1719DD938100FB2679 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2389AC1619DD938100FB2679 /* NMX Motion 3.0.app */,
+				2389AC1619DD938100FB2679 /* NMX Motion.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -640,6 +646,7 @@
 		2389AC1819DD938100FB2679 /* Joystick */ = {
 			isa = PBXGroup;
 			children = (
+				304ECCFC1C98E1250094B7B0 /* Utilities */,
 				10F9DE341BEBC1B00059A727 /* reachability */,
 				10F9DE221BEBC0B40059A727 /* imagepicker */,
 				10D5EBB61B94CEE2006125E1 /* assets */,
@@ -688,6 +695,15 @@
 				2389AC3419DD938100FB2679 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		304ECCFC1C98E1250094B7B0 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				304ECCFD1C98E1B70094B7B0 /* HSpline.h */,
+				304ECCFE1C98E1B70094B7B0 /* HSpline.m */,
+			);
+			name = Utilities;
 			sourceTree = "<group>";
 		};
 		3F51E8AC1B66A69400E1E2D5 /* TestFairy */ = {
@@ -805,6 +821,8 @@
 			children = (
 				5D25BC641A5B862B00F324AD /* DeviceSettingsViewController.h */,
 				5D25BC651A5B862B00F324AD /* DeviceSettingsViewController.m */,
+				306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */,
+				306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */,
 				23FD81061A23D78800FD9D49 /* CameraSettingsViewController.h */,
 				23FD81071A23D78800FD9D49 /* CameraSettingsViewController.m */,
 				23C72C741A1FC20400DF1002 /* MotorSettingsViewController.h */,
@@ -891,7 +909,7 @@
 			);
 			name = "NMX Motion";
 			productName = Joystick;
-			productReference = 2389AC1619DD938100FB2679 /* NMX Motion 3.0.app */;
+			productReference = 2389AC1619DD938100FB2679 /* NMX Motion.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -901,7 +919,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0600;
-				ORGANIZATIONNAME = "Mark Zykin";
+				ORGANIZATIONNAME = "Dynamic Perception";
 				TargetAttributes = {
 					2389AC1519DD938100FB2679 = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -1121,6 +1139,7 @@
 				2389AC4419DDB56800FB2679 /* JoystickView.m in Sources */,
 				23F95D981A24CE8300E3D7DA /* JoyButton.m in Sources */,
 				23EEAD291A44D0BE006EC15C /* IntervalViewController.m in Sources */,
+				304ECCFF1C98E1B70094B7B0 /* HSpline.m in Sources */,
 				5D5C2F781A644C6A0009FE8A /* NSNumber+ASI.m in Sources */,
 				236621091A39FA520009EB85 /* FrameRateViewController.m in Sources */,
 				5DAEBE5119F6080A000AC7AA /* DeviceSelectionTableViewController.m in Sources */,
@@ -1136,6 +1155,7 @@
 				30B8EEA31C48924800DCF15C /* DeviceTableViewCell.m in Sources */,
 				10CF71D31BC388E3004ED48C /* HelpViewController.m in Sources */,
 				3FB4A5671B61F0B4006CFF1F /* NotificationTest.m in Sources */,
+				306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */,
 				10F9DE331BEBC0C20059A727 /* ELCImagePickerController.m in Sources */,
 				3FB4A55E1B5FF154006CFF1F /* GraphView.m in Sources */,
 				106615831BA1CF1900A85529 /* LinearRotaryViewController.m in Sources */,
@@ -1294,7 +1314,7 @@
 					"\"UIKit\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamicpercption.nmxcontroller;
-				PRODUCT_NAME = "$(TARGET_NAME) 3.0";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1337,7 +1357,7 @@
 					"\"UIKit\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamicpercption.nmxcontroller;
-				PRODUCT_NAME = "$(TARGET_NAME) 3.0";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_ROOT)/../IntermediateBuildFilesPath/UninstalledProducts/include";

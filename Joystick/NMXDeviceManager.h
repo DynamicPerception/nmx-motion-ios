@@ -23,7 +23,7 @@
 
 }
 
-- (void) startScanning: (BOOL) inLegacyDevices;
+- (void) startScanning;
 - (void) stopScanning;
 - (NSArray *) deviceList;
 

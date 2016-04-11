@@ -16,7 +16,7 @@
 #import "HelpViewController.h"
 #import "OverallDistanceViewController.h"
 
-@interface MotorSettingsViewController : UIViewController <BacklashDelegate, UITextFieldDelegate,UIScrollViewDelegate> {
+@interface MotorSettingsViewController : UIViewController <BacklashDelegate, UITextFieldDelegate,UIScrollViewDelegate, UIAlertViewDelegate> {
 
     BOOL leftEnabled;
     BOOL rightEnabled;
@@ -74,6 +74,8 @@
 @property (weak, nonatomic) IBOutlet UISwitch *toggleJoystickSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *dampeningLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *dampeningImg;
+@property (strong, nonatomic) IBOutlet UILabel *directionLbl;
+@property NSNumber *directionLabelMode;
 
 - (IBAction) handleReleaseSensitivitySlider: (UISlider *) sender;
 - (IBAction) handleSensitivitySlider: (UISlider *) sender;

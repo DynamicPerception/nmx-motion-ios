@@ -12,7 +12,6 @@
 @protocol ExposureDelegate
 
 - (void) updateExposureNumber: (NSNumber *) number;
-- (void) updateExposureString: (NSString *) string;
 
 @end
 

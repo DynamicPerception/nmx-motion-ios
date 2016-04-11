@@ -26,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *		deviceIDLabel;
 @property (weak, nonatomic) IBOutlet UILabel *		deviceNameLabel;
 @property (weak, nonatomic) IBOutlet UIButton *		deviceNameButton;
+@property (strong, nonatomic) IBOutlet UISwitch *   slaveModeSwitch;
 
 // Joystick Settings subview
 
@@ -148,6 +149,8 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
     voltageLowTxt.layer.cornerRadius=1.0f;
     voltageLowTxt.layer.borderColor=[[UIColor whiteColor]CGColor];
     voltageLowTxt.layer.borderWidth= 1.0f;
+    
+    
 }
 
 - (void) viewWillAppear: (BOOL) animated {
@@ -164,6 +167,9 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 	self.dominantAxisSwitch.on		= [self.appExecutive.lockAxisNumber boolValue];
 	self.sensitivitySlider.value	= [self.appExecutive.sensitivityNumber floatValue];
 	self.sensitivityValue.text		= [NSString stringWithFormat: @"%3.0f%%", self.sensitivitySlider.value];
+    
+    [self.slaveModeSwitch setOn: [self.appExecutive.device cameraQuerySlaveMode] animated:NO];
+
 }
 
 - (void) updateDeviceNameField {
@@ -290,6 +296,21 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 
 	return;
 }
+
+- (IBAction)setSlaveMode:(UISwitch *)sender {
+    if ([sender isOn] && (![sender isSelected]))
+    {
+        [self.appExecutive.device cameraSetSlaveMode: YES];
+        [sender setSelected:YES];
+
+    }
+    else if ((![sender isOn]) && [sender isSelected])
+    {
+        [self.appExecutive.device cameraSetSlaveMode: NO];
+        [sender setSelected:NO];
+    }
+}
+
 
 - (NSMutableArray *) logFileData {
 

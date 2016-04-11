@@ -147,12 +147,6 @@
 
 	DDLogDebug(@"Dismiss Backlash Picker Button");
 
-//	NSInteger	index	= [self.picker selectedRowInComponent: 0];
-//	NSNumber *	number	= [exposureNumbers objectAtIndex: index];
-//	NSString *	string	= [exposureStrings objectAtIndex: index];
-//
-//	[self.delegate updateExposureNumber: number];
-//	[self.delegate updateExposureString: string];
 	[self dismissViewControllerAnimated: YES completion: nil];
 }
 

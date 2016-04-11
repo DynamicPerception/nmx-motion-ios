@@ -15,7 +15,7 @@
 #import "DurationViewController.h"
 #import "ShortDurationViewController.h"
 #import "NMXDevice.h"
-
+#import "HSpline.h"
 
 //------------------------------------------------------------------------------
 
@@ -31,6 +31,12 @@ typedef enum {
 	ControllerStateResumeOrStopProgram
 }
 ControllerState;
+
+typedef enum{
+    AtProgramEndStop,
+    AtProgramEndKeepAlive,
+    AtProgramEndPingPong
+} AtProgramEndMode;
 
 
 @interface ReviewStatusViewController ()
@@ -75,6 +81,9 @@ ControllerState;
 @property (nonatomic, assign)               float               timePerFrame;
 @property (nonatomic, assign)               NMXProgramMode      programMode;
 
+@property                                   float               previousPercentage;
+@property                                   BOOL                reversing;
+
 @end
 
 
@@ -112,7 +121,8 @@ ControllerState;
 @synthesize sendMotorsTimer;
 @synthesize statusTimer;
 
-@synthesize graphView, panGraph, tiltGraph, appExecutive, graphViewContainer, playhead, goBtn, cancelBtn, keepAliveView, startTimerBtn, keepAliveSwitch, timerContainer, timerLbl, disconnectStatusLbl, disconnectBtn,graph3P,dic,shareBtn,settingsButton,batteryIcon,contentBG,shareBtn2,debugTxt;
+@synthesize graphView, panGraph, tiltGraph, appExecutive, graphViewContainer, playhead, goBtn, cancelBtn, keepAliveView, startTimerBtn,
+            timerContainer, timerLbl, disconnectStatusLbl, disconnectBtn,graph3P,dic,shareBtn,settingsButton,batteryIcon,contentBG,shareBtn2,debugTxt;
 
 #pragma mark Public Propery Methods
 
@@ -269,6 +279,7 @@ ControllerState;
     timerContainer.hidden = YES;
     startTimerBtn.hidden = YES;
     keepAliveView.hidden = YES;
+    self.previousPercentage = 0.f;
     
     //http://stackoverflow.com/questions/13155461/creating-a-stopwatch-in-iphone
     
@@ -281,6 +292,15 @@ ControllerState;
     }
 
     [self setupIcons];
+
+    if (device.fwVersion < 52)
+    {
+        [self.atProgramEndControl removeSegmentAtIndex:AtProgramEndPingPong animated:NO];
+    }
+    else if ([device mainQueryPingPongMode])
+    {
+        [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
+    }
     
 	[super viewDidLoad];
 }
@@ -401,6 +421,13 @@ ControllerState;
     countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(countDownTimerFired:) userInfo:nil repeats:YES];
 }
 
+- (void) showKeepAliveView
+{
+    self.atProgramEndControl.enabled = YES;
+    keepAliveView.hidden = NO;
+}
+
+
 - (void) countDownTimerFired:(id)sender {
     
     NSLog(@"countDownTimerFired secondsLeft: %i",secondsLeft);
@@ -429,10 +456,9 @@ ControllerState;
         goBtn.hidden = YES;
         pauseProgramButton.hidden = NO;
         
-        if (!self.appExecutive.is3P)
-        {
-            keepAliveView.hidden = NO;
-        }
+        [self showKeepAliveView];
+        self.reversing = NO;
+        self.previousPercentage = 0.f;
     }
 }
 
@@ -505,9 +531,11 @@ ControllerState;
     
     [[AppExecutive sharedInstance].device mainStartPlannedMove];
     
-    if(self.programMode != NMXProgramModeVideo && !self.appExecutive.is3P)
+    if(self.programMode != NMXProgramModeVideo)
     {
-        keepAliveView.hidden = NO;
+        [self showKeepAliveView];
+        self.reversing = NO;
+        self.previousPercentage = 0.f;
     }
     
     startTimerBtn.hidden = YES;
@@ -548,9 +576,11 @@ ControllerState;
     
     [self transitionToState: ControllerStatePauseProgram];
     
-    if(self.programMode != NMXProgramModeVideo && !self.appExecutive.is3P)
+    if(self.programMode != NMXProgramModeVideo)
     {
-        keepAliveView.hidden = NO;
+        [self showKeepAliveView];
+        self.reversing = NO;
+        self.previousPercentage = 0.f;
     }
     
     startTimerBtn.hidden = YES;
@@ -587,7 +617,7 @@ ControllerState;
     [[AppExecutive sharedInstance].deviceManager setDelegate: self];
     
     NMXRunStatus runStatus = [device mainQueryRunStatus];
-    NMXKeyFrameRunStatus runStatusKeyFrame = [device queryKeyFrameProgramRunState];
+    NMXRunStatus runStatusKeyFrame = [device queryKeyFrameProgramRunState];
     
     //NSLog(@"viewWillAppear status: %i", runStatus);
     //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
@@ -619,7 +649,7 @@ ControllerState;
     
     if (self.appExecutive.is3P == NO)
     {
-        if (runStatus == NMXRunStatusDelayTimer)
+        if (runStatus & NMXRunStatusDelayTimer)
         {
             timerContainer.hidden = NO;
             
@@ -688,44 +718,78 @@ ControllerState;
             
             self.statusTimer = self.statusTimer;
         }
-        else if(runStatus == NMXRunStatusRunning ||
-                runStatus == NMXRunStatusPaused ||
-                runStatus == NMXRunStatusKeepAlive)
+        else if(runStatus & NMXRunStatusRunning ||
+                runStatus & NMXRunStatusPaused)
         {
-            [keepAliveSwitch setOn:[appExecutive.defaults integerForKey: @"keepAlive"]];
-            
-            if (!self.appExecutive.is3P)
-            {
-                keepAliveView.hidden = NO;
-            }
-            
-            //[self showVoltage];
-            
-            self.statusTimer = self.statusTimer;
-        }
-        
-        if (runStatus == NMXRunStatusKeepAlive)
-        {
-            [self transitionToPauseProgramState];
-            
+            [self showKeepAliveView];
+            self.reversing = NO;
+            self.previousPercentage = 0.f;
+
             self.motorRampingButton.hidden = YES;
             self.sendMotorsToStartButton.hidden = YES;
+
+            if(runStatus & NMXRunStatusPingPong)
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
+            }
+            else if (runStatus & NMXRunStatusKeepAlive)
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndKeepAlive];
+            }
+            else
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
+            }
+
+            if (runStatus & NMXRunStatusPaused)
+            {
+                [self transitionToResumeOrStopProgramState];
+            }
+            else
+            {
+                [self transitionToPauseProgramState];
+            }
+            
+            self.statusTimer = self.statusTimer;
+            
         }
     }
     else
     {
-        if(runStatusKeyFrame == NMXKeyFrameRunStatusRunning ||
-           runStatusKeyFrame == NMXKeyFrameRunStatusPaused)
+        if(runStatusKeyFrame & NMXRunStatusRunning ||
+           runStatusKeyFrame & NMXRunStatusPaused)
         {
             //NSLog(@"review NMXKeyFrameRunStatusRunning/Paused");
             
-            [keepAliveSwitch setOn:[appExecutive.defaults integerForKey: @"keepAlive"]];
-            
-            if (!self.appExecutive.is3P)
+            [self showKeepAliveView];
+            self.reversing = NO;
+            self.previousPercentage = 0.f;
+
+            self.motorRampingButton.hidden = YES;
+            self.sendMotorsToStartButton.hidden = YES;
+
+            if(runStatusKeyFrame & NMXRunStatusPingPong)
             {
-                keepAliveView.hidden = NO;
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
             }
-            
+            else if (runStatusKeyFrame & NMXRunStatusKeepAlive)
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndKeepAlive];
+            }
+            else
+            {
+                [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
+            }
+
+            if (runStatus & NMXRunStatusPaused)
+            {
+                [self transitionToResumeOrStopProgramState];
+            }
+            else
+            {
+                [self transitionToPauseProgramState];
+            }
+
             self.totalRunTime = [device queryKeyFrameProgramMaxTime];
             
             [self startKeyframeTimer];
@@ -740,8 +804,8 @@ ControllerState;
         
         [self setupGraphViews3P];
         
-        if (runStatusKeyFrame != NMXKeyFrameRunStatusRunning &&
-            runStatusKeyFrame != NMXKeyFrameRunStatusPaused && !camClosed)
+        if (!(runStatusKeyFrame & NMXRunStatusRunning) &&
+            !(runStatusKeyFrame & NMXRunStatusPaused) && !camClosed)
         {
             [self initKeyFrameValues];
         }
@@ -774,6 +838,28 @@ ControllerState;
 - (void) initKeyFrameValues {
     
     //for shoot move, absicssa is multiple of 1000
+
+    // Initialize keyframe arrays to be used in midpoint velocity calculation
+    NSMutableArray<KeyFrameModel *> *keyframeArray;
+    KeyFrameModel *kfm;
+    keyframeArray = [NSMutableArray arrayWithCapacity:3];
+    for (int point = 0; point < 3; point++)
+    {
+        KeyFrameModel *kfm = [KeyFrameModel new];
+        [keyframeArray addObject: kfm];
+    }
+    HSpline *hs = [HSpline new];
+    if (self.programMode == NMXProgramModeVideo)
+    {
+        hs.velocityIncrement = 0.1;
+    }
+    else
+    {
+        hs.velocityIncrement = 0.1;
+    }
+    
+    //slide motor
+    
     
     [appExecutive.device setCurrentKeyFrameAxis:0];
     [appExecutive.device setKeyFrameCount:3];
@@ -810,29 +896,47 @@ ControllerState;
         val3 = (float)((int)(self.appExecutive.slide3PVal3 * [self.appExecutive.intervalNumber intValue]));
     }
     
-    [appExecutive.device setKeyFrameAbscissa:val1]; //15
-    [appExecutive.device setKeyFrameAbscissa:val2]; //100
-    [appExecutive.device setKeyFrameAbscissa:val3]; //250
-    
-    NSLog(@"val1: %f",(float)val1);
-    NSLog(@"val2: %f",(float)val2);
-    NSLog(@"val3: %f",(float)val3);
-    
-    NSLog(@"appExecutive.microstep1: %f",(float)appExecutive.microstep1);
-
     float conversionFactor = (float)appExecutive.microstep1 / 16;
     
     float startSlideOut = self.appExecutive.scaledStart3PSlideDistance * conversionFactor;
     float midSlideOut = self.appExecutive.scaledMid3PSlideDistance * conversionFactor;
     float endSlideOut = self.appExecutive.scaledEnd3PSlideDistance * conversionFactor;
+
+    kfm = keyframeArray[0];
+    kfm.time = val1;
+    kfm.position = startSlideOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[1];
+    kfm.time = val2;
+    kfm.position = midSlideOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[2];
+    kfm.time = val3;
+    kfm.position = endSlideOut;
+    kfm.velocity = 0;
+    
+    [appExecutive.device setKeyFrameAbscissa:val1];
+    [appExecutive.device setKeyFrameAbscissa:val2];
+    [appExecutive.device setKeyFrameAbscissa:val3];
+    [hs optimizePointVelForAxis:keyframeArray];
+
+    NSLog(@"Slider Motor keyframes");
+    NSLog(@"val1: %f   position : %g",(float)val1, startSlideOut);
+    NSLog(@"val2: %f   position : %g",(float)val2, midSlideOut);
+    NSLog(@"val3: %f   position : %g",(float)val3, endSlideOut);
+    
+    NSLog(@"appExecutive.microstep1: %f",(float)appExecutive.microstep1);
+
     
     [appExecutive.device setKeyFramePosition:startSlideOut];
     [appExecutive.device setKeyFramePosition:midSlideOut];
     [appExecutive.device setKeyFramePosition:endSlideOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    
+    NSLog(@"mid slide Velocity: %g",keyframeArray[1].velocity);
     
     [appExecutive.device endKeyFrameTransmission];
     
@@ -853,13 +957,30 @@ ControllerState;
     float midPanOut = self.appExecutive.scaledMid3PPanDistance * conversionFactor2;
     float endPanOut = self.appExecutive.scaledEnd3PPanDistance * conversionFactor2;
     
+    kfm = keyframeArray[0];
+    kfm.time = val1;
+    kfm.position = startPanOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[1];
+    kfm.time = val2;
+    kfm.position = midPanOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[2];
+    kfm.time = val3;
+    kfm.position = endPanOut;
+    kfm.velocity = 0;
+
+    [hs optimizePointVelForAxis:keyframeArray];
+    
     [appExecutive.device setKeyFramePosition:startPanOut];
     [appExecutive.device setKeyFramePosition:midPanOut];
     [appExecutive.device setKeyFramePosition:endPanOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    
+    NSLog(@"mid pan Velocity: %g",keyframeArray[1].velocity);
     
     [appExecutive.device endKeyFrameTransmission];
     
@@ -896,13 +1017,30 @@ ControllerState;
     
     debugTxt.text = [NSString stringWithFormat:@"%@\n start tilt in: %f\n mid tilt in: %f\n end tilt in: %f",debugTxt.text, startTiltOut,midTiltOut,endTiltOut];
     
+    kfm = keyframeArray[0];
+    kfm.time = val1;
+    kfm.position = startTiltOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[1];
+    kfm.time = val2;
+    kfm.position = midTiltOut;
+    kfm.velocity = 0;
+    kfm = keyframeArray[2];
+    kfm.time = val3;
+    kfm.position = endTiltOut;
+    kfm.velocity = 0;
+    
+    [hs optimizePointVelForAxis:keyframeArray];
+    
     [appExecutive.device setKeyFramePosition:startTiltOut];
     [appExecutive.device setKeyFramePosition:midTiltOut];
     [appExecutive.device setKeyFramePosition:endTiltOut];
     
     [appExecutive.device setKeyFrameVelocity:(float)0];
+    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    
+    NSLog(@"mid tilt Velocity: %g",keyframeArray[1].velocity);
     
     [appExecutive.device endKeyFrameTransmission];
         
@@ -958,64 +1096,28 @@ ControllerState;
             }
             break;
     }
-    
+
+    NMXRunStatus runStatus;
     if (self.appExecutive.is3P == NO)
     {
-        NMXRunStatus runStatus = [device mainQueryRunStatus];
-        
-        switch (runStatus)
-        {
-            case NMXRunStatusRunning:
-                
-                [self transitionToState: ControllerStatePauseProgram];
-                
-                break;
-                
-            case NMXRunStatusPaused:
-
-                [self transitionToState: ControllerStateResumeOrStopProgram];
-
-                break;
-                
-            case NMXRunStatusStopped:
-
-                [self transitionToState: ControllerStateMotorRampingOrSendMotors];
-
-                break;
-                
-            default:
-                break;
-        }
+        runStatus = [device mainQueryRunStatus];
     }
     else
     {
-        NMXKeyFrameRunStatus runStatus2 = [device queryKeyFrameProgramRunState];
-        
-        //NSLog(@"runStatus2: %i",runStatus2);
-        
-        switch (runStatus2)
-        {
-            case NMXKeyFrameRunStatusRunning:
-                
-                [self transitionToState: ControllerStatePauseProgram];
-                
-                break;
-                
-            case NMXKeyFrameRunStatusPaused:
-                
-                [self transitionToState: ControllerStateResumeOrStopProgram];
-                
-                break;
-                
-            case NMXKeyFrameRunStatusStopped:
-                
-                [self transitionToState: ControllerStateMotorRampingOrSendMotors];
-                
-                break;
-                
-            default:
-                break;
-        }
+        runStatus = [device queryKeyFrameProgramRunState];
+    }
+
+    if (runStatus & NMXRunStatusRunning)
+    {
+        [self transitionToState: ControllerStatePauseProgram];
+    }
+    else if (runStatus & NMXRunStatusPaused)
+    {
+        [self transitionToState: ControllerStateResumeOrStopProgram];
+    }
+    else if (runStatus == NMXRunStatusStopped)
+    {
+        [self transitionToState: ControllerStateMotorRampingOrSendMotors];
     }
 }
 
@@ -1106,14 +1208,21 @@ ControllerState;
 
 #pragma mark - IBAction Methods
 
-- (IBAction) manageKeepAlive:(id)sender {
+- (IBAction)mangeAtProgramEndSelection:(id)sender {
     
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:keepAliveSwitch.isOn] forKey: @"keepAlive"];
+    NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
+    
+    [appExecutive.defaults setObject: [NSNumber numberWithLong:atEndSelection] forKey: @"keepAlive"];
     [appExecutive.defaults synchronize];
     
-     //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
+    //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
     
-    [device keepAlive:keepAliveSwitch.isOn];
+    [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
+    if (device.fwVersion >= 52)
+    {
+        [device mainSetPingPongMode: atEndSelection==AtProgramEndPingPong];
+    }
+
 }
 
 - (IBAction) cancelTimer: (JoyButton *) sender {
@@ -1158,10 +1267,7 @@ ControllerState;
 	
     [[AppExecutive sharedInstance].device mainStartPlannedMove];
     
-    if (!self.appExecutive.is3P)
-    {
-        keepAliveView.hidden = NO;
-    }
+    [self showKeepAliveView];
     
     [self transitionToPauseProgramState];
 }
@@ -1175,14 +1281,15 @@ ControllerState;
     
 	//DDLogDebug(@"Send Motors To Start Button");
     
-    //NSLog(@"keepAlive 0");
-    
     [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
     [appExecutive.defaults synchronize];
     
-    [device mainSendMotorsToStart];
+    // Set to fastest setting to allow return to home to perform optimally
+    [device motorSet: device.sledMotor Microstep: 4];
+    [device motorSet: device.panMotor Microstep: 4];
+    [device motorSet: device.tiltMotor Microstep: 4];
     
-    NSLog(@"send motors");
+    [device mainSendMotorsToStart];
 
 	[self transitionToState: ControllerStateMotorRampingOrStartProgram];
     
@@ -1192,7 +1299,7 @@ ControllerState;
 - (IBAction) handleStartProgramButton: (JoyButton *) sender {
     
 	DDLogDebug(@"Start Program Button");
-    
+
     [device setDelayProgramStartTimer:0];
 
     [self startProgram];
@@ -1250,8 +1357,7 @@ ControllerState;
     
 	DDLogDebug(@"Stop Program Button");
     
-    [device keepAlive:0];
-    [keepAliveSwitch setOn:NO animated:NO];
+    [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
     
     [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
     [appExecutive.defaults synchronize];
@@ -1271,6 +1377,12 @@ ControllerState;
     else
     {
         [[AppExecutive sharedInstance].device mainStopPlannedMove];
+        
+        [device keepAlive:0];
+        if (device.fwVersion >= 52)
+        {
+            [device mainSetPingPongMode: NO];
+        }
     }
     
     [self clearFields];
@@ -1300,10 +1412,7 @@ ControllerState;
     [device1 mainSetAppMode: true];
     [device1 mainSetJoystickMode: false];
     
-    if (!self.appExecutive.is3P)
-    {
-        keepAliveView.hidden = NO;
-    }
+    [self showKeepAliveView];
     
     [self setupAfterConnection];
 }
@@ -1518,14 +1627,19 @@ ControllerState;
         [self.sendMotorsTimer invalidate];
         self.sendMotorsTimer = nil;
         
-        self.startProgramButton.enabled = YES;
-        
-        if (!self.appExecutive.is3P)
-        {
-            startTimerBtn.hidden = NO;
-        }
-        
         dispatch_async(dispatch_get_main_queue(), ^{
+            
+            self.startProgramButton.enabled = YES;
+            
+            if (!self.appExecutive.is3P)
+            {
+                startTimerBtn.hidden = NO;
+            }
+
+            // Reset motors to correct microstep values
+            [device motorSet: device.sledMotor Microstep: appExecutive.microstep1];
+            [device motorSet: device.panMotor Microstep: appExecutive.microstep2];
+            [device motorSet: device.tiltMotor Microstep: appExecutive.microstep3];
             
             [MBProgressHUD hideHUDForView:self.view animated:YES];
         });
@@ -1534,163 +1648,170 @@ ControllerState;
 
 - (void) handleKeyFrameStatusTimer: (NSTimer *) sender {
     
-    NMXKeyFrameRunStatus runStatus = [device queryKeyFrameProgramRunState];
+    NMXRunStatus runStatus = [device queryKeyFrameProgramRunState];
     
-    switch (runStatus)
+    if (runStatus & NMXRunStatusRunning)
     {
-        case NMXKeyFrameRunStatusRunning:
+        timerContainer.hidden = YES;
+        
+        //NSLog(@"NMXKeyFrameRunStatusRunning");
+        
+        float percentComplete = [device queryKeyFramePercentComplete] / (float)100;
+        self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
+        
+        //NSLog(@"lastRunTime: %i",(unsigned int)self.lastRunTime);
+        //NSLog(@"keyFrame percentComplete: %f",percentComplete);
+        
+        self.timeOfLastRunTime = time(nil);
+        
+        NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
+        
+        if (timeRemaining < 0)
         {
-            timerContainer.hidden = YES;
-            
-            //NSLog(@"NMXKeyFrameRunStatusRunning");
-            
-            float percentComplete = [device queryKeyFramePercentComplete] / (float)100;
-            self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
-            
-            //NSLog(@"lastRunTime: %i",(unsigned int)self.lastRunTime);
-            //NSLog(@"keyFrame percentComplete: %f",percentComplete);
-            
-            self.timeOfLastRunTime = time(nil);
-            
-            NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
-            
-            if (timeRemaining < 0)
-            {
-                timeRemaining = 0;
-            }
-            
-            if (NMXProgramModeVideo == self.programMode)
-            {
-                self.videoProgressView.progress = percentComplete;
-                self.videoTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
-                
-                float percentComplete2 = (float)self.lastRunTime/self.totalRunTime;
-                
-                NSLog(@"keyframe video percentComplete2: %f",percentComplete2);
-                
-                if(percentComplete <= 1.0)
-                {
-                    percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
-                }
-                
-                NSLog(@"keyframe video percentCompletePosition: %f",percentCompletePosition);
-                
-                playhead.frame = CGRectMake(percentCompletePosition,
-                                            playhead.frame.origin.y,
-                                            playhead.frame.size.width,
-                                            playhead.frame.size.height);
-            }
-            else
-            {
-                unsigned int  framesShot = [device cameraQueryCurrentShots];
-                
-                NSLog(@"framesShot: %i",framesShot);
-                
-                UInt32  videoLength = framesShot * 1000 / self.fps;
-                
-                NSLog(@"videoLength: %i",(unsigned int)videoLength);
-                
-                self.timelapseProgressView.progress = percentComplete;
-                self.timelapseTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
-                self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
-                self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
-                
-                float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
-                
-                NSLog(@"keyframe percentComplete: %f",percentComplete2);
-                
-                if(percentComplete2 <= 1.0)
-                {
-                    percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
-                }
-                
-                NSLog(@"keyframe percentCompletePosition: %f",percentCompletePosition);
-                
-                playhead.frame = CGRectMake(percentCompletePosition,
-                                            playhead.frame.origin.y,
-                                            playhead.frame.size.width,
-                                            playhead.frame.size.height);
-            }
-            
-            break;
+            timeRemaining = 0;
         }
-        case NMXKeyFrameRunStatusPaused:
+        
+        if (self.previousPercentage > percentComplete)  // we are reversing direction
         {
-            NSLog(@"handleStatusTimer runStatus: NMXRunStatusPaused");
-            
-            break;
-        }
-        case NMXKeyFrameRunStatusStopped:
-        {
-            NSLog(@"handleStatusTimer runStatus: NMXRunStatusStopped");
-            
-            [keyframeTimer invalidate];
-            keyframeTimer = nil;
-            
-            [self clearFields];
-            [self transitionToState: ControllerStateMotorRampingOrSendMotors];
-            
-            break;
-        }
-        case NMXKeyFrameRunStatusDelayTimer:
-        {
-            self.totalRunTime = [device queryKeyFrameProgramMaxTime];
-            
-            self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
-            
-            int	wholeseconds3	= (int)self.lastRunTime / 1000;
-            int	hours3			= wholeseconds3 / 3600;
-            int	minutes3		= (wholeseconds3 % 3600) / 60;
-            int	seconds3		= wholeseconds3 % 60;
-            
-            NSLog(@"NMXRunStatusDelayTimer Status lastRunTime: %02ld:%02ld:%02ld", (long)hours3, (long)minutes3, (long)seconds3);
-            
-            self.timeOfLastRunTime = time(nil);
-            
-            NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
-            
-            NSLog(@"NMXRunStatusDelayTimer Status timeRemaining: %li",(long)timeRemaining);
-            
-            int currentDelayTime = [device queryDelayTime];
-            
-            NSLog(@"NMXRunStatusDelayTimer Status currentDelayTime: %i",currentDelayTime);
-            
-            break;
-        }
-        case NMXKeyFrameRunStatusKeepAlive:
-        {
-            NSLog(@"keep alive");
-            
-            unsigned int framesShot = [device cameraQueryCurrentShots];
-            
-            UInt32  videoLength = framesShot * 1000 / self.fps;
-            
-            self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
-            self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
-            self.timelapseTimeRemainingValueLabel.text = @"-";
-            
-            float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
-            
-            if(percentComplete2 <= 1.0)
+            NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
+            if (atEndSelection==AtProgramEndPingPong)
             {
-                percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
+                self.reversing = !self.reversing;
             }
-            else if(percentComplete2 > 1.0)
+        }
+        
+        if (percentComplete >= 1.f || self.reversing)
+        {
+            self.atProgramEndControl.enabled = NO;
+        }
+        
+        self.previousPercentage = percentComplete;
+        
+        if (self.reversing)
+        {
+            percentComplete = 1. - percentComplete;
+        }
+
+        
+        if (NMXProgramModeVideo == self.programMode)
+        {
+            self.videoProgressView.progress = percentComplete;
+            self.videoTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
+            
+            //float percentComplete2 = (float)self.lastRunTime/self.totalRunTime;
+            //NSLog(@"keyframe video percentComplete2: %f",percentComplete2);
+            
+            if(percentComplete <= 1.0)
             {
-                percentCompletePosition = graphWidth * screenRatio;
+                percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
             }
+            
+            NSLog(@"keyframe video percentCompletePosition: %f",percentCompletePosition);
             
             playhead.frame = CGRectMake(percentCompletePosition,
                                         playhead.frame.origin.y,
                                         playhead.frame.size.width,
                                         playhead.frame.size.height);
-            break;
         }
-        default:
+        else
         {
-            NSLog(@"something else");
-            break;
+            unsigned int  framesShot = [device cameraQueryCurrentShots];
+            
+            NSLog(@"framesShot: %i",framesShot);
+            
+            UInt32  videoLength = framesShot * 1000 / self.fps;
+            
+            NSLog(@"videoLength: %i",(unsigned int)videoLength);
+            
+            self.timelapseProgressView.progress = percentComplete;
+            self.timelapseTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
+            self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
+            self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
+            
+            NSLog(@"%%    percentComplete per device: %g",percentComplete);
+            
+            if(percentComplete <= 1.0)
+            {
+                percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
+            }
+            
+            NSLog(@"keyframe percentCompletePosition: %f",percentCompletePosition);
+            
+            playhead.frame = CGRectMake(percentCompletePosition,
+                                        playhead.frame.origin.y,
+                                        playhead.frame.size.width,
+                                        playhead.frame.size.height);
         }
+    }
+    else if (runStatus & NMXRunStatusPaused)
+    {
+        NSLog(@"handleStatusTimer runStatus: NMXRunStatusPaused");
+    }
+    else if (runStatus == NMXRunStatusStopped)
+    {
+        NSLog(@"handleStatusTimer runStatus: NMXRunStatusStopped");
+        
+        [keyframeTimer invalidate];
+        keyframeTimer = nil;
+        
+        [self clearFields];
+        [self transitionToState: ControllerStateMotorRampingOrSendMotors];
+        
+    }
+    else if (runStatus & NMXRunStatusDelayTimer)
+    {
+        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+        
+        self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
+        
+        int	wholeseconds3	= (int)self.lastRunTime / 1000;
+        int	hours3			= wholeseconds3 / 3600;
+        int	minutes3		= (wholeseconds3 % 3600) / 60;
+        int	seconds3		= wholeseconds3 % 60;
+        
+        NSLog(@"NMXRunStatusDelayTimer Status lastRunTime: %02ld:%02ld:%02ld", (long)hours3, (long)minutes3, (long)seconds3);
+        
+        self.timeOfLastRunTime = time(nil);
+        
+        NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
+        
+        NSLog(@"NMXRunStatusDelayTimer Status timeRemaining: %li",(long)timeRemaining);
+        
+        int currentDelayTime = [device queryDelayTime];
+        
+        NSLog(@"NMXRunStatusDelayTimer Status currentDelayTime: %i",currentDelayTime);
+    }
+    else if (runStatus & NMXRunStatusKeepAlive)
+    {
+        NSLog(@"keep alive");
+        
+        unsigned int framesShot = [device cameraQueryCurrentShots];
+        
+        UInt32  videoLength = framesShot * 1000 / self.fps;
+        
+        self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
+        self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
+        self.timelapseTimeRemainingValueLabel.text = @"-";
+        
+        float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
+        
+        if(percentComplete2 <= 1.0)
+        {
+            percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
+        }
+        else if(percentComplete2 > 1.0)
+        {
+            percentCompletePosition = graphWidth * screenRatio;
+        }
+        
+        playhead.frame = CGRectMake(percentCompletePosition,
+                                    playhead.frame.origin.y,
+                                    playhead.frame.size.width,
+                                    playhead.frame.size.height);
+    }
+    else
+    {
+        NSLog(@"something else");
     }
 }
 
@@ -1698,197 +1819,240 @@ ControllerState;
     
     NMXRunStatus runStatus = [device mainQueryRunStatus];
     
-    switch (runStatus)
-    {
-        case NMXRunStatusRunning:
+    if (runStatus & NMXRunStatusPaused) {
+        NSLog(@"handleStatusTimer runStatus: NMXRunStatusPaused");
+            
+        // This state should only happen from the user hitting pause, and we already handle that transition...
+    }
+    else if (runStatus == NMXRunStatusStopped) {
+        NSLog(@"handleStatusTimer runStatus: NMXRunStatusStopped");
+        
+        // Due to a firmware bug.  We want to make sure we are really stopped...
+        
+        runStatus = [device mainQueryRunStatus];
+        
+        if (NMXRunStatusStopped == runStatus)
         {
-            timerContainer.hidden = YES;
+            [self.statusTimer invalidate];
+            self.statusTimer = nil;
             
-            NSLog(@"NMXRunStatusRunning");
-            
-            float percentComplete = [device mainQueryProgramPercentComplete] / (float)100;
-            self.lastRunTime = [device mainQueryRunTime];
-            self.timeOfLastRunTime = time(nil);
-            
-            NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
-            
-            if (timeRemaining < 0)
-            {
-                timeRemaining = 0;
-            }
-            
-            if (NMXProgramModeVideo == self.programMode)
-            {
-                self.videoProgressView.progress = percentComplete;
-                self.videoTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
- 
-//                [self.appExecutive.videoLengthNumber integerValue];
-//                NSLog(@"percentComplete: %f",percentComplete);
-//                NSLog(@"totalRunTime: %u",(unsigned int)self.totalRunTime);
-//                NSLog(@"lastRunTime: %u",(unsigned int)self.lastRunTime);
-//                NSLog(@"timeRemaining: %li",(long)timeRemaining);
-                
-                float percentComplete2 = (float)self.lastRunTime/self.totalRunTime;
-                
-                NSLog(@"percentComplete2 orig: %f",percentComplete2);
-                
-                if(percentComplete <= 1.0)
-                {
-                    //percentCompletePosition = (graphWidth * percentComplete)*screenRatio;
-                    percentCompletePosition = (graphWidth * percentComplete2)*screenRatio;
-                }
-                
-                NSLog(@"percentCompletePosition orig: %f",percentCompletePosition);
-                
-                playhead.frame = CGRectMake(percentCompletePosition,
-                                            playhead.frame.origin.y,
-                                            playhead.frame.size.width,
-                                            playhead.frame.size.height);
-            }
-            else
-            {
-                unsigned int framesShot = [device cameraQueryCurrentShots];
-                
-                UInt32  videoLength = framesShot * 1000 / self.fps;
-                
-                self.timelapseProgressView.progress = percentComplete;
-                self.timelapseTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
-                self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
-                self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
-                
-                //NSLog(@"percentComplete: %f",percentComplete);
-                
-                float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
-                
-                NSLog(@"percentComplete2 orig: %f",percentComplete2);
-                
-                if(percentComplete2 <= 1.0)
-                {
-                    percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
-                }
-                
-                NSLog(@"percentCompletePosition orig: %f",percentCompletePosition);
-                
-                playhead.frame = CGRectMake(percentCompletePosition,
-                                            playhead.frame.origin.y,
-                                            playhead.frame.size.width,
-                                            playhead.frame.size.height);
-            }
-            
-            break;
+            [self clearFields];
+            [self transitionToState: ControllerStateMotorRampingOrSendMotors];
         }
-        case NMXRunStatusPaused:
+        else
         {
-            NSLog(@"handleStatusTimer runStatus: NMXRunStatusPaused");
-            
-            // This state should only happen from the user hitting pause, and we already handle that transition...
-            
-            break;
+            DDLogWarn(@"Saw a FAKE stopped response");
         }
-        case NMXRunStatusStopped:
+    }
+    else if (runStatus & NMXRunStatusDelayTimer) {
+        
+        self.totalRunTime = [device mainQueryTotalRunTime];
+        
+        //NSLog(@"NMXRunStatusDelayTimer totalRunTime: %i",self.totalRunTime);
+        
+        self.lastRunTime = [device mainQueryRunTime];
+        
+        //NSLog(@"NMXRunStatusDelayTimer lastRunTime: %i",self.lastRunTime);
+        
+        int	wholeseconds3	= (int)self.lastRunTime / 1000;
+        int	hours3			= wholeseconds3 / 3600;
+        int	minutes3			= (wholeseconds3 % 3600) / 60;
+        int	seconds3			= wholeseconds3 % 60;
+        
+        NSLog(@"NMXRunStatusDelayTimer Status lastRunTime: %02ld:%02ld:%02ld", (long)hours3, (long)minutes3, (long)seconds3);
+        
+        self.timeOfLastRunTime = time(nil);
+        
+        NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
+        
+        NSLog(@"NMXRunStatusDelayTimer Status timeRemaining: %li",(long)timeRemaining);
+        
+        int currentDelayTime = [device queryDelayTime];
+        
+        NSLog(@"NMXRunStatusDelayTimer Status currentDelayTime: %i",currentDelayTime);
+        
+    }
+    else if (runStatus & NMXRunStatusKeepAlive) {
+        NSLog(@"keep alive");
+            
+        unsigned int framesShot = [device cameraQueryCurrentShots];
+        
+        UInt32  videoLength = framesShot * 1000 / self.fps;
+        
+        self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
+        self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
+        self.timelapseTimeRemainingValueLabel.text = @"-";
+        
+        float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
+        
+        //NSLog(@"percentComplete2: %f",percentComplete2);
+        
+        if(percentComplete2 <= 1.0)
         {
-            NSLog(@"handleStatusTimer runStatus: NMXRunStatusStopped");
-            
-            // Due to a firmware bug.  We want to make sure we are really stopped...
-            
-            runStatus = [device mainQueryRunStatus];
-            
-            if (NMXRunStatusStopped == runStatus)
-            {
-                [self.statusTimer invalidate];
-                self.statusTimer = nil;
-                
-                [self clearFields];
-                [self transitionToState: ControllerStateMotorRampingOrSendMotors];
-            }
-            else
-            {
-                DDLogWarn(@"Saw a FAKE stopped response");
-            }
-            break;
+            percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
         }
-        case NMXRunStatusDelayTimer:
+        else if(percentComplete2 > 1.0)
         {
-            self.totalRunTime = [device mainQueryTotalRunTime];
-            
-            //NSLog(@"NMXRunStatusDelayTimer totalRunTime: %i",self.totalRunTime);
-            
-            self.lastRunTime = [device mainQueryRunTime];
-            
-            //NSLog(@"NMXRunStatusDelayTimer lastRunTime: %i",self.lastRunTime);
-            
-            int	wholeseconds3	= (int)self.lastRunTime / 1000;
-            int	hours3			= wholeseconds3 / 3600;
-            int	minutes3			= (wholeseconds3 % 3600) / 60;
-            int	seconds3			= wholeseconds3 % 60;
-            
-            NSLog(@"NMXRunStatusDelayTimer Status lastRunTime: %02ld:%02ld:%02ld", (long)hours3, (long)minutes3, (long)seconds3);
-            
-            self.timeOfLastRunTime = time(nil);
-            
-            NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
-            
-            NSLog(@"NMXRunStatusDelayTimer Status timeRemaining: %li",(long)timeRemaining);
-            
-            int currentDelayTime = [device queryDelayTime];
-            
-            NSLog(@"NMXRunStatusDelayTimer Status currentDelayTime: %i",currentDelayTime);
-            
-            break;
+            percentCompletePosition = graphWidth * screenRatio;
         }
-        case NMXRunStatusKeepAlive:
+        
+        //NSLog(@"percentCompletePosition: %f",percentCompletePosition);
+        
+        playhead.frame = CGRectMake(percentCompletePosition,
+                                    playhead.frame.origin.y,
+                                    playhead.frame.size.width,
+                                    playhead.frame.size.height);
+    }
+    else if (runStatus & NMXRunStatusRunning) {
+        timerContainer.hidden = YES;
+            
+        //NSLog(@"NMXRunStatusRunning");
+            
+        float percentComplete = MIN(1.0, [device mainQueryProgramPercentComplete] / (float)100);
+        self.lastRunTime = [device mainQueryRunTime];
+        self.timeOfLastRunTime = time(nil);
+        
+        NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
+        
+        if (timeRemaining < 0)
         {
-            NSLog(@"keep alive");
-            
-            unsigned int framesShot = [device cameraQueryCurrentShots];
-            
-            UInt32  videoLength = framesShot * 1000 / self.fps;
-            
-            self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
-            self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
-             self.timelapseTimeRemainingValueLabel.text = @"-";
-            
-            float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
-            
-            //NSLog(@"percentComplete2: %f",percentComplete2);
-            
-            if(percentComplete2 <= 1.0)
+            timeRemaining = 0;
+        }
+        
+        if (self.previousPercentage > percentComplete)  // we are reversing direction
+        {
+            NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
+            if (atEndSelection==AtProgramEndPingPong)
             {
-                percentCompletePosition = (graphWidth * percentComplete2) * screenRatio;
+                self.reversing = !self.reversing;
             }
-            else if(percentComplete2 > 1.0)
+        }
+        
+        if (percentComplete >= 1.f || self.reversing)
+        {
+            self.atProgramEndControl.enabled = NO;
+        }
+        
+        self.previousPercentage = percentComplete;
+
+        if (self.reversing)
+        {
+            percentComplete = 1. - percentComplete;
+        }
+        
+        if (NMXProgramModeVideo == self.programMode)
+        {
+            self.videoProgressView.progress = percentComplete;
+            self.videoTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
+            
+            //                [self.appExecutive.videoLengthNumber integerValue];
+            //                NSLog(@"percentComplete: %f",percentComplete);
+            //                NSLog(@"totalRunTime: %u",(unsigned int)self.totalRunTime);
+            //                NSLog(@"lastRunTime: %u",(unsigned int)self.lastRunTime);
+            //                NSLog(@"timeRemaining: %li",(long)timeRemaining);
+            
+            //float percentComplete2 = (float)self.lastRunTime/self.totalRunTime;
+            //NSLog(@"percentComplete2 orig: %f",percentComplete2);
+            
+            if(percentComplete <= 1.0)
             {
-                percentCompletePosition = graphWidth * screenRatio;
+                //percentCompletePosition = (graphWidth * percentComplete)*screenRatio;
+                percentCompletePosition = (graphWidth * percentComplete)*screenRatio;
             }
             
-            //NSLog(@"percentCompletePosition: %f",percentCompletePosition);
+            NSLog(@"percentCompletePosition orig: %f",percentCompletePosition);
             
             playhead.frame = CGRectMake(percentCompletePosition,
                                         playhead.frame.origin.y,
                                         playhead.frame.size.width,
                                         playhead.frame.size.height);
-            break;
         }
-        default:
+        else
         {
-            NSLog(@"something else: %i",runStatus);
+            unsigned int framesShot = [device cameraQueryCurrentShots];
             
-            [self.statusTimer invalidate];
-            self.statusTimer = nil;
+            UInt32  videoLength = framesShot * 1000 / self.fps;
             
-            keyframeTimer = nil;
+            self.timelapseProgressView.progress = percentComplete;
+            self.timelapseTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
+            self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
+            self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
+
+            //NSLog(@"%%    percentComplete per device: %g   frames = %d  framesPerProg = %d",percentComplete, framesShot, [self.appExecutive.frameCountNumber intValue]);
             
-            [self.disconnectedTimer invalidate];
-            self.disconnectedTimer = nil;
+            if(percentComplete <= 1.0)
+            {
+                percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
+            }
             
-            dispatch_async(dispatch_get_main_queue(), ^(void) {
-                
-                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];                
-            });
+            //NSLog(@"**********  Runtime = %u   Total runtime = %u\n\n", [device mainQueryRunTime], [device mainQueryTotalRunTime]);
             
-            break;
+            //NSLog(@"percentCompletePosition orig: %f",percentCompletePosition);
+            
+            playhead.frame = CGRectMake(percentCompletePosition,
+                                        playhead.frame.origin.y,
+                                        playhead.frame.size.width,
+                                        playhead.frame.size.height);
+        }
+
+    }
+    else {
+        NSLog(@"something else: %i",runStatus);
+            
+        [self.statusTimer invalidate];
+        self.statusTimer = nil;
+        
+        keyframeTimer = nil;
+        
+        [self.disconnectedTimer invalidate];
+        self.disconnectedTimer = nil;
+        
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];
+        });
+        
+    }
+}
+
+- (void) calculatePingPongReverse
+{
+    int runningBackwards = 0;
+    
+    if (AtProgramEndPingPong != self.atProgramEndControl.selectedSegmentIndex)
+    {
+        self.reversing = NO;
+        return;
+    }
+
+    
+    if (self.programMode == NMXProgramModeVideo)
+    {
+        if (self.totalRunTime > 0)
+        {
+            if (self.appExecutive.is3P)
+            {
+                self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
+            }
+            else
+            {
+                self.lastRunTime = [device mainQueryRunTime];
+            }
+
+            runningBackwards = ((int)((float)self.lastRunTime/(float)self.totalRunTime)) % 2;
         }
     }
+    else
+    {
+        unsigned int framesPerRun = [self.appExecutive.frameCountNumber intValue];
+        unsigned int framesShot = [device cameraQueryCurrentShots];
+    
+        runningBackwards = ((int)((float)framesShot/(float)framesPerRun)) % 2;
+    }
+    
+    //NSLog(@"Total Run Time = %g     Last Run Time = %g", (float)self.totalRunTime, (float)self.lastRunTime);
+    
+    self.reversing = runningBackwards ? YES: NO;
 }
 
 - (void) transitionToPauseProgramState {
@@ -1925,6 +2089,8 @@ ControllerState;
     {
         self.timePerFrame = self.totalRunTime / [device cameraQueryMaxShots];
     }
+
+    [self calculatePingPongReverse];
 }
 
 - (void) transitionToConfirmPauseProgramState {
@@ -1947,6 +2113,10 @@ ControllerState;
     
 	self.resumeProgramButton.hidden = NO;
 	self.stopProgramButton.hidden = NO;
+    self.confirmPauseProgramButton.hidden = YES;
+    self.pauseProgramButton.hidden = YES;
+    
+    [self calculatePingPongReverse];
 }
 
 #pragma mark - Graph

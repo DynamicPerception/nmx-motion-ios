@@ -16,6 +16,7 @@
 #import "JoyButton.h"
 #import "NMXDevice.h"
 #import "MBProgressHUD.h"
+#import "CameraSettingsTimelineView.h"
 
 
 //------------------------------------------------------------------------------
@@ -27,6 +28,7 @@
 
 	UIAlertView *		intervalAlert;
 	UIAlertView *		frameCountAlert;
+    BOOL                isVisible;
 }
 
 @property (nonatomic, strong)				AppExecutive *				appExecutive;
@@ -39,6 +41,7 @@
 @property (nonatomic, strong)	IBOutlet	JoyButton *					joystickButton;
 @property (nonatomic, strong)	IBOutlet	JoyButton *					nextButton;
 
+@property (strong, nonatomic)   IBOutlet    CameraSettingsTimelineView *cameraSettingsTimelineView;
 
 // Timelapse view container
 
@@ -55,7 +58,6 @@
 @property (nonatomic, strong)	IBOutlet	UILabel *					frameRateValue;
 
 @property (nonatomic, strong)	IBOutlet	JoyButton *					advancedCameraSettingsButton;
-@property (nonatomic, strong)	IBOutlet	JoyButton *					testCameraButton;
 
 @property (nonatomic, strong)	IBOutlet	UIButton *					settingsButton;
 
@@ -67,6 +69,11 @@
 @property (nonatomic, strong)	IBOutlet	UISegmentedControl *		videoModeControl;
 
 @property (nonatomic, strong)	IBOutlet	UILabel *					videoShotDurationValue;	// same value as videoLengthValue
+
+@property (strong, nonatomic) IBOutlet UIView *exposureColorBarView;
+@property (strong, nonatomic) IBOutlet UIView *bufferColorBarView;
+@property (strong, nonatomic) IBOutlet UIView *intervalColorBarView;
+
 
 @end
 
@@ -89,6 +96,7 @@ NSString	static	*kSegueForVideoShotDurationInput	= @"SegueForVideoShotDurationIn
 NSString	static	*kSegueForFrameRateInput			= @"SegueForFrameRateInput";
 NSString	static	*kSegueForTestCameraModalView		= @"SegueForTestCameraModalView";
 NSString	static	*kSegueForAboutView					= @"SegueForAboutView";
+NSString    static  *kSequeForCameraSettingsView        = @"SegueToCameraSettingsViewController";
 
 NSString	static	*kShotDurationName		= @"kShotDurationName";
 NSString	static	*kVideoLengthName		= @"kVideoLengthName";
@@ -122,7 +130,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 @synthesize frameRateValue;
 
 @synthesize advancedCameraSettingsButton;
-@synthesize testCameraButton;
 
 @synthesize settingsButton;
 
@@ -206,6 +213,10 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     
     buttonView.hidden = YES;
     
+    self.exposureColorBarView.backgroundColor = [CameraSettingsTimelineView exposureColor];
+    self.bufferColorBarView.backgroundColor = [CameraSettingsTimelineView bufferColor];
+    self.intervalColorBarView.backgroundColor = [CameraSettingsTimelineView intervalColor];
+    
     [[NSNotificationCenter defaultCenter]
      addObserver:self
      selector:@selector(handleNotificationLoadPreset:)
@@ -240,14 +251,13 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         minimumDurationHeaderLbl.hidden = YES;
         minimumDurationSubHeaderLbl.hidden = YES;
         minimuDurationLbl.hidden = YES;
-        
-        videoModeControl.userInteractionEnabled = NO;
-        [videoModeControl removeSegmentAtIndex:1 animated:NO];
     }
         
 //    NSLog(@"ms1: %i",self.appExecutive.microstep1);
 //    NSLog(@"ms2: %i",self.appExecutive.microstep2);
 //    NSLog(@"ms3: %i",self.appExecutive.microstep3);
+    
+    [self.cameraSettingsTimelineView addTarget:self action:@selector(touchedTimeline:) forControlEvents:UIControlEventTouchUpInside];
     
     [super viewDidLoad];
 }
@@ -348,7 +358,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     //NSLog(@"viewwillappear setup");
 
     if (NMXRunStatusStopped != [[AppExecutive sharedInstance].device mainQueryRunStatus] ||
-        NMXKeyFrameRunStatusStopped != [[AppExecutive sharedInstance].device queryKeyFrameProgramRunState])
+        NMXRunStatusStopped != [[AppExecutive sharedInstance].device queryKeyFrameProgramRunState])
     {
         //NSLog(@"randall load status not stopped setupVC: %i",[[AppExecutive sharedInstance].device queryKeyFrameProgramRunState]);
         
@@ -479,14 +489,39 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 	NSInteger frameRate = [self.appExecutive.frameRateNumber integerValue];
 	self.frameRateValue.text = [NSString stringWithFormat: @"%ld", (long)frameRate];
+    
+    [self.cameraSettingsTimelineView stopPlayheadAnimation];
+    [self.cameraSettingsTimelineView setCameraTimesForFocus:[self.appExecutive.focusNumber integerValue]
+                                                    trigger:[self.appExecutive.triggerNumber integerValue]
+                                                      delay:[self.appExecutive.delayNumber integerValue]
+                                                     buffer:[self.appExecutive.bufferNumber integerValue]
+                                                   animated:isVisible];
+}
+
+- (void) viewDidLayoutSubviews
+{
+    [self.cameraSettingsTimelineView setCameraTimesForFocus:[self.appExecutive.focusNumber integerValue]
+                                                    trigger:[self.appExecutive.triggerNumber integerValue]
+                                                      delay:[self.appExecutive.delayNumber integerValue]
+                                                     buffer:[self.appExecutive.bufferNumber integerValue]
+                                                   animated:NO];
+}
+
+- (void) viewDidDisappear:(BOOL)animated
+{
+    isVisible = NO;
+    [self.cameraSettingsTimelineView stopPlayheadAnimation];
 }
 
 - (void) viewDidAppear: (BOOL) animated {
     
 	[super viewDidAppear: animated];
+    isVisible = YES;
 
 	[self handleRecordModeControl: self.recordModeControl];
 
+    [self.cameraSettingsTimelineView startPlayheadAnimation];
+    
 	if (getenv("GOTO_ABOUT"))
 	{
 		[self performSegueWithIdentifier: kSegueForAboutView sender: self];
@@ -596,6 +631,13 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 #pragma mark - IBAction Methods
 
+- (void) touchedTimeline: (id)control
+{
+    [self performSegueWithIdentifier: kSequeForCameraSettingsView sender: self];
+}
+
+
+
 - (IBAction) handleRecordModeControl: (UISegmentedControl *) sender {
 
 	NSInteger	index = sender.selectedSegmentIndex;
@@ -684,22 +726,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 	[self performSegueWithIdentifier: kSegueForIntervalInput sender: self];
 }
 
-- (IBAction) handleTestCameraButton: (UIButton *) sender {
-
-	DDLogDebug(@"Test Camera Button");
-	// go to modal view
-    
-    NMXDevice * device = [AppExecutive sharedInstance].device;
-    
-    [device cameraSetEnable: true];
-    [device cameraSetTriggerTime: (UInt32)[self.appExecutive.triggerNumber unsignedIntegerValue]];
-    [device cameraSetFocusTime: (UInt16)[self.appExecutive.focusNumber unsignedIntegerValue]];
-    [device cameraSetExposureDelay: (UInt16)[self.appExecutive.delayNumber unsignedIntegerValue]];
-    [device cameraSetInterval: (UInt32)[self.appExecutive.intervalNumber unsignedIntegerValue]];
-
-    [device cameraSetTestMode: true];
-}
-
 - (IBAction) handleAdvancedCameraSettingsButton: (UIButton *) sender {
 
 	DDLogDebug(@"Advanced Camera Settings Button");
@@ -746,14 +772,14 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 }
 
 - (void) checkProgramAndHandleNext {
-    
+
     NMXDevice * device = [AppExecutive sharedInstance].device;
     
     if (appExecutive.is3P == NO) {
 
-        if ((255 == [device motorAutoSetMicrosteps: device.sledMotor]) ||
-            (255 == [device motorAutoSetMicrosteps: device.panMotor])  ||
-            (255 == [device motorAutoSetMicrosteps: device.tiltMotor]))
+        if ((NO == [device motorQueryFeasibility: device.sledMotor]) ||
+            (NO == [device motorQueryFeasibility: device.panMotor]) ||
+            (NO == [device motorQueryFeasibility: device.tiltMotor]))
         {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
                                                             message: @"Increase shot duration"
@@ -765,13 +791,14 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         else
         {
             // If we transition too fast, the hardware gets unhappy...
-            
             usleep(100);
             [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
         }
     }
     else
     {
+        // If we transition too fast, the hardware gets unhappy...
+        usleep(100);
         [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
     }
 }
@@ -974,19 +1001,72 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     
 	if (FALSE == [number isEqualToNumber: self.appExecutive.exposureNumber])
 	{
-        //self.appExecutive.delayNumber = number; //randall 8-9-15
-        
-        self.appExecutive.exposureNumber = number;
-		[self.appExecutive resetFocusTime];
-		[self.appExecutive resetTriggerTime];
+        if ([self.appExecutive validExposureNumber: number])
+        {
+            self.appExecutive.exposureNumber = number;
+            
+            NSInteger focus		= [self.appExecutive.focusNumber integerValue];
+            NSInteger trigger	= [self.appExecutive.triggerNumber integerValue];
+            NSInteger interval		= [self.appExecutive.intervalNumber integerValue];
+            NSInteger exposure	    = [self.appExecutive.exposureNumber integerValue];
+
+            NSInteger buffer;
+            if (exposure > (interval - focus))
+            {
+                buffer = focus;
+                interval = exposure + focus;
+                
+                self.appExecutive.intervalNumber = [NSNumber numberWithInteger: interval];
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Interval Setting"
+                                                                message: @"Interval has been changed to maintain minimum buffer time."
+                                                               delegate: self
+                                                      cancelButtonTitle: @"OK"
+                                                      otherButtonTitles: nil];
+                [alert show];
+
+            }
+            else
+            {
+                buffer = interval - exposure;
+            }
+
+            self.appExecutive.bufferNumber = [NSNumber numberWithInteger: buffer];
+            
+            NSInteger delay = exposure - (focus + trigger);
+            
+            if (delay < 100)
+            {
+                delay = 100;
+                focus = exposure - (delay + trigger);
+                
+                if (focus < 100)
+                {
+                    focus = 100;
+
+                    trigger = exposure - (delay + focus);
+                    trigger = MAX(100, trigger);
+                    self.appExecutive.triggerNumber = [NSNumber numberWithInteger: trigger];
+                }
+                
+                self.appExecutive.focusNumber = [NSNumber numberWithInteger: focus];
+            }
+            
+            self.appExecutive.delayNumber = [NSNumber numberWithInteger: delay];
+            
+            self.exposureValue.text = [NSString stringWithFormat: @"%@ s", [ExposureViewController stringForExposure: exposure]];
+        }
+        else
+        {
+            UIAlertView *alert = [[UIAlertView alloc]
+                                  initWithTitle:@""
+                                  message:@"The selected exposure value is not allowed"
+                                  delegate:nil
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles:nil];
+            [alert show];
+        }
 	}
-
-	[self updateViewFields];
-}
-
-- (void) updateExposureString: (NSString *) string {
-
-	self.exposureValue.text = [NSString stringWithFormat: @"%@ s", string];
 }
 
 //------------------------------------------------------------------------------
@@ -1056,11 +1136,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     appExecutive.focusNumber = preset.focus;
     appExecutive.triggerNumber = preset.trigger;
     appExecutive.delayNumber = preset.delay;
-    
-//    recordModeControl.selectedSegmentIndex = preset.timelapsevideo;
-//    timelapseModeControl.selectedSegmentIndex = preset.smscontinuous;
-    
-    [self.appExecutive computeDelayTime];
     
     [self updateViewFields];
     

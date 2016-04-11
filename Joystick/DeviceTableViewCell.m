@@ -141,7 +141,7 @@
                 NSString *deviceImage = [self getImageForDeviceStatus: device];
                 self.imageView.image = [UIImage imageNamed: deviceImage];
                 
-                if (NMXRunStatusStopped != queryStatus || NMXKeyFrameRunStatusStopped != queryStatusKeyFrame)
+                if ((NMXRunStatusStopped != queryStatus) || NMXRunStatusStopped != queryStatusKeyFrame)
                 {
                     [self.tableView navigateToMainViewWithDevice: self.device];
                 }
