@@ -230,6 +230,7 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 		{
 			shotDurationNumber = number;
 			[self computeFrameCountForShotDurationAndInterval];
+            shotDurationNumber = number;    // ComputeFrameCountForShotDurationAndInterval can change the duration, set it back
 			[self saveValue: shotDurationNumber forKey: kDefaultsShotDuration];
 		}
 	}
