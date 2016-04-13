@@ -1812,6 +1812,18 @@ typedef enum{
     else
     {
         NSLog(@"something else");
+        
+        [keyframeTimer invalidate];
+        keyframeTimer = nil;
+        
+        [self.disconnectedTimer invalidate];
+        self.disconnectedTimer = nil;
+        
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];
+        });
+
     }
 }
 
@@ -1904,6 +1916,19 @@ typedef enum{
                                     playhead.frame.size.height);
     }
     else if (runStatus & NMXRunStatusRunning) {
+        
+/*
+ //mm debug cycle timing
+        UInt32 lastRunTime = [device mainQueryRunTime];
+        AppExecutive *ae = [AppExecutive sharedInstance];
+        NSInteger intervalTime = [ae intervalNumber].integerValue;
+        UInt32 timeIntoCycle = lastRunTime % intervalTime;
+        NSInteger focus = [ae.focusNumber integerValue];
+        NSInteger trigger = [ae.triggerNumber integerValue];
+        NSInteger delay = [ae.delayNumber integerValue];
+        NSLog(@"Into Cycle %u    Start of MM = %ld", timeIntoCycle, focus+trigger+delay-900);
+*/
+        
         timerContainer.hidden = YES;
             
         //NSLog(@"NMXRunStatusRunning");

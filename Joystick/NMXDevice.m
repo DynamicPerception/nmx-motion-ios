@@ -1071,7 +1071,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         command = NMXCommandMainQueryRunStatus_DEPRECATED;
     }
     
-    NMXRunStatus    runStatus;
+    NMXRunStatus    runStatus = NMXRunStatusUnknown;
     unsigned char   newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: command dataLength: 0];
     

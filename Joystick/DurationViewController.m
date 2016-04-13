@@ -12,6 +12,7 @@
 #import "JoyButton.h"
 #import "NMXDevice.h"
 
+#define MAX_HOURS 99
 
 //------------------------------------------------------------------------------
 
@@ -83,12 +84,10 @@ NSArray static	*secondsStrings = nil;
 	NSMutableArray *mutableNumbers	= [NSMutableArray array];
 	NSMutableArray *mutableStrings	= [NSMutableArray array];
 
-    //for (NSInteger index = 0; index < 60; index++)
-	for (NSInteger index = 0; index <= 99; index++)
+	for (NSInteger index = 0; index <= MAX_HOURS; index++)
 		[mutableNumbers addObject: [NSNumber numberWithInteger: index]];
 
-	//for (NSInteger index = 0; index < 60; index++)
-    for (NSInteger index = 0; index <= 99; index++)
+    for (NSInteger index = 0; index <= MAX_HOURS; index++)
 		[mutableStrings addObject: [NSString stringWithFormat: @"%02ldh", (long)index]];
 
 	hoursNumbers = [NSArray arrayWithArray: mutableNumbers];
@@ -173,6 +172,13 @@ NSArray static	*secondsStrings = nil;
 		NSInteger	minutes			= (wholeseconds % 3600) / 60;
 		NSInteger	seconds			= wholeseconds % 60;
 
+        if (hours > MAX_HOURS)
+        {
+            hours = MAX_HOURS;
+            minutes = 59;
+            seconds = 59;
+        }
+        
 		NSInteger	hoursRow	= [hoursNumbers   indexOfObject: [NSNumber numberWithInteger: hours]];
 		NSInteger	minutesRow	= [minutesNumbers indexOfObject: [NSNumber numberWithInteger: minutes]];
 		NSInteger	secondsRow	= [secondsNumbers indexOfObject: [NSNumber numberWithInteger: seconds]];
