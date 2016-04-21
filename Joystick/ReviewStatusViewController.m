@@ -1728,13 +1728,13 @@ typedef enum{
             self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
             self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
             
-            NSLog(@"%%    percentComplete per device: %g",percentComplete);
+            //NSLog(@"%%    percentComplete per device: %g      remaining %@",percentComplete, self.timelapseTimeRemainingValueLabel.text);
             
             if(percentComplete <= 1.0)
             {
                 percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
             }
-            
+
             NSLog(@"keyframe percentCompletePosition: %f",percentCompletePosition);
             
             playhead.frame = CGRectMake(percentCompletePosition,
@@ -1742,6 +1742,17 @@ typedef enum{
                                         playhead.frame.size.width,
                                         playhead.frame.size.height);
         }
+        
+        if (percentComplete >= 1.0 || (self.atProgramEndControl.enabled == NO))
+        {
+            if (runStatus & NMXRunStatusKeepAlive ||
+                runStatus & NMXRunStatusPingPong)
+            {
+                self.timelapseTimeRemainingValueLabel.text = @"-";
+                self.videoTimeRemainingValueLabel.text = @"-";
+            }
+        }
+
     }
     else if (runStatus & NMXRunStatusPaused)
     {
@@ -1893,9 +1904,27 @@ typedef enum{
         
         self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
         self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
-        self.timelapseTimeRemainingValueLabel.text = @"-";
+        
+        self.lastRunTime = [device mainQueryRunTime];
+        NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
+        self.timelapseTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
         
         float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
+        
+        float percentComplete = MIN(1.0, [device mainQueryProgramPercentComplete] / (float)100);
+        if (percentComplete >= 1.f || self.reversing)
+        {
+            self.atProgramEndControl.enabled = NO;
+        }
+        
+        if (self.atProgramEndControl.enabled == NO)  // we've gone beyond the max => either ping pong or keep alive
+        {
+            if (runStatus & NMXRunStatusKeepAlive ||
+                runStatus & NMXRunStatusPingPong)
+            {
+                self.timelapseTimeRemainingValueLabel.text = @"-";
+            }
+        }
         
         //NSLog(@"percentComplete2: %f",percentComplete2);
         
@@ -2003,8 +2032,6 @@ typedef enum{
             self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
             self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
 
-            //NSLog(@"%%    percentComplete per device: %g   frames = %d  framesPerProg = %d",percentComplete, framesShot, [self.appExecutive.frameCountNumber intValue]);
-            
             if(percentComplete <= 1.0)
             {
                 percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
@@ -2018,6 +2045,16 @@ typedef enum{
                                         playhead.frame.origin.y,
                                         playhead.frame.size.width,
                                         playhead.frame.size.height);
+        }
+
+        if (self.atProgramEndControl.enabled == NO)  // we've gone beyond the max => either ping pong or keep alive
+        {
+            if (runStatus & NMXRunStatusKeepAlive ||
+                runStatus & NMXRunStatusPingPong)
+            {
+                self.timelapseTimeRemainingValueLabel.text = @"-";
+                self.videoTimeRemainingValueLabel.text  = @"-";
+            }
         }
 
     }

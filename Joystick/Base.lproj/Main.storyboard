@@ -1920,8 +1920,8 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00:00.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u3d-Vk-vgd" userLabel="Shot Duration Value">
-                                                <rect key="frame" x="288" y="167" width="90" height="21"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00:00:00.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u3d-Vk-vgd" userLabel="Shot Duration Value">
+                                                <rect key="frame" x="278" y="167" width="130" height="21"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="21" id="373-89-qSF"/>
                                                 </constraints>
@@ -1930,9 +1930,9 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hl4-cK-RGw" userLabel="Shot Duration Button">
-                                                <rect key="frame" x="288" y="167" width="90" height="21"/>
+                                                <rect key="frame" x="278" y="167" width="130" height="21"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="90" id="NpA-j4-xpM"/>
+                                                    <constraint firstAttribute="width" constant="130" id="NpA-j4-xpM"/>
                                                 </constraints>
                                                 <state key="normal">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -1955,7 +1955,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wRr-19-z5w" userLabel="Frames Count Value">
-                                                <rect key="frame" x="29" y="235" width="70" height="21"/>
+                                                <rect key="frame" x="24" y="235" width="80" height="21"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="21" id="g39-iE-Hss"/>
                                                 </constraints>
@@ -1964,7 +1964,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sa8-7Q-DBr" userLabel="Frames Count Button">
-                                                <rect key="frame" x="29" y="215" width="70" height="41"/>
+                                                <rect key="frame" x="24" y="215" width="80" height="41"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="41" id="7jI-Td-p6f"/>
                                                 </constraints>
@@ -1982,9 +1982,9 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4hb-N1-kFM" userLabel="Video Length Value">
-                                                <rect key="frame" x="253" y="235" width="70" height="21"/>
+                                                <rect key="frame" x="248" y="235" width="80" height="21"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="70" id="jCW-0H-sAF"/>
+                                                    <constraint firstAttribute="width" constant="80" id="jCW-0H-sAF"/>
                                                     <constraint firstAttribute="height" constant="21" id="s9m-4B-Cs7"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1992,7 +1992,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T83-FY-Hh4" userLabel="Video Length Button">
-                                                <rect key="frame" x="253" y="215" width="70" height="41"/>
+                                                <rect key="frame" x="248" y="215" width="80" height="41"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="41" id="NWY-a0-vWB"/>
                                                 </constraints>
@@ -2010,7 +2010,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1bq-hc-Jo1" userLabel="Frame Rate Value">
-                                                <rect key="frame" x="488" y="235" width="70" height="21"/>
+                                                <rect key="frame" x="483" y="235" width="80" height="21"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="21" id="abD-L6-Uta"/>
                                                 </constraints>
@@ -2019,7 +2019,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fMp-VN-yAj" userLabel="Frame Rate Button">
-                                                <rect key="frame" x="488" y="215" width="70" height="41"/>
+                                                <rect key="frame" x="483" y="215" width="80" height="41"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="41" id="Wbb-07-ZUW"/>
                                                 </constraints>
@@ -2067,7 +2067,7 @@
                                             <constraint firstItem="OK1-Lb-uHG" firstAttribute="top" secondItem="sbs-If-zNZ" secondAttribute="bottom" constant="16" id="7T5-6r-nS0"/>
                                             <constraint firstItem="sbs-If-zNZ" firstAttribute="centerX" secondItem="bpB-uC-NOT" secondAttribute="centerX" id="7p2-0K-Lao"/>
                                             <constraint firstItem="zf9-BT-LqV" firstAttribute="top" secondItem="GN9-XX-Ofn" secondAttribute="bottom" constant="1" id="7sZ-8F-buv"/>
-                                            <constraint firstAttribute="centerX" secondItem="Hl4-cK-RGw" secondAttribute="centerX" constant="-45" id="8FY-OR-z2P"/>
+                                            <constraint firstAttribute="centerX" secondItem="Hl4-cK-RGw" secondAttribute="centerX" constant="-55" id="8FY-OR-z2P"/>
                                             <constraint firstItem="zf9-BT-LqV" firstAttribute="width" secondItem="bpB-uC-NOT" secondAttribute="width" id="91L-yL-vMs"/>
                                             <constraint firstItem="1bq-hc-Jo1" firstAttribute="width" secondItem="4hb-N1-kFM" secondAttribute="width" id="96o-oi-Ydu"/>
                                             <constraint firstItem="sbs-If-zNZ" firstAttribute="height" secondItem="bpB-uC-NOT" secondAttribute="height" constant="20" id="9FL-qx-qGT"/>
@@ -3706,7 +3706,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rrO-KG-W20">
-                                        <rect key="frame" x="166" y="37" width="245" height="100"/>
+                                        <rect key="frame" x="156" y="37" width="265" height="100"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time Remaining:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hz2-hI-44O" userLabel="Video Time Remaining">
                                                 <rect key="frame" x="20" y="20" width="135" height="21"/>
@@ -3715,7 +3715,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="12:34:56" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uEd-DS-hhg" userLabel="Video Time Remaining Value">
-                                                <rect key="frame" x="155" y="20" width="70" height="21"/>
+                                                <rect key="frame" x="155" y="20" width="110" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -3723,7 +3723,7 @@
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="VNf-14-viu"/>
-                                            <constraint firstAttribute="width" constant="245" id="su8-7o-1i9"/>
+                                            <constraint firstAttribute="width" constant="265" id="su8-7o-1i9"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -3756,7 +3756,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5su-81-zBT">
-                                        <rect key="frame" x="166" y="33" width="245" height="90"/>
+                                        <rect key="frame" x="156" y="33" width="265" height="90"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time Remaining:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f5C-d9-efL" userLabel="Timelapse Time Remaining">
                                                 <rect key="frame" x="20" y="0.0" width="135" height="21"/>
@@ -3776,20 +3776,20 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="12:34:56" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WI1-oE-CsI" userLabel="Timelapse Time Remainig Value">
-                                                <rect key="frame" x="155" y="0.0" width="90" height="21"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="12:34:56:78" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WI1-oE-CsI" userLabel="Timelapse Time Remainig Value">
+                                                <rect key="frame" x="155" y="0.0" width="110" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="134" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KUq-dm-Kwg" userLabel="Frames Shot Value">
-                                                <rect key="frame" x="155" y="29" width="90" height="21"/>
+                                                <rect key="frame" x="155" y="29" width="102" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="05:34" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PDk-p1-SVW" userLabel="Video Length Value">
-                                                <rect key="frame" x="155" y="58" width="90" height="21"/>
+                                                <rect key="frame" x="155" y="58" width="102" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -3797,7 +3797,7 @@
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="245" id="dJa-YO-p6D"/>
+                                            <constraint firstAttribute="width" constant="265" id="dJa-YO-p6D"/>
                                             <constraint firstAttribute="height" constant="90" id="pVe-NW-zIz"/>
                                         </constraints>
                                     </view>
@@ -4209,27 +4209,27 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wf4-T0-Qbr" userLabel="Control Background">
-                                <rect key="frame" x="16" y="253" width="568" height="236"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wf4-T0-Qbr" userLabel="Control Background">
+                                <rect key="frame" x="20" y="226" width="560" height="290"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hFP-In-glI">
-                                <rect key="frame" x="16" y="261" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hFP-In-glI">
+                                <rect key="frame" x="20" y="234" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Set Hours, Minutes, and Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTQ-kM-jGw">
-                                <rect key="frame" x="16" y="290" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Days, Hours, Minutes, and Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTQ-kM-jGw">
+                                <rect key="frame" x="16" y="263" width="568" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yMA-m3-gtO">
-                                <rect key="frame" x="16" y="319" width="568" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yMA-m3-gtO">
+                                <rect key="frame" x="20" y="292" width="560" height="216"/>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SQv-Ri-tKy" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SQv-Ri-tKy" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="SzC-6t-nhK"/>
                                 </constraints>
@@ -4253,9 +4253,9 @@ Ramping</string>
                             <constraint firstAttribute="trailingMargin" secondItem="yMA-m3-gtO" secondAttribute="trailing" id="VTO-7O-zaL"/>
                             <constraint firstItem="OTQ-kM-jGw" firstAttribute="top" secondItem="hFP-In-glI" secondAttribute="bottom" constant="8" id="YL0-zU-zWG"/>
                             <constraint firstItem="hFP-In-glI" firstAttribute="top" secondItem="Wf4-T0-Qbr" secondAttribute="top" constant="8" id="Ydg-wY-Ya1"/>
-                            <constraint firstItem="OTQ-kM-jGw" firstAttribute="leading" secondItem="30k-hL-LTZ" secondAttribute="leadingMargin" id="dal-Ea-I9q"/>
+                            <constraint firstItem="OTQ-kM-jGw" firstAttribute="leading" secondItem="30k-hL-LTZ" secondAttribute="leadingMargin" constant="-4" id="dal-Ea-I9q"/>
                             <constraint firstAttribute="centerX" secondItem="SQv-Ri-tKy" secondAttribute="centerX" id="eBX-Ab-KER"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="OTQ-kM-jGw" secondAttribute="trailing" id="ei1-l2-wCh"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="OTQ-kM-jGw" secondAttribute="trailing" constant="-4" id="ei1-l2-wCh"/>
                             <constraint firstItem="yMA-m3-gtO" firstAttribute="top" secondItem="OTQ-kM-jGw" secondAttribute="bottom" constant="8" id="gC9-54-nfN"/>
                             <constraint firstAttribute="trailingMargin" secondItem="hFP-In-glI" secondAttribute="trailing" id="jhx-SA-fmH"/>
                             <constraint firstAttribute="centerX" secondItem="yMA-m3-gtO" secondAttribute="centerX" id="qCe-uB-jLE"/>
@@ -5800,19 +5800,19 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="gqx-Wd-6xg"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="PwX-tX-cQi"/>
+        <segue reference="gqx-Wd-6xg"/>
+        <segue reference="p4Z-EB-hlS"/>
         <segue reference="6SS-hE-J9g"/>
+        <segue reference="k3P-Db-zBC"/>
+        <segue reference="eIy-q4-84e"/>
         <segue reference="rGc-Y0-TPg"/>
-        <segue reference="0Dk-WM-mJ4"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="HUL-Rp-DYU"/>
-        <segue reference="B0O-MD-mVD"/>
-        <segue reference="kyO-dy-beu"/>
         <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="uS0-Tr-f5Z"/>
-        <segue reference="STE-RU-aG4"/>
+        <segue reference="HUL-Rp-DYU"/>
+        <segue reference="6tH-tQ-8da"/>
+        <segue reference="AeQ-9g-E8b"/>
+        <segue reference="kyO-dy-beu"/>
+        <segue reference="B0O-MD-mVD"/>
     </inferredMetricsTieBreakers>
 </document>
