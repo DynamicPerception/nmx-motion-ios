@@ -1902,11 +1902,11 @@ typedef enum{
     }
     else if (runStatus & NMXRunStatusPaused)
     {
-        NSLog(@"handleStatusTimer runStatus: NMXRunStatusPaused");
+        NSLog(@"handleKeyframeStatusTimer runStatus: NMXRunStatusPaused");
     }
     else if (runStatus == NMXRunStatusStopped)
     {
-        NSLog(@"handleStatusTimer runStatus: NMXRunStatusStopped");
+        NSLog(@"handleKeyframeStatusTimer runStatus: NMXRunStatusStopped");
         
         [keyframeTimer invalidate];
         keyframeTimer = nil;
@@ -2071,8 +2071,10 @@ typedef enum{
         timerContainer.hidden = YES;
             
         //NSLog(@"NMXRunStatusRunning");
-            
-        float percentComplete = MIN(1.0, [device mainQueryProgramPercentComplete] / (float)100);
+        
+        int devicePercentComplete = [device mainQueryProgramPercentComplete];
+        
+        float percentComplete = MIN(1.0, devicePercentComplete / (float)100);
         self.lastRunTime = [device mainQueryRunTime];
         self.timeOfLastRunTime = time(nil);
         
@@ -2081,6 +2083,11 @@ typedef enum{
         if (timeRemaining < 0)
         {
             timeRemaining = 0;
+        }
+        else if (devicePercentComplete >= 100)  // work around a bug where the controller sometimes reports
+                                                // 100% done early in the program, usually after a delay
+        {
+            percentComplete = .0;
         }
         
         if (self.previousPercentage > percentComplete)  // we are reversing direction
