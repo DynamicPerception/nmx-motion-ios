@@ -43,7 +43,9 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
     BOOL running;
     
     NSTimer *countdownTimer;
-    int secondsLeft;
+    NSDate  *timerStartTime;
+    NSTimeInterval countdownTime;
+    NSTimeInterval originalCountdownTime;
 //    int hours;
 //    int minutes;
 //    int seconds;
@@ -98,6 +100,7 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
 @property (weak, nonatomic) IBOutlet UIImageView *batteryIcon;
 @property (weak, nonatomic) IBOutlet UIView *contentBG;
 @property (weak, nonatomic) IBOutlet UITextView *debugTxt;
+
 
 - (IBAction) simulateDisconnect:(id)sender;
 - (IBAction) shareScene:(id)sender;

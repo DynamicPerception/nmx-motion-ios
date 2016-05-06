@@ -175,6 +175,7 @@ NSArray static	*tenthsStrings = nil;
     if (isReviewShotTimerSegue)
     {
         [okButton setTitle:@"Start" forState:UIControlStateNormal];
+        self.title.text = @"Delay";
         subheaderLbl.text = @"Set Hours and Minutes";
     }
     else if(isMotorSegue)

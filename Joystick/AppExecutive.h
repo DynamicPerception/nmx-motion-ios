@@ -49,12 +49,11 @@
 @property (nonatomic, strong)		NSArray *			slideIncreaseValues;
 @property (nonatomic, strong)		NSArray *			slideDecreaseValues;
 
+// device
 
 @property (strong, atomic)          NMXDevice *         device;
 @property (strong, atomic)          NMXDeviceManager *  deviceManager;
 @property (nonatomic, readonly)		NSUserDefaults *	defaults;
-
-//Randall additions
 
 @property (nonatomic, readonly)		UIColor *	appBlueColor;
 
@@ -175,5 +174,15 @@
 - (BOOL) validDelayNumber: (NSNumber *) number;
 - (BOOL) validFocusNumber: (NSNumber *) number;
 - (BOOL) validTriggerNumber: (NSNumber *) number;
+
+#pragma mark program delay methods
+
+- (void) setProgramDelayTime: (NSTimeInterval) delay;
+- (NSDate *) getDelayTimerStartTime;
+- (NSTimeInterval) getProgramDelayTime;
+- (NSTimeInterval) getTimeSinceDelayStarted;
+- (void) setOriginalProgramDelay: (NSTimeInterval)delay;
+- (NSTimeInterval) getOriginalProgramDelay;
+
 
 @end

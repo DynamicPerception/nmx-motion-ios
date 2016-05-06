@@ -3533,7 +3533,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="183" id="AUs-o9-2mG"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="100"/>
+                                        <fontDescription key="fontDescription" name="CourierNewPS-BoldMT" family="Courier New" pointSize="100"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -3851,7 +3851,7 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Out of range - status estimated." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mms-w6-hun">
-                                <rect key="frame" x="185" y="441" width="230" height="18"/>
+                                <rect key="frame" x="185" y="664" width="230" height="18"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="230" id="5K7-02-2se"/>
                                     <constraint firstAttribute="height" constant="18" id="7pe-Mu-vVR"/>
@@ -3963,10 +3963,10 @@ Ramping</string>
                                 </connections>
                             </button>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kmr-hb-7bX" customClass="JoyButton">
-                                <rect key="frame" x="310" y="758" width="120" height="40"/>
+                                <rect key="frame" x="310" y="744" width="120" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="120" id="XPv-qk-KjX"/>
-                                    <constraint firstAttribute="height" constant="40" id="coz-st-6WX"/>
+                                    <constraint firstAttribute="height" constant="48" id="coz-st-6WX"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Go">
@@ -4029,21 +4029,6 @@ Ramping</string>
                                     <action selector="simulateDisconnect:" destination="JJo-cO-rHw" eventType="touchUpInside" id="Qy3-UC-2qc"/>
                                 </connections>
                             </button>
-                            <textView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vhe-B2-yMs">
-                                <rect key="frame" x="12" y="403" width="576" height="334"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="sIg-4u-nfb"/>
-                                </constraints>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="sIg-4u-nfb"/>
-                                    </mask>
-                                </variation>
-                            </textView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hfR-LQ-WaR">
                                 <rect key="frame" x="185" y="713" width="230" height="30"/>
                                 <constraints>
@@ -4059,6 +4044,21 @@ Ramping</string>
                                     <segue destination="cFu-K3-tEi" kind="presentation" identifier="ReviewStatusTimer" id="AeQ-9g-E8b"/>
                                 </connections>
                             </button>
+                            <textView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vhe-B2-yMs">
+                                <rect key="frame" x="12" y="403" width="576" height="334"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="sIg-4u-nfb"/>
+                                </constraints>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="sIg-4u-nfb"/>
+                                    </mask>
+                                </variation>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" red="0.098039215686274508" green="0.19215686274509802" blue="0.41960784313725491" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -4075,7 +4075,7 @@ Ramping</string>
                             <constraint firstItem="bDh-qJ-T1Q" firstAttribute="top" secondItem="791-DZ-iyX" secondAttribute="bottom" id="BnF-iG-MtK"/>
                             <constraint firstItem="Vhe-B2-yMs" firstAttribute="trailing" secondItem="5ya-dE-KyP" secondAttribute="trailing" id="DBi-Da-x0D"/>
                             <constraint firstItem="qAY-t2-nKR" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" id="DYL-AD-D2U"/>
-                            <constraint firstItem="8FC-hv-UmP" firstAttribute="top" secondItem="Kmr-hb-7bX" secondAttribute="bottom" constant="2" id="EEc-bS-cs8"/>
+                            <constraint firstItem="8FC-hv-UmP" firstAttribute="top" secondItem="Kmr-hb-7bX" secondAttribute="bottom" constant="8" id="EEc-bS-cs8"/>
                             <constraint firstAttribute="centerX" secondItem="YMJ-lV-rlE" secondAttribute="centerX" constant="70" id="I8c-4T-NeE"/>
                             <constraint firstItem="IRd-1r-DcP" firstAttribute="top" secondItem="IHZ-IE-dZK" secondAttribute="bottom" constant="8" id="J0k-Nz-gd0"/>
                             <constraint firstItem="5ya-dE-KyP" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" constant="-8" id="JhG-KH-jXY"/>
@@ -4102,7 +4102,6 @@ Ramping</string>
                             <constraint firstItem="791-DZ-iyX" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" constant="-8" id="aol-WV-asb"/>
                             <constraint firstItem="hfR-LQ-WaR" firstAttribute="top" secondItem="LxV-gU-AyN" secondAttribute="bottom" constant="13" id="bPF-iq-FIB"/>
                             <constraint firstAttribute="centerX" secondItem="qdC-Aa-T5l" secondAttribute="centerX" id="bUy-Qe-u6O"/>
-                            <constraint firstItem="mms-w6-hun" firstAttribute="top" secondItem="IRd-1r-DcP" secondAttribute="bottom" constant="8" id="c8g-7G-TDa"/>
                             <constraint firstItem="5ya-dE-KyP" firstAttribute="top" secondItem="Ndq-gE-Aea" secondAttribute="bottom" constant="16" id="cCs-kV-1hY"/>
                             <constraint firstAttribute="trailingMargin" secondItem="5ya-dE-KyP" secondAttribute="trailing" constant="-8" id="cHm-hT-Pge"/>
                             <constraint firstItem="eGr-59-xoD" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" id="cU0-d0-5Ip"/>
@@ -4119,6 +4118,7 @@ Ramping</string>
                             <constraint firstItem="Vhe-B2-yMs" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" constant="-8" id="lSN-L5-SMZ"/>
                             <constraint firstItem="YMJ-lV-rlE" firstAttribute="top" secondItem="G4I-5g-edb" secondAttribute="bottom" constant="16" id="m1V-UJ-2Yi"/>
                             <constraint firstItem="8FC-hv-UmP" firstAttribute="top" secondItem="FuA-Pj-Sss" secondAttribute="bottom" constant="8" id="mSK-kN-k57"/>
+                            <constraint firstItem="mms-w6-hun" firstAttribute="top" secondItem="LxV-gU-AyN" secondAttribute="top" id="mb6-MP-u3i"/>
                             <constraint firstItem="8FC-hv-UmP" firstAttribute="top" secondItem="boS-xK-ld2" secondAttribute="bottom" constant="8" id="nRT-Yj-gaI"/>
                             <constraint firstAttribute="centerX" secondItem="IRd-1r-DcP" secondAttribute="centerX" id="nwk-7P-vdQ"/>
                             <constraint firstItem="r2O-Mf-iwX" firstAttribute="top" secondItem="hfR-LQ-WaR" secondAttribute="bottom" constant="7" id="oXY-sU-trB"/>
@@ -5800,19 +5800,19 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="rGc-Y0-TPg"/>
+        <segue reference="gqx-Wd-6xg"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="PwX-tX-cQi"/>
-        <segue reference="gqx-Wd-6xg"/>
         <segue reference="p4Z-EB-hlS"/>
         <segue reference="6SS-hE-J9g"/>
-        <segue reference="k3P-Db-zBC"/>
-        <segue reference="eIy-q4-84e"/>
-        <segue reference="rGc-Y0-TPg"/>
         <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="HUL-Rp-DYU"/>
+        <segue reference="uS0-Tr-f5Z"/>
+        <segue reference="STE-RU-aG4"/>
         <segue reference="6tH-tQ-8da"/>
-        <segue reference="AeQ-9g-E8b"/>
+        <segue reference="HUL-Rp-DYU"/>
         <segue reference="kyO-dy-beu"/>
+        <segue reference="AeQ-9g-E8b"/>
         <segue reference="B0O-MD-mVD"/>
     </inferredMetricsTieBreakers>
 </document>

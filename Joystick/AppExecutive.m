@@ -102,6 +102,10 @@ NSString		static *kDefaultsTiltDecreaseValues		= @"kDefaultsTiltDecreaseValues";
 NSString		static *kDefaultsSlideIncreaseValues	= @"kDefaultsSlideIncreaseValues";
 NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues";
 
+NSString        static *kDefaultsProgramDelayTime         = @"programDelayTimer";
+NSString        static *kDefaultsProgramDelayTimeSetAt    = @"programDelayTimerSetAtTime";
+NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDelayTimer";
+
 #define kDefaultsMotorSledMicrosteps   @"MotorSledMicrosteps"
 #define kDefaultsMotorPanMicrosteps   @"MotorPanMicrosteps"
 #define kDefaultsMotorTiltMicrosteps   @"MotorTiltMicrosteps"
@@ -754,6 +758,56 @@ NSArray *defaultRampingValues() {
 
     return deviceName;
 }
+
+- (void) setProgramDelayTime: (NSTimeInterval) delay
+{
+    [self.defaults setObject: [NSNumber numberWithDouble:delay] forKey: kDefaultsProgramDelayTime];
+    [self.defaults setObject: [NSDate date] forKey: kDefaultsProgramDelayTimeSetAt];
+    [self.defaults synchronize];
+}
+
+- (NSDate *) getDelayTimerStartTime
+{
+    NSDate *date = [self.defaults objectForKey: kDefaultsProgramDelayTimeSetAt];
+    
+    if (NULL == date)
+    {
+        NSAssert(0, @"Could not find the delay timer start time");
+        date = [NSDate date];
+    }
+    
+    return date;
+}
+
+- (NSTimeInterval) getTimeSinceDelayStarted
+{
+    NSDate *timerStartTime = [self getDelayTimerStartTime];
+    NSTimeInterval ti = [[NSDate date] timeIntervalSinceDate: timerStartTime];
+
+    return ti;
+}
+
+- (NSTimeInterval) getProgramDelayTime
+{
+    NSTimeInterval delayTime = [[self getNumberForKey: kDefaultsProgramDelayTime] doubleValue];
+    return delayTime;
+}
+
+- (void) setOriginalProgramDelay: (NSTimeInterval)delay
+{
+    [self.defaults setObject: [NSNumber numberWithDouble:delay] forKey: kDefaultsOriginalProgramDelayTime];
+    [self.defaults synchronize];
+}
+
+// MM : this is a workaround for a firmware v. .61 bug where, in KF mode, the delay time is encapsulated into
+//   the percentage done calculation coming back from the controller.  We use the original program delay
+//   to get that out of there and calculate a correct %
+- (NSTimeInterval) getOriginalProgramDelay
+{
+    NSTimeInterval delayTime = [[self getNumberForKey: kDefaultsOriginalProgramDelayTime] doubleValue];
+    return delayTime;
+}
+
 
 
 //------------------------------------------------------------------------------
