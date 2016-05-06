@@ -298,17 +298,7 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 }
 
 - (IBAction)setSlaveMode:(UISwitch *)sender {
-    if ([sender isOn] && (![sender isSelected]))
-    {
-        [self.appExecutive.device cameraSetSlaveMode: YES];
-        [sender setSelected:YES];
-
-    }
-    else if ((![sender isOn]) && [sender isSelected])
-    {
-        [self.appExecutive.device cameraSetSlaveMode: NO];
-        [sender setSelected:NO];
-    }
+    [self.appExecutive.device cameraSetSlaveMode: [sender isOn]];
 }
 
 

@@ -20,7 +20,7 @@
 #define kDefaultsMotorPanInvert        @"MotorPanInvert"
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
 
-#define kCurrentSupportedFirmwareVersion 61
+#define kCurrentSupportedFirmwareVersion 62
 
 
 typedef enum : unsigned char {
