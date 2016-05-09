@@ -154,6 +154,7 @@ typedef enum: unsigned char {
     NMXStartResumeKeyFrameProgram = 20,
     NMXPauseKeyFrameProgram = 21,
     NMXStopKeyFrameProgram = 22,
+    NMXKeyFrameTakeUpBacklash = 23,                     // Introduced in v. 0.61
     NMXQueryKeyFrameProgramRunState_DEPRECATED = 120,   // deprecated in v. 0.51
     NMXQueryKeyFrameCurrentRunTime = 121,
     NMXQueryKeyFrameMaxRunTime = 122,
@@ -2299,6 +2300,20 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     [self sendCommand: newData WithDesc: @"Stop KeyFrame Program" WaitForResponse: true WithTimeout: 0.2];
 }
+
+- (void) takeUpBacklashKeyFrameProgram {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 61]) return;
+    
+    unsigned char newDataBytes[16];
+    
+    [self setupBuffer: newDataBytes subAddress: 5 command: NMXKeyFrameTakeUpBacklash dataLength: 0];
+    
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"KeyFrame Program Take Up Backlash" WaitForResponse: true WithTimeout: 0.2];
+}
+
 
 - (void) pauseKeyFrameProgram {
     
