@@ -368,7 +368,7 @@ typedef enum{
 {
     if (delayState)
     {
-        keepAliveView.hidden = YES;
+        [self showKeepAliveView];
         cancelBtn.hidden = NO;
         goBtn.hidden = NO;
         startTimerBtn.hidden = YES;
@@ -472,8 +472,11 @@ typedef enum{
 
 - (void) showKeepAliveView
 {
-    self.atProgramEndControl.enabled = YES;
-    keepAliveView.hidden = NO;
+    if(self.programMode != NMXProgramModeVideo)
+    {
+        self.atProgramEndControl.enabled = YES;
+        keepAliveView.hidden = NO;
+    }
 }
 
 
@@ -838,11 +841,6 @@ typedef enum{
         [self setupGraphViews];
     }
     
-    if (self.appExecutive.is3P)
-    {
-        keepAliveView.hidden = YES;
-    }
-    
     [settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
     
     if ([[UIScreen mainScreen] bounds].size.height <= 480)
@@ -1179,8 +1177,6 @@ typedef enum{
     
     playhead.frame = origPlayheadPosition;
     
-    keepAliveView.hidden = YES;
-    
     //NSLog(@"origPlayheadPosition.origin.x: %f",origPlayheadPosition.origin.x);
 }
 
@@ -1447,6 +1443,8 @@ typedef enum{
             [device mainSetPingPongMode: NO];
         }
     }
+    
+    keepAliveView.hidden = YES;
     
     [self clearFields];
 }
@@ -1759,7 +1757,7 @@ typedef enum{
     
     NMXRunStatus runStatus = [device queryKeyFrameProgramRunState];
     
-    NSLog(@"handleKeyFrameStatusTimer runStatus = 0x%x", runStatus);
+    //NSLog(@"handleKeyFrameStatusTimer runStatus = 0x%x", runStatus);
     
     if (NMXRunStatusUnknown == runStatus)
     {
@@ -1922,6 +1920,7 @@ typedef enum{
         keyframeTimer = nil;
         
         [self clearFields];
+        keepAliveView.hidden = YES;
         [self transitionToState: ControllerStateMotorRampingOrSendMotors];
         
     }
@@ -1982,6 +1981,7 @@ typedef enum{
             self.statusTimer = nil;
             
             [self clearFields];
+            keepAliveView.hidden = YES;
             [self transitionToState: ControllerStateMotorRampingOrSendMotors];
         }
         else

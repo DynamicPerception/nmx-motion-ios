@@ -3526,7 +3526,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G4I-5g-edb" userLabel="timerContainer">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="736"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="656"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="sxd-9j-d75">
                                         <rect key="frame" x="8" y="276" width="584" height="183"/>
@@ -3543,7 +3543,7 @@
                                     <constraint firstAttribute="trailing" secondItem="sxd-9j-d75" secondAttribute="trailing" constant="8" id="Sof-UD-iH0"/>
                                     <constraint firstItem="sxd-9j-d75" firstAttribute="leading" secondItem="G4I-5g-edb" secondAttribute="leading" constant="8" id="aqn-ts-qoU"/>
                                     <constraint firstAttribute="trailing" secondItem="sxd-9j-d75" secondAttribute="trailing" constant="8" id="q2c-8Y-9xC"/>
-                                    <constraint firstAttribute="centerY" secondItem="sxd-9j-d75" secondAttribute="centerY" id="y7c-BC-GKy"/>
+                                    <constraint firstAttribute="centerY" secondItem="sxd-9j-d75" secondAttribute="centerY" constant="-39.5" id="y7c-BC-GKy"/>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="constraints">
@@ -4116,7 +4116,7 @@ Ramping</string>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="bottom" secondItem="qdC-Aa-T5l" secondAttribute="bottom" id="gKC-5A-AVf"/>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="bottom" secondItem="he1-U0-9MV" secondAttribute="bottom" id="i7L-I7-RVC"/>
                             <constraint firstItem="Vhe-B2-yMs" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" constant="-8" id="lSN-L5-SMZ"/>
-                            <constraint firstItem="YMJ-lV-rlE" firstAttribute="top" secondItem="G4I-5g-edb" secondAttribute="bottom" constant="16" id="m1V-UJ-2Yi"/>
+                            <constraint firstItem="YMJ-lV-rlE" firstAttribute="top" secondItem="G4I-5g-edb" secondAttribute="bottom" constant="96" id="m1V-UJ-2Yi"/>
                             <constraint firstItem="8FC-hv-UmP" firstAttribute="top" secondItem="FuA-Pj-Sss" secondAttribute="bottom" constant="8" id="mSK-kN-k57"/>
                             <constraint firstItem="mms-w6-hun" firstAttribute="top" secondItem="LxV-gU-AyN" secondAttribute="top" id="mb6-MP-u3i"/>
                             <constraint firstItem="8FC-hv-UmP" firstAttribute="top" secondItem="boS-xK-ld2" secondAttribute="bottom" constant="8" id="nRT-Yj-gaI"/>
