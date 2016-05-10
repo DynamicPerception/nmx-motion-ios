@@ -574,11 +574,27 @@ typedef enum{
     motorRampingButton.hidden = YES;
 }
 
+- (void) startKeyframeProgram
+{
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+
+        [[AppExecutive sharedInstance].device takeUpBacklashKeyFrameProgram];
+        [[AppExecutive sharedInstance].device startKeyFrameProgram];
+
+        [self startKeyframeTimer];
+    
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
+    });
+}
+
 - (void) doStartMove {
     
     if (appExecutive.is3P == YES)
     {
-        [[AppExecutive sharedInstance].device startKeyFrameProgram];
+        [self startKeyframeProgram];
         
         [self startKeyframeTimer];
     }
@@ -630,9 +646,7 @@ typedef enum{
     
     if (appExecutive.is3P == YES)
     {
-        [[AppExecutive sharedInstance].device startKeyFrameProgram];
-        
-        [self startKeyframeTimer];
+        [self startKeyframeProgram];
     }
     else
     {
@@ -1306,9 +1320,7 @@ typedef enum{
     {
         originalCountdownTime = 0;
         
-        [[AppExecutive sharedInstance].device startKeyFrameProgram];
-        
-        [self startKeyframeTimer];
+        [self startKeyframeProgram];
         
         //NSLog(@"resume keyframe pause");
     }
@@ -1394,9 +1406,7 @@ typedef enum{
     
     if (appExecutive.is3P == YES)
     {
-        [[AppExecutive sharedInstance].device startKeyFrameProgram];
-        
-        [self startKeyframeTimer];
+        [self startKeyframeProgram];
         
         //NSLog(@"resume keyframe pause");
     }

@@ -163,6 +163,7 @@ typedef enum: unsigned char {
 } NMXKeyFrameMode;
 
 
+
 @interface  NMXDevice()
 @property (atomic, strong) CBCentralManager *myCBCentralManager;
 @property (atomic, strong) CBPeripheral *myPeripheral;
@@ -1004,6 +1005,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         }
         NSLog(@"mainQueryFirmwareVersion = %i", fwVerison);
     }
+    
     return fwVerison;
 }
 
@@ -2312,6 +2314,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
     
     [self sendCommand: newData WithDesc: @"KeyFrame Program Take Up Backlash" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        usleep(400000); //wait 400ms for command to complete
+    }
 }
 
 
