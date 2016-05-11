@@ -175,6 +175,7 @@ NSArray static	*tenthsStrings = nil;
     if (isReviewShotTimerSegue)
     {
         [okButton setTitle:@"Start" forState:UIControlStateNormal];
+        self.title.text = @"Delay";
         subheaderLbl.text = @"Set Hours and Minutes";
     }
     else if(isMotorSegue)
@@ -389,6 +390,20 @@ NSArray static	*tenthsStrings = nil;
         NSDictionary *	info	= [NSDictionary dictionaryWithObjects: objects forKeys: keys];
 
         [self.delegate updateShortDurationInfo: info];
+        
+        if ([appExecutive.frameCountNumber integerValue] > USHRT_MAX)
+        {
+            self.appExecutive.frameCountNumber = [NSNumber numberWithInteger: USHRT_MAX];
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Video Length Setting"
+                                                            message: @"New video length exceeds frame count limit.  Length has been adjusted to a legal value."
+                                                           delegate: self
+                                                  cancelButtonTitle: @"OK"
+                                                  otherButtonTitles: nil];
+            [alert show];
+            
+        }
+
     }
     else
     {

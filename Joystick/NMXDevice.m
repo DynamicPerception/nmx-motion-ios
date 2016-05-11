@@ -20,7 +20,7 @@
 #define kDefaultsMotorPanInvert        @"MotorPanInvert"
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
 
-#define kCurrentSupportedFirmwareVersion 54
+#define kCurrentSupportedFirmwareVersion 60
 
 
 typedef enum : unsigned char {
@@ -154,12 +154,14 @@ typedef enum: unsigned char {
     NMXStartResumeKeyFrameProgram = 20,
     NMXPauseKeyFrameProgram = 21,
     NMXStopKeyFrameProgram = 22,
+    NMXKeyFrameTakeUpBacklash = 23,                     // Introduced in v. 0.61
     NMXQueryKeyFrameProgramRunState_DEPRECATED = 120,   // deprecated in v. 0.51
     NMXQueryKeyFrameCurrentRunTime = 121,
     NMXQueryKeyFrameMaxRunTime = 122,
     NMXQueryKeyFramePercentComplete = 123
     
 } NMXKeyFrameMode;
+
 
 
 @interface  NMXDevice()
@@ -334,7 +336,10 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
                 //DDLogDebug(@"Empty Length Response"); randall 8-17-15
             }
             
-            dispatch_semaphore_signal(self.mySemaphore);
+            if (self.mySemaphore)
+            {
+                dispatch_semaphore_signal(self.mySemaphore);
+            }
             
             self.myNotifyData = self.myNotifyBuffer;
             
@@ -679,14 +684,14 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     NMXValueType valueType;
     NSNumber * returnedNumber;
     
-    //NSLog(@"myNotifyData.bytes: %@",&self.myNotifyData.bytes[10]);
-    
 //    NSLog(@"sizeof(valueType): %lu",sizeof(valueType));
 //    NSLog(@"valueType: %c",&valueType);
     
     if (self.myNotifyData.length != 0) {
         
-         memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
+        memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
+
+        //NSLog(@"Read from device value type %d", valueType);
         
         //    @try {
         //
@@ -970,6 +975,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (UInt16) mainQueryFirmwareVersion {
     
+    static int tryCount = 4;
+    
     UInt16    fwVerison;
     unsigned char   newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryFirmwareVersion dataLength: 0];
@@ -983,7 +990,22 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         fwVerison = [[self extractReturnedNumber] UInt16Value];
     }
 
-    NSLog(@"mainQueryFirmwareVersion = %i", fwVerison);
+    if (fwVerison == 0 && tryCount > 0)
+    {
+        tryCount--;
+        NSLog(@"mainQueryFirmwareVersion failed, retrying");
+        return [self mainQueryFirmwareVersion];
+    }
+    else
+    {
+        if (tryCount <= 0)
+        {
+            NSLog(@"FAILED TO GET THE FWVERSION!   Assume the latest");
+            return kCurrentSupportedFirmwareVersion;
+        }
+        NSLog(@"mainQueryFirmwareVersion = %i", fwVerison);
+    }
+    
     return fwVerison;
 }
 
@@ -1777,8 +1799,6 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         microstep = [[self extractReturnedNumber] UInt16Value];
     }
 
-    NSLog(@"REALLY query for motor = %d    motorQueryMicrostep2 = %d", motorNumber, microstep);
-    
     return microstep;
 }
 
@@ -2282,6 +2302,25 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     [self sendCommand: newData WithDesc: @"Stop KeyFrame Program" WaitForResponse: true WithTimeout: 0.2];
 }
+
+- (void) takeUpBacklashKeyFrameProgram {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 61]) return;
+    
+    unsigned char newDataBytes[16];
+    
+    [self setupBuffer: newDataBytes subAddress: 5 command: NMXKeyFrameTakeUpBacklash dataLength: 0];
+    
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"KeyFrame Program Take Up Backlash" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        usleep(400000); //wait 400ms for command to complete
+    }
+}
+
 
 - (void) pauseKeyFrameProgram {
     

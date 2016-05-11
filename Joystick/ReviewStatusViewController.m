@@ -267,7 +267,7 @@ typedef enum{
     [goBtn addTarget:self action:@selector(bypassTimer:) forControlEvents:UIControlEventTouchUpInside];
     
     [[NSNotificationCenter defaultCenter]
-	 addObserver:self
+     addObserver:self
 	 selector:@selector(handleShotDurationNotification:)
 	 name:@"chooseReviewShotDuration" object:nil];
     
@@ -276,14 +276,15 @@ typedef enum{
 	 selector:@selector(handleAddKeyframeDebug:)
 	 name:@"debugKeyframePosition" object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(deviceDisconnect:)
+                                                 name: kDeviceDisconnectedNotification
+                                               object: nil];
+    
     timerContainer.hidden = YES;
     startTimerBtn.hidden = YES;
     keepAliveView.hidden = YES;
     self.previousPercentage = 0.f;
-    
-    //http://stackoverflow.com/questions/13155461/creating-a-stopwatch-in-iphone
-    
-    //[device setDelayProgramStartTimer:3000];
     
     if (!debugDisconnect)
     {
@@ -361,43 +362,89 @@ typedef enum{
     debugInd++;
 }
 
-#pragma mark - Delay Timer Notification
+#pragma mark - Delay
+
+- (void) setControlVisibilityForDelayState: (BOOL) delayState
+{
+    if (delayState)
+    {
+        [self showKeepAliveView];
+        cancelBtn.hidden = NO;
+        goBtn.hidden = NO;
+        startTimerBtn.hidden = YES;
+        timerContainer.hidden = NO;
+        pauseProgramButton.hidden = YES;
+    }
+}
 
 - (void) handleShotDurationNotification:(NSNotification *)pNotification {
     
     NSNumber *n = pNotification.object;
         
-    secondsLeft = [n intValue];
+    countdownTime = [n intValue];
+    originalCountdownTime = countdownTime;
+    [appExecutive setOriginalProgramDelay:countdownTime];
+
+    [appExecutive setProgramDelayTime:countdownTime];
+    timerStartTime = [appExecutive getDelayTimerStartTime];
     
-    //secondsLeft = 5000; //debug
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"HH:mm:ss"];
+    NSLog(@"handleShotDurationNotification countdownTime: %g  startTime %@",countdownTime, [dateFormatter stringFromDate:timerStartTime]);
     
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:secondsLeft] forKey: @"programDelayTimer"];
-    [appExecutive.defaults synchronize];
-    
-    //NSLog(@"defaults programDelay: %@",[appExecutive getNumberForKey: @"programDelayTimer"]);
-    
-    NSLog(@"handleShotDurationNotification secondsLeft: %i",secondsLeft);
-    
-    int	wholeseconds	= secondsLeft / 1000;
+    int	wholeseconds	= countdownTime / 1000;
     int	hours			= wholeseconds / 3600;
     int	minutes			= (wholeseconds % 3600) / 60;
     int	seconds			= wholeseconds % 60;
     
     timerLbl.text = [NSString stringWithFormat:@"%02ld:%02ld:%02ld", (long)hours, (long)minutes, (long)seconds];
     
-    //NSLog(@"timer duration: %@",n);
+    [self setControlVisibilityForDelayState:YES];
     
-    keepAliveView.hidden = YES;
-    cancelBtn.hidden = NO;
-    goBtn.hidden = NO;
-    startTimerBtn.hidden = YES;
-    timerContainer.hidden = NO;
-    
-    [device setDelayProgramStartTimer:secondsLeft];
+    [device setDelayProgramStartTimer:countdownTime];
     
     [self manageCountdownTimer];
     
     [self doStartMove];
+}
+
+- (void) reconnectDelay
+{
+    timerContainer.hidden = NO;
+    
+    if (self.appExecutive.is3P == NO)
+    {
+        self.totalRunTime = [device mainQueryTotalRunTime];
+        self.lastRunTime = [device mainQueryRunTime];
+    }
+    else
+    {
+        self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
+        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+    }
+    
+    self.timeOfLastRunTime = time(nil);
+    
+    countdownTime = [appExecutive getProgramDelayTime];
+    timerStartTime = [appExecutive getDelayTimerStartTime];
+    originalCountdownTime = [appExecutive getOriginalProgramDelay];
+    
+    [self manageCountdownTimer];
+    
+    [self setControlVisibilityForDelayState: YES];
+    
+    sendMotorsToStartButton.hidden = YES;
+    motorRampingButton.hidden = YES;
+    
+    if (self.appExecutive.is3P == NO)
+    {
+        self.statusTimer = self.statusTimer;
+    }
+    else
+    {
+        [self startKeyframeTimer];
+    }
+
 }
 
 - (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
@@ -413,30 +460,35 @@ typedef enum{
 //http://stackoverflow.com/questions/17145112/countdown-timer-ios-tutorial
 
 - (void) manageCountdownTimer {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [countdownTimer invalidate];
     
-    [countdownTimer invalidate];
+        running = TRUE;
     
-    running = TRUE;
-    
-    countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(countDownTimerFired:) userInfo:nil repeats:YES];
+        countdownTimer = [NSTimer scheduledTimerWithTimeInterval:.01f target:self selector:@selector(countDownTimerFired:) userInfo:nil repeats:YES];
+    });
 }
 
 - (void) showKeepAliveView
 {
-    self.atProgramEndControl.enabled = YES;
-    keepAliveView.hidden = NO;
+    if(self.programMode != NMXProgramModeVideo)
+    {
+        self.atProgramEndControl.enabled = YES;
+        keepAliveView.hidden = NO;
+    }
 }
 
 
 - (void) countDownTimerFired:(id)sender {
     
-    NSLog(@"countDownTimerFired secondsLeft: %i",secondsLeft);
+    NSTimeInterval ti = [[NSDate date] timeIntervalSinceDate: timerStartTime];
+
+    NSTimeInterval timeRemaining = countdownTime/1000 - ti;
     
-    if(secondsLeft > 0 )
+    if(timeRemaining > 0 )
     {
-        secondsLeft -=  1000;
-        
-        int	wholeseconds	= secondsLeft / 1000;
+        int	wholeseconds	= (int)timeRemaining;
         int	hours			= wholeseconds / 3600;
         int	minutes			= (wholeseconds % 3600) / 60;
         int	seconds			= wholeseconds % 60;
@@ -446,8 +498,6 @@ typedef enum{
     else
     {
         //clear timer UI and start program
-        
-        NSLog(@"clear UI");
         
         [countdownTimer invalidate];
         
@@ -527,9 +577,34 @@ typedef enum{
     motorRampingButton.hidden = YES;
 }
 
+- (void) startKeyframeProgram
+{
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+
+        [[AppExecutive sharedInstance].device takeUpBacklashKeyFrameProgram];
+        [[AppExecutive sharedInstance].device startKeyFrameProgram];
+
+        [self startKeyframeTimer];
+    
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
+    });
+}
+
 - (void) doStartMove {
     
-    [[AppExecutive sharedInstance].device mainStartPlannedMove];
+    if (appExecutive.is3P == YES)
+    {
+        [self startKeyframeProgram];
+        
+        [self startKeyframeTimer];
+    }
+    else
+    {
+        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+    }
     
     if(self.programMode != NMXProgramModeVideo)
     {
@@ -540,9 +615,15 @@ typedef enum{
     
     startTimerBtn.hidden = YES;
     
-    self.totalRunTime = [device mainQueryTotalRunTime];
-    
-    self.statusTimer = self.statusTimer;
+    if (self.appExecutive.is3P == NO)
+    {
+        self.totalRunTime = [device mainQueryTotalRunTime];
+        self.statusTimer = self.statusTimer;
+    }
+    else
+    {
+        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+    }
     
     if (self.programMode != NMXProgramModeVideo)
     {
@@ -552,11 +633,14 @@ typedef enum{
 
 - (void) startKeyframeTimer {
 
-    keyframeTimer = [NSTimer scheduledTimerWithTimeInterval:2.000
-                                                     target:self
-                                                   selector:@selector(handleKeyFrameStatusTimer:)
-                                                   userInfo:nil
-                                                    repeats:YES];
+    if (!keyframeTimer )
+    {
+        keyframeTimer = [NSTimer scheduledTimerWithTimeInterval:2.000
+                                                         target:self
+                                                       selector:@selector(handleKeyFrameStatusTimer:)
+                                                       userInfo:nil
+                                                        repeats:YES];
+    }
 }
 
 - (void) startProgram {
@@ -565,9 +649,7 @@ typedef enum{
     
     if (appExecutive.is3P == YES)
     {
-        [[AppExecutive sharedInstance].device startKeyFrameProgram];
-        
-        [self startKeyframeTimer];
+        [self startKeyframeProgram];
     }
     else
     {
@@ -616,16 +698,23 @@ typedef enum{
     
     [[AppExecutive sharedInstance].deviceManager setDelegate: self];
     
-    NMXRunStatus runStatus = [device mainQueryRunStatus];
-    NMXRunStatus runStatusKeyFrame = [device queryKeyFrameProgramRunState];
+    NMXRunStatus runStatus;
+    
+    if (appExecutive.is3P == YES)
+    {
+        runStatus = [device queryKeyFrameProgramRunState];
+    }
+    else
+    {
+        runStatus = [device mainQueryRunStatus];
+    }
+
     
     //NSLog(@"viewWillAppear status: %i", runStatus);
     //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
-    
-    int savedSecondsLeft = [[appExecutive getNumberForKey: @"programDelayTimer"] intValue];
-    
     //NSLog(@"viewWillAppear savedSecondsLeft: %i", savedSecondsLeft);
     
+    [self.view bringSubviewToFront:timerContainer];
     timerContainer.hidden = YES;
     
     queryFPS = [device mainQueryFPS];
@@ -647,79 +736,15 @@ typedef enum{
             break;
     }
     
-    if (self.appExecutive.is3P == NO)
+    
+    if (runStatus & NMXRunStatusDelayTimer)
     {
-        if (runStatus & NMXRunStatusDelayTimer)
-        {
-            timerContainer.hidden = NO;
-            
-            //int currentDelayTime = [device queryDelayTime];
-            
-            self.totalRunTime = [device mainQueryTotalRunTime];
-            self.lastRunTime = [device mainQueryRunTime];
-            self.timeOfLastRunTime = time(nil);
-            
-    //        int shotDuration = (int)[appExecutive.shotDurationNumber integerValue];
-    //        
-    //        NSLog(@"NMXRunStatusDelayTimer shotDuration: %i", shotDuration);
-            
-            int timeRemaining = self.totalRunTime - self.lastRunTime;
-            
-            int	wholeseconds5	= (int)timeRemaining / 1000;
-            int	hours5			= wholeseconds5 / 3600;
-            int	minutes5		= (wholeseconds5 % 3600) / 60;
-            int	seconds5		= wholeseconds5 % 60;
-            
-            NSLog(@"NMXRunStatusDelayTimer totalRunTime: %02ld:%02ld:%02ld", (long)hours5, (long)minutes5, (long)seconds5);
-            
-            self.lastRunTime = [device mainQueryRunTime];
-            
-            int	wholeseconds3	= (int)self.lastRunTime / 1000;
-            int	hours3			= wholeseconds3 / 3600;
-            int	minutes3		= (wholeseconds3 % 3600) / 60;
-            int	seconds3		= wholeseconds3 % 60;
-            
-            NSLog(@"NMXRunStatusDelayTimer lastRunTime: %02ld:%02ld:%02ld", (long)hours3, (long)minutes3, (long)seconds3);
-            
-            self.timeOfLastRunTime = time(nil);
-            
-            if (NMXProgramModeVideo == self.programMode)
-            {
-                timeRemaining = self.totalRunTime - (savedSecondsLeft * 2) - self.lastRunTime - (int)[appExecutive.videoLengthNumber integerValue];
-            }
-            else
-            {
-                timeRemaining = self.totalRunTime - (savedSecondsLeft * 2) - self.lastRunTime - (int)[appExecutive.shotDurationNumber integerValue];
-            }
-            
-            int	wholeseconds	= timeRemaining / 1000;
-            int	hours			= wholeseconds / 3600;
-            int	minutes			= (wholeseconds % 3600) / 60;
-            int	seconds			= wholeseconds % 60;
-            
-            NSLog(@"NMXRunStatusDelayTimer time remaining2: %02ld:%02ld:%02ld", (long)hours, (long)minutes, (long)seconds);
-            
-            timerLbl.text = [NSString stringWithFormat:@"%02ld:%02ld:%02ld", (long)hours, (long)minutes, (long)seconds];
-            
-            secondsLeft = timeRemaining;
-            
-            NSLog(@"viewWillAppear secondsLeft: %i",secondsLeft);
-            
-            [self manageCountdownTimer];
-            
-            //keepAliveView.hidden = YES;
-            cancelBtn.hidden = NO;
-            goBtn.hidden = NO;
-            //startTimerBtn.hidden = YES;
-            //timerContainer.hidden = NO;
-            
-            sendMotorsToStartButton.hidden = YES;
-            motorRampingButton.hidden = YES;
-            
-            self.statusTimer = self.statusTimer;
-        }
-        else if(runStatus & NMXRunStatusRunning ||
-                runStatus & NMXRunStatusPaused)
+        [self reconnectDelay];
+    }
+    else if (self.appExecutive.is3P == NO)
+    {
+        if(runStatus & NMXRunStatusRunning ||
+           runStatus & NMXRunStatusPaused)
         {
             [self showKeepAliveView];
             self.reversing = NO;
@@ -756,8 +781,8 @@ typedef enum{
     }
     else
     {
-        if(runStatusKeyFrame & NMXRunStatusRunning ||
-           runStatusKeyFrame & NMXRunStatusPaused)
+        if(runStatus & NMXRunStatusRunning ||
+           runStatus & NMXRunStatusPaused)
         {
             //NSLog(@"review NMXKeyFrameRunStatusRunning/Paused");
             
@@ -768,11 +793,11 @@ typedef enum{
             self.motorRampingButton.hidden = YES;
             self.sendMotorsToStartButton.hidden = YES;
 
-            if(runStatusKeyFrame & NMXRunStatusPingPong)
+            if(runStatus & NMXRunStatusPingPong)
             {
                 [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
             }
-            else if (runStatusKeyFrame & NMXRunStatusKeepAlive)
+            else if (runStatus & NMXRunStatusKeepAlive)
             {
                 [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndKeepAlive];
             }
@@ -804,8 +829,8 @@ typedef enum{
         
         [self setupGraphViews3P];
         
-        if (!(runStatusKeyFrame & NMXRunStatusRunning) &&
-            !(runStatusKeyFrame & NMXRunStatusPaused) && !camClosed)
+        if (!(runStatus & NMXRunStatusRunning) &&
+            !(runStatus & NMXRunStatusPaused) && !camClosed)
         {
             [self initKeyFrameValues];
         }
@@ -814,12 +839,6 @@ typedef enum{
     {
         graph3P.hidden = YES;
         [self setupGraphViews];
-    }
-    
-    if (self.appExecutive.is3P)
-    {
-        keepAliveView.hidden = YES;
-        startTimerBtn.hidden = YES;
     }
     
     [settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
@@ -1107,13 +1126,17 @@ typedef enum{
         runStatus = [device queryKeyFrameProgramRunState];
     }
 
-    if (runStatus & NMXRunStatusRunning)
+    if (runStatus & NMXRunStatusDelayTimer)
     {
-        [self transitionToState: ControllerStatePauseProgram];
+        [self reconnectDelay];
     }
     else if (runStatus & NMXRunStatusPaused)
     {
         [self transitionToState: ControllerStateResumeOrStopProgram];
+    }
+    else if (runStatus & NMXRunStatusRunning)
+    {
+        [self transitionToState: ControllerStatePauseProgram];
     }
     else if (runStatus == NMXRunStatusStopped)
     {
@@ -1126,10 +1149,17 @@ typedef enum{
     NSLog(@"viewWillDisappear");
     
     [self.disconnectedTimer invalidate];
+    self.disconnectedTimer = nil;
 
-    [super viewWillDisappear: animated];
-    
     [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
+    
+    [super viewWillDisappear: animated];
+
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 - (void) clearFields {
@@ -1146,8 +1176,6 @@ typedef enum{
     lastFrameShotValue = self.framesShotValueLabel.text;
     
     playhead.frame = origPlayheadPosition;
-    
-    keepAliveView.hidden = YES;
     
     //NSLog(@"origPlayheadPosition.origin.x: %f",origPlayheadPosition.origin.x);
 }
@@ -1232,18 +1260,29 @@ typedef enum{
     
     //[device setDelayProgramStartTimer:0];
     
-    [self.statusTimer invalidate];
-    self.statusTimer = nil;
-    
-    [[AppExecutive sharedInstance].device mainStopPlannedMove];
+    if (appExecutive.is3P == YES)
+    {
+        originalCountdownTime = 0;
+        [[AppExecutive sharedInstance].device stopKeyFrameProgram];
+        
+        [keyframeTimer invalidate];
+        keyframeTimer = nil;
+    }
+    else
+    {
+        [[AppExecutive sharedInstance].device mainStopPlannedMove];
+        
+        [self.statusTimer invalidate];
+        self.statusTimer = nil;
+    }
     
     [countdownTimer invalidate];
     
     //[self manageCountupTimer];
     
     [self transitionToMotorRampingOrStartProgramState];
-    
     startTimerBtn.hidden = NO;
+
     timerContainer.hidden = YES;
 }
 
@@ -1256,7 +1295,15 @@ typedef enum{
     
     timerContainer.hidden = YES;
     
-    [[AppExecutive sharedInstance].device mainStopPlannedMove];
+    if (appExecutive.is3P == YES)
+    {
+        originalCountdownTime = 0;
+        [[AppExecutive sharedInstance].device stopKeyFrameProgram];
+    }
+    else
+    {
+        [[AppExecutive sharedInstance].device mainStopPlannedMove];
+    }
     
     [device setDelayProgramStartTimer:0];
     
@@ -1265,7 +1312,18 @@ typedef enum{
 
 - (void) removeDelayTimer {
 	
-    [[AppExecutive sharedInstance].device mainStartPlannedMove];
+    if (appExecutive.is3P == YES)
+    {
+        originalCountdownTime = 0;
+        
+        [self startKeyframeProgram];
+        
+        //NSLog(@"resume keyframe pause");
+    }
+    else
+    {
+        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+    }
     
     [self showKeepAliveView];
     
@@ -1280,6 +1338,7 @@ typedef enum{
 - (IBAction) handleSendMotorsToStartButton: (JoyButton *) sender {
     
 	//DDLogDebug(@"Send Motors To Start Button");
+    originalCountdownTime = 0;
     
     [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
     [appExecutive.defaults synchronize];
@@ -1299,6 +1358,7 @@ typedef enum{
 - (IBAction) handleStartProgramButton: (JoyButton *) sender {
     
 	DDLogDebug(@"Start Program Button");
+    originalCountdownTime = 0;
 
     [device setDelayProgramStartTimer:0];
 
@@ -1323,6 +1383,7 @@ typedef enum{
     if (appExecutive.is3P == YES)
     {
         [keyframeTimer invalidate];
+        keyframeTimer = nil;
 
         [[AppExecutive sharedInstance].device pauseKeyFrameProgram];
     }
@@ -1341,9 +1402,7 @@ typedef enum{
     
     if (appExecutive.is3P == YES)
     {
-        [[AppExecutive sharedInstance].device startKeyFrameProgram];
-        
-        [self startKeyframeTimer];
+        [self startKeyframeProgram];
         
         //NSLog(@"resume keyframe pause");
     }
@@ -1385,6 +1444,8 @@ typedef enum{
         }
     }
     
+    keepAliveView.hidden = YES;
+    
     [self clearFields];
 }
 
@@ -1393,7 +1454,9 @@ typedef enum{
     [AppExecutive sharedInstance].device.delegate = self;
     [[AppExecutive sharedInstance].device connect];
     
+    //mm this looks wrong!   should only do this on didConnect
     [self.disconnectedTimer invalidate];
+    self.disconnectedTimer = nil;
     
     if (self.appExecutive.is3P == YES)
     {
@@ -1421,8 +1484,6 @@ typedef enum{
     
     DDLogDebug(@"Did Disconnect Device");
     
-    disconnectStatusLbl.text = @"Did Disconnect Device Init";
-    
 //    [appExecutive.defaults setObject: @"yes" forKey: @"didDisconnect"];
 //    [appExecutive.defaults synchronize];
     
@@ -1430,32 +1491,59 @@ typedef enum{
     [appExecutive.defaults synchronize];
 
     dispatch_async(dispatch_get_main_queue(), ^(void) {
-        
+
+        disconnectStatusLbl.text = @"Did Disconnect Device Init";
+
         [keyframeTimer invalidate];
+        keyframeTimer = nil;
         
         self.statusTimer = nil;
         self.confirmPauseTimer = nil;
         [self hideStateButtons];
         
+        if (timerContainer.hidden == NO)
+        {
+            cancelBtn.hidden = YES;
+            goBtn.hidden = YES;
+        }
+
         [self.reconnectButton setHidden: false];
+
         [self.disconnectedLabel setHidden: false];
         keepAliveView.hidden = YES;
         
-        self.disconnectedTimer = [NSTimer scheduledTimerWithTimeInterval: 1.0
-                                                                  target: self
-                                                                selector: @selector(handleDisconnectedTimer:)
-                                                                userInfo: nil
-                                                                 repeats: YES];
+        if (self.disconnectedTimer == nil)
+        {
+            self.disconnectedTimer = [NSTimer scheduledTimerWithTimeInterval: 1.0
+                                                                      target: self
+                                                                    selector: @selector(handleDisconnectedTimer:)
+                                                                    userInfo: nil
+                                                                     repeats: YES];
+        }
     });
 }
 
+- (void) deviceDisconnect: (id) object
+{
+    [self didDisconnectDevice: nil];
+}
+
+
 - (void) handleDisconnectedTimer: (NSTimer *) sender {
+    
+     if (timerContainer.hidden == NO)
+     {
+         return;
+     }
+    
+    pauseProgramButton.hidden = YES;
+    keepAliveView.hidden = YES;
     
     count++;
     
     time_t  currentTime = time(nil);
-    UInt32  currentRunTime = self.lastRunTime + ((UInt32)(currentTime - self.timeOfLastRunTime) * 1000);
-    float percentComplete =  currentRunTime / (float)self.totalRunTime;
+    UInt32  currentRunTime = self.lastRunTime + ((UInt32)(currentTime - self.timeOfLastRunTime) * 1000) - originalCountdownTime;
+    float percentComplete =  currentRunTime / (float)(self.totalRunTime-originalCountdownTime);
     
     NSInteger timeRemaining = self.totalRunTime - self.lastRunTime - ((currentTime - self.timeOfLastRunTime) * 1000.0);
     
@@ -1533,15 +1621,19 @@ typedef enum{
         self.confirmPauseTimer = nil;
         [self hideStateButtons];
         [keyframeTimer invalidate];
+        keyframeTimer = nil;
         
         [self.reconnectButton setHidden: false];
         [self.disconnectedLabel setHidden: false];
         
-        self.disconnectedTimer = [NSTimer scheduledTimerWithTimeInterval: 1.0
-                                                                  target: self
-                                                                selector: @selector(handleDisconnectedTimer:)
-                                                                userInfo: nil
-                                                                 repeats: YES];
+        if (self.disconnectedTimer == nil)
+        {
+            self.disconnectedTimer = [NSTimer scheduledTimerWithTimeInterval: 1.0
+                                                                      target: self
+                                                                    selector: @selector(handleDisconnectedTimer:)
+                                                                    userInfo: nil
+                                                                     repeats: YES];
+        }
     });
 }
 
@@ -1631,11 +1723,11 @@ typedef enum{
             
             self.startProgramButton.enabled = YES;
             
-            if (!self.appExecutive.is3P)
+            if (!self.appExecutive.is3P || [device fwVersion] >= 61)
             {
                 startTimerBtn.hidden = NO;
             }
-
+            
             // Reset motors to correct microstep values
             [device motorSet: device.sledMotor Microstep: appExecutive.microstep1];
             [device motorSet: device.panMotor Microstep: appExecutive.microstep2];
@@ -1646,21 +1738,80 @@ typedef enum{
     }
 }
 
+- (void) killStatusTimerOnDisconnect
+{
+    
+    [keyframeTimer invalidate];
+    keyframeTimer = nil;
+    
+    [self.disconnectedTimer invalidate];
+    self.disconnectedTimer = nil;
+    
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];
+    });
+}
+
 - (void) handleKeyFrameStatusTimer: (NSTimer *) sender {
     
     NMXRunStatus runStatus = [device queryKeyFrameProgramRunState];
     
-    if (runStatus & NMXRunStatusRunning)
+    //NSLog(@"handleKeyFrameStatusTimer runStatus = 0x%x", runStatus);
+    
+    if (NMXRunStatusUnknown == runStatus)
+    {
+        [self killStatusTimerOnDisconnect];
+        return;
+    }
+    
+    if (runStatus & NMXRunStatusDelayTimer)
+    {
+        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+        
+        self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
+        
+        self.timeOfLastRunTime = time(nil);
+
+        /* mm this seemed like a good idea to keep the clocks in sync but it is proving to cause problems nixing it
+        // If our countdown has drifted from the device "truth", resync the app countdown timer.
+        NSTimeInterval ti = [[NSDate date] timeIntervalSinceDate: timerStartTime];
+        
+        NSLog(@"time since start = %g      device time since start = %g", ti, self.lastRunTime/1000.);
+        
+        if (ABS(ti - self.lastRunTime/1000.) > 1.)
+        {
+            countdownTime = countdownTime-self.lastRunTime;
+            
+            [appExecutive setProgramDelayTime: countdownTime];
+            timerStartTime = [appExecutive getDelayTimerStartTime];
+            
+            NSLog(@"ADJUST Countdown diff = %f", ABS(ti - self.lastRunTime/1000.));
+            
+            [self manageCountdownTimer];
+        }
+         */
+        //        if (timerContainer.hidden == YES)
+        //        {
+        //            [self setControlVisibilityForDelayState:YES];
+        //        }
+
+    }
+    else if (runStatus & NMXRunStatusRunning)
     {
         timerContainer.hidden = YES;
         
         //NSLog(@"NMXKeyFrameRunStatusRunning");
         
-        float percentComplete = [device queryKeyFramePercentComplete] / (float)100;
         self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
+
+        //float percentCompleteOld = [device queryKeyFramePercentComplete] / (float)100;
+        // Mitch - this old and proper method to get the percent complete in KF mode doesn't work when there's a delay, calculated it ourself
+        int maxTime = [device queryKeyFrameProgramMaxTime] - originalCountdownTime;
+        int runTime = self.lastRunTime - originalCountdownTime;
+        float percentComplete = (float)(runTime)/maxTime;
         
-        //NSLog(@"lastRunTime: %i",(unsigned int)self.lastRunTime);
-        //NSLog(@"keyFrame percentComplete: %f",percentComplete);
+        //NSLog(@"OLD  percent = %g    new = %g     countdown = %g    ", percentCompleteOld, percentComplete, originalCountdownTime);
         
         self.timeOfLastRunTime = time(nil);
         
@@ -1671,27 +1822,30 @@ typedef enum{
             timeRemaining = 0;
         }
         
-        if (self.previousPercentage > percentComplete)  // we are reversing direction
+        if (percentComplete > 1)  // we may be reversing direction
         {
+            self.atProgramEndControl.enabled = NO;
+
             NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
             if (atEndSelection==AtProgramEndPingPong)
             {
-                self.reversing = !self.reversing;
+                int cycleDir = (int)percentComplete % 2;
+                float prct = percentComplete - (int)percentComplete;
+                if (cycleDir == 1)
+                {
+                    self.reversing = YES;
+                    percentComplete = 1. - prct;
+                }
+                else
+                {
+                    self.reversing = NO;
+                    percentComplete = prct;
+                }
+
             }
         }
-        
-        if (percentComplete >= 1.f || self.reversing)
-        {
-            self.atProgramEndControl.enabled = NO;
-        }
-        
-        self.previousPercentage = percentComplete;
-        
-        if (self.reversing)
-        {
-            percentComplete = 1. - percentComplete;
-        }
 
+        self.previousPercentage = percentComplete;
         
         if (NMXProgramModeVideo == self.programMode)
         {
@@ -1728,13 +1882,13 @@ typedef enum{
             self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
             self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
             
-            NSLog(@"%%    percentComplete per device: %g",percentComplete);
+            //NSLog(@"%%    percentComplete per device: %g      remaining %@",percentComplete, self.timelapseTimeRemainingValueLabel.text);
             
             if(percentComplete <= 1.0)
             {
                 percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
             }
-            
+
             NSLog(@"keyframe percentCompletePosition: %f",percentCompletePosition);
             
             playhead.frame = CGRectMake(percentCompletePosition,
@@ -1742,44 +1896,33 @@ typedef enum{
                                         playhead.frame.size.width,
                                         playhead.frame.size.height);
         }
+        
+        if (percentComplete >= 1.0 || (self.atProgramEndControl.enabled == NO))
+        {
+            if (runStatus & NMXRunStatusKeepAlive ||
+                runStatus & NMXRunStatusPingPong)
+            {
+                self.timelapseTimeRemainingValueLabel.text = @"-";
+                self.videoTimeRemainingValueLabel.text = @"-";
+            }
+        }
+
     }
     else if (runStatus & NMXRunStatusPaused)
     {
-        NSLog(@"handleStatusTimer runStatus: NMXRunStatusPaused");
+        NSLog(@"handleKeyframeStatusTimer runStatus: NMXRunStatusPaused");
     }
     else if (runStatus == NMXRunStatusStopped)
     {
-        NSLog(@"handleStatusTimer runStatus: NMXRunStatusStopped");
+        NSLog(@"handleKeyframeStatusTimer runStatus: NMXRunStatusStopped");
         
         [keyframeTimer invalidate];
         keyframeTimer = nil;
         
         [self clearFields];
+        keepAliveView.hidden = YES;
         [self transitionToState: ControllerStateMotorRampingOrSendMotors];
         
-    }
-    else if (runStatus & NMXRunStatusDelayTimer)
-    {
-        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
-        
-        self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
-        
-        int	wholeseconds3	= (int)self.lastRunTime / 1000;
-        int	hours3			= wholeseconds3 / 3600;
-        int	minutes3		= (wholeseconds3 % 3600) / 60;
-        int	seconds3		= wholeseconds3 % 60;
-        
-        NSLog(@"NMXRunStatusDelayTimer Status lastRunTime: %02ld:%02ld:%02ld", (long)hours3, (long)minutes3, (long)seconds3);
-        
-        self.timeOfLastRunTime = time(nil);
-        
-        NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
-        
-        NSLog(@"NMXRunStatusDelayTimer Status timeRemaining: %li",(long)timeRemaining);
-        
-        int currentDelayTime = [device queryDelayTime];
-        
-        NSLog(@"NMXRunStatusDelayTimer Status currentDelayTime: %i",currentDelayTime);
     }
     else if (runStatus & NMXRunStatusKeepAlive)
     {
@@ -1812,18 +1955,7 @@ typedef enum{
     else
     {
         NSLog(@"something else");
-        
-        [keyframeTimer invalidate];
-        keyframeTimer = nil;
-        
-        [self.disconnectedTimer invalidate];
-        self.disconnectedTimer = nil;
-        
-        dispatch_async(dispatch_get_main_queue(), ^(void) {
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];
-        });
-
+        [self killStatusTimerOnDisconnect];
     }
 }
 
@@ -1849,6 +1981,7 @@ typedef enum{
             self.statusTimer = nil;
             
             [self clearFields];
+            keepAliveView.hidden = YES;
             [self transitionToState: ControllerStateMotorRampingOrSendMotors];
         }
         else
@@ -1857,32 +1990,30 @@ typedef enum{
         }
     }
     else if (runStatus & NMXRunStatusDelayTimer) {
-        
+
         self.totalRunTime = [device mainQueryTotalRunTime];
-        
-        //NSLog(@"NMXRunStatusDelayTimer totalRunTime: %i",self.totalRunTime);
         
         self.lastRunTime = [device mainQueryRunTime];
         
-        //NSLog(@"NMXRunStatusDelayTimer lastRunTime: %i",self.lastRunTime);
-        
-        int	wholeseconds3	= (int)self.lastRunTime / 1000;
-        int	hours3			= wholeseconds3 / 3600;
-        int	minutes3			= (wholeseconds3 % 3600) / 60;
-        int	seconds3			= wholeseconds3 % 60;
-        
-        NSLog(@"NMXRunStatusDelayTimer Status lastRunTime: %02ld:%02ld:%02ld", (long)hours3, (long)minutes3, (long)seconds3);
-        
         self.timeOfLastRunTime = time(nil);
+        /* mm this seemed like a good idea to keep the clocks in sync but it is proving to cause problems nixing it
+        // If our countdown has drifted from the device "truth", resync the app countdown timer.
+        NSTimeInterval ti = [[NSDate date] timeIntervalSinceDate: timerStartTime];
+        if (ABS(ti - self.lastRunTime/1000.) > 1.)
+        {
+            countdownTime = countdownTime-self.lastRunTime;
+            
+            [appExecutive setProgramDelayTime: countdownTime];
+            timerStartTime = [appExecutive getDelayTimerStartTime];
+
+            [self manageCountdownTimer];
+        }
+        */
         
-        NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
-        
-        NSLog(@"NMXRunStatusDelayTimer Status timeRemaining: %li",(long)timeRemaining);
-        
-        int currentDelayTime = [device queryDelayTime];
-        
-        NSLog(@"NMXRunStatusDelayTimer Status currentDelayTime: %i",currentDelayTime);
-        
+        //        if (timerContainer.hidden == YES)
+        //        {
+        //            [self setControlVisibilityForDelayState:YES];
+        //        }
     }
     else if (runStatus & NMXRunStatusKeepAlive) {
         NSLog(@"keep alive");
@@ -1893,9 +2024,27 @@ typedef enum{
         
         self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
         self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
-        self.timelapseTimeRemainingValueLabel.text = @"-";
+        
+        self.lastRunTime = [device mainQueryRunTime];
+        NSInteger timeRemaining = self.totalRunTime - self.lastRunTime;
+        self.timelapseTimeRemainingValueLabel.text = [DurationViewController stringForDuration: timeRemaining];
         
         float percentComplete2 = [framesShotValueLabel.text intValue]/masterFrameCount;
+        
+        float percentComplete = MIN(1.0, [device mainQueryProgramPercentComplete] / (float)100);
+        if (percentComplete >= 1.f || self.reversing)
+        {
+            self.atProgramEndControl.enabled = NO;
+        }
+        
+        if (self.atProgramEndControl.enabled == NO)  // we've gone beyond the max => either ping pong or keep alive
+        {
+            if (runStatus & NMXRunStatusKeepAlive ||
+                runStatus & NMXRunStatusPingPong)
+            {
+                self.timelapseTimeRemainingValueLabel.text = @"-";
+            }
+        }
         
         //NSLog(@"percentComplete2: %f",percentComplete2);
         
@@ -1932,8 +2081,10 @@ typedef enum{
         timerContainer.hidden = YES;
             
         //NSLog(@"NMXRunStatusRunning");
-            
-        float percentComplete = MIN(1.0, [device mainQueryProgramPercentComplete] / (float)100);
+        
+        int devicePercentComplete = [device mainQueryProgramPercentComplete];
+        
+        float percentComplete = MIN(1.0, devicePercentComplete / (float)100);
         self.lastRunTime = [device mainQueryRunTime];
         self.timeOfLastRunTime = time(nil);
         
@@ -1942,6 +2093,11 @@ typedef enum{
         if (timeRemaining < 0)
         {
             timeRemaining = 0;
+        }
+        else if (devicePercentComplete >= 100)  // work around a bug where the controller sometimes reports
+                                                // 100% done early in the program, usually after a delay
+        {
+            percentComplete = .0;
         }
         
         if (self.previousPercentage > percentComplete)  // we are reversing direction
@@ -2003,8 +2159,6 @@ typedef enum{
             self.framesShotValueLabel.text = [NSString stringWithFormat: @"%d", framesShot];
             self.videoLengthValueLabel.text = [ShortDurationViewController stringForShortDuration: videoLength];
 
-            //NSLog(@"%%    percentComplete per device: %g   frames = %d  framesPerProg = %d",percentComplete, framesShot, [self.appExecutive.frameCountNumber intValue]);
-            
             if(percentComplete <= 1.0)
             {
                 percentCompletePosition = (graphWidth * percentComplete) * screenRatio;
@@ -2018,6 +2172,16 @@ typedef enum{
                                         playhead.frame.origin.y,
                                         playhead.frame.size.width,
                                         playhead.frame.size.height);
+        }
+
+        if (self.atProgramEndControl.enabled == NO)  // we've gone beyond the max => either ping pong or keep alive
+        {
+            if (runStatus & NMXRunStatusKeepAlive ||
+                runStatus & NMXRunStatusPingPong)
+            {
+                self.timelapseTimeRemainingValueLabel.text = @"-";
+                self.videoTimeRemainingValueLabel.text  = @"-";
+            }
         }
 
     }

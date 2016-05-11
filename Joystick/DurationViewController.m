@@ -12,7 +12,7 @@
 #import "JoyButton.h"
 #import "NMXDevice.h"
 
-#define MAX_HOURS 99
+#define MAX_DAYS 9
 
 //------------------------------------------------------------------------------
 
@@ -36,6 +36,9 @@
 @implementation DurationViewController
 
 #pragma mark Static Variables
+
+NSArray	static	*daysNumbers = nil;
+NSArray	static	*daysStrings = nil;
 
 NSArray	static	*hoursNumbers = nil;
 NSArray	static	*hoursStrings = nil;
@@ -84,19 +87,35 @@ NSArray static	*secondsStrings = nil;
 	NSMutableArray *mutableNumbers	= [NSMutableArray array];
 	NSMutableArray *mutableStrings	= [NSMutableArray array];
 
-	for (NSInteger index = 0; index <= MAX_HOURS; index++)
-		[mutableNumbers addObject: [NSNumber numberWithInteger: index]];
+    for (NSInteger index = 0; index <= MAX_DAYS; index++)
+    {
+        [mutableNumbers addObject: [NSNumber numberWithInteger: index]];
+        [mutableStrings addObject: [NSString stringWithFormat: @"%ldd", (long)index]];
+    }
+    
+    daysNumbers = [NSArray arrayWithArray: mutableNumbers];
+    daysStrings = [NSArray arrayWithArray: mutableStrings];
 
-    for (NSInteger index = 0; index <= MAX_HOURS; index++)
+    [mutableStrings removeAllObjects];
+    [mutableNumbers removeAllObjects];
+    
+	for (NSInteger index = 0; index <= 23; index++)
+    {
+		[mutableNumbers addObject: [NSNumber numberWithInteger: index]];
 		[mutableStrings addObject: [NSString stringWithFormat: @"%02ldh", (long)index]];
+    }
 
 	hoursNumbers = [NSArray arrayWithArray: mutableNumbers];
 	hoursStrings = [NSArray arrayWithArray: mutableStrings];
 
 	[mutableStrings removeAllObjects];
+    [mutableNumbers removeAllObjects];
     
 	for (NSInteger index = 0; index < 60; index++)
+    {
 		[mutableStrings addObject: [NSString stringWithFormat: @"%02ldm", (long)index]];
+        [mutableNumbers addObject: [NSNumber numberWithInteger: index]];
+    }
 
 	minutesNumbers = [NSArray arrayWithArray: mutableNumbers];
 	minutesStrings = [NSArray arrayWithArray: mutableStrings];
@@ -118,11 +137,13 @@ NSArray static	*secondsStrings = nil;
     
 	NSInteger	wholeseconds	= duration / 1000;
 
+    NSInteger	days	= wholeseconds / (3600*24);
+    wholeseconds -= days * (3600*24);
 	NSInteger	hours	= wholeseconds / 3600;
 	NSInteger	minutes	= (wholeseconds % 3600) / 60;
 	NSInteger	seconds	= wholeseconds % 60;
 
-	NSString *	string	= [NSString stringWithFormat: @"%02ld:%02ld:%02ld", (long)hours, (long)minutes, (long)seconds];
+	NSString *	string	= [NSString stringWithFormat: @"%ld:%02ld:%02ld:%02ld", (long)days, (long)hours, (long)minutes, (long)seconds];
 
 	return string;
 }
@@ -168,24 +189,29 @@ NSArray static	*secondsStrings = nil;
 		NSNumber *	number			= [self.userInfo objectForKey: kDurationInfoKeyNumber];
 		NSInteger	duration		= [number integerValue];
 		NSInteger	wholeseconds	= duration / 1000;
+        NSInteger	days	        = wholeseconds / (3600*24);
+        wholeseconds -= days * (3600*24);
 		NSInteger	hours			= wholeseconds / 3600;
 		NSInteger	minutes			= (wholeseconds % 3600) / 60;
 		NSInteger	seconds			= wholeseconds % 60;
 
-        if (hours > MAX_HOURS)
+        if (days > MAX_DAYS)
         {
-            hours = MAX_HOURS;
+            days = MAX_DAYS;
+            hours = 23;
             minutes = 59;
             seconds = 59;
         }
-        
+
+        NSInteger	daysRow	    = [daysNumbers    indexOfObject: [NSNumber numberWithInteger: days]];
 		NSInteger	hoursRow	= [hoursNumbers   indexOfObject: [NSNumber numberWithInteger: hours]];
 		NSInteger	minutesRow	= [minutesNumbers indexOfObject: [NSNumber numberWithInteger: minutes]];
 		NSInteger	secondsRow	= [secondsNumbers indexOfObject: [NSNumber numberWithInteger: seconds]];
 
-		[self.picker selectRow: hoursRow   inComponent: 0 animated: NO];
-		[self.picker selectRow: minutesRow inComponent: 1 animated: NO];
-		[self.picker selectRow: secondsRow inComponent: 2 animated: NO];
+        [self.picker selectRow: daysRow    inComponent: 0 animated: NO];
+		[self.picker selectRow: hoursRow   inComponent: 1 animated: NO];
+		[self.picker selectRow: minutesRow inComponent: 2 animated: NO];
+		[self.picker selectRow: secondsRow inComponent: 3 animated: NO];
 
 		self.title.text = [self.userInfo objectForKey: kDurationInfoKeyTitle];
 	}
@@ -217,18 +243,20 @@ NSArray static	*secondsStrings = nil;
 
 	DDLogDebug(@"Dismiss Duration Picker Button");
 
-	NSNumber *	numberForHours		= [hoursNumbers   objectAtIndex: [self.picker selectedRowInComponent: 0]];
-	NSNumber *	numberForMinutes	= [minutesNumbers objectAtIndex: [self.picker selectedRowInComponent: 1]];
-	NSNumber *	numberForSeconds	= [secondsNumbers objectAtIndex: [self.picker selectedRowInComponent: 2]];
+    NSNumber *	numberForDays		= [daysNumbers    objectAtIndex: [self.picker selectedRowInComponent: 0]];
+	NSNumber *	numberForHours		= [hoursNumbers   objectAtIndex: [self.picker selectedRowInComponent: 1]];
+	NSNumber *	numberForMinutes	= [minutesNumbers objectAtIndex: [self.picker selectedRowInComponent: 2]];
+	NSNumber *	numberForSeconds	= [secondsNumbers objectAtIndex: [self.picker selectedRowInComponent: 3]];
 
+    NSInteger	days		= [numberForDays integerValue];
 	NSInteger	hours		= [numberForHours integerValue];
 	NSInteger	minutes		= [numberForMinutes integerValue];
 	NSInteger	seconds		= [numberForSeconds integerValue];
-	NSInteger	duration	= 1000 * (hours * 3600 + minutes * 60 + seconds);
+	NSInteger	duration	= 1000 * (days * (3600*24) + hours * 3600 + minutes * 60 + seconds);
     
     if (isMotorSegue)
     {
-        duration = 1000 * (hours * 3600 + minutes * 60);
+        duration = 1000 * (days * (3600*24) + hours * 3600 + minutes * 60);
         
         //post notification
         
@@ -248,9 +276,20 @@ NSArray static	*secondsStrings = nil;
         NSArray *		objects	= @[name, number, string];
         NSDictionary *	info	= [NSDictionary dictionaryWithObjects: objects forKeys: keys];
         
-        duration	= 1000 * (hours * 3600 + minutes * 60 + seconds);
-        
         [self.delegate updateDurationInfo: info];
+        
+        if ([appExecutive.frameCountNumber integerValue] > USHRT_MAX)
+        {
+            self.appExecutive.frameCountNumber = [NSNumber numberWithInteger: USHRT_MAX];
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Duration Setting"
+                                                            message: @"New duration exceeds frame count limit.  Duration has been adjusted to a legal value."
+                                                           delegate: self
+                                                  cancelButtonTitle: @"OK"
+                                                  otherButtonTitles: nil];
+            [alert show];
+
+        }
     }
     
     if (self.appExecutive.is3P)
@@ -285,7 +324,7 @@ NSArray static	*secondsStrings = nil;
     
 	switch (component)
 	{
-		case 0: case 1: case 2:
+		case 0: case 1: case 2: case 3:
 			return  70.0;
 
 		default:
@@ -302,9 +341,10 @@ NSArray static	*secondsStrings = nil;
 
 	switch (component)
 	{
-		case 0: string = [hoursStrings   objectAtIndex: row];	break;
-		case 1: string = [minutesStrings objectAtIndex: row];	break;
-		case 2: string = [secondsStrings objectAtIndex: row];	break;
+		case 0: string = [daysStrings    objectAtIndex: row];	break;
+		case 1: string = [hoursStrings   objectAtIndex: row];	break;
+		case 2: string = [minutesStrings objectAtIndex: row];	break;
+		case 3: string = [secondsStrings objectAtIndex: row];	break;
 
 		default: break;
 	}
@@ -324,16 +364,17 @@ NSArray static	*secondsStrings = nil;
 
 - (NSInteger) numberOfComponentsInPickerView: (UIPickerView *) pickerView {
     
-	return 3;
+	return 4;
 }
 
 - (NSInteger) pickerView: (UIPickerView *) pickerView numberOfRowsInComponent: (NSInteger) component {
     
 	switch (component)
 	{
-		case 0: return hoursStrings.count;
-		case 1: return minutesStrings.count;
-		case 2: return secondsStrings.count;
+		case 0: return daysStrings.count;
+		case 1: return hoursStrings.count;
+		case 2: return minutesStrings.count;
+		case 3: return secondsStrings.count;
 
 		default: break;
 	}

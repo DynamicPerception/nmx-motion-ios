@@ -113,6 +113,7 @@ typedef enum : unsigned char {
 - (void) motorSet: (int) motorNumber ContinuousSpeed: (float) speed;
 - (void) motorMove: (int) motorNumber Direction: (unsigned char) direction Steps: (UInt32) steps;
 - (UInt16) motorQueryBacklash: (int) motorNumber;
+- (void) takeUpBacklashKeyFrameProgram;
 - (int) motorQueryCurrentPosition: (int) motorNumber;
 - (bool) motorQueryRunning: (int) motorNumber;
 - (UInt32) motorQueryShotsTotalTravelTime: (int) motorNumber;
