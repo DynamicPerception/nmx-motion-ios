@@ -1016,10 +1016,10 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     switch (runStatus)
     {
         case _Deprecated_NMXRunStatusStopped :
-            newStatus = NMXRunStatusStopped;
+            newStatus = 0;
             break;
         case _Deprecated_NMXRunStatusPaused :
-            newStatus = NMXRunStatusPaused;
+            newStatus = NMXRunStatusPaused | NMXRunStatusRunning;
             break;
         case  _Deprecated_NMXRunStatusRunning:
             newStatus = NMXRunStatusRunning;
@@ -1045,10 +1045,10 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     switch (runStatus)
     {
         case _Deprecated_NMXKeyFrameRunStatusStopped :
-            newStatus = NMXRunStatusStopped;
+            newStatus = 0;
             break;
         case _Deprecated_NMXKeyFrameRunStatusPaused :
-            newStatus = NMXRunStatusPaused;
+            newStatus = NMXRunStatusPaused | NMXRunStatusRunning;
             break;
         case  _Deprecated_NMXKeyFrameRunStatusRunning:
             newStatus = NMXRunStatusRunning;
@@ -2361,7 +2361,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         
         runState = [self runStatusFromOldKeyframRunStatus:(_Deprecated_NMXKeyFrameRunStatus)runState];
         
-        if (runState != NMXRunStatusStopped)
+        if (runState & NMXRunStatusRunning)
         {
             runState |= NMXRunStatusKeyframe;  // We are running in keyframe mode so set the bit flag
         }

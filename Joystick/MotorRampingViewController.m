@@ -497,8 +497,8 @@ NSArray static	*frameCountStrings = nil;
     
     //NSLog(@"viewWillAppear ramping");
     
-    if (NMXRunStatusStopped != [[AppExecutive sharedInstance].device mainQueryRunStatus] ||
-        NMXRunStatusStopped != [[AppExecutive sharedInstance].device queryKeyFrameProgramRunState])
+    if (NMXRunStatusRunning & [[AppExecutive sharedInstance].device mainQueryRunStatus] ||
+        NMXRunStatusRunning & [[AppExecutive sharedInstance].device queryKeyFrameProgramRunState])
     {
         NSLog(@"gotoreview");
         [self showVoltage];
