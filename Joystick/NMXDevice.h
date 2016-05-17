@@ -42,14 +42,14 @@ typedef enum : unsigned char {
 
 typedef enum : unsigned char {
 
-    NMXRunStatusUnknown   = -1,
-    NMXRunStatusStopped   = 0,
+    NMXRunStatusUnknown   = 0xFF,
     NMXRunStatusRunning   = 1 << 0,
     NMXRunStatusPaused    = 1 << 1,
     NMXRunStatusKeyframe  = 1 << 2,
     NMXRunStatusDelayTimer= 1 << 3,
     NMXRunStatusKeepAlive = 1 << 4,
     NMXRunStatusPingPong  = 1 << 5,
+
 } NMXRunStatus;
 
 

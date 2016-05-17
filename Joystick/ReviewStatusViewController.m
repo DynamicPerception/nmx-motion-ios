@@ -1138,7 +1138,7 @@ typedef enum{
     {
         [self transitionToState: ControllerStatePauseProgram];
     }
-    else if (runStatus == NMXRunStatusStopped)
+    else
     {
         [self transitionToState: ControllerStateMotorRampingOrSendMotors];
     }
@@ -1912,18 +1912,6 @@ typedef enum{
     {
         NSLog(@"handleKeyframeStatusTimer runStatus: NMXRunStatusPaused");
     }
-    else if (runStatus == NMXRunStatusStopped)
-    {
-        NSLog(@"handleKeyframeStatusTimer runStatus: NMXRunStatusStopped");
-        
-        [keyframeTimer invalidate];
-        keyframeTimer = nil;
-        
-        [self clearFields];
-        keepAliveView.hidden = YES;
-        [self transitionToState: ControllerStateMotorRampingOrSendMotors];
-        
-    }
     else if (runStatus & NMXRunStatusKeepAlive)
     {
         NSLog(@"keep alive");
@@ -1952,10 +1940,22 @@ typedef enum{
                                     playhead.frame.size.width,
                                     playhead.frame.size.height);
     }
-    else
+    else if (runStatus & NMXRunStatusUnknown)
     {
         NSLog(@"something else");
         [self killStatusTimerOnDisconnect];
+    }
+    else
+    {
+        NSLog(@"handleKeyframeStatusTimer runStatus: Stopped");
+        
+        [keyframeTimer invalidate];
+        keyframeTimer = nil;
+        
+        [self clearFields];
+        keepAliveView.hidden = YES;
+        [self transitionToState: ControllerStateMotorRampingOrSendMotors];
+        
     }
 }
 
@@ -1967,27 +1967,6 @@ typedef enum{
         NSLog(@"handleStatusTimer runStatus: NMXRunStatusPaused");
             
         // This state should only happen from the user hitting pause, and we already handle that transition...
-    }
-    else if (runStatus == NMXRunStatusStopped) {
-        NSLog(@"handleStatusTimer runStatus: NMXRunStatusStopped");
-        
-        // Due to a firmware bug.  We want to make sure we are really stopped...
-        
-        runStatus = [device mainQueryRunStatus];
-        
-        if (NMXRunStatusStopped == runStatus)
-        {
-            [self.statusTimer invalidate];
-            self.statusTimer = nil;
-            
-            [self clearFields];
-            keepAliveView.hidden = YES;
-            [self transitionToState: ControllerStateMotorRampingOrSendMotors];
-        }
-        else
-        {
-            DDLogWarn(@"Saw a FAKE stopped response");
-        }
     }
     else if (runStatus & NMXRunStatusDelayTimer) {
 
@@ -2185,7 +2164,7 @@ typedef enum{
         }
 
     }
-    else {
+    else if (runStatus == NMXRunStatusUnknown) {
         NSLog(@"something else: %i",runStatus);
             
         [self.statusTimer invalidate];
@@ -2202,6 +2181,29 @@ typedef enum{
         });
         
     }
+    else {
+        NSLog(@"handleStatusTimer runStatus: Stopped");
+        
+        // Due to a firmware bug.  We want to make sure we are really stopped...
+        
+        runStatus = [device mainQueryRunStatus];
+        
+        if ((runStatus & NMXRunStatusPaused) == 0 &&
+            (runStatus & NMXRunStatusRunning) == 0)
+        {
+            [self.statusTimer invalidate];
+            self.statusTimer = nil;
+            
+            [self clearFields];
+            keepAliveView.hidden = YES;
+            [self transitionToState: ControllerStateMotorRampingOrSendMotors];
+        }
+        else
+        {
+            DDLogWarn(@"Saw a FAKE stopped response");
+        }
+    }
+
 }
 
 - (void) calculatePingPongReverse

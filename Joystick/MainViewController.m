@@ -882,7 +882,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
     int queryStatus = [device mainQueryRunStatus];
     
-    if (NMXRunStatusStopped != queryStatus || NMXRunStatusStopped != queryStatusKeyFrame)
+    if (NMXRunStatusRunning & queryStatus || NMXRunStatusRunning & queryStatusKeyFrame)
     {
         if (NMXRunStatusKeyframe & queryStatusKeyFrame)
         {
@@ -910,7 +910,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         [self enterJoystickMode];
     }
     
-    if (NMXRunStatusStopped == queryStatus)
+    if ((NMXRunStatusRunning & queryStatus) == 0)
     {
         [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
     }
