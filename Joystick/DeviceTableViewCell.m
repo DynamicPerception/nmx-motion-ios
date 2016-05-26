@@ -29,6 +29,37 @@
 #endif
 }
 
+- (IBAction)connectSwitchSelected:(id)sender {
+    if (self.connectSwitch.on)
+    {
+        if (self.device.disconnected)
+        {
+            self.connectionTimer = [NSTimer scheduledTimerWithTimeInterval:15.0
+                                                                    target:self
+                                                                  selector:@selector(connectionTimeout)
+                                                                  userInfo:nil
+                                                                   repeats:YES];
+        
+            [self.tableView preDevicesStateChange];
+        
+            [self initFirmware];
+        
+            [self.activityIndicator startAnimating];
+        
+            //UIButton *button = (UIButton *)sender;
+            //button.hidden = YES;
+        }
+    }
+    else
+    {
+        [self.device disconnect];
+        self.settingsButton.enabled = NO;
+        self.settingsButton.hidden = YES;
+        self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
+    }
+
+}
+/*
 - (IBAction) connectButtonSelected: (id) sender
 {
     if (self.device.disconnected)
@@ -53,6 +84,7 @@
         [self.tableView navigateToMainViewWithDevice: self.device];
     }
 }
+*/
 
 - (void) connectionTimeout
 {
@@ -86,10 +118,11 @@
     self.connectionTimer = nil;
 
     [self.activityIndicator stopAnimating];
-    [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
-    self.connectGoButton.hidden = NO;
-    self.connectGoButton.enabled = YES;
+    //    [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+    //    self.connectGoButton.hidden = NO;
+    //    self.connectGoButton.enabled = YES;
     self.settingsButton.hidden = YES;
+    self.connectSwitch.selected = NO;
     
     NSString *deviceImage = [self getImageForDeviceStatus: self.device];
     self.imageView.image = [UIImage imageNamed: deviceImage];
@@ -133,8 +166,9 @@
                 [self.connectionTimer invalidate];
                 self.connectionTimer = nil;
                 [self.activityIndicator stopAnimating];
-                [self.connectGoButton setTitle:@"Go >" forState:UIControlStateNormal];
-                self.connectGoButton.hidden = NO;
+                //                [self.connectGoButton setTitle:@"Go >" forState:UIControlStateNormal];
+                self.connectSwitch.on = YES;
+                //                self.connectGoButton.hidden = NO;
                 self.settingsButton.enabled = YES;
                 self.settingsButton.hidden = NO;
                 
@@ -143,7 +177,7 @@
                 
                 if ((NMXRunStatusRunning & queryStatus) || NMXRunStatusRunning & queryStatusKeyFrame)
                 {
-                    [self.tableView navigateToMainViewWithDevice: self.device];
+                    [self.tableView navigateToMainView];
                 }
                 
                 [self.tableView postDevicesStateChange];
@@ -158,23 +192,27 @@
 
 - (void) preDeviceStateChange
 {
-    self.connectGoButton.enabled = NO;
-    
+    //    self.connectGoButton.enabled = NO;
+    self.connectSwitch.enabled = NO;
+/*
     if (NO == self.device.disconnected)
     {
-        [self.device disconnect];
+        //mm       [self.device disconnect];
         
-        [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+        //        [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+        self.connectSwitch.on = NO;
         self.settingsButton.enabled = NO;
         self.settingsButton.hidden = YES;
         
         self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
     }
+*/ 
 }
 
 - (void) postDeviceStateChange
 {
-    self.connectGoButton.enabled = YES;
+    //    self.connectGoButton.enabled = YES;
+    self.connectSwitch.enabled = YES;
 }
 
 @end

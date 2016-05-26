@@ -20,7 +20,7 @@
 #define kDefaultsMotorPanInvert        @"MotorPanInvert"
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
 
-#define kCurrentSupportedFirmwareVersion 60
+#define kCurrentSupportedFirmwareVersion 64
 
 
 typedef enum : unsigned char {
@@ -119,6 +119,20 @@ typedef enum : unsigned char {
     NMXCommandCameraQuerySlaveMode = 112,
     
 } NMXCommandCamera;
+
+typedef enum : unsigned char {
+    
+    NMXCommandBroadcastStart         = 1,
+    NMXCommandBroadcastStop          = 2,
+    NMXCommandBroadcastPause         = 3,
+    NMXCommandBroadcastAssignAddress = 4,
+    NMXCommandBroadcastEnableGraffik = 5,   // unused by this app
+    NMXCommandBroadcastStartKF       = 7,
+    NMXCommandBroadcastStopKF        = 8,
+    NMXCommandBroadcastPauseKF       = 9
+    
+} NMXCommandBroadcast;
+
 
 
 typedef enum: unsigned char {
@@ -233,6 +247,7 @@ bool waitForResponse;
         self.retryCount = 0;
         self.retrying = false;
         self.disconnected = true;
+        self.address = 3;
         
         waitForResponse = true;
         
@@ -448,7 +463,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     buffer[3] = 0;
     buffer[4] = 0;
     buffer[5] = 255;
-    buffer[6] = 3;                    // Address 1
+    buffer[6] = self.address;
     buffer[7] = subAddress;
     buffer[8] = command;
     buffer[9] = dataLength;
@@ -462,11 +477,26 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     buffer[3] = 0;
     buffer[4] = 0;
     buffer[5] = 255;
-    buffer[6] = 3;                    // Address 1
+    buffer[6] = self.address;
     buffer[7] = subAddress;
     buffer[8] = command;
     buffer[9] = dataLength;
 }
+
+- (void) setupBroadcastBuffer: (unsigned char *) buffer command: (unsigned char) command dataLength: (unsigned char) dataLength {
+    
+    buffer[0] = 0;
+    buffer[1] = 0;
+    buffer[2] = 0;
+    buffer[3] = 0;
+    buffer[4] = 0;
+    buffer[5] = 255;
+    buffer[6] = 1;
+    buffer[7] = 0;
+    buffer[8] = command;
+    buffer[9] = dataLength;
+}
+
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
@@ -1276,6 +1306,16 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     }
     
     return  runTime;
+}
+
+- (void) setDeviceAddress:(unsigned char) address
+{
+    unsigned char newDataBytes[16];
+    [self setupBroadcastBuffer: newDataBytes command: NMXCommandBroadcastAssignAddress dataLength: 1];
+    newDataBytes[10] = address;
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
+    NSString *  descString = [NSString stringWithFormat: @"Set device address %d", address];
+    [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
 }
 
 #pragma mark - Motor Set

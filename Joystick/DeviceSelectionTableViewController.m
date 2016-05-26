@@ -16,6 +16,11 @@
 @interface DeviceSelectionTableViewController ()
 
 @property (nonatomic, strong)	IBOutlet UITableView* tableView;
+@property (strong, nonatomic) IBOutlet UIButton *goButton;
+@property BOOL confirmingFirmware;
+@property BOOL confirmingMultiDevice;
+@property BOOL oldFirmwareConfirmed;
+@property BOOL multiDeviceConfirmed;
 
 @property NSArray *             deviceList;
 @end
@@ -65,8 +70,6 @@
     
     [AppExecutive sharedInstance].deviceManager = [[NMXDeviceManager alloc] init];
     
-    [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(timerName) userInfo:nil repeats:NO];
-    
 #if TARGET_IPHONE_SIMULATOR
     [self performSegueWithIdentifier: @"showMainView" sender: self];
 #else
@@ -78,6 +81,10 @@
     
     notificationLbl.text = @"Waiting for notification";
     notificationLbl.hidden = YES;
+    self.oldFirmwareConfirmed = NO;
+    self.confirmingFirmware = NO;
+    self.confirmingMultiDevice = NO;
+    self.multiDeviceConfirmed = NO;
 }
 
 
@@ -100,35 +107,20 @@
 - (void) postDevicesStateChange;
 {
     NSArray *cells = [self.tableView visibleCells];
+    BOOL oneConnected = NO;
     for (DeviceTableViewCell *cell in cells)
     {
         [cell postDeviceStateChange];
+        
+        if (!cell.device.disconnected)
+        {
+            oneConnected = YES;
+        }
     }
-}
-
-
-- (void) timerName {
-	
-    if ([[[AppExecutive sharedInstance].defaults stringForKey: @"didDisconnect"] isEqualToString:@"yes"]) {
-        
-        //NSLog(@"didDisconnect stored");
-        
-        //NSString *device = [[AppExecutive sharedInstance].defaults stringForKey: @"deviceName"];
-        
-//        for (int i = 0; i < self.deviceList.count; i++)
-//        {
-//            NMXDevice *d = [self.deviceList objectAtIndex: i];
-//            
-//            NSLog(@"device name: %@",d.name);
-//            
-//            if ([d.name isEqualToString:device])
-//            {
-//                NSLog(@"this the 1");
-//                [AppExecutive sharedInstance].device = d;
-//                [self performSegueWithIdentifier:@"DeviceSelectionToReviewStatus" sender:self];
-//                return;
-//            }
-//        }
+    
+    if (oneConnected)
+    {
+        self.goButton.hidden = NO;
     }
 }
 
@@ -203,7 +195,8 @@
         cell.settingsButton.hidden = YES;
         cell.imageView.hidden = YES;
         cell.textLabel.text = @"No Devices Found";
-        cell.connectGoButton.hidden = YES;
+        //        cell.connectGoButton.hidden = YES;
+        cell.connectSwitch.hidden = YES;
     }
     else
     {
@@ -213,9 +206,11 @@
         if (device.disconnected)
         {
             cell.settingsButton.hidden = YES;
-            [cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+            //[cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+            cell.connectSwitch.on = NO;
         }
-        cell.connectGoButton.hidden = NO;
+        //        cell.connectGoButton.hidden = NO;
+        cell.connectSwitch.hidden = NO;
         cell.device = device;
         cell.tableView = self;
 
@@ -229,24 +224,70 @@
     return cell;
 }
 
-- (void) navigateToMainViewWithDevice: (NMXDevice *)device
+- (void) navigateToMainView
 {
-#if !TARGET_IPHONE_SIMULATOR
-    
+    NSString *updatesAvailFor = @"";
+    BOOL ready = YES;
+
     AppExecutive * appExecutive = [AppExecutive sharedInstance];
-    appExecutive.device = device;
+
+#if !TARGET_IPHONE_SIMULATOR
+
+    NSMutableArray *activeDevices = [NSMutableArray new];
+    NSArray *cells = [self.tableView visibleCells];
+    for (DeviceTableViewCell *cell in cells)
+    {
+        NMXDevice *device = cell.device;
+        [activeDevices addObject: device];
+
+        if (0 == device.fwVersion)
+        {
+            ready = NO;
+        }
+        else if (device.fwVersionUpdateAvailable)
+        {
+            if (NO == [updatesAvailFor isEqualToString: @""])
+            {
+                updatesAvailFor = [updatesAvailFor stringByAppendingString: @", "];
+            }
+            updatesAvailFor = [updatesAvailFor stringByAppendingString:device.name];
+        }
+
+    }
+    
+    appExecutive.deviceList = [NSArray arrayWithArray:activeDevices];
+    appExecutive.device = activeDevices[0];
+    
 #endif
 
-    if (device.fwVersionUpdateAvailable)
+    if (NO == self.multiDeviceConfirmed && appExecutive.deviceList.count > 1)
     {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"New Firmware Version"
-                                                        message: @"New firmware is available for the NMX, please update the NMX firmware asap.  If you continue some features will be disabled."
+        NSString *warningString = @"You have selected more than one NMX controller.  Before proceeding, "\
+        "confirm that the controllers are disonnected from each other. "\
+        "Select Continue to proceed.";
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Multicontroller Mode"
+                                                        message: warningString
                                                        delegate: self
                                               cancelButtonTitle: @"Cancel"
                                               otherButtonTitles: @"Continue", nil];
+        self.confirmingMultiDevice = YES;
+
         [alert show];
     }
-    else if (0 == device.fwVersion)
+    else if (NO == self.oldFirmwareConfirmed && ![updatesAvailFor isEqualToString: @""])
+    {
+        NSString *updatesString = [NSString stringWithFormat:@"New firmware is available for NMX device(s) %@. Please update the NMX firmware asap.  If you continue some features will be disabled.",
+                                   updatesAvailFor];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"New Firmware Version"
+                                                        message: updatesString
+                                                       delegate: self
+                                              cancelButtonTitle: @"Cancel"
+                                              otherButtonTitles: @"Continue", nil];
+        self.confirmingFirmware = YES;
+
+        [alert show];
+    }
+    else if (NO == ready)
     {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Device not ready"
                                                         message: @"The device is being initialized, please wait."
@@ -266,7 +307,24 @@
 {
     if(buttonIndex != 0)
     {
-        [self performSegueWithIdentifier:@"showMainView" sender:self];
+        if (self.confirmingFirmware)
+        {
+            self.oldFirmwareConfirmed = YES;
+        }
+        if (self.confirmingMultiDevice)
+        {
+            self.multiDeviceConfirmed = YES;
+        }
+
+        self.confirmingFirmware = NO;
+        self.confirmingMultiDevice = NO;
+
+        [self navigateToMainView];
+    }
+    else
+    {
+        self.confirmingFirmware = NO;
+        self.confirmingMultiDevice = NO;
     }
 }
 
@@ -301,5 +359,8 @@
     [super didReceiveMemoryWarning];
 }
 
+- (IBAction)goAction:(id)sender {
+    [self navigateToMainView];
+}
 
 @end

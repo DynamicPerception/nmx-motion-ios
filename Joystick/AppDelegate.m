@@ -31,9 +31,10 @@
 
 - (BOOL) application: (UIApplication *) application didFinishLaunchingWithOptions: (NSDictionary *) launchOptions {
 
-	// Override point for customization after application launch.
-    
-    [TestFairy begin:@"ec963cd05b830146b2cf9039a57ee8bf80b07863"];
+#ifdef NDEBUG
+    //only want this for test builds
+    //[TestFairy begin:@"55f4e43d6fb82a6f2f7643f9b18803b63dbf6201"];
+#endif
 
 	[[UIApplication sharedApplication] setStatusBarStyle: UIStatusBarStyleLightContent];
 

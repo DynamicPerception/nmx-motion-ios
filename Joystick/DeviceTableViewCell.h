@@ -16,7 +16,8 @@
 @property (strong, nonatomic) IBOutlet UIButton *settingsButton;
 @property (strong, nonatomic) NMXDevice *device;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-@property (strong, nonatomic) IBOutlet UIButton *connectGoButton;
+//@property (strong, nonatomic) IBOutlet UIButton *connectGoButton;
+@property (strong, nonatomic) IBOutlet UISwitch *connectSwitch;
 @property (weak) DeviceSelectionTableViewController *tableView;
 
 - (void) preDeviceStateChange;

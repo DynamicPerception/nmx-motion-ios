@@ -15,7 +15,7 @@
 @property (weak, nonatomic) IBOutlet JoyButton *shareBtn;
 @property (weak, nonatomic) IBOutlet UILabel *notificationLbl;
 
-- (void) navigateToMainViewWithDevice: (NMXDevice *)device;
+- (void) navigateToMainView;
 - (void) preDevicesStateChange;
 - (void) postDevicesStateChange;
 

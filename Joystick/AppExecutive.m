@@ -8,10 +8,13 @@
 
 #import <CocoaLumberjack/CocoaLumberjack.h>
 #import "AppExecutive.h"
+#import "JSDeviceSettings.h"
 
 //------------------------------------------------------------------------------
 
 #pragma mark - User Defaults Category
+
+
 
 @implementation NSUserDefaults (Number)
 
@@ -42,7 +45,7 @@ LastSet;
 
 @interface AppExecutive ()
 
-
+@property (nonatomic) NSUserDefaults *userDefaults;
 @property (nonatomic, readwrite)	LastSet				forFrameRate;
 
 @end
@@ -162,40 +165,40 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 
 
 - (void) setJoystick: (CGPoint) position {
-
-	joystick = position;
+    
+    joystick = position;
 }
 
 - (NSNumber *) exposureNumber {
-
-	if (exposureNumber == nil)
-	{
-		exposureNumber = [self.defaults numberForKey: kDefaultsExposure];
-
-		if (exposureNumber == nil)
-		{
-			exposureNumber = [NSNumber numberWithInteger: defaultExposureTime];
-			[self.defaults setObject: exposureNumber forKey: kDefaultsExposure];
-		}
-	}
-
-	return exposureNumber;
+    
+    if (exposureNumber == nil)
+    {
+        exposureNumber = [self.defaults numberForKey: kDefaultsExposure];
+        
+        if (exposureNumber == nil)
+        {
+            exposureNumber = [NSNumber numberWithInteger: defaultExposureTime];
+            [self.defaults setObject: exposureNumber forKey: kDefaultsExposure];
+        }
+    }
+    
+    return exposureNumber;
 }
 
 - (NSNumber *) bufferNumber {
-
-	if (bufferNumber == nil)
-	{
-		bufferNumber = [self.defaults objectForKey: kDefaultsBuffer];
-
-		if (bufferNumber == nil)
-		{
-			bufferNumber = [NSNumber numberWithInteger: defaultBufferTime];
-			[self.defaults setObject: bufferNumber forKey: kDefaultsBuffer];
-		}
-	}
-
-	return bufferNumber;
+    
+    if (bufferNumber == nil)
+    {
+        bufferNumber = [self.defaults objectForKey: kDefaultsBuffer];
+        
+        if (bufferNumber == nil)
+        {
+            bufferNumber = [NSNumber numberWithInteger: defaultBufferTime];
+            [self.defaults setObject: bufferNumber forKey: kDefaultsBuffer];
+        }
+    }
+    
+    return bufferNumber;
 }
 
 - (void) setBufferNumber: (NSNumber *) number {
@@ -209,454 +212,470 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 
 
 - (NSNumber *) shotDurationNumber {
-
-	if (shotDurationNumber == nil)
-	{
-		shotDurationNumber = [self.defaults numberForKey: kDefaultsShotDuration];
-
-		if (shotDurationNumber == nil)
-		{
-			shotDurationNumber = [NSNumber numberWithInteger: defaultShotDuration];
-			[self.defaults setObject: shotDurationNumber forKey: kDefaultsShotDuration];
-		}
-	}
-
-	return shotDurationNumber;
+    
+    if (shotDurationNumber == nil)
+    {
+        shotDurationNumber = [self.defaults numberForKey: kDefaultsShotDuration];
+        
+        if (shotDurationNumber == nil)
+        {
+            shotDurationNumber = [NSNumber numberWithInteger: defaultShotDuration];
+            [self.defaults setObject: shotDurationNumber forKey: kDefaultsShotDuration];
+        }
+    }
+    
+    return shotDurationNumber;
 }
 
 - (void) setShotDurationNumber: (NSNumber *) number {
-
+    
     //NSLog(@"setShotDurationNumber");
     
-	if (FALSE == [number isEqualToNumber: self.shotDurationNumber])
-	{
-		if ([self validShotDurationNumber: number])
-		{
-			shotDurationNumber = number;
-			[self computeFrameCountForShotDurationAndInterval];
+    if (FALSE == [number isEqualToNumber: self.shotDurationNumber])
+    {
+        if ([self validShotDurationNumber: number])
+        {
+            shotDurationNumber = number;
+            [self computeFrameCountForShotDurationAndInterval];
             shotDurationNumber = number;    // ComputeFrameCountForShotDurationAndInterval can change the duration, set it back
-			[self saveValue: shotDurationNumber forKey: kDefaultsShotDuration];
-		}
-	}
+            [self saveValue: shotDurationNumber forKey: kDefaultsShotDuration];
+        }
+    }
 }
 
 - (NSNumber *) frameCountNumber {
-
-	if (frameCountNumber == nil)
-	{
-		frameCountNumber = [self.defaults numberForKey: kDefaultsFrameCount];
-
-		if (frameCountNumber == nil)
-		{
-			frameCountNumber = [NSNumber numberWithInteger: defaultFrameCount];
-			[self.defaults setObject: frameCountNumber forKey: kDefaultsFrameCount];
-		}
-	}
-
-	return frameCountNumber;
+    
+    if (frameCountNumber == nil)
+    {
+        frameCountNumber = [self.defaults numberForKey: kDefaultsFrameCount];
+        
+        if (frameCountNumber == nil)
+        {
+            frameCountNumber = [NSNumber numberWithInteger: defaultFrameCount];
+            [self.defaults setObject: frameCountNumber forKey: kDefaultsFrameCount];
+        }
+    }
+    
+    return frameCountNumber;
 }
 
 - (void) setFrameCountNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.frameCountNumber])
-	{
-		if ([self validFrameCountNumber: number])
-		{
-			frameCountNumber = number;
-
-			[self computeVideoLength];
-			[self computeShotDuration];
-			[self saveValue: frameCountNumber forKey: kDefaultsFrameCount];
-
-			self.forFrameRate = DidSetFrameCount;
-		}
-	}
+    
+    if (FALSE == [number isEqualToNumber: self.frameCountNumber])
+    {
+        if ([self validFrameCountNumber: number])
+        {
+            frameCountNumber = number;
+            
+            [self computeVideoLength];
+            [self computeShotDuration];
+            [self saveValue: frameCountNumber forKey: kDefaultsFrameCount];
+            
+            self.forFrameRate = DidSetFrameCount;
+        }
+    }
 }
 
 - (NSNumber *) videoLengthNumber {
-
-	if (videoLengthNumber == nil)
-	{
-		videoLengthNumber = [self.defaults numberForKey: kDefaultsVideoLength];
-
-		if (videoLengthNumber == nil)
-		{
-			videoLengthNumber = [NSNumber numberWithInteger: defaultVideoLength];
-			[self.defaults setObject: videoLengthNumber forKey: kDefaultsVideoLength];
-		}
-	}
-
-	return videoLengthNumber;
+    
+    if (videoLengthNumber == nil)
+    {
+        videoLengthNumber = [self.defaults numberForKey: kDefaultsVideoLength];
+        
+        if (videoLengthNumber == nil)
+        {
+            videoLengthNumber = [NSNumber numberWithInteger: defaultVideoLength];
+            [self.defaults setObject: videoLengthNumber forKey: kDefaultsVideoLength];
+        }
+    }
+    
+    return videoLengthNumber;
 }
 
 - (void) setVideoLengthNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.frameRateNumber])
-	{
-		if ([self validVideoLengthNumber: number])
-		{
-			videoLengthNumber = number;
-
-			[self computeFrameCount];
-			[self computeShotDuration];
-			[self saveValue: videoLengthNumber forKey: kDefaultsVideoLength];
-
-			self.forFrameRate = DidSetVideoLength;
-		}
-	}
+    
+    if (FALSE == [number isEqualToNumber: self.frameRateNumber])
+    {
+        if ([self validVideoLengthNumber: number])
+        {
+            videoLengthNumber = number;
+            
+            [self computeFrameCount];
+            [self computeShotDuration];
+            [self saveValue: videoLengthNumber forKey: kDefaultsVideoLength];
+            
+            self.forFrameRate = DidSetVideoLength;
+        }
+    }
 }
 
 - (NSNumber *) frameRateNumber {
-
-	if (frameRateNumber == nil)
-	{
-		frameRateNumber = [self.defaults numberForKey: kDefaultsFrameRate];
-
-		if (frameRateNumber == nil)
-		{
-			frameRateNumber = [NSNumber numberWithInteger: defaultFrameRate];
-			[self.defaults setObject: frameRateNumber forKey: kDefaultsFrameRate];
-		}
-	}
-
-	return frameRateNumber;
+    
+    if (frameRateNumber == nil)
+    {
+        frameRateNumber = [self.defaults numberForKey: kDefaultsFrameRate];
+        
+        if (frameRateNumber == nil)
+        {
+            frameRateNumber = [NSNumber numberWithInteger: defaultFrameRate];
+            [self.defaults setObject: frameRateNumber forKey: kDefaultsFrameRate];
+        }
+    }
+    
+    return frameRateNumber;
 }
 
 - (void) setFrameRateNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.frameRateNumber])
-	{
-		frameRateNumber = number;
-		[self computeFrameCount];
-		[self computeShotDuration];
-		[self saveValue: frameRateNumber forKey: kDefaultsFrameRate];
-	}
+    
+    if (FALSE == [number isEqualToNumber: self.frameRateNumber])
+    {
+        frameRateNumber = number;
+        [self computeFrameCount];
+        [self computeShotDuration];
+        [self saveValue: frameRateNumber forKey: kDefaultsFrameRate];
+    }
 }
 
 - (NSNumber *) triggerNumber {
-
-	if (triggerNumber == nil)
-	{
-		triggerNumber = [self.defaults numberForKey: kDefaultsTrigger];
-
-		if (triggerNumber == nil)
-		{
-			triggerNumber = [NSNumber numberWithInteger: defaultTriggerTime];
-			[self.defaults setObject: triggerNumber forKey: kDefaultsTrigger];
-		}
-	}
-
-	return triggerNumber;
+    
+    if (triggerNumber == nil)
+    {
+        triggerNumber = [self.defaults numberForKey: kDefaultsTrigger];
+        
+        if (triggerNumber == nil)
+        {
+            triggerNumber = [NSNumber numberWithInteger: defaultTriggerTime];
+            [self.defaults setObject: triggerNumber forKey: kDefaultsTrigger];
+        }
+    }
+    
+    return triggerNumber;
 }
 
 - (void) setTriggerNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.triggerNumber])
-	{
-		if ([self validTriggerNumber: number])
-		{
-			triggerNumber = number;
-			[self saveValue: triggerNumber forKey: kDefaultsTrigger];
-		}
-	}
+    
+    if (FALSE == [number isEqualToNumber: self.triggerNumber])
+    {
+        if ([self validTriggerNumber: number])
+        {
+            triggerNumber = number;
+            [self saveValue: triggerNumber forKey: kDefaultsTrigger];
+        }
+    }
 }
 
 - (NSNumber *) delayNumber {
-
-	if (delayNumber == nil)
-	{
-		delayNumber = [self.defaults numberForKey: kDefaultsDelay];
-
-		if (delayNumber == nil)
-		{
-			delayNumber = [NSNumber numberWithInteger: defaultDelayTime];
-			[self.defaults setObject: delayNumber forKey: kDefaultsDelay];
-		}
-	}
-
-	return delayNumber;
+    
+    if (delayNumber == nil)
+    {
+        delayNumber = [self.defaults numberForKey: kDefaultsDelay];
+        
+        if (delayNumber == nil)
+        {
+            delayNumber = [NSNumber numberWithInteger: defaultDelayTime];
+            [self.defaults setObject: delayNumber forKey: kDefaultsDelay];
+        }
+    }
+    
+    return delayNumber;
 }
 
 
 - (void) setDelayNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.delayNumber])
-	{
+    
+    if (FALSE == [number isEqualToNumber: self.delayNumber])
+    {
         delayNumber = number;
         [self saveValue: delayNumber forKey: kDefaultsDelay];
     }
 }
- 
- - (void) setExposureNumber: (NSNumber *) number {
- 
-	if (FALSE == [number isEqualToNumber: self.exposureNumber])
-	{
+
+- (void) setExposureNumber: (NSNumber *) number {
+    
+    if (FALSE == [number isEqualToNumber: self.exposureNumber])
+    {
         exposureNumber = number;
         [self saveValue: exposureNumber forKey: kDefaultsExposure];
-	}
- }
- 
+    }
+}
+
 
 - (NSNumber *) focusNumber {
-
-	if (focusNumber == nil)
-	{
-		focusNumber = [self.defaults numberForKey: kDefaultsFocus];
-
-		if (focusNumber == nil)
-		{
-			focusNumber = [NSNumber numberWithInteger: defaultFocusTime];
-			[self.defaults setObject: focusNumber forKey: kDefaultsFocus];
-		}
-	}
-
-	return focusNumber;
+    
+    if (focusNumber == nil)
+    {
+        focusNumber = [self.defaults numberForKey: kDefaultsFocus];
+        
+        if (focusNumber == nil)
+        {
+            focusNumber = [NSNumber numberWithInteger: defaultFocusTime];
+            [self.defaults setObject: focusNumber forKey: kDefaultsFocus];
+        }
+    }
+    
+    return focusNumber;
 }
 
 - (void) setFocusNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.focusNumber])
-	{
-		if ([self validFocusNumber: number])
-		{
-			focusNumber = number;
-			[self saveValue: focusNumber forKey: kDefaultsFocus];
-		}
-	}
+    
+    if (FALSE == [number isEqualToNumber: self.focusNumber])
+    {
+        if ([self validFocusNumber: number])
+        {
+            focusNumber = number;
+            [self saveValue: focusNumber forKey: kDefaultsFocus];
+        }
+    }
 }
 
 - (NSNumber *) intervalNumber {
-
-	if (intervalNumber == nil)
-	{
-		intervalNumber = [self.defaults numberForKey: kDefaultsInterval];
-
-		if (intervalNumber == nil)
-		{
-			intervalNumber = [NSNumber numberWithInteger: defaultIntervalTime];
-			[self.defaults setObject: intervalNumber forKey: kDefaultsInterval];
-		}
-	}
-
-	return intervalNumber;
+    
+    if (intervalNumber == nil)
+    {
+        intervalNumber = [self.defaults numberForKey: kDefaultsInterval];
+        
+        if (intervalNumber == nil)
+        {
+            intervalNumber = [NSNumber numberWithInteger: defaultIntervalTime];
+            [self.defaults setObject: intervalNumber forKey: kDefaultsInterval];
+        }
+    }
+    
+    return intervalNumber;
 }
 
 - (void) setIntervalNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.intervalNumber])
-	{
-		if ([self validIntervalNumber: number])
-		{
-			intervalNumber = number;
+    
+    if (FALSE == [number isEqualToNumber: self.intervalNumber])
+    {
+        if ([self validIntervalNumber: number])
+        {
+            intervalNumber = number;
             [self computeShotDuration];	// computes frameCount if changed
-
-			[self saveValue: intervalNumber forKey: kDefaultsInterval];
-		}
-	}
+            
+            [self saveValue: intervalNumber forKey: kDefaultsInterval];
+        }
+    }
 }
 
 - (NSNumber *) lockAxisNumber {
-
-	if (lockAxisNumber == nil)
-	{
-		lockAxisNumber = [self.defaults numberForKey: kDefaultsLockAxisState];
-
-		if (lockAxisNumber == nil)
-		{
-			lockAxisNumber = [NSNumber numberWithBool: defaultLockAxisState];
-			[self.defaults setObject: lockAxisNumber forKey: kDefaultsLockAxisState];
-		}
-	}
-
-	return lockAxisNumber;
+    
+    if (lockAxisNumber == nil)
+    {
+        lockAxisNumber = [self.defaults numberForKey: kDefaultsLockAxisState];
+        
+        if (lockAxisNumber == nil)
+        {
+            lockAxisNumber = [NSNumber numberWithBool: defaultLockAxisState];
+            [self.defaults setObject: lockAxisNumber forKey: kDefaultsLockAxisState];
+        }
+    }
+    
+    return lockAxisNumber;
 }
 
 - (void) setLockAxisNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.lockAxisNumber])
-	{
-		lockAxisNumber = number;
-		[self saveValue: lockAxisNumber forKey: kDefaultsLockAxisState];
-	}
+    
+    if (FALSE == [number isEqualToNumber: self.lockAxisNumber])
+    {
+        lockAxisNumber = number;
+        [self saveValue: lockAxisNumber forKey: kDefaultsLockAxisState];
+    }
 }
 
 - (NSNumber *) sensitivityNumber {
-
-	if (sensitivityNumber == nil)
-	{
-		sensitivityNumber = [self.defaults numberForKey: kDefaultsSensitivity];
-
-		if (sensitivityNumber == nil)
-		{
-			sensitivityNumber = [NSNumber numberWithFloat: defaultSensitivity];
-			[self.defaults setObject: sensitivityNumber forKey: kDefaultsSensitivity];
-		}
-	}
-
-	return sensitivityNumber;
+    
+    if (sensitivityNumber == nil)
+    {
+        sensitivityNumber = [self.defaults numberForKey: kDefaultsSensitivity];
+        
+        if (sensitivityNumber == nil)
+        {
+            sensitivityNumber = [NSNumber numberWithFloat: defaultSensitivity];
+            [self.defaults setObject: sensitivityNumber forKey: kDefaultsSensitivity];
+        }
+    }
+    
+    return sensitivityNumber;
 }
 
 - (void) setSensitivityNumber: (NSNumber *) number {
-
-	if (FALSE == [number isEqualToNumber: self.sensitivityNumber])
-	{
-		sensitivityNumber = number;
-		[self saveValue: sensitivityNumber forKey: kDefaultsSensitivity];
-	}
+    
+    if (FALSE == [number isEqualToNumber: self.sensitivityNumber])
+    {
+        sensitivityNumber = number;
+        [self saveValue: sensitivityNumber forKey: kDefaultsSensitivity];
+    }
 }
 
 
 NSArray *defaultRampingValues() {
-
-	NSNumber *startValue	= [NSNumber numberWithFloat: defaultRampingStart];
-	NSNumber *finalValue	= [NSNumber numberWithFloat: defaultRampingFinal];
-	NSArray  *values		= [NSArray arrayWithObjects: startValue, finalValue, nil];
-
-	return values;
+    
+    NSNumber *startValue	= [NSNumber numberWithFloat: defaultRampingStart];
+    NSNumber *finalValue	= [NSNumber numberWithFloat: defaultRampingFinal];
+    NSArray  *values		= [NSArray arrayWithObjects: startValue, finalValue, nil];
+    
+    return values;
 }
 
 - (NSArray *) panIncreaseValues {
-
-	if (panIncreaseValues == nil)
-	{
-		panIncreaseValues = [self.defaults arrayForKey: kDefaultsPanIncreaseValues];
-
-		if (panIncreaseValues == nil)
-		{
-			panIncreaseValues = defaultRampingValues();
-			[self.defaults setObject: panIncreaseValues forKey: kDefaultsPanIncreaseValues];
-		}
-	}
-
-	return panIncreaseValues;
+    
+    if (panIncreaseValues == nil)
+    {
+        panIncreaseValues = [self.defaults arrayForKey: kDefaultsPanIncreaseValues];
+        
+        if (panIncreaseValues == nil)
+        {
+            panIncreaseValues = defaultRampingValues();
+            [self.defaults setObject: panIncreaseValues forKey: kDefaultsPanIncreaseValues];
+        }
+    }
+    
+    return panIncreaseValues;
 }
 
 - (void) setPanIncreaseValues: (NSArray *) array {
-
-	panIncreaseValues = array;
-	[self saveValue: panIncreaseValues forKey: kDefaultsPanIncreaseValues];
+    
+    panIncreaseValues = array;
+    [self saveValue: panIncreaseValues forKey: kDefaultsPanIncreaseValues];
 }
 
 - (NSArray *) panDecreaseValues {
-
-	if (panDecreaseValues == nil)
-	{
-		panDecreaseValues = [self.defaults arrayForKey: kDefaultsPanDecreaseValues];
-
-		if (panDecreaseValues == nil)
-		{
-			panDecreaseValues = defaultRampingValues();
-			[self.defaults setObject: panDecreaseValues forKey: kDefaultsPanDecreaseValues];
-		}
-	}
-
-	return panDecreaseValues;
+    
+    if (panDecreaseValues == nil)
+    {
+        panDecreaseValues = [self.defaults arrayForKey: kDefaultsPanDecreaseValues];
+        
+        if (panDecreaseValues == nil)
+        {
+            panDecreaseValues = defaultRampingValues();
+            [self.defaults setObject: panDecreaseValues forKey: kDefaultsPanDecreaseValues];
+        }
+    }
+    
+    return panDecreaseValues;
 }
 
 - (void) setPanDecreaseValues: (NSArray *) array {
-
-	panDecreaseValues = array;
-	[self saveValue: panDecreaseValues forKey: kDefaultsPanDecreaseValues];
+    
+    panDecreaseValues = array;
+    [self saveValue: panDecreaseValues forKey: kDefaultsPanDecreaseValues];
 }
 
 - (NSArray *) tiltIncreaseValues {
-
-	if (tiltIncreaseValues == nil)
-	{
-		tiltIncreaseValues = [self.defaults arrayForKey: kDefaultsTiltIncreaseValues];
-
-		if (tiltIncreaseValues == nil)
-		{
-			tiltIncreaseValues = defaultRampingValues();
-			[self.defaults setObject: tiltIncreaseValues forKey: kDefaultsTiltIncreaseValues];
-		}
-	}
-
-	return tiltIncreaseValues;
+    
+    if (tiltIncreaseValues == nil)
+    {
+        tiltIncreaseValues = [self.defaults arrayForKey: kDefaultsTiltIncreaseValues];
+        
+        if (tiltIncreaseValues == nil)
+        {
+            tiltIncreaseValues = defaultRampingValues();
+            [self.defaults setObject: tiltIncreaseValues forKey: kDefaultsTiltIncreaseValues];
+        }
+    }
+    
+    return tiltIncreaseValues;
 }
 
 - (void) setTiltIncreaseValues: (NSArray *) array {
-
-	tiltIncreaseValues = array;
-	[self saveValue: tiltIncreaseValues forKey: kDefaultsTiltIncreaseValues];
+    
+    tiltIncreaseValues = array;
+    [self saveValue: tiltIncreaseValues forKey: kDefaultsTiltIncreaseValues];
 }
 
 - (NSArray *) tiltDecreaseValues {
-
-	if (tiltDecreaseValues == nil)
-	{
-		tiltDecreaseValues = [self.defaults arrayForKey: kDefaultsTiltDecreaseValues];
-
-		if (tiltDecreaseValues == nil)
-		{
-			tiltDecreaseValues = defaultRampingValues();
-			[self.defaults setObject: tiltDecreaseValues forKey: kDefaultsTiltDecreaseValues];
-		}
-	}
-
-	return tiltDecreaseValues;
+    
+    if (tiltDecreaseValues == nil)
+    {
+        tiltDecreaseValues = [self.defaults arrayForKey: kDefaultsTiltDecreaseValues];
+        
+        if (tiltDecreaseValues == nil)
+        {
+            tiltDecreaseValues = defaultRampingValues();
+            [self.defaults setObject: tiltDecreaseValues forKey: kDefaultsTiltDecreaseValues];
+        }
+    }
+    
+    return tiltDecreaseValues;
 }
 
 - (void) setTiltDecreaseValues: (NSArray *) array {
-
-	tiltDecreaseValues = array;
-	[self saveValue: tiltDecreaseValues forKey: kDefaultsTiltDecreaseValues];
+    
+    tiltDecreaseValues = array;
+    [self saveValue: tiltDecreaseValues forKey: kDefaultsTiltDecreaseValues];
 }
 
 - (NSArray *) slideIncreaseValues {
-
-	if (slideIncreaseValues == nil)
-	{
-		slideIncreaseValues = [self.defaults arrayForKey: kDefaultsSlideIncreaseValues];
-
-		if (slideIncreaseValues == nil)
-		{
-			slideIncreaseValues = defaultRampingValues();
-			[self.defaults setObject: slideIncreaseValues forKey: kDefaultsSlideIncreaseValues];
-		}
-	}
     
-	return slideIncreaseValues;
+    if (slideIncreaseValues == nil)
+    {
+        slideIncreaseValues = [self.defaults arrayForKey: kDefaultsSlideIncreaseValues];
+        
+        if (slideIncreaseValues == nil)
+        {
+            slideIncreaseValues = defaultRampingValues();
+            [self.defaults setObject: slideIncreaseValues forKey: kDefaultsSlideIncreaseValues];
+        }
+    }
+    
+    return slideIncreaseValues;
 }
 
 - (void) setSlideIncreaseValues: (NSArray *) array {
-
-	slideIncreaseValues = array;
-	[self saveValue: slideIncreaseValues forKey: kDefaultsSlideIncreaseValues];
+    
+    slideIncreaseValues = array;
+    [self saveValue: slideIncreaseValues forKey: kDefaultsSlideIncreaseValues];
 }
 
 - (NSArray *) slideDecreaseValues {
-
-	if (slideDecreaseValues == nil)
-	{
-		slideDecreaseValues = [self.defaults arrayForKey: kDefaultsSlideDecreaseValues];
-
-		if (slideDecreaseValues == nil)
-		{
-			slideDecreaseValues = defaultRampingValues();
-			[self.defaults setObject: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
-		}
-	}
-
-	return slideDecreaseValues;
+    
+    if (slideDecreaseValues == nil)
+    {
+        slideDecreaseValues = [self.defaults arrayForKey: kDefaultsSlideDecreaseValues];
+        
+        if (slideDecreaseValues == nil)
+        {
+            slideDecreaseValues = defaultRampingValues();
+            [self.defaults setObject: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
+        }
+    }
+    
+    return slideDecreaseValues;
 }
 
 - (void) setSlideDecreaseValues: (NSArray *) array {
-
-	slideDecreaseValues = array;
-	[self saveValue: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
+    
+    slideDecreaseValues = array;
+    [self saveValue: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
 }
+
 
 //------------------------------------------------------------------------------
 
-#pragma mark - Private Property Methods
+#pragma mark - Defaults
 
-- (NSUserDefaults *) defaults {
-
+- (JSDeviceSettings *) defaults {
+    
 	if (defaults == nil)
-		defaults =  [NSUserDefaults standardUserDefaults];
+    {
+#if TARGET_IPHONE_SIMULATOR
+        defaults = [[JSDeviceSettings alloc] initWithDevice:@"Simulator Dev"];
+#else
+        NSAssert(_device, @"Attempting to get device settings before the device is known");
+        defaults = [[JSDeviceSettings alloc] initWithDevice:_device.name];
+#endif
+    }
 
 	return defaults;
+}
+
+- (NSUserDefaults *) userDefaults {
+    
+    if (_userDefaults == nil)
+        _userDefaults =  [NSUserDefaults standardUserDefaults];
+    
+    return _userDefaults;
 }
 
 //------------------------------------------------------------------------------
@@ -692,9 +711,10 @@ NSArray *defaultRampingValues() {
         
 		if (getenv("CLEAR_DEVICE_HANDLES"))
 		{
-			[self.defaults removeObjectForKey: kDefaultsDeviceHandles];
-			[self.defaults synchronize];
+			[self.userDefaults removeObjectForKey: kDefaultsDeviceHandles];
+			[self.userDefaults synchronize];
 		}
+        
 	}
 
 	return self;
@@ -724,7 +744,7 @@ NSArray *defaultRampingValues() {
 
 	if (deviceName)
 	{
-		NSDictionary *	allHandles	= [self.defaults dictionaryForKey: kDefaultsDeviceHandles];
+		NSDictionary *	allHandles	= [self.userDefaults dictionaryForKey: kDefaultsDeviceHandles];
 		NSString *		thisHandle	= [allHandles objectForKey: deviceName];
 
 		return thisHandle;
@@ -735,7 +755,7 @@ NSArray *defaultRampingValues() {
 
 - (void) setHandle: (NSString *) handle forDeviceName: (NSString *) deviceName {
 
-	NSDictionary *			oldHandles	= [self.defaults dictionaryForKey: kDefaultsDeviceHandles];
+	NSDictionary *			oldHandles	= [self.userDefaults dictionaryForKey: kDefaultsDeviceHandles];
 	NSMutableDictionary *	newHandles	= [NSMutableDictionary dictionaryWithDictionary: oldHandles];
 
 	if (handle.length == 0)
@@ -743,8 +763,8 @@ NSArray *defaultRampingValues() {
 	else
 		[newHandles setObject: handle forKey: deviceName];
 
-	[self.defaults setObject: newHandles forKey: kDefaultsDeviceHandles];
-	[self.defaults synchronize];
+	[self.userDefaults setObject: newHandles forKey: kDefaultsDeviceHandles];
+	[self.userDefaults synchronize];
 }
 
 - (NSString *) stringWithHandleForDeviceName: (NSString *) deviceName {
@@ -1056,8 +1076,6 @@ NSArray *defaultRampingValues() {
 
 - (void) setPoints {
     
-    //NSLog(@"startStopQueryTimer");
-        
     startPoint1 = [self.device queryProgramStartPoint:1];
     endPoint1 = [self.device queryProgramEndPoint:1];
     

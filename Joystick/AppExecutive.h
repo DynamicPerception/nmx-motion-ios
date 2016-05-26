@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "NMXDevice.h"
 #import "NMXDeviceManager.h"
+#import "JSDeviceSettings.h"
 
 @interface AppExecutive : NSObject
 
@@ -51,9 +52,10 @@
 
 // device
 
-@property (strong, atomic)          NMXDevice *         device;
-@property (strong, atomic)          NMXDeviceManager *  deviceManager;
-@property (nonatomic, readonly)		NSUserDefaults *	defaults;
+@property (strong, atomic)          NMXDevice *           device;
+@property (strong, atomic)          NMXDeviceManager *    deviceManager;
+@property (nonatomic, readonly)		JSDeviceSettings *    defaults;
+@property (strong, atomic)          NSArray<NMXDevice *> *deviceList;
 
 @property (nonatomic, readonly)		UIColor *	appBlueColor;
 

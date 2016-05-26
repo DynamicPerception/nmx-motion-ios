@@ -131,13 +131,20 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     [[NSUserDefaults standardUserDefaults] setValue:@(NO) forKey:@"_UIConstraintBasedLayoutLogUnsatisfiable"];
 
+    [self initViewForDevice];
+    
+    [super viewDidLoad];
+}
+
+- (void) initViewForDevice
+{
     self.joystickModeActive = false;
     self.showingModalScreen = false;
-
-	self.setStartButton.selected = NO;
-	self.setStopButton.selected = NO;
-	self.nextButton.selected = NO;
-	self.fireCameraButton.selected = NO;
+    
+    self.setStartButton.selected = NO;
+    self.setStopButton.selected = NO;
+    self.nextButton.selected = NO;
+    self.fireCameraButton.selected = NO;
     
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
@@ -192,12 +199,12 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     float f = [self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"];//tiltLinearCustom = 0.00;
     
     NSLog(@"slideMotor: %i",a);
-//    NSLog(@"b: %i",b);
-//    NSLog(@"c: %i",c);
-//    
-//    NSLog(@"d: %f",d);
-//    NSLog(@"e: %f",e);
-//    NSLog(@"f: %f",f);
+    //    NSLog(@"b: %i",b);
+    //    NSLog(@"c: %i",c);
+    //
+    //    NSLog(@"d: %f",d);
+    //    NSLog(@"e: %f",e);
+    //    NSLog(@"f: %f",f);
     
     if([appExecutive.defaults objectForKey:@"slideMotor"] != nil)
     {
@@ -265,12 +272,12 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     {
         tiltDirection = [appExecutive.defaults objectForKey:@"tiltDirection"];
     }
-
+    
     
     self.slideDirectionMode = [NSNumber numberWithInt:kLeftRightLabel];
     self.panDirectionMode = [NSNumber numberWithInt:kClockwiseCounterClockwiseLabel];
     self.tiltDirectionMode = [NSNumber numberWithInt:kUpDownLabel];
-
+    
     // Restore saved label values for direction
     if([appExecutive.defaults objectForKey:@"slideDirectionMode"] != nil)
     {
@@ -298,28 +305,28 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     {
         [appExecutive.defaults setObject:self.tiltDirectionMode forKey:@"tiltDirectionMode"];
     }
-
-
-//    float fc = [self.appExecutive.frameCountNumber floatValue];
-//    
-//    NSLog(@"fc: %f",fc);
-//    
-//    float range1 = [self.appExecutive.frameCountNumber floatValue] * .33;
-//    float range2 = [self.appExecutive.frameCountNumber floatValue] * .75 - range1;
-//    float range3 = [self.appExecutive.frameCountNumber floatValue] - range2;
-//    
-//    
-//    NSLog(@"range1: %.02f",range1);
-//    NSLog(@"range2: %.02f",range2);
-//    NSLog(@"range3: %.02f",range3);
-//    
-//    float per1 = (float)3/range1;
-//    float per2 = (float)3/range2;
-//    float per3 = (float)3/range3;
-//    
-//    NSLog(@"per1: %.02f",per1);
-//    NSLog(@"per2: %.02f",per2);
-//    NSLog(@"per3: %.02f",per3);
+    
+    
+    //    float fc = [self.appExecutive.frameCountNumber floatValue];
+    //
+    //    NSLog(@"fc: %f",fc);
+    //
+    //    float range1 = [self.appExecutive.frameCountNumber floatValue] * .33;
+    //    float range2 = [self.appExecutive.frameCountNumber floatValue] * .75 - range1;
+    //    float range3 = [self.appExecutive.frameCountNumber floatValue] - range2;
+    //
+    //
+    //    NSLog(@"range1: %.02f",range1);
+    //    NSLog(@"range2: %.02f",range2);
+    //    NSLog(@"range3: %.02f",range3);
+    //
+    //    float per1 = (float)3/range1;
+    //    float per2 = (float)3/range2;
+    //    float per3 = (float)3/range3;
+    //
+    //    NSLog(@"per1: %.02f",per1);
+    //    NSLog(@"per2: %.02f",per2);
+    //    NSLog(@"per3: %.02f",per3);
     
     if ([self.appExecutive.defaults integerForKey:@"useJoystick"] == 2)
     {
@@ -334,8 +341,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     {
         //NSLog(@"use joystick1");
         
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"useJoystick"];
-//        [self.appExecutive.defaults synchronize];
+        //        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"useJoystick"];
+        //        [self.appExecutive.defaults synchronize];
         
         self.appExecutive.useJoystick = YES;
         [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"useJoystick"];
@@ -385,8 +392,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     UITapGestureRecognizer *gestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(enterJoystickMode)];
     [self.joystickViewController.view addGestureRecognizer:gestureRecognizer1];
     gestureRecognizer.cancelsTouchesInView = NO;
-    
-    [super viewDidLoad];
 }
 
 - (void)hideButtonViews {
@@ -3103,6 +3108,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     [self enterJoystickMode];
 }
+
+- (IBAction)deviceSelectionButtonSelected:(id)sender {
+}
+
 
 - (void) convertUnits : (int)pointIndex {
     

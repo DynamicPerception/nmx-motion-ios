@@ -159,6 +159,7 @@
 		23F95D981A24CE8300E3D7DA /* JoyButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F95D971A24CE8300E3D7DA /* JoyButton.m */; };
 		23FD81081A23D78800FD9D49 /* CameraSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23FD81071A23D78800FD9D49 /* CameraSettingsViewController.m */; };
 		23FD810B1A23D8FC00FD9D49 /* ReviewStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23FD810A1A23D8FC00FD9D49 /* ReviewStatusViewController.m */; };
+		301A1BFA1CED22FA00A26D14 /* JSDeviceSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 301A1BF91CED22FA00A26D14 /* JSDeviceSettings.m */; };
 		3048A1121C40657C00855EB0 /* DeviceState_Ready.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */; };
 		3048A1131C40657C00855EB0 /* DeviceState_Ready@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */; };
 		3048A1141C40657C00855EB0 /* DeviceState_Indeterminate.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */; };
@@ -399,6 +400,8 @@
 		23FD81071A23D78800FD9D49 /* CameraSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsViewController.m; sourceTree = "<group>"; };
 		23FD81091A23D8FC00FD9D49 /* ReviewStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReviewStatusViewController.h; sourceTree = "<group>"; };
 		23FD810A1A23D8FC00FD9D49 /* ReviewStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReviewStatusViewController.m; sourceTree = "<group>"; };
+		301A1BF81CED22FA00A26D14 /* JSDeviceSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeviceSettings.h; sourceTree = "<group>"; };
+		301A1BF91CED22FA00A26D14 /* JSDeviceSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDeviceSettings.m; sourceTree = "<group>"; };
 		3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Ready.png; sourceTree = "<group>"; };
 		3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Ready@2x.png"; sourceTree = "<group>"; };
 		3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Indeterminate.png; sourceTree = "<group>"; };
@@ -478,14 +481,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		10871B651B8B99BD00B1D017 /* CoreData */ = {
+		10871B651B8B99BD00B1D017 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				10871B621B8B997400B1D017 /* NMXMotion.xcdatamodeld */,
 				10871B6C1B8BA05E00B1D017 /* PresetOb.h */,
 				10871B6D1B8BA05E00B1D017 /* PresetOb.m */,
+				301A1BF81CED22FA00A26D14 /* JSDeviceSettings.h */,
+				301A1BF91CED22FA00A26D14 /* JSDeviceSettings.m */,
 			);
-			name = CoreData;
+			name = Data;
 			sourceTree = "<group>";
 		};
 		10D5EBB61B94CEE2006125E1 /* assets */ = {
@@ -650,7 +655,7 @@
 				10F9DE341BEBC1B00059A727 /* reachability */,
 				10F9DE221BEBC0B40059A727 /* imagepicker */,
 				10D5EBB61B94CEE2006125E1 /* assets */,
-				10871B651B8B99BD00B1D017 /* CoreData */,
+				10871B651B8B99BD00B1D017 /* Data */,
 				3F51E8AC1B66A69400E1E2D5 /* TestFairy */,
 				3FB4A5581B5FE80A006CFF1F /* Tests */,
 				5D6A799F1B27543E00F93B71 /* MainViews */,
@@ -1122,6 +1127,7 @@
 				2389AC2219DD938100FB2679 /* MainViewController.m in Sources */,
 				5DAEBE5719F60D6F000AC7AA /* NMXDevice.m in Sources */,
 				2389AC1F19DD938100FB2679 /* AppDelegate.m in Sources */,
+				301A1BFA1CED22FA00A26D14 /* JSDeviceSettings.m in Sources */,
 				100838A21B8F88C6003823E0 /* DistancePresetViewController.m in Sources */,
 				3FB4A55B1B5FE84C006CFF1F /* DrawTest.m in Sources */,
 				2397C3E41AE96FBF001FFF60 /* MotorRampingView.m in Sources */,

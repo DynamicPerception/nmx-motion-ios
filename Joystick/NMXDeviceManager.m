@@ -122,7 +122,9 @@
 
     //DDLogDebug(@"centralManager Peripheral disconnected");
     
-    for (NMXDevice *device in self.myDevices)
+    NSArray *deviceArray = [NSArray arrayWithArray:self.myDevices];
+    
+    for (NMXDevice *device in deviceArray)
     {
         if ([device.name isEqualToString: peripheral.name])
         {

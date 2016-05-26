@@ -78,6 +78,8 @@ typedef enum : unsigned char {
 - (void) connect;
 - (void) disconnect;
 
+- (void) setDeviceAddress:(unsigned char) address;
+
 - (UInt32) mainQueryStartHere;
 
 - (void) mainDebugLEDToggle;
@@ -163,6 +165,7 @@ typedef enum : unsigned char {
 @property (assign) unsigned char sledMotor;
 @property (assign) unsigned char panMotor;
 @property (assign) unsigned char tiltMotor;
+@property (atomic) unsigned char address;
 @property bool inBackground;
 @property (readonly) UInt16 fwVersion;
 @property (readonly) BOOL fwVersionUpdateAvailable;
