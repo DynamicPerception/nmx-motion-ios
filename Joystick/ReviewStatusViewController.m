@@ -709,11 +709,6 @@ typedef enum{
         runStatus = [device mainQueryRunStatus];
     }
 
-    
-    //NSLog(@"viewWillAppear status: %i", runStatus);
-    //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
-    //NSLog(@"viewWillAppear savedSecondsLeft: %i", savedSecondsLeft);
-    
     [self.view bringSubviewToFront:timerContainer];
     timerContainer.hidden = YES;
     
@@ -1240,10 +1235,8 @@ typedef enum{
     
     NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
     
-    [appExecutive.defaults setObject: [NSNumber numberWithLong:atEndSelection] forKey: @"keepAlive"];
-    [appExecutive.defaults synchronize];
-    
-    //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
+    [appExecutive.userDefaults setObject: [NSNumber numberWithLong:atEndSelection] forKey: @"keepAlive"];
+    [appExecutive.userDefaults synchronize];
     
     [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
     if (device.fwVersion >= 52)
@@ -1340,8 +1333,8 @@ typedef enum{
 	//DDLogDebug(@"Send Motors To Start Button");
     originalCountdownTime = 0;
     
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
+    [appExecutive.userDefaults synchronize];
     
     // Set to fastest setting to allow return to home to perform optimally
     [device motorSet: device.sledMotor Microstep: 4];
@@ -1418,14 +1411,8 @@ typedef enum{
     
     [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
     
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
-    [appExecutive.defaults synchronize];
-    
-    [appExecutive.defaults setObject: @"no" forKey: @"didDisconnect"];
-    [appExecutive.defaults synchronize];
-    
-    [appExecutive.defaults setObject: appExecutive.device.name forKey: @"deviceName"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
+    [appExecutive.userDefaults synchronize];
 
 	[self transitionToState: ControllerStateMotorRampingOrSendMotors];
     
@@ -1484,12 +1471,6 @@ typedef enum{
     
     DDLogDebug(@"Did Disconnect Device");
     
-//    [appExecutive.defaults setObject: @"yes" forKey: @"didDisconnect"];
-//    [appExecutive.defaults synchronize];
-    
-    [appExecutive.defaults setObject: appExecutive.device.name forKey: @"deviceName"];
-    [appExecutive.defaults synchronize];
-
     dispatch_async(dispatch_get_main_queue(), ^(void) {
 
         disconnectStatusLbl.text = @"Did Disconnect Device Init";

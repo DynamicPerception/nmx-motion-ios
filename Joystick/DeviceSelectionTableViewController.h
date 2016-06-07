@@ -13,7 +13,8 @@
 @interface DeviceSelectionTableViewController : UIViewController <NMXDeviceManagerDelegate, UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet JoyButton *shareBtn;
-@property (weak, nonatomic) IBOutlet UILabel *notificationLbl;
+@property (weak, nonatomic) IBOutlet UILabel   *notificationLbl;
+@property NSMutableArray                       *activeDevices;
 
 - (void) navigateToMainView;
 - (void) preDevicesStateChange;

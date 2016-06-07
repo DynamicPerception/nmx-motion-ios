@@ -136,6 +136,8 @@
 @property NSNumber *panDirectionMode;     // CW/CCW, In/Out, etc.
 @property NSNumber *tiltDirectionMode;    // CW/CCW, In/Out, etc.
 
+@property (nonatomic, strong)				NSTimer *			sendMotorsTimer;
+
 - (IBAction) setStartPoint1:(id)sender;
 - (IBAction) goToStartPoint1:(id)sender;
 - (IBAction) closeStartView:(id)sender;
@@ -152,6 +154,6 @@
 - (IBAction) handleDominantAxisSwitch: (UISwitch *) sender;
 - (IBAction) manage2P:(id)sender;
 
-@property (nonatomic, strong)				NSTimer *			sendMotorsTimer;
+- (void) activeDeviceChanged;
 
 @end

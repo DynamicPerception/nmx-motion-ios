@@ -12,13 +12,15 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "NSNumber+ASI.h"
+#import "AppExecutive.h"
 
 #define kDefaultsMotorSledMicrosteps   @"MotorSledMicrosteps"
-#define kDefaultsMotorPanMicrosteps   @"MotorPanMicrosteps"
+#define kDefaultsMotorPanMicrosteps    @"MotorPanMicrosteps"
 #define kDefaultsMotorTiltMicrosteps   @"MotorTiltMicrosteps"
 #define kDefaultsMotorSledInvert       @"MotorSledInvert"
 #define kDefaultsMotorPanInvert        @"MotorPanInvert"
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
+#define kDefaultsDeviceAddress         @"DeviceAddress"
 
 #define kCurrentSupportedFirmwareVersion 64
 
@@ -226,8 +228,10 @@ bool waitForResponse;
         moving[1] = NMXMovingStopped;
         moving[2] = NMXMovingStopped;
         moving[3] = NMXMovingStopped;
+
+        AppExecutive *appExecutive = [AppExecutive sharedInstance];
         
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        JSDeviceSettings *defaults = [appExecutive defaultsForDevice: self];
         
         invertDirection[0] = false;
         invertDirection[1] = [defaults boolForKey: kDefaultsMotorSledInvert];
@@ -247,9 +251,12 @@ bool waitForResponse;
         self.retryCount = 0;
         self.retrying = false;
         self.disconnected = true;
-        self.address = 3;
         
         waitForResponse = true;
+        
+        int address = [defaults boolForKey: kDefaultsDeviceAddress];
+        self.address = address > 0 ? address : 3;        // default the address to 3 if it hasn't been set already
+
         
         self.serviceDiscoveryRetryCount = 3;
     }
@@ -615,6 +622,13 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
                     [self sendCommand: self.myLastCommand WithDesc: @"Retrying last command" WaitForResponse: waitForResponse WithTimeout: self.lastTimeout];
                     
                     self.retrying = nestedRetry;
+                    
+                    if (self.disconnected)
+                    {
+                        DDLogDebug(@"Device disconnected in waitForResponse");
+                        break;
+                    }
+                    
                 }
                 else// if(!inBackground)
                 {
@@ -1316,6 +1330,8 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
     NSString *  descString = [NSString stringWithFormat: @"Set device address %d", address];
     [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
+    
+    [[AppExecutive sharedInstance].defaults setInteger: address forKey: kDefaultsDeviceAddress];
 }
 
 #pragma mark - Motor Set
@@ -1341,20 +1357,21 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) motorSet: (int) motorNumber InvertDirection: (bool) inInvertDirection {
     
     invertDirection[motorNumber] = inInvertDirection;
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    AppExecutive *appExecutive = [AppExecutive sharedInstance];
+    
     switch (motorNumber)
     {
         case 1:
-            [defaults setBool: inInvertDirection forKey: kDefaultsMotorSledInvert];
+            [appExecutive.defaults setBool: inInvertDirection forKey: kDefaultsMotorSledInvert];
             break;
         case 2:
-            [defaults setBool: inInvertDirection forKey: kDefaultsMotorPanInvert];
+            [appExecutive.defaults setBool: inInvertDirection forKey: kDefaultsMotorPanInvert];
             break;
         case 3:
-            [defaults setBool: inInvertDirection forKey: kDefaultsMotorTiltInvert];
+            [appExecutive.defaults setBool: inInvertDirection forKey: kDefaultsMotorTiltInvert];
             break;
     }
-    [defaults synchronize];
+    [appExecutive.defaults synchronize];
 }
 
 - (void) motorSet: (int) motorNumber Disabled: (bool) inDisabled {

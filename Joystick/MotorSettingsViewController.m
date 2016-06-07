@@ -308,10 +308,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
     if (self.motorNumber == 1)
     {
-        NSLog(@"self.motorNumber: %i",(int)self.motorNumber);
-        NSLog(@"self.appExecutive.defaults slideGear: %i",(int)[self.appExecutive.defaults integerForKey:@"slideGear"]);
-        NSLog(@"self.appExecutive.defaults slideMotor: %i",(int)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
-        
         if ([self.appExecutive.defaults integerForKey:@"slideGear"])
         {
             NSLog(@"slide setting");

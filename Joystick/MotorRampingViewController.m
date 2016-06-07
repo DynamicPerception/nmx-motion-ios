@@ -352,25 +352,6 @@ NSArray static	*frameCountStrings = nil;
     slide3PSlider3.minimumValue = slide3PSlider2.maximumValue + 1;
     slide3PSlider3.maximumValue = masterFrameCount;
     
-    
-    if ((![appExecutive.defaults integerForKey:@"slide3PVal1"]))
-    {
-//        NSLog(@"min: %f",slide3PSlider2.minimumValue);
-//        NSLog(@"max: %f",slide3PSlider2.maximumValue);
-        
-        //int a = (slide3PSlider2.minimumValue + slide3PSlider2.maximumValue)/2;
-        
-        //NSLog(@"half 3p vals: %i",a);
-        
-        //appExecutive.slide3PVal2 = a;
-        
-//        [appExecutive.defaults setObject: [NSNumber numberWithInt:slide3PSlider1.minimumValue] forKey: @"slide3PVal1"];
-//        [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-//        [appExecutive.defaults setObject: [NSNumber numberWithInt:slide3PSlider3.maximumValue] forKey: @"slide3PVal3"];
-//        
-//        [appExecutive.defaults synchronize];
-    }
-    
     slide3PSlider1.value = appExecutive.slide3PVal1;
     slide3PSlider2.value = appExecutive.slide3PVal2;
     slide3PSlider3.value = appExecutive.slide3PVal3;
@@ -409,8 +390,6 @@ NSArray static	*frameCountStrings = nil;
     
     if (appExecutive.is3P == YES)
     {
-        //NSLog(@"is3P");
-        
         if (programMode == NMXProgramModeVideo)
         {
             NSLog(@"is video");
@@ -1616,8 +1595,8 @@ NSArray static	*frameCountStrings = nil;
         slide3P1Lbl.text = a;
     }
     
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
+    [appExecutive.userDefaults synchronize];
 }
 
 - (IBAction) handleSlide3PSlider2:(id)sender {
@@ -1651,8 +1630,8 @@ NSArray static	*frameCountStrings = nil;
         slide3P2Lbl.text = a;
     }
     
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
+    [appExecutive.userDefaults synchronize];
 }
 
 - (IBAction) handleSlide3PSlider3:(id)sender {
@@ -1686,92 +1665,8 @@ NSArray static	*frameCountStrings = nil;
         slide3P3Lbl.text = a;
     }
     
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handlePan3PSlider1:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.pan3PVal1 = s.value;
-    
-    NSLog(@"pan3PVal1: %i",appExecutive.pan3PVal1);
-    
-    pan3P1Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.pan3PVal1];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.pan3PVal1] forKey: @"pan3PVal1"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handlePan3PSlider2:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.pan3PVal2 = s.value;
-    
-    NSLog(@"pan3PVal2: %i",appExecutive.pan3PVal2);
-    
-    pan3P2Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.pan3PVal2];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.pan3PVal2] forKey: @"pan3PVal2"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handlePan3PSlider3:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.pan3PVal3 = s.value;
-    
-    pan3P3Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.pan3PVal3];
-    
-    NSLog(@"pan3PVal3: %i",appExecutive.pan3PVal3);
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.pan3PVal3] forKey: @"pan3PVal3"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handleTilt3PSlider1:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.tilt3PVal1 = s.value;
-    
-    NSLog(@"tilt3PVal1: %i",appExecutive.tilt3PVal1);
-    
-    tilt3P1Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.tilt3PVal1];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.tilt3PVal1] forKey: @"tilt3PVal1"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handleTilt3PSlider2:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.tilt3PVal2 = s.value;
-    
-    NSLog(@"tilt3PVal2: %i",appExecutive.tilt3PVal2);
-    
-    tilt3P2Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.tilt3PVal2];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.tilt3PVal2] forKey: @"tilt3PVal2"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handleTilt3PSlider3:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.tilt3PVal3 = s.value;
-    
-    tilt3P3Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.tilt3PVal3];
-    
-    NSLog(@"tilt3PVal3: %i",appExecutive.tilt3PVal3);
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.tilt3PVal3] forKey: @"tilt3PVal3"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
+    [appExecutive.userDefaults synchronize];
 }
 
 - (IBAction) updateRampEasingValue:(id)sender {
@@ -1855,8 +1750,8 @@ NSArray static	*frameCountStrings = nil;
     
     [self.slide3PView setNeedsDisplay];
     
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
+    [appExecutive.userDefaults synchronize];
     
     //[self saveSlideIncreaseValues];
 }
@@ -1886,8 +1781,8 @@ NSArray static	*frameCountStrings = nil;
     
     [self.slide3PView setNeedsDisplay];
     
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
+    [appExecutive.userDefaults synchronize];
     
     //[self saveSlideIncreaseValues];
 }
@@ -1915,8 +1810,8 @@ NSArray static	*frameCountStrings = nil;
     
     [self.slide3PView setNeedsDisplay];
     
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
+    [appExecutive.userDefaults synchronize];
     
     //[self saveSlideIncreaseValues];
 }

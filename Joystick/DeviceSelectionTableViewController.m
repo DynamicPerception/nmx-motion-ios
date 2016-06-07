@@ -18,7 +18,6 @@
 @property (nonatomic, strong)	IBOutlet UITableView* tableView;
 @property (strong, nonatomic) IBOutlet UIButton *goButton;
 @property BOOL confirmingFirmware;
-@property BOOL confirmingMultiDevice;
 @property BOOL oldFirmwareConfirmed;
 @property BOOL multiDeviceConfirmed;
 
@@ -83,8 +82,9 @@
     notificationLbl.hidden = YES;
     self.oldFirmwareConfirmed = NO;
     self.confirmingFirmware = NO;
-    self.confirmingMultiDevice = NO;
     self.multiDeviceConfirmed = NO;
+    self.activeDevices = [NSMutableArray new];
+
 }
 
 
@@ -101,7 +101,7 @@
     for (DeviceTableViewCell *cell in cells)
     {
         [cell preDeviceStateChange];
-    }
+     }
 }
 
 - (void) postDevicesStateChange;
@@ -233,48 +233,35 @@
 
 #if !TARGET_IPHONE_SIMULATOR
 
-    NSMutableArray *activeDevices = [NSMutableArray new];
     NSArray *cells = [self.tableView visibleCells];
     for (DeviceTableViewCell *cell in cells)
     {
-        NMXDevice *device = cell.device;
-        [activeDevices addObject: device];
+        if (cell.connectSwitch.on)
+        {
+            NMXDevice *device = cell.device;
 
-        if (0 == device.fwVersion)
-        {
-            ready = NO;
-        }
-        else if (device.fwVersionUpdateAvailable)
-        {
-            if (NO == [updatesAvailFor isEqualToString: @""])
+            if (0 == device.fwVersion)
             {
-                updatesAvailFor = [updatesAvailFor stringByAppendingString: @", "];
+                ready = NO;
             }
-            updatesAvailFor = [updatesAvailFor stringByAppendingString:device.name];
+            else if (device.fwVersionUpdateAvailable)
+            {
+                if (NO == [updatesAvailFor isEqualToString: @""])
+                {
+                    updatesAvailFor = [updatesAvailFor stringByAppendingString: @", "];
+                }
+                updatesAvailFor = [updatesAvailFor stringByAppendingString:device.name];
+            }
         }
 
     }
     
-    appExecutive.deviceList = [NSArray arrayWithArray:activeDevices];
-    appExecutive.device = activeDevices[0];
+    appExecutive.deviceList = [NSArray arrayWithArray:self.activeDevices];
+    appExecutive.device = self.activeDevices[0];
     
 #endif
 
-    if (NO == self.multiDeviceConfirmed && appExecutive.deviceList.count > 1)
-    {
-        NSString *warningString = @"You have selected more than one NMX controller.  Before proceeding, "\
-        "confirm that the controllers are disonnected from each other. "\
-        "Select Continue to proceed.";
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Multicontroller Mode"
-                                                        message: warningString
-                                                       delegate: self
-                                              cancelButtonTitle: @"Cancel"
-                                              otherButtonTitles: @"Continue", nil];
-        self.confirmingMultiDevice = YES;
-
-        [alert show];
-    }
-    else if (NO == self.oldFirmwareConfirmed && ![updatesAvailFor isEqualToString: @""])
+    if (NO == self.oldFirmwareConfirmed && ![updatesAvailFor isEqualToString: @""])
     {
         NSString *updatesString = [NSString stringWithFormat:@"New firmware is available for NMX device(s) %@. Please update the NMX firmware asap.  If you continue some features will be disabled.",
                                    updatesAvailFor];
@@ -311,20 +298,15 @@
         {
             self.oldFirmwareConfirmed = YES;
         }
-        if (self.confirmingMultiDevice)
-        {
-            self.multiDeviceConfirmed = YES;
-        }
 
         self.confirmingFirmware = NO;
-        self.confirmingMultiDevice = NO;
 
         [self navigateToMainView];
     }
     else
     {
         self.confirmingFirmware = NO;
-        self.confirmingMultiDevice = NO;
+
     }
 }
 

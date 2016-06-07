@@ -54,6 +54,7 @@
 
 @property (strong, atomic)          NMXDevice *           device;
 @property (strong, atomic)          NMXDeviceManager *    deviceManager;
+@property (nonatomic)               NSUserDefaults *      userDefaults;
 @property (nonatomic, readonly)		JSDeviceSettings *    defaults;
 @property (strong, atomic)          NSArray<NMXDevice *> *deviceList;
 
@@ -158,6 +159,9 @@
 
 - (id) init;
 
+- (void) setActiveDevice: (NMXDevice *)device;
+- (JSDeviceSettings *) defaultsForDevice: (NMXDevice *) device;
+
 #pragma mark Persistence
 
 - (NSString *) nameForDeviceID: (NSString *) deviceName;
@@ -185,6 +189,17 @@
 - (NSTimeInterval) getTimeSinceDelayStarted;
 - (void) setOriginalProgramDelay: (NSTimeInterval)delay;
 - (NSTimeInterval) getOriginalProgramDelay;
+
+#pragma mark batch device comm
+
+- (BOOL) queryMotorFeasibility;
+- (void) setProgamSettings: (NMXProgramMode) programMode
+              pingPongMode: (BOOL)pingPong
+                  duration: (UInt32) durationInMS
+                     accel: (UInt32) accelInMS
+                       fps: (NMXFPS) fps;
+
+
 
 
 @end

@@ -69,6 +69,17 @@
     return (NSNumber *)[self.settings objectForKey:key];
 }
 
+- (BOOL) boolForKey:(NSString *)key
+{
+    NSNumber *num = (NSNumber *)[self.settings objectForKey:key];
+    if (num)
+    {
+        return [num intValue] > 0 ? YES : NO;
+    }
+    return NO;
+}
+
+
 - (NSArray*) arrayForKey:(NSString *)key
 {
     return (NSArray *)[self.settings objectForKey:key];
@@ -86,7 +97,6 @@
 }
 
 
-
 - (void) setObject: (id) obj forKey: (NSString *)key
 {
     if (obj == nil)
@@ -100,6 +110,13 @@
 {
     NSNumber *num = [NSNumber numberWithInt:value];
     [self setObject:num forKey:key];
+}
+
+- (void) setBool: (BOOL)value forKey: (NSString *)key
+{
+    NSNumber *num = [NSNumber numberWithInt: (value ? 1 : 0)];
+    [self setObject:num forKey:key];
+    
 }
 
 - (void) synchronize

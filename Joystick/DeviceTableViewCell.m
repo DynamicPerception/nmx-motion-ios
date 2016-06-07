@@ -34,20 +34,24 @@
     {
         if (self.device.disconnected)
         {
-            self.connectionTimer = [NSTimer scheduledTimerWithTimeInterval:15.0
-                                                                    target:self
-                                                                  selector:@selector(connectionTimeout)
-                                                                  userInfo:nil
-                                                                   repeats:YES];
-        
-            [self.tableView preDevicesStateChange];
-        
-            [self initFirmware];
-        
-            [self.activityIndicator startAnimating];
-        
-            //UIButton *button = (UIButton *)sender;
-            //button.hidden = YES;
+            if (self.tableView.activeDevices.count == 1)
+            {
+                NSString *warningString = @"You have selected more than one NMX controller.  Before proceeding, "\
+                "confirm that the controllers are disonnected from each other. "\
+                "Select Continue to proceed.";
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Multicontroller Mode"
+                                                                message: warningString
+                                                               delegate: self
+                                                      cancelButtonTitle: @"Cancel"
+                                                      otherButtonTitles: @"Continue", nil];
+                
+                [alert show];
+            }
+            else
+            {
+                [self connect];
+            }
+            
         }
     }
     else
@@ -56,35 +60,10 @@
         self.settingsButton.enabled = NO;
         self.settingsButton.hidden = YES;
         self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
+        [self.tableView.activeDevices removeObject: self.device];
     }
 
 }
-/*
-- (IBAction) connectButtonSelected: (id) sender
-{
-    if (self.device.disconnected)
-    {
-        self.connectionTimer = [NSTimer scheduledTimerWithTimeInterval:15.0
-                                                                target:self
-                                                              selector:@selector(connectionTimeout)
-                                                              userInfo:nil
-                                                               repeats:YES];
-        
-        [self.tableView preDevicesStateChange];
-        
-        [self initFirmware];
-        
-        [self.activityIndicator startAnimating];
-        
-        UIButton *button = (UIButton *)sender;
-        button.hidden = YES;
-    }
-    else
-    {
-        [self.tableView navigateToMainViewWithDevice: self.device];
-    }
-}
-*/
 
 - (void) connectionTimeout
 {
@@ -137,6 +116,21 @@
 
 }
 
+- (void) connect
+{
+    self.connectionTimer = [NSTimer scheduledTimerWithTimeInterval:15.0
+                                                            target:self
+                                                          selector:@selector(connectionTimeout)
+                                                          userInfo:nil
+                                                           repeats:YES];
+    
+    [self.tableView preDevicesStateChange];
+    
+    [self initFirmware];
+    
+    [self.activityIndicator startAnimating];
+}
+
 - (void) didConnect: (NMXDevice *) device
 {
     // Initialize the device state and query firmware
@@ -182,6 +176,10 @@
                 
                 [self.tableView postDevicesStateChange];
                 
+                if (![self.tableView.activeDevices containsObject: device])
+                {
+                    [self.tableView.activeDevices addObject: device];
+                }
             });
         }
     });
@@ -192,27 +190,24 @@
 
 - (void) preDeviceStateChange
 {
-    //    self.connectGoButton.enabled = NO;
     self.connectSwitch.enabled = NO;
-/*
-    if (NO == self.device.disconnected)
-    {
-        //mm       [self.device disconnect];
-        
-        //        [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
-        self.connectSwitch.on = NO;
-        self.settingsButton.enabled = NO;
-        self.settingsButton.hidden = YES;
-        
-        self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
-    }
-*/ 
 }
 
 - (void) postDeviceStateChange
 {
-    //    self.connectGoButton.enabled = YES;
     self.connectSwitch.enabled = YES;
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex != 0)
+    {
+        [self connect];
+    }
+    else
+    {
+        [self.connectSwitch setOn:NO animated:YES];
+    }
 }
 
 @end

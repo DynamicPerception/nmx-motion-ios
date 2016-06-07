@@ -15,6 +15,7 @@
 #import "AppDelegate.h"
 #import "JoyButton.h"
 #import "MBProgressHUD.h"
+#import "JSActiveDeviceViewController.h"
 
 
 //------------------------------------------------------------------------------
@@ -37,6 +38,7 @@
 @property (nonatomic, strong)	IBOutlet	JoyButton *					flipButton;
 @property (nonatomic, strong)	IBOutlet	JoyButton *					nextButton;
 @property (nonatomic, strong)	IBOutlet	JoyButton *					fireCameraButton;
+@property (strong, nonatomic)   IBOutlet    JoyButton *                 currentDeviceButton;
 
 @property (nonatomic, retain)	IBOutlet	UISlider *					_dollySlider;
 @property (nonatomic, strong)	IBOutlet	UIButton *					settingsButton;
@@ -70,6 +72,7 @@ NSString static	*SegueToPanMotorSettingsViewController		= @"SegueToPanMotorSetti
 NSString static	*SegueToTiltMotorSettingsViewController		= @"SegueToTiltMotorSettingsViewController";
 NSString static	*SegueToSetupViewController					= @"SegueToSetupViewController";
 NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController";
+NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDeviceViewController";
 
 
 #pragma mark Public Property Synthesis
@@ -128,16 +131,13 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 #pragma mark - Object Management
 
 - (void) viewDidLoad {
-    
+
+    [super viewDidLoad];
+
     [[NSUserDefaults standardUserDefaults] setValue:@(NO) forKey:@"_UIConstraintBasedLayoutLogUnsatisfiable"];
 
     [self initViewForDevice];
     
-    [super viewDidLoad];
-}
-
-- (void) initViewForDevice
-{
     self.joystickModeActive = false;
     self.showingModalScreen = false;
     
@@ -174,6 +174,31 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     setMidView.alpha = 0;
     setStopView.alpha = 0;
     
+    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName4) userInfo:nil repeats:NO];
+    
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(handleNotificationJSMode:)
+     name:@"enterJSMode" object:nil];
+    
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(handleNotificationExitJSMode:)
+     name:@"exitJSMode" object:nil];
+    
+    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideButtonViews)];
+    [controlBackground addGestureRecognizer:gestureRecognizer];
+    gestureRecognizer.cancelsTouchesInView = NO;
+    
+    UITapGestureRecognizer *gestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(enterJoystickMode)];
+    [self.joystickViewController.view addGestureRecognizer:gestureRecognizer1];
+    gestureRecognizer.cancelsTouchesInView = NO;
+
+}
+
+- (void) initViewForDevice
+{
+    
     slideGear = 19.2032;
     panGear = 19.2032;
     tiltGear = 19.2032;
@@ -197,14 +222,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     float d = [self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"];//slideLinearCustom = 0.00;
     float e = [self.appExecutive.defaults floatForKey:@"panMotorCustomValue"];//panLinearCustom = 0.00;
     float f = [self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"];//tiltLinearCustom = 0.00;
-    
-    NSLog(@"slideMotor: %i",a);
-    //    NSLog(@"b: %i",b);
-    //    NSLog(@"c: %i",c);
-    //
-    //    NSLog(@"d: %f",d);
-    //    NSLog(@"e: %f",e);
-    //    NSLog(@"f: %f",f);
     
     if([appExecutive.defaults objectForKey:@"slideMotor"] != nil)
     {
@@ -306,28 +323,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         [appExecutive.defaults setObject:self.tiltDirectionMode forKey:@"tiltDirectionMode"];
     }
     
-    
-    //    float fc = [self.appExecutive.frameCountNumber floatValue];
-    //
-    //    NSLog(@"fc: %f",fc);
-    //
-    //    float range1 = [self.appExecutive.frameCountNumber floatValue] * .33;
-    //    float range2 = [self.appExecutive.frameCountNumber floatValue] * .75 - range1;
-    //    float range3 = [self.appExecutive.frameCountNumber floatValue] - range2;
-    //
-    //
-    //    NSLog(@"range1: %.02f",range1);
-    //    NSLog(@"range2: %.02f",range2);
-    //    NSLog(@"range3: %.02f",range3);
-    //
-    //    float per1 = (float)3/range1;
-    //    float per2 = (float)3/range2;
-    //    float per3 = (float)3/range3;
-    //
-    //    NSLog(@"per1: %.02f",per1);
-    //    NSLog(@"per2: %.02f",per2);
-    //    NSLog(@"per3: %.02f",per3);
-    
     if ([self.appExecutive.defaults integerForKey:@"useJoystick"] == 2)
     {
         //NSLog(@"dont use joystick1");
@@ -373,25 +368,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         tiltSliderLbl.hidden = YES;
     }
     
-    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName4) userInfo:nil repeats:NO];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationJSMode:)
-     name:@"enterJSMode" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationExitJSMode:)
-     name:@"exitJSMode" object:nil];
-    
-    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideButtonViews)];
-    [controlBackground addGestureRecognizer:gestureRecognizer];
-    gestureRecognizer.cancelsTouchesInView = NO;
-    
-    UITapGestureRecognizer *gestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(enterJoystickMode)];
-    [self.joystickViewController.view addGestureRecognizer:gestureRecognizer1];
-    gestureRecognizer.cancelsTouchesInView = NO;
 }
 
 - (void)hideButtonViews {
@@ -409,9 +385,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) timerName4 {
 	
-    //NSLog(@"vdl: %li",(long)[self.appExecutive.defaults integerForKey:@"is3P"]);
-    
-    if ([self.appExecutive.defaults integerForKey:@"is3P"] == 1)
+    if ([self.appExecutive.userDefaults integerForKey:@"is3P"] == 1)
     {
         self.appExecutive.is3P = YES;
         [switch2P setOn:YES];
@@ -427,17 +401,11 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         goToMidBtn.enabled = NO;
         goToMidBtn.alpha = .5;
     }
-    else
-    {
-        
-    }
     
     #if TARGET_IPHONE_SIMULATOR
     
         [self showVoltage];
         
-    #else
-    
     #endif
 }
 
@@ -643,12 +611,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.appExecutive.is3P = NO;
     }
     
-    NSLog(@"appExecutive.is3P: %i",self.appExecutive.is3P);
+    [self.appExecutive.userDefaults setObject: [NSNumber numberWithInt:self.appExecutive.is3P] forKey: @"is3P"];
     
-    [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.is3P] forKey: @"is3P"];
-    [self.appExecutive.defaults synchronize];
-    
-    NSLog(@"defaults is3P: %li",(long)[appExecutive.defaults integerForKey:@"is3P"]);
 }
 
 - (void) resetTimers {
@@ -761,6 +725,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     slideButton.userInteractionEnabled = NO;
     panButton.userInteractionEnabled = NO;
     tiltButton.userInteractionEnabled = NO;
+    
+    self.currentDeviceButton.hidden = (self.appExecutive.deviceList.count < 2);
+    [self.currentDeviceButton setTitle:[self.appExecutive nameForDeviceID: self.appExecutive.device.name] forState:UIControlStateNormal];
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(enableInteractions) userInfo:nil repeats:NO];
 }
@@ -1009,21 +976,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     bool pc = [self.appExecutive.device queryPowerCycle];
     
-    //NSLog(@"pc: %i", pc);
-    
-    NSString *storedDevice = [self.appExecutive.defaults stringForKey:@"deviceName"];
-    
-    bool isSameDevice = [self.appExecutive.device.name isEqualToString:storedDevice];
-    
-    if (pc == 0 && isSameDevice == YES)
+    if (pc == 0)
     {
         NSLog(@"startEndTotal 2: %i",startEndTotal);
-        
-        //NSLog(@"didload is3P: %i",[appExecutive.defaults integerForKey:@"is3P"]);
-        
-//        NSLog(@"start3PSet: %li", (long)[appExecutive.defaults integerForKey:@"start3PSet"]);
-//        NSLog(@"mid3PSet: %li", (long)[appExecutive.defaults integerForKey:@"mid3PSet"]);
-//        NSLog(@"end3PSet: %li", (long)[appExecutive.defaults integerForKey:@"end3PSet"]);
         
         if (self.appExecutive.is3P == YES) {
             
@@ -1059,49 +1014,14 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.appExecutive.end3PPanDistance = [appExecutive.defaults floatForKey:@"end3PPanDistance"];
         self.appExecutive.end3PTiltDistance = [appExecutive.defaults floatForKey:@"end3PTiltDistance"];
         
-//        NSLog(@"start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
-//        NSLog(@"start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
-//        NSLog(@"start3PTiltDistance: %f",self.appExecutive.start3PTiltDistance);
-//        
-//        NSLog(@"mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
-//        NSLog(@"mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
-//        NSLog(@"mid3PTiltDistance: %f",self.appExecutive.mid3PTiltDistance);
-//        
-//        NSLog(@"end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
-//        NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
-//        NSLog(@"end3PTiltDistance: %f",self.appExecutive.end3PTiltDistance);
+        startTotals = self.appExecutive.start3PSlideDistance + self.appExecutive.start3PPanDistance +
+                      self.appExecutive.start3PTiltDistance;
         
-        startTotals = self.appExecutive.start3PSlideDistance +
-        self.appExecutive.start3PPanDistance +
-        self.appExecutive.start3PTiltDistance;
+        midTotals = self.appExecutive.mid3PSlideDistance + self.appExecutive.mid3PPanDistance +
+                    self.appExecutive.mid3PTiltDistance;
         
-        midTotals = self.appExecutive.mid3PSlideDistance +
-        self.appExecutive.mid3PPanDistance +
-        self.appExecutive.mid3PTiltDistance;
-        
-        endTotals = self.appExecutive.end3PSlideDistance +
-        self.appExecutive.end3PPanDistance +
-        self.appExecutive.end3PTiltDistance;
-        
-//        NSLog(@"3P startTotals: %i", startTotals);
-//        NSLog(@"3P midTotals: %i", midTotals);
-//        NSLog(@"3P endTotals: %i", endTotals);
-        
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:8] forKey: @"saved3PMicro1"];
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:4] forKey: @"saved3PMicro2"];
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:16] forKey: @"saved3PMicro3"];
-        
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:-3986.000000] forKey: @"scaledStart3PSlideDistance"];
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:5913472.000000] forKey: @"scaledStart3PPanDistance"];
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:-6918448.000000] forKey: @"scaledStart3PTiltDistance"];
-//        
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:-8696.000000] forKey: @"scaledMid3PSlideDistance"];
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:5932160.000000] forKey: @"scaledMid3PPanDistance"];
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:-6921208.000000] forKey: @"scaledMid3PTiltDistance"];
-//        
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:-16452.000000] forKey: @"scaledEnd3PSlideDistance"];
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:5955772.000000] forKey: @"scaledEnd3PPanDistance"];
-//        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:-6923192.000000] forKey: @"scaledEnd3PTiltDistance"];
+        endTotals = self.appExecutive.end3PSlideDistance + self.appExecutive.end3PPanDistance +
+                    self.appExecutive.end3PTiltDistance;
         
         self.appExecutive.scaledStart3PSlideDistance = [appExecutive.defaults floatForKey:@"scaledStart3PSlideDistance"];
         self.appExecutive.scaledStart3PPanDistance = [appExecutive.defaults floatForKey:@"scaledStart3PPanDistance"];
@@ -1115,31 +1035,12 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.appExecutive.scaledEnd3PPanDistance = [appExecutive.defaults floatForKey:@"scaledEnd3PPanDistance"];
         self.appExecutive.scaledEnd3PTiltDistance = [appExecutive.defaults floatForKey:@"scaledEnd3PTiltDistance"];
 
-        
-//        NSLog(@"after scaledStart3PSlideDistance: %f",self.appExecutive.scaledStart3PSlideDistance);
-//        NSLog(@"after scaledStart3PPanDistance: %f",self.appExecutive.scaledStart3PPanDistance);
-//        NSLog(@"after scaledStart3PTiltDistance: %f",self.appExecutive.scaledStart3PTiltDistance);
-//        
-//        NSLog(@"after scaledMid3PSlideDistance: %f",self.appExecutive.scaledMid3PSlideDistance);
-//        NSLog(@"after scaledMid3PPanDistance: %f",self.appExecutive.scaledMid3PPanDistance);
-//        NSLog(@"after scaledMid3PTiltDistance: %f",self.appExecutive.scaledMid3PTiltDistance);
-//        
-//        NSLog(@"after scaledEnd3PSlideDistance: %f",self.appExecutive.scaledEnd3PSlideDistance);
-//        NSLog(@"after scaledEnd3PPanDistance: %f",self.appExecutive.scaledEnd3PPanDistance);
-//        NSLog(@"after scaledEnd3PTiltDistance: %f",self.appExecutive.scaledEnd3PTiltDistance);
-        
-        if ([appExecutive.defaults integerForKey:@"is3P"] == 0)
+        if ([appExecutive.userDefaults integerForKey:@"is3P"] == 0)
         {
             NSLog(@"its 2p");
             
             start2pSet = (int)[self.appExecutive.defaults integerForKey:@"start2pSet"];
             end2pSet = (int)[self.appExecutive.defaults integerForKey:@"end2pSet"];
-            
-//            if (startEndTotal != 0 && self.appExecutive.is3P == NO)
-//            {
-//                self.setStartButton.selected = YES;
-//                self.setStopButton.selected = YES;
-//            }
             
             if(start2pTotals != 0 || start2pSet == 1)
             {
@@ -1159,7 +1060,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             }
         }
     }
-    else if ((pc != 0 || isSameDevice == NO))
+    else
     {
         //NSLog(@"reset values");
         
@@ -1179,9 +1080,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         [self.appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"mid3PSet"];
         [self.appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"end3PSet"];
         
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal1"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal2"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal3"];
+        [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal1"];
+        [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal2"];
+        [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal3"];
         
         [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledStart3PSlideDistance"];
         [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledStart3PPanDistance"];
@@ -1202,12 +1103,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         [self.appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"start2pSet"];
         [self.appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"end2pSet"];
         
-        [self.appExecutive.defaults setObject: self.appExecutive.device.name forKey: @"deviceName"];
-        
         [self.appExecutive.defaults synchronize];
     }
     
-    if (([self.appExecutive.defaults floatForKey:@"slide3PVal1"] == 0))
+    if (([self.appExecutive.userDefaults floatForKey:@"slide3PVal1"] == 0))
     {
         //NSLog(@"set default 3P vals");
         
@@ -1219,9 +1118,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     {
         //NSLog(@"get saved 3P vals");
         
-        self.appExecutive.slide3PVal1 = [self.appExecutive.defaults floatForKey:@"slide3PVal1"];
-        self.appExecutive.slide3PVal2 = [self.appExecutive.defaults floatForKey:@"slide3PVal2"];
-        self.appExecutive.slide3PVal3 = [self.appExecutive.defaults floatForKey:@"slide3PVal3"];
+        self.appExecutive.slide3PVal1 = [self.appExecutive.userDefaults floatForKey:@"slide3PVal1"];
+        self.appExecutive.slide3PVal2 = [self.appExecutive.userDefaults floatForKey:@"slide3PVal2"];
+        self.appExecutive.slide3PVal3 = [self.appExecutive.userDefaults floatForKey:@"slide3PVal3"];
     }
     
 //    //keyframe position
@@ -1233,9 +1132,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     //NSLog(@"sdn: %i",[self.appExecutive.shotDurationNumber intValue]);
     //NSLog(@"appExecutive.slide3PVal2: %f",appExecutive.slide3PVal2);
     
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
+    [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
+    [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
+    [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
     
     if (![self.appExecutive.defaults floatForKey:@"voltageLow"])
     {
@@ -1260,8 +1159,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 //    NSLog(@"appExecutive.dampening2: %f",appExecutive.dampening2);
 //    NSLog(@"appExecutive.dampening3: %f",appExecutive.dampening3);
     
-    if (([appExecutive.defaults integerForKey:@"is3P"] == 0 ||
-         [appExecutive.defaults objectForKey:@"is3P"] == nil) &&
+    if (([appExecutive.userDefaults integerForKey:@"is3P"] == 0 ||
+         [appExecutive.userDefaults objectForKey:@"is3P"] == nil) &&
         (start2pSet == 1 && end2pSet == 1))
     {
         [UIView animateWithDuration:.4 animations:^{
@@ -2004,6 +1903,11 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         [self exitJoystickMode];
         self.showingModalScreen = true;
     }
+    else if ([segue.identifier isEqualToString: SegueToActiveDeviceViewController])
+    {
+        JSActiveDeviceViewController *advc = segue.destinationViewController;
+        advc.mainVC = self;
+    }
     else if ([segue.identifier isEqualToString: @"HelpJoystick"])
     {
         NSLog(@"HelpJoystick");
@@ -2057,11 +1961,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
                                    forKey: @"saved3PMicro1"];
     
     self.appExecutive.start3PSet = 2;
-    
-    //NSLog(@"start3PSet: %li",(long)[appExecutive.defaults integerForKey:@"start3PSet"]);
-    //    NSLog(@"after scaledStart3PSlideDistance: %f",self.appExecutive.scaledStart3PSlideDistance);
-    //    NSLog(@"after scaledStart3PPanDistance: %f",self.appExecutive.scaledStart3PPanDistance);
-    //    NSLog(@"after scaledStart3PTiltDistance: %f",self.appExecutive.scaledStart3PTiltDistance);
     
     [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledStart3PSlideDistance]
                                    forKey: @"scaledStart3PSlideDistance"];
@@ -2902,11 +2801,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     self.appExecutive.start3PSet = 2;
     
-    //NSLog(@"start3PSet: %li",(long)[appExecutive.defaults integerForKey:@"start3PSet"]);
-    //    NSLog(@"after scaledStart3PSlideDistance: %f",self.appExecutive.scaledStart3PSlideDistance);
-    //    NSLog(@"after scaledStart3PPanDistance: %f",self.appExecutive.scaledStart3PPanDistance);
-    //    NSLog(@"after scaledStart3PTiltDistance: %f",self.appExecutive.scaledStart3PTiltDistance);
-    
     [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledStart3PSlideDistance]
                                    forKey: @"scaledStart3PSlideDistance"];
     
@@ -3463,6 +3357,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
 }
 
+- (void) activeDeviceChanged
+{
+    [self initViewForDevice];
+}
 
 
 @end

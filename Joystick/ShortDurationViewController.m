@@ -440,10 +440,10 @@ NSArray static	*tenthsStrings = nil;
         NSLog(@"sd new 2: %.02f",appExecutive.slide3PVal2);
         NSLog(@"sd new 3: %.02f",appExecutive.slide3PVal3);
         
-        [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-        [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-        [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-        [appExecutive.defaults synchronize];
+        [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
+        [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
+        [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
+        [appExecutive.userDefaults synchronize];
     }
     
 	[self dismissViewControllerAnimated: YES completion: nil];

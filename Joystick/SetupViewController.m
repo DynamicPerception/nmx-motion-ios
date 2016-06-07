@@ -773,13 +773,9 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) checkProgramAndHandleNext {
 
-    NMXDevice * device = [AppExecutive sharedInstance].device;
-    
     if (appExecutive.is3P == NO) {
 
-        if ((NO == [device motorQueryFeasibility: device.sledMotor]) ||
-            (NO == [device motorQueryFeasibility: device.panMotor]) ||
-            (NO == [device motorQueryFeasibility: device.tiltMotor]))
+        if (NO == [appExecutive queryMotorFeasibility])
         {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
                                                             message: @"Increase shot duration"
@@ -807,132 +803,66 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
     //DDLogDebug(@"Next Button");
 
-    NMXDevice * device = [AppExecutive sharedInstance].device;
     __block UInt32 durationInMS;
     __block UInt32 accelInMS;
+    __block NMXFPS fps;
+    __block NMXProgramMode programMode;
+    __block BOOL pingPong = NO;
+
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     if (self.recordModeControl.selectedSegmentIndex == 1)
     {
-        // Video Mode
-        
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
-            [device mainSetProgramMode: NMXProgramModeVideo];
-            
-            durationInMS = (int)[self.appExecutive.videoLengthNumber integerValue];
-            
-            if (durationInMS > 50000)
-                accelInMS = 5000;
-            else
-                accelInMS = durationInMS / 10;
-            
-            [device mainSetPingPongMode: (self.videoModeControl.selectedSegmentIndex == 1)];
-            [device cameraSetEnable: false];
-            
-            [device motorSet: device.sledMotor SetLeadInShotsOrTime: 0];
-            [device motorSet: device.panMotor SetLeadInShotsOrTime: 0];
-            [device motorSet: device.tiltMotor SetLeadInShotsOrTime: 0];
-            
-            [device motorSet: device.sledMotor SetProgramAccel: accelInMS];
-            [device motorSet: device.panMotor SetProgramAccel: accelInMS];
-            [device motorSet: device.tiltMotor SetProgramAccel: accelInMS];
-            
-            [device motorSet: device.sledMotor SetShotsTotalTravelTime: durationInMS];
-            [device motorSet: device.panMotor SetShotsTotalTravelTime: durationInMS];
-            [device motorSet: device.tiltMotor SetShotsTotalTravelTime: durationInMS];
-            
-            [device motorSet: device.sledMotor SetProgramDecel: accelInMS];
-            [device motorSet: device.panMotor SetProgramDecel: accelInMS];
-            [device motorSet: device.tiltMotor SetProgramDecel: accelInMS];
-            
-            [device motorSet: device.sledMotor SetLeadOutShotsOrTime: 0];
-            [device motorSet: device.panMotor SetLeadOutShotsOrTime: 0];
-            [device motorSet: device.tiltMotor SetLeadOutShotsOrTime: 0];
-
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                [self checkProgramAndHandleNext];
-            });
-        });
+        programMode = NMXProgramModeVideo;
+        durationInMS = (int)[self.appExecutive.videoLengthNumber integerValue];
+        pingPong = (self.videoModeControl.selectedSegmentIndex == 1);
+        if (durationInMS > 50000)
+            accelInMS = 5000;
+        else
+            accelInMS = durationInMS / 10;
     }
     else
     {
-        // Timelapse Mode
-
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        if (self.timelapseModeControl.selectedSegmentIndex == 1)
+        {
+            programMode = NMXProgramModeTimelapse;
+            durationInMS = (int)[self.appExecutive.shotDurationNumber integerValue];
+        }
+        else
+        {
+            programMode = NMXProgramModeSMS;
+            durationInMS = [self.appExecutive.frameCountNumber intValue];
+        }
+        accelInMS = durationInMS / 10;
         
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        switch ([self.appExecutive.frameRateNumber integerValue])
+        {
+            case 24:
+                fps = NMXFPS24;
+                break;
+            case 25:
+                fps = NMXFPS25;
+                break;
+            case 30:
+            default:
+                fps = NMXFPS30;
+                break;
+        }
+    }
+    
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
-            if (self.timelapseModeControl.selectedSegmentIndex == 1)
-            {
-                [device mainSetProgramMode: NMXProgramModeTimelapse];
-                durationInMS = (int)[self.appExecutive.shotDurationNumber integerValue];
-            }
-            else
-            {
-                [device mainSetProgramMode: NMXProgramModeSMS];
-                durationInMS = [self.appExecutive.frameCountNumber intValue];
-            }
-            
-            accelInMS = durationInMS / 10;
-            
-            NMXFPS fps;
-            
-            switch ([self.appExecutive.frameRateNumber integerValue])
-            {
-                case 24:
-                    fps = NMXFPS24;
-                    break;
-                case 25:
-                    fps = NMXFPS25;
-                    break;
-                case 30:
-                default:
-                    fps = NMXFPS30;
-                    break;
-            }
-            
-            [device mainSetFPS: fps];
-            
-            [device cameraSetFrames: [self.appExecutive.frameCountNumber intValue]];
-            
-            [device cameraSetTriggerTime: (UInt32)[self.appExecutive.triggerNumber unsignedIntegerValue]];
-            [device cameraSetFocusTime: (UInt16)[self.appExecutive.focusNumber unsignedIntegerValue]];
-            [device cameraSetExposureDelay: (UInt16)[self.appExecutive.delayNumber unsignedIntegerValue]];
-            [device cameraSetInterval: (UInt32)[self.appExecutive.intervalNumber unsignedIntegerValue]];
-            
-            [device motorSet: device.sledMotor SetShotsTotalTravelTime: durationInMS];
-            [device motorSet: device.panMotor SetShotsTotalTravelTime: durationInMS];
-            [device motorSet: device.tiltMotor SetShotsTotalTravelTime: durationInMS];
-            
-            [device motorSet: device.sledMotor SetProgramAccel: accelInMS];
-            [device motorSet: device.panMotor SetProgramAccel: accelInMS];
-            [device motorSet: device.tiltMotor SetProgramAccel: accelInMS];
-            
-            [device motorSet: device.sledMotor SetProgramDecel: accelInMS];
-            [device motorSet: device.panMotor SetProgramDecel: accelInMS];
-            [device motorSet: device.tiltMotor SetProgramDecel: accelInMS];
-            
-            [device motorSet: device.sledMotor SetLeadInShotsOrTime: 0];
-            [device motorSet: device.panMotor SetLeadInShotsOrTime: 0];
-            [device motorSet: device.tiltMotor SetLeadInShotsOrTime: 0];
-            
-            [device motorSet: device.sledMotor SetLeadOutShotsOrTime: 0];
-            [device motorSet: device.panMotor SetLeadOutShotsOrTime: 0];
-            [device motorSet: device.tiltMotor SetLeadOutShotsOrTime: 0];
+        [self.appExecutive setProgamSettings: programMode
+                                pingPongMode: pingPong
+                                    duration: durationInMS
+                                       accel: accelInMS
+                                         fps: fps];
 
-            [device cameraSetEnable: true];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
+        dispatch_async(dispatch_get_main_queue(), ^{
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
                 [self checkProgramAndHandleNext];
-            });
         });
-    }
+    });
 }
 
 //------------------------------------------------------------------------------
