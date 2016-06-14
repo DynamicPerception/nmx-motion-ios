@@ -55,9 +55,10 @@ typedef enum : unsigned char {
 
 typedef enum : unsigned char {
 
-    NMXFPS24 = 0,
-    NMXFPS30 = 1,
+    NMXFPS30 = 0,
+    NMXFPS24 = 1,
     NMXFPS25 = 2
+    
 } NMXFPS;
 
 

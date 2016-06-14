@@ -1293,7 +1293,6 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (NMXFPS) mainQueryFPS {
     
-    //mm -- FIXME  -- this was using NMXCommandMainQueryRunStatus BUG!  Confirming from Michael the correct return value
     NMXFPS          fps;
     unsigned char   newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryFPS dataLength: 0];
