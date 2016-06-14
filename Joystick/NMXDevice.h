@@ -79,6 +79,7 @@ typedef enum : unsigned char {
 - (void) disconnect;
 
 - (void) setDeviceAddress:(unsigned char) address;
+- (int) queryDeviceAddress;
 
 - (UInt32) mainQueryStartHere;
 
@@ -171,6 +172,9 @@ typedef enum : unsigned char {
 @property (readonly) BOOL fwVersionUpdateAvailable;
 @property (readonly) bool disconnected;
 @property (atomic) int serviceDiscoveryRetryCount;
+@property float voltageLow;
+@property float voltageHigh;
+@property float voltage;
 
 - (void) setHomePosition : (int) motor;
 
@@ -197,6 +201,8 @@ typedef enum : unsigned char {
 - (void) motorSendToEndPoint: (int) motorNumber;
 
 - (void) peripheralWasConnected: (CBPeripheral *) peripheral;
+
++ (unsigned char) defaultAddress;
 
 @end
 

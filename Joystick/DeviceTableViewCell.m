@@ -144,7 +144,8 @@
         
         AppExecutive *ae = [AppExecutive sharedInstance];
         
-        if (queryStatus == 99) {
+        if (queryStatus == 99 || queryStatusKeyFrame == 99 ||
+            queryStatus == NMXRunStatusUnknown || queryStatusKeyFrame == NMXRunStatusUnknown) {
             
             NSLog(@"stop everything");
             

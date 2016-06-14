@@ -161,6 +161,7 @@
 
 - (void) setActiveDevice: (NMXDevice *)device;
 - (JSDeviceSettings *) defaultsForDevice: (NMXDevice *) device;
+- (NSArray<NMXDevice *> *) connectedDeviceList;
 
 #pragma mark Persistence
 

@@ -156,7 +156,7 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 @synthesize defaults;
 @synthesize forFrameRate;
 
-@synthesize selectedMotorFrame, startPoint1,endPoint1, startPoint2,endPoint2, startPoint3, endPoint3, stopMicrostep1, stopMicrostep2, stopMicrostep3, motor2MicrostepChanged,motor3MicrostepChanged, appBlueColor, is3P,slide3PVal1,slide3PVal3,slide3PVal2,pan3PVal1,pan3PVal2,pan3PVal3,tilt3PVal1,tilt3PVal2,tilt3PVal3,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,midSet,start3PSlideDistance,start3PPanDistance,start3PTiltDistance,mid3PSlideDistance,mid3PPanDistance,mid3PTiltDistance,end3PSlideDistance,end3PPanDistance,end3PTiltDistance,useJoystick,start3PSet,mid3PSet,end3PSet,isContinuous,voltageHigh,voltageLow,voltage,scaledEnd3PPanDistance,scaledMid3PPanDistance,scaledStart3PPanDistance,scaledEnd3PSlideDistance,scaledEnd3PTiltDistance,scaledMid3PSlideDistance,scaledMid3PTiltDistance,scaledStart3PSlideDistance,scaledStart3PTiltDistance,isVideo,printTilt,dampening1,dampening2,dampening3,resetController;
+@synthesize selectedMotorFrame, startPoint1,endPoint1, startPoint2,endPoint2, startPoint3, endPoint3, stopMicrostep1, stopMicrostep2, stopMicrostep3, motor2MicrostepChanged,motor3MicrostepChanged, appBlueColor, is3P,slide3PVal1,slide3PVal3,slide3PVal2,pan3PVal1,pan3PVal2,pan3PVal3,tilt3PVal1,tilt3PVal2,tilt3PVal3,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,midSet,start3PSlideDistance,start3PPanDistance,start3PTiltDistance,mid3PSlideDistance,mid3PPanDistance,mid3PTiltDistance,end3PSlideDistance,end3PPanDistance,end3PTiltDistance,useJoystick,start3PSet,mid3PSet,end3PSet,isContinuous,scaledEnd3PPanDistance,scaledMid3PPanDistance,scaledStart3PPanDistance,scaledEnd3PSlideDistance,scaledEnd3PTiltDistance,scaledMid3PSlideDistance,scaledMid3PTiltDistance,scaledStart3PSlideDistance,scaledStart3PTiltDistance,isVideo,printTilt,dampening1,dampening2,dampening3,resetController;
 
 //------------------------------------------------------------------------------
 
@@ -649,6 +649,36 @@ NSArray *defaultRampingValues() {
     [self saveValue: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
 }
 
+-(float) voltageLow
+{
+    return self.device.voltageLow;
+}
+
+- (void) setVoltageLow:(float)voltageLow
+{
+    self.device.voltageLow = voltageLow;
+}
+
+-(float) voltage
+{
+    return self.device.voltage;
+}
+
+- (void) setVoltage:(float)voltage
+{
+    self.device.voltage = voltage;
+}
+
+-(float) voltageHigh
+{
+    return self.device.voltageHigh;
+}
+
+- (void) setVoltageHigh:(float)voltageHigh
+{
+    self.device.voltageHigh = voltageHigh;
+}
+
 
 //------------------------------------------------------------------------------
 
@@ -677,6 +707,20 @@ NSArray *defaultRampingValues() {
     NSAssert(device, @"Attempting to get device settings for unknown device");
     return [[JSDeviceSettings alloc] initWithDevice:device.name];
 #endif
+}
+
+- (NSArray<NMXDevice *> *) connectedDeviceList
+{
+    NSMutableArray *devList = [NSMutableArray new];
+    for (NMXDevice *device in [self.deviceManager deviceList])
+    {
+        if (device.disconnected == NO)
+        {
+            [devList addObject:device];
+        }
+    }
+    
+    return devList;
 }
 
 

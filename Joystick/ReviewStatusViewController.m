@@ -1921,7 +1921,7 @@ typedef enum{
                                     playhead.frame.size.width,
                                     playhead.frame.size.height);
     }
-    else if (runStatus & NMXRunStatusUnknown)
+    else if (runStatus == NMXRunStatusUnknown)
     {
         NSLog(@"something else");
         [self killStatusTimerOnDisconnect];
@@ -2025,18 +2025,6 @@ typedef enum{
                                     playhead.frame.size.height);
     }
     else if (runStatus & NMXRunStatusRunning) {
-        
-/*
- //mm debug cycle timing
-        UInt32 lastRunTime = [device mainQueryRunTime];
-        AppExecutive *ae = [AppExecutive sharedInstance];
-        NSInteger intervalTime = [ae intervalNumber].integerValue;
-        UInt32 timeIntoCycle = lastRunTime % intervalTime;
-        NSInteger focus = [ae.focusNumber integerValue];
-        NSInteger trigger = [ae.triggerNumber integerValue];
-        NSInteger delay = [ae.delayNumber integerValue];
-        NSLog(@"Into Cycle %u    Start of MM = %ld", timeIntoCycle, focus+trigger+delay-900);
-*/
         
         timerContainer.hidden = YES;
             

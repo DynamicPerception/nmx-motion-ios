@@ -168,6 +168,7 @@
 		3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */; };
 		304ECCFF1C98E1B70094B7B0 /* HSpline.m in Sources */ = {isa = PBXBuildFile; fileRef = 304ECCFE1C98E1B70094B7B0 /* HSpline.m */; };
 		306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */; };
+		309AD5FF1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */; };
 		30A73F651CFE48990048315D /* JSActiveDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A73F641CFE48990048315D /* JSActiveDeviceViewController.m */; };
 		30B8EE9F1C45D0A100DCF15C /* DeviceState_Off.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */; };
 		30B8EEA01C45D0A100DCF15C /* DeviceState_Off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */; };
@@ -413,6 +414,8 @@
 		304ECCFE1C98E1B70094B7B0 /* HSpline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSpline.m; sourceTree = "<group>"; };
 		306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraSettingsTimelineView.h; sourceTree = "<group>"; };
 		306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsTimelineView.m; sourceTree = "<group>"; };
+		309AD5FD1D08EC5B00F91CB4 /* JSDeviceSettingsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeviceSettingsVC.h; sourceTree = "<group>"; };
+		309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDeviceSettingsVC.m; sourceTree = "<group>"; };
 		30A73F631CFE48990048315D /* JSActiveDeviceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActiveDeviceViewController.h; sourceTree = "<group>"; };
 		30A73F641CFE48990048315D /* JSActiveDeviceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSActiveDeviceViewController.m; sourceTree = "<group>"; };
 		30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Off.png; sourceTree = "<group>"; };
@@ -871,6 +874,8 @@
 				101F9B821C1740A9006DCFAA /* OverallDistanceViewController.m */,
 				30A73F631CFE48990048315D /* JSActiveDeviceViewController.h */,
 				30A73F641CFE48990048315D /* JSActiveDeviceViewController.m */,
+				309AD5FD1D08EC5B00F91CB4 /* JSDeviceSettingsVC.h */,
+				309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */,
 			);
 			name = SettingsViews;
 			sourceTree = "<group>";
@@ -1167,6 +1172,7 @@
 				10CF71D31BC388E3004ED48C /* HelpViewController.m in Sources */,
 				3FB4A5671B61F0B4006CFF1F /* NotificationTest.m in Sources */,
 				306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */,
+				309AD5FF1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m in Sources */,
 				10F9DE331BEBC0C20059A727 /* ELCImagePickerController.m in Sources */,
 				3FB4A55E1B5FF154006CFF1F /* GraphView.m in Sources */,
 				106615831BA1CF1900A85529 /* LinearRotaryViewController.m in Sources */,

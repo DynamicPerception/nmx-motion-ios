@@ -131,7 +131,8 @@ typedef enum : unsigned char {
     NMXCommandBroadcastEnableGraffik = 5,   // unused by this app
     NMXCommandBroadcastStartKF       = 7,
     NMXCommandBroadcastStopKF        = 8,
-    NMXCommandBroadcastPauseKF       = 9
+    NMXCommandBroadcastPauseKF       = 9,
+    NMXCommandBroadcastQueryAddress  = 10,
     
 } NMXCommandBroadcast;
 
@@ -254,14 +255,19 @@ bool waitForResponse;
         
         waitForResponse = true;
         
-        int address = [defaults boolForKey: kDefaultsDeviceAddress];
-        self.address = address > 0 ? address : 3;        // default the address to 3 if it hasn't been set already
+        self.address = [NMXDevice defaultAddress];        // default the address to 3 if it hasn't been set already
 
         
         self.serviceDiscoveryRetryCount = 3;
+        
     }
     
     return self;
+}
+
++ (unsigned char) defaultAddress
+{
+    return 3;
 }
 
 - (NSString *) name {
@@ -1330,8 +1336,40 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
     NSString *  descString = [NSString stringWithFormat: @"Set device address %d", address];
     [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
+
+    [[[AppExecutive sharedInstance] defaultsForDevice: self] setInteger: address forKey: kDefaultsDeviceAddress];
+}
+
+- (int) queryDeviceAddress {
     
-    [[AppExecutive sharedInstance].defaults setInteger: address forKey: kDefaultsDeviceAddress];
+    static int tryCount = 4;
+    
+    int addr;
+    unsigned char newDataBytes[16];
+    [self setupBroadcastBuffer: newDataBytes command: NMXCommandBroadcastQueryAddress dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"Query device address" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        addr = [[self extractReturnedNumber] intValue];
+    }
+    
+    if (addr == 0 && tryCount > 0)
+    {
+        tryCount--;
+        return [self queryDeviceAddress];
+    }
+    else
+    {
+        if (tryCount <= 0)
+        {
+            return [NMXDevice defaultAddress];
+        }
+    }
+    
+    return addr;
 }
 
 #pragma mark - Motor Set
