@@ -862,26 +862,12 @@
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="battery.png" translatesAutoresizingMaskIntoConstraints="NO" id="87u-W7-c63">
-                                <rect key="frame" x="281" y="529" width="30" height="30"/>
+                                <rect key="frame" x="327" y="529" width="30" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="4H5-h9-e8A"/>
                                     <constraint firstAttribute="width" constant="30" id="8Tm-E6-5Ov"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kbB-RK-Uxj" userLabel="Settings">
-                                <rect key="frame" x="312" y="529" width="49" height="31"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="49" id="fZ1-Yc-CNi"/>
-                                    <constraint firstAttribute="height" constant="31" id="pYz-mz-ibz"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <state key="normal" title="#"/>
-                                <connections>
-                                    <action selector="handleSettingsButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CSd-jk-PkP"/>
-                                    <segue destination="O3i-3h-ccc" kind="presentation" identifier="" id="vr9-JF-N1x"/>
-                                </connections>
-                            </button>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ia8-ml-pTU" userLabel="Dominant Axis">
                                 <rect key="frame" x="16" y="529" width="51" height="31"/>
                                 <constraints>
@@ -1219,13 +1205,18 @@
                             <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i4a-6J-o4Z" customClass="JoyButton">
                                 <rect key="frame" x="120" y="544" width="136" height="27"/>
                                 <color key="backgroundColor" red="0.27450980390000002" green="0.27450980390000002" blue="0.27450980390000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="27" id="ANA-lQ-hE1"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <inset key="contentEdgeInsets" minX="3" minY="0.0" maxX="3" maxY="0.0"/>
                                 <state key="normal" title="CurrDevice">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="deviceSelectionButtonSelected:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5vn-3R-KVN"/>
+                                    <segue destination="O3i-3h-ccc" kind="presentation" id="PxZ-Ia-vQN"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kul-cF-xcm" customClass="JoyButton">
@@ -1246,7 +1237,6 @@
                             <constraint firstItem="vsM-NE-ZJD" firstAttribute="bottom" secondItem="P0N-lC-htH" secondAttribute="bottom" constant="5" id="11p-Oh-IgS"/>
                             <constraint firstItem="EhM-Vi-6Kh" firstAttribute="top" secondItem="Cat-Bh-4PZ" secondAttribute="top" constant="-15" id="2Sa-17-y7L"/>
                             <constraint firstItem="P0T-aJ-e7a" firstAttribute="bottom" secondItem="WWH-gu-m4b" secondAttribute="bottom" constant="-105" id="3aV-my-eT0"/>
-                            <constraint firstItem="kbB-RK-Uxj" firstAttribute="leading" secondItem="87u-W7-c63" secondAttribute="trailing" constant="1" id="3gA-Ik-prv"/>
                             <constraint firstItem="oBJ-Z0-iFL" firstAttribute="trailing" secondItem="hX2-fQ-qoH" secondAttribute="trailing" id="4DS-bK-deN"/>
                             <constraint firstItem="Ia8-ml-pTU" firstAttribute="leading" secondItem="pXZ-LH-vRb" secondAttribute="trailing" constant="-36" id="4wU-cR-nLq"/>
                             <constraint firstItem="oBJ-Z0-iFL" firstAttribute="centerX" secondItem="Tbw-K9-r81" secondAttribute="centerX" constant="0.5" id="523-pN-ewg"/>
@@ -1267,7 +1257,6 @@
                             <constraint firstItem="64T-37-rG3" firstAttribute="baseline" secondItem="UIz-jC-Ebt" secondAttribute="baseline" id="EEb-mk-v4d"/>
                             <constraint firstItem="7j0-g8-Zy2" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="ERb-Mb-dwI"/>
                             <constraint firstItem="P0T-aJ-e7a" firstAttribute="height" secondItem="WWH-gu-m4b" secondAttribute="height" id="EZh-mD-ns2"/>
-                            <constraint firstItem="87u-W7-c63" firstAttribute="top" secondItem="kbB-RK-Uxj" secondAttribute="top" id="F2q-Vr-qkh"/>
                             <constraint firstItem="NLB-N4-TDO" firstAttribute="width" secondItem="Kul-cF-xcm" secondAttribute="width" id="GI9-m0-BYc"/>
                             <constraint firstItem="b4C-9H-6mv" firstAttribute="centerX" secondItem="Isb-ME-82D" secondAttribute="centerX" id="Gng-4c-bBe"/>
                             <constraint firstItem="i4a-6J-o4Z" firstAttribute="width" secondItem="3zV-sm-Qhr" secondAttribute="width" multiplier="2" id="HKA-HO-XEI"/>
@@ -1276,6 +1265,7 @@
                             <constraint firstItem="GIn-LO-HBm" firstAttribute="top" secondItem="dnh-fh-2FY" secondAttribute="top" constant="35" id="Idl-f6-w9G"/>
                             <constraint firstItem="64T-37-rG3" firstAttribute="width" secondItem="UIz-jC-Ebt" secondAttribute="width" id="JIj-nS-sBt"/>
                             <constraint firstItem="pXZ-LH-vRb" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="12" id="JOg-7K-Ad0"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="87u-W7-c63" secondAttribute="trailing" constant="2" id="JRB-cG-1yi"/>
                             <constraint firstItem="oBJ-Z0-iFL" firstAttribute="top" secondItem="P0T-aJ-e7a" secondAttribute="bottom" constant="8" id="JUi-EV-eBw"/>
                             <constraint firstItem="i4a-6J-o4Z" firstAttribute="bottom" secondItem="P0N-lC-htH" secondAttribute="bottom" constant="-3" id="LGi-wF-hkP"/>
                             <constraint firstItem="P0T-aJ-e7a" firstAttribute="leading" secondItem="WWH-gu-m4b" secondAttribute="leading" id="NuJ-WG-NAF"/>
@@ -1289,7 +1279,6 @@
                             <constraint firstItem="vsM-NE-ZJD" firstAttribute="centerY" secondItem="Ia8-ml-pTU" secondAttribute="centerY" id="Szb-do-jjK"/>
                             <constraint firstItem="EhM-Vi-6Kh" firstAttribute="bottom" secondItem="Cat-Bh-4PZ" secondAttribute="bottom" id="Ttz-UU-DRf"/>
                             <constraint firstItem="Iju-Ll-N9P" firstAttribute="bottom" secondItem="P0N-lC-htH" secondAttribute="bottom" id="Ucg-dM-ZfA"/>
-                            <constraint firstItem="kbB-RK-Uxj" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" constant="2" id="VdG-66-hw7"/>
                             <constraint firstItem="XRc-sy-GeC" firstAttribute="centerX" secondItem="dnh-fh-2FY" secondAttribute="centerX" id="VdH-km-RIe"/>
                             <constraint firstItem="7j0-g8-Zy2" firstAttribute="baseline" secondItem="hX2-fQ-qoH" secondAttribute="baseline" id="WMv-Eh-HZa"/>
                             <constraint firstItem="WWH-gu-m4b" firstAttribute="leading" secondItem="EhM-Vi-6Kh" secondAttribute="leading" id="Wdy-dO-Miv"/>
@@ -1306,7 +1295,6 @@
                             <constraint firstItem="3zV-sm-Qhr" firstAttribute="top" secondItem="EhM-Vi-6Kh" secondAttribute="bottom" constant="5" id="g8N-gi-83D"/>
                             <constraint firstItem="Iju-Ll-N9P" firstAttribute="width" secondItem="8qv-5f-nmc" secondAttribute="width" id="gvy-wU-ZhD"/>
                             <constraint firstItem="Tbw-K9-r81" firstAttribute="top" secondItem="oBJ-Z0-iFL" secondAttribute="bottom" constant="2" id="h8k-Vu-iIq"/>
-                            <constraint firstItem="kbB-RK-Uxj" firstAttribute="bottom" secondItem="P0N-lC-htH" secondAttribute="bottom" constant="-14" id="hge-2d-qqp"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="64T-37-rG3" secondAttribute="bottom" constant="8" id="htp-AH-jbb"/>
                             <constraint firstAttribute="trailingMargin" secondItem="UIz-jC-Ebt" secondAttribute="trailing" id="hv4-9e-iON"/>
                             <constraint firstItem="ONl-88-2GQ" firstAttribute="centerX" secondItem="OWV-uy-cNu" secondAttribute="centerX" id="i6Z-23-zoM"/>
@@ -1323,7 +1311,6 @@
                             <constraint firstItem="WWH-gu-m4b" firstAttribute="bottom" secondItem="EhM-Vi-6Kh" secondAttribute="bottom" constant="-106" id="o0P-8M-lNj"/>
                             <constraint firstItem="bdz-Vl-zQZ" firstAttribute="top" secondItem="hX2-fQ-qoH" secondAttribute="bottom" constant="8" id="oNS-7N-C6y"/>
                             <constraint firstItem="315-we-jdz" firstAttribute="top" secondItem="7j0-g8-Zy2" secondAttribute="bottom" constant="8" id="oif-4K-24W"/>
-                            <constraint firstItem="P0N-lC-htH" firstAttribute="bottom" secondItem="kbB-RK-Uxj" secondAttribute="bottom" constant="-42" id="oyP-FO-bhC"/>
                             <constraint firstItem="P0T-aJ-e7a" firstAttribute="top" secondItem="dnh-fh-2FY" secondAttribute="top" constant="-15" id="p0l-JQ-pDz"/>
                             <constraint firstItem="P0N-lC-htH" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="5" id="pNm-GB-6bU"/>
                             <constraint firstItem="vsM-NE-ZJD" firstAttribute="top" secondItem="GIn-LO-HBm" secondAttribute="bottom" constant="5" id="prd-RJ-rMF"/>
@@ -1343,6 +1330,7 @@
                             <constraint firstItem="XRc-sy-GeC" firstAttribute="top" secondItem="P0T-aJ-e7a" secondAttribute="bottom" constant="5" id="twX-PE-oY8"/>
                             <constraint firstItem="P0T-aJ-e7a" firstAttribute="width" secondItem="WWH-gu-m4b" secondAttribute="width" id="u1B-dp-27T"/>
                             <constraint firstItem="Ia8-ml-pTU" firstAttribute="top" secondItem="pXZ-LH-vRb" secondAttribute="bottom" constant="12" id="vOZ-Pv-FLa"/>
+                            <constraint firstItem="87u-W7-c63" firstAttribute="top" secondItem="P0N-lC-htH" secondAttribute="bottom" constant="-45" id="vW5-9Y-cGH"/>
                             <constraint firstItem="vsM-NE-ZJD" firstAttribute="top" secondItem="GIn-LO-HBm" secondAttribute="bottom" constant="1" id="w5f-ge-Ebr"/>
                             <constraint firstItem="UIz-jC-Ebt" firstAttribute="leading" secondItem="64T-37-rG3" secondAttribute="trailing" constant="8" id="xBy-cF-NhW"/>
                             <constraint firstItem="Isb-ME-82D" firstAttribute="top" secondItem="b4C-9H-6mv" secondAttribute="bottom" constant="8" id="xSB-jz-68r"/>
@@ -1350,7 +1338,6 @@
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
-                                <exclude reference="oyP-FO-bhC"/>
                                 <exclude reference="sOv-TW-0hX"/>
                                 <exclude reference="jn9-1G-Cgb"/>
                                 <exclude reference="S5V-F0-7wq"/>
@@ -1377,6 +1364,8 @@
                         <outlet property="cancelStopBtn" destination="pUk-VS-Apa" id="XE6-Of-5En"/>
                         <outlet property="controlBackground" destination="P0N-lC-htH" id="4go-73-JD1"/>
                         <outlet property="currentDeviceButton" destination="i4a-6J-o4Z" id="aRi-Oy-16c"/>
+                        <outlet property="currentDeviceButtonBottomConstraint" destination="LGi-wF-hkP" id="wCG-sP-xyn"/>
+                        <outlet property="currentDeviceButtonHeightConstraint" destination="ANA-lQ-hE1" id="uHQ-nt-kXA"/>
                         <outlet property="distancePanLbl" destination="315-we-jdz" id="oBT-Ku-Jih"/>
                         <outlet property="distanceSlideLbl" destination="Isb-ME-82D" id="Cks-Kf-Zdg"/>
                         <outlet property="distanceTiltLbl" destination="bdz-Vl-zQZ" id="Gyf-xC-zZJ"/>
@@ -1401,7 +1390,6 @@
                         <outlet property="setStop1Btn" destination="alt-29-QcT" id="8zQ-aq-mze"/>
                         <outlet property="setStopButton" destination="8qv-5f-nmc" id="G0s-rZ-NBa"/>
                         <outlet property="setStopView" destination="Iju-Ll-N9P" id="w7O-4Q-iEs"/>
-                        <outlet property="settingsButton" destination="kbB-RK-Uxj" id="m58-rI-RTV"/>
                         <outlet property="slideButton" destination="b4C-9H-6mv" id="Ls6-hx-Dgv"/>
                         <outlet property="switch2P" destination="oBJ-Z0-iFL" id="o3O-Ns-dif"/>
                         <outlet property="tiltButton" destination="hX2-fQ-qoH" id="1il-T4-dPw"/>
@@ -5942,9 +5930,9 @@ Ramping</string>
         <segue reference="gqx-Wd-6xg"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="IfY-aS-7xa"/>
-        <segue reference="X7X-ZC-NQI"/>
-        <segue reference="B0O-MD-mVD"/>
+        <segue reference="BxP-51-sJV"/>
         <segue reference="PwX-tX-cQi"/>
+        <segue reference="PxZ-Ia-vQN"/>
         <segue reference="aFw-MN-OaY"/>
         <segue reference="6tH-tQ-8da"/>
         <segue reference="k3P-Db-zBC"/>

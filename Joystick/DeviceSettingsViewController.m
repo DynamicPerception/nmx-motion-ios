@@ -150,10 +150,18 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 
 - (IBAction) handleOk: (id) sender {
     
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"updateBattery"
-     object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateBattery" object:nil];
 
+    JSDeviceSettingsVC *viewController = [_pageController.viewControllers lastObject];
+    int selectedDev = [viewController itemIndex];
+    
+    NMXDevice *newDev = self.appExecutive.deviceList[selectedDev];
+    
+    if (self.appExecutive.device != newDev)
+    {
+        [self.appExecutive setActiveDevice: newDev];
+    }
+    
 	[self dismissViewControllerAnimated: YES completion: nil];
 }
 
@@ -341,6 +349,7 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
     
     return nil;
 }
+
 
 #pragma mark Page Indicator
 

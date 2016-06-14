@@ -30,6 +30,9 @@
 
 @property (nonatomic, strong)				JoystickViewController *	joystickViewController;
 
+@property (strong, nonatomic)   IBOutlet    NSLayoutConstraint *        currentDeviceButtonBottomConstraint;
+@property (strong, nonatomic)   IBOutlet    NSLayoutConstraint *        currentDeviceButtonHeightConstraint;
+
 @property (nonatomic, strong)	IBOutlet	JoyButton *					slideButton;
 @property (nonatomic, strong)	IBOutlet	JoyButton *					panButton;
 @property (nonatomic, strong)	IBOutlet	JoyButton *					tiltButton;
@@ -193,6 +196,17 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     UITapGestureRecognizer *gestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(enterJoystickMode)];
     [self.joystickViewController.view addGestureRecognizer:gestureRecognizer1];
     gestureRecognizer.cancelsTouchesInView = NO;
+    
+    if (self.view.frame.size.height > 480)
+    {
+        UIFont *font = self.currentDeviceButton.titleLabel.font;
+        [self.currentDeviceButton.titleLabel setFont: [font fontWithSize: font.pointSize*1.5]];
+        self.currentDeviceButtonBottomConstraint.constant = -10;
+        self.currentDeviceButtonHeightConstraint.constant = 35;
+    }
+    self.currentDeviceButton.titleLabel.numberOfLines = 1;
+    self.currentDeviceButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    self.currentDeviceButton.titleLabel.lineBreakMode = NSLineBreakByClipping;
 
 }
 
@@ -726,8 +740,11 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     panButton.userInteractionEnabled = NO;
     tiltButton.userInteractionEnabled = NO;
     
-    self.currentDeviceButton.hidden = (self.appExecutive.deviceList.count < 2);
-    [self.currentDeviceButton setTitle:[self.appExecutive nameForDeviceID: self.appExecutive.device.name] forState:UIControlStateNormal];
+    //    self.currentDeviceButton.hidden = (self.appExecutive.deviceList.count < 2);
+    NSString *name = [self.appExecutive nameForDeviceID: self.appExecutive.device.name];
+    if (nil == name) name = self.appExecutive.device.name;
+    name = [NSString stringWithFormat:@"\u2699 %@", name];
+    [self.currentDeviceButton setTitle:name forState:UIControlStateNormal];
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(enableInteractions) userInfo:nil repeats:NO];
 }
@@ -1220,6 +1237,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 //    NSLog(@"per2: %.02f",per2);
     
     float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
+    if (newBase == 0) newBase = 1;
     
     //NSLog(@"newBase: %.02f",newBase);
     
@@ -3004,6 +3022,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 }
 
 - (IBAction)deviceSelectionButtonSelected:(id)sender {
+    [self exitJoystickMode];
+    self.showingModalScreen = true;
 }
 
 
