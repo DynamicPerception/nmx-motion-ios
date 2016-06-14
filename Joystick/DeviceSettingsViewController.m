@@ -99,6 +99,9 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
     [self addChildViewController:_pageController];
     [self.view addSubview: _pageController.view];
     [_pageController didMoveToParentViewController:self];
+    
+    UIViewController *vc = [self itemControllerForIndex: [[self.appExecutive connectedDeviceList] indexOfObject:self.appExecutive.device]];
+    [_pageController setViewControllers:[NSArray arrayWithObjects:vc, nil] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion: nil];
 }
 
 - (void) viewDidLayoutSubviews
@@ -348,7 +351,7 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
 {
-    return 0;
+    return [[self.appExecutive connectedDeviceList] indexOfObject:self.appExecutive.device];
 }
 
 @end
