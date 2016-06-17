@@ -34,24 +34,7 @@
     {
         if (self.device.disconnected)
         {
-            if (self.tableView.activeDevices.count == 1)
-            {
-                NSString *warningString = @"You have selected more than one NMX controller.  Before proceeding, "\
-                "confirm that the controllers are disonnected from each other. "\
-                "Select Continue to proceed.";
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Multicontroller Mode"
-                                                                message: warningString
-                                                               delegate: self
-                                                      cancelButtonTitle: @"Cancel"
-                                                      otherButtonTitles: @"Continue", nil];
-                
-                [alert show];
-            }
-            else
-            {
-                [self connect];
-            }
-            
+            [self connect];
         }
     }
     else
@@ -113,6 +96,8 @@
                                           cancelButtonTitle: @"OK"
                                           otherButtonTitles: nil];
     [alert show];
+
+    [self.connectSwitch setOn:NO animated:YES];
 
 }
 
@@ -199,16 +184,5 @@
     self.connectSwitch.enabled = YES;
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if(buttonIndex != 0)
-    {
-        [self connect];
-    }
-    else
-    {
-        [self.connectSwitch setOn:NO animated:YES];
-    }
-}
 
 @end

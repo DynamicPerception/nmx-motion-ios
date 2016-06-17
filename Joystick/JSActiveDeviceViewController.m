@@ -91,10 +91,10 @@
     if (self.appExecutive.device != newDev)
     {
         [self.appExecutive setActiveDevice: newDev];
-
-        [self dismissViewControllerAnimated: YES completion: nil];
     }
-    
+
+    [self dismissViewControllerAnimated: YES completion: nil];
+
 }
 
 
@@ -110,20 +110,20 @@
 
 - (CGFloat) pickerView: (UIPickerView *) pickerView widthForComponent: (NSInteger) component {
     
-    return 200.0;
+    return 280.0;
 }
 
 - (NSAttributedString *) pickerView: (UIPickerView *) pickerView attributedTitleForRow: (NSInteger) row forComponent: (NSInteger) component {
     
     NSDictionary *	attributes	=  @{ NSForegroundColorAttributeName: [UIColor whiteColor]};
-    NSString *		string		= nil;
+    NSString *		string		= @"";
     
     NSArray<NMXDevice *> *devices = self.appExecutive.deviceList;
     
     switch (component)
     {
         case 0:
-            string = [self.appExecutive nameForDeviceID: devices[row].name];
+            string = [self.appExecutive stringWithHandleForDeviceName: devices[row].name];
             break;
         default:
             return nil;

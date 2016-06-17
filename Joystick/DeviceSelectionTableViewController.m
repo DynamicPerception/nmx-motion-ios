@@ -54,10 +54,7 @@
 //    NSLog(@"val1: %f",val1);
     
     
-    
-    
-    
-    [super viewDidLoad];
+     [super viewDidLoad];
     
     // Uncomment the following line to preserve selection between presentations.
     

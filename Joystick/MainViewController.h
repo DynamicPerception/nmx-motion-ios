@@ -72,8 +72,6 @@
     
     bool debugDistance;
     bool disconnected;
-    int start2pSet;
-    int end2pSet;
 }
 
 @property (weak, nonatomic)	IBOutlet UISwitch *dominantAxisSwitch;
@@ -137,6 +135,7 @@
 @property NSNumber *tiltDirectionMode;    // CW/CCW, In/Out, etc.
 
 @property (nonatomic, strong)				NSTimer *			sendMotorsTimer;
+
 
 - (IBAction) setStartPoint1:(id)sender;
 - (IBAction) goToStartPoint1:(id)sender;

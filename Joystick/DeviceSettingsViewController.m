@@ -152,16 +152,6 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updateBattery" object:nil];
 
-    JSDeviceSettingsVC *viewController = [_pageController.viewControllers lastObject];
-    int selectedDev = [viewController itemIndex];
-    
-    NMXDevice *newDev = self.appExecutive.deviceList[selectedDev];
-    
-    if (self.appExecutive.device != newDev)
-    {
-        [self.appExecutive setActiveDevice: newDev];
-    }
-    
 	[self dismissViewControllerAnimated: YES completion: nil];
 }
 

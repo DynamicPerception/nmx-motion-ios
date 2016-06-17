@@ -106,10 +106,6 @@
 
 @property int isHome;
 
-@property int start3PSet;
-@property int mid3PSet;
-@property int end3PSet;
-
 @property float start3PSlideDistance;
 @property float mid3PSlideDistance;
 @property float end3PSlideDistance;
