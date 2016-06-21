@@ -887,13 +887,15 @@ typedef enum{
         [appExecutive.device setKeyFrameVideoTime:[self.appExecutive.videoLengthNumber intValue]];
     }
     
-    float val1 = (float)((int)(self.appExecutive.slide3PVal1 - 1));
-    float val2 = (float)((int)(self.appExecutive.slide3PVal2 - 1));
-    float val3 = (float)((int)(self.appExecutive.slide3PVal3 - 1));
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-    float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-    float per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
-    float per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
+    float val1 = (float)((int)(settings.slide3PVal1 - 1));
+    float val2 = (float)((int)(settings.slide3PVal2 - 1));
+    float val3 = (float)((int)(settings.slide3PVal3 - 1));
+    
+    float per1 = (float)settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+    float per2 = (float)settings.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
+    float per3 = (float)settings.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
     
     if (self.programMode == NMXProgramModeVideo)
     {
@@ -903,18 +905,16 @@ typedef enum{
     }
     else if (self.appExecutive.isContinuous == YES)
     {
-        //NSLog(@"isContinuous");
-        
-        val1 = (float)((int)(self.appExecutive.slide3PVal1 * [self.appExecutive.intervalNumber intValue]));
-        val2 = (float)((int)(self.appExecutive.slide3PVal2 * [self.appExecutive.intervalNumber intValue]));
-        val3 = (float)((int)(self.appExecutive.slide3PVal3 * [self.appExecutive.intervalNumber intValue]));
+        val1 = (float)((int)(settings.slide3PVal1 * [self.appExecutive.intervalNumber intValue]));
+        val2 = (float)((int)(settings.slide3PVal2 * [self.appExecutive.intervalNumber intValue]));
+        val3 = (float)((int)(settings.slide3PVal3 * [self.appExecutive.intervalNumber intValue]));
     }
     
-    float conversionFactor = (float)appExecutive.microstep1 / 16;
+    float conversionFactor = (float)settings.microstep1 / 16;
     
-    float startSlideOut = self.appExecutive.scaledStart3PSlideDistance * conversionFactor;
-    float midSlideOut = self.appExecutive.scaledMid3PSlideDistance * conversionFactor;
-    float endSlideOut = self.appExecutive.scaledEnd3PSlideDistance * conversionFactor;
+    float startSlideOut = settings.scaledStart3PSlideDistance * conversionFactor;
+    float midSlideOut = settings.scaledMid3PSlideDistance * conversionFactor;
+    float endSlideOut = settings.scaledEnd3PSlideDistance * conversionFactor;
 
     kfm = keyframeArray[0];
     kfm.time = val1;
@@ -934,14 +934,6 @@ typedef enum{
     [appExecutive.device setKeyFrameAbscissa:val3];
     [hs optimizePointVelForAxis:keyframeArray];
 
-    NSLog(@"Slider Motor keyframes");
-    NSLog(@"val1: %f   position : %g",(float)val1, startSlideOut);
-    NSLog(@"val2: %f   position : %g",(float)val2, midSlideOut);
-    NSLog(@"val3: %f   position : %g",(float)val3, endSlideOut);
-    
-    NSLog(@"appExecutive.microstep1: %f",(float)appExecutive.microstep1);
-
-    
     [appExecutive.device setKeyFramePosition:startSlideOut];
     [appExecutive.device setKeyFramePosition:midSlideOut];
     [appExecutive.device setKeyFramePosition:endSlideOut];
@@ -949,8 +941,6 @@ typedef enum{
     [appExecutive.device setKeyFrameVelocity:(float)0];
     [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
     [appExecutive.device setKeyFrameVelocity:(float)0];
-    
-    NSLog(@"mid slide Velocity: %g",keyframeArray[1].velocity);
     
     [appExecutive.device endKeyFrameTransmission];
     
@@ -963,13 +953,11 @@ typedef enum{
     [appExecutive.device setKeyFrameAbscissa:val2]; //100
     [appExecutive.device setKeyFrameAbscissa:val3]; //250
     
-    NSLog(@"appExecutive.microstep2: %f",(float)appExecutive.microstep2);
+    float conversionFactor2 = (float)settings.microstep2 / 16;
     
-    float conversionFactor2 = (float)appExecutive.microstep2 / 16;
-    
-    float startPanOut = self.appExecutive.scaledStart3PPanDistance * conversionFactor2;
-    float midPanOut = self.appExecutive.scaledMid3PPanDistance * conversionFactor2;
-    float endPanOut = self.appExecutive.scaledEnd3PPanDistance * conversionFactor2;
+    float startPanOut = settings.scaledStart3PPanDistance * conversionFactor2;
+    float midPanOut = settings.scaledMid3PPanDistance * conversionFactor2;
+    float endPanOut = settings.scaledEnd3PPanDistance * conversionFactor2;
     
     kfm = keyframeArray[0];
     kfm.time = val1;
@@ -994,8 +982,6 @@ typedef enum{
     [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
     [appExecutive.device setKeyFrameVelocity:(float)0];
     
-    NSLog(@"mid pan Velocity: %g",keyframeArray[1].velocity);
-    
     [appExecutive.device endKeyFrameTransmission];
     
     //tilt motor
@@ -1007,27 +993,11 @@ typedef enum{
     [appExecutive.device setKeyFrameAbscissa:val2]; //100
     [appExecutive.device setKeyFrameAbscissa:val3]; //250
     
-    NSLog(@"appExecutive.microstep3: %f",(float)appExecutive.microstep3);
+    float conversionFactor3 = (float)settings.microstep3 / 16;
     
-    float conversionFactor3 = (float)appExecutive.microstep3 / 16;
-    
-    float startTiltOut = self.appExecutive.scaledStart3PTiltDistance * conversionFactor3;
-    float midTiltOut = self.appExecutive.scaledMid3PTiltDistance * conversionFactor3;
-    float endTiltOut = self.appExecutive.scaledEnd3PTiltDistance * conversionFactor3;
-    
-    NSLog(@"startSlideOut: %f",startSlideOut);
-    NSLog(@"startPanOut: %f",startPanOut);
-    NSLog(@"startTiltOut: %f",startTiltOut);
-    
-    NSLog(@"midSlideOut: %f",midSlideOut);
-    NSLog(@"midPanOut: %f",midPanOut);
-    NSLog(@"midTiltOut: %f",midTiltOut);
-    
-    NSLog(@"endSlideOut: %f",endSlideOut);
-    NSLog(@"endPanOut: %f",endPanOut);
-    NSLog(@"endTiltOut: %f",endTiltOut);
-    
-    debugTxt.text = @"";
+    float startTiltOut = settings.scaledStart3PTiltDistance * conversionFactor3;
+    float midTiltOut = settings.scaledMid3PTiltDistance * conversionFactor3;
+    float endTiltOut = settings.scaledEnd3PTiltDistance * conversionFactor3;
     
     debugTxt.text = [NSString stringWithFormat:@"%@\n start tilt in: %f\n mid tilt in: %f\n end tilt in: %f",debugTxt.text, startTiltOut,midTiltOut,endTiltOut];
     
@@ -1709,10 +1679,12 @@ typedef enum{
                 startTimerBtn.hidden = NO;
             }
             
+            JSDeviceSettings *settings = self.appExecutive.device.settings;
+
             // Reset motors to correct microstep values
-            [device motorSet: device.sledMotor Microstep: appExecutive.microstep1];
-            [device motorSet: device.panMotor Microstep: appExecutive.microstep2];
-            [device motorSet: device.tiltMotor Microstep: appExecutive.microstep3];
+            [device motorSet: device.sledMotor Microstep: settings.microstep1];
+            [device motorSet: device.panMotor Microstep: settings.microstep2];
+            [device motorSet: device.tiltMotor Microstep: settings.microstep3];
             
             [MBProgressHUD hideHUDForView:self.view animated:YES];
         });
@@ -2286,10 +2258,12 @@ typedef enum{
     masterFrameCount = [self.appExecutive.frameCountNumber floatValue];
     
     graph3P.is3P = YES;
-    
-    graph3P.frame1 = appExecutive.slide3PVal1;
-    graph3P.frame2 = appExecutive.slide3PVal2;
-    graph3P.frame3 = appExecutive.slide3PVal3;
+
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+
+    graph3P.frame1 = settings.slide3PVal1;
+    graph3P.frame2 = settings.slide3PVal2;
+    graph3P.frame3 = settings.slide3PVal3;
     
     graph3P.headerString = @"3-Point Move";
     
@@ -2861,37 +2835,13 @@ typedef enum{
 
 - (void) showVoltageTimer {
     
-//    float voltage = self.appExecutive.voltage;
-//    
-//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-//    
-//    float diff = self.appExecutive.voltageHigh - voltage;
-//    
-//    float per = diff/range;
-//    
-//    float per2 = voltage/self.appExecutive.voltageHigh;
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-    //per2 = .35;
+    float newBase = settings.voltageHigh - settings.voltageLow;
     
-//    NSLog(@"voltage: %.02f",voltage);
-//    NSLog(@"high: %.02f",self.appExecutive.voltageHigh);
-//    NSLog(@"low: %.02f",self.appExecutive.voltageLow);
-//    NSLog(@"range: %.02f",range);
-//    NSLog(@"diff: %.02f",diff);
-//    NSLog(@"per: %.02f",per);
-//    NSLog(@"per2: %.02f",per2);
-    
-    float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newBase: %.02f",newBase);
-    
-    float newVoltage = self.appExecutive.voltage - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newVoltage: %.02f",newVoltage);
+    float newVoltage = settings.voltage - settings.voltageLow;
     
     float per4 = newVoltage/newBase;
-    
-    //NSLog(@"per4: %.02f",per4);
     
     if (per4 > 1)
     {

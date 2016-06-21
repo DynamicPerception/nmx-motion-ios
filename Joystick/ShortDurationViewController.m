@@ -224,15 +224,13 @@ NSArray static	*tenthsStrings = nil;
 	[super viewWillAppear: animated];
 	[self.view sendSubviewToBack: self.controlBackground];
     
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
     if (self.appExecutive.is3P)
     {
-        per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-        per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
-        per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
-        
-        NSLog(@"short per1: %.02f",per1);
-        NSLog(@"short per2: %.02f",per2);
-        NSLog(@"short per3: %.02f",per3);
+        per1 = (float)settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+        per2 = (float)settings.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
+        per3 = (float)settings.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
     }
 
 	if (self.userInfo)
@@ -432,18 +430,11 @@ NSArray static	*tenthsStrings = nil;
     
     if (self.appExecutive.is3P)
     {
-        self.appExecutive.slide3PVal1 = [self.appExecutive.frameCountNumber floatValue] * per1;
-        self.appExecutive.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue] * per2;
-        self.appExecutive.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue] * per3;
-        
-        NSLog(@"sd new 1: %.02f",appExecutive.slide3PVal1);
-        NSLog(@"sd new 2: %.02f",appExecutive.slide3PVal2);
-        NSLog(@"sd new 3: %.02f",appExecutive.slide3PVal3);
-        
-        [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-        [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-        [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-        [appExecutive.userDefaults synchronize];
+        JSDeviceSettings *settings = self.appExecutive.device.settings;
+
+        settings.slide3PVal1 = [self.appExecutive.frameCountNumber floatValue] * per1;
+        settings.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue] * per2;
+        settings.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue] * per3;
     }
     
 	[self dismissViewControllerAnimated: YES completion: nil];

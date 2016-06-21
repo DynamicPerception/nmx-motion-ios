@@ -30,10 +30,15 @@
 @property (nonatomic, weak)	IBOutlet	UIButton *				backlashButton;
 @property (nonatomic, weak)	IBOutlet	JoyButton *				okButton;
 
+@property JSDeviceSettings *settings;
+
 // TODO: the value of this probably comes from and goes to the device, temporarily set to arbitrary value
 // may not need to be a property in the future.
 
 @property (nonatomic, readwrite)			NSInteger				backlash;
+@property float dampening1;
+@property float dampening2;
+@property float dampening3;
 
 @end
 
@@ -59,6 +64,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 //------------------------------------------------------------------------------
 
+- (MotorSettingsViewController *) init
+{
+    self = [super init];
+
+    self.settings = self.appExecutive.device.settings;
+    
+    return self;
+}
+
 - (void) viewDidLoad {
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
@@ -70,15 +84,17 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     start = [self.appExecutive.device queryProgramStartPoint:(int)self.motorNumber];
     end = [self.appExecutive.device queryProgramEndPoint:(int)self.motorNumber];
     
+    //mm - confirm that self.settings is not nil!!!!
+    
     switch (self.motorNumber) {
         case 1:
-            microstepSetting = self.appExecutive.microstep1;
+            microstepSetting = self.settings.microstep1;
             break;
         case 2:
-            microstepSetting = self.appExecutive.microstep2;
+            microstepSetting = self.settings.microstep2;
             break;
         case 3:
-            microstepSetting = self.appExecutive.microstep3;
+            microstepSetting = self.settings.microstep3;
             break;
         default:
             NSAssert(0, @"Bad motor number");
@@ -192,7 +208,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     okButton.userInteractionEnabled = NO;
     
-    if (self.appExecutive.useJoystick == NO)
+    if (self.settings.useJoystick == NO)
     {
         [toggleJoystickSwitch setOn:YES];
     }
@@ -201,26 +217,14 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     //NSLog(@"sensitivityRatio: %f",sensitivityRatio);
     
-    if (self.appExecutive.is3P == YES) {
-       
-        if (self.motorNumber == 1) {
-            
-            NSLog(@"start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
-            NSLog(@"mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
-            NSLog(@"end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
-        }
-        if (self.motorNumber == 2) {
-        
-            NSLog(@"start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
-            NSLog(@"mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
-            NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
-        }
-    }
-    
     float maxAccel = 30000;
     
     float a;
     float b;
+    
+    self.dampening1 = [self.appExecutive.device motorQueryContinuousAccelDecel: 1]/100;
+    self.dampening2 = [self.appExecutive.device motorQueryContinuousAccelDecel: 2]/100;
+    self.dampening3 = [self.appExecutive.device motorQueryContinuousAccelDecel: 3]/100;
     
     if ((int)self.motorNumber == 1)
     {
@@ -228,9 +232,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         //16192/maxAcel = x * x
         //.53 = x * x
         
-        //NSLog(@"appExecutive.dampening1: %f",appExecutive.dampening1);
-        
-        a = appExecutive.dampening1/maxAccel;
+        a = self.dampening1/maxAccel;
     }
     else if ((int)self.motorNumber == 2)
     {
@@ -238,7 +240,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 //        
 //        dampeningSlider.value = self.appExecutive.dampening2;
         
-        a = appExecutive.dampening2/maxAccel;
+        a = self.dampening2/maxAccel;
     }
     else  if ((int)self.motorNumber == 3)
     {
@@ -246,7 +248,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 //        
 //        dampeningSlider.value = self.appExecutive.dampening3;
 
-        a = appExecutive.dampening3/maxAccel;
+        a = self.dampening3/maxAccel;
     }
     
     b = sqrtf(a);
@@ -1098,15 +1100,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if (self.motorNumber == 1)
     {
-        self.appExecutive.endPoint1 = end;
+        self.settings.endPoint1 = end;
     }
     else if (self.motorNumber == 2)
     {
-        self.appExecutive.endPoint2 = end;
+        self.settings.endPoint2 = end;
     }
     else if (self.motorNumber == 3)
     {
-        self.appExecutive.endPoint3 = end;
+        self.settings.endPoint3 = end;
     }
     
     [appExecutive.device motorSet:(int)self.motorNumber ProgramStopPoint:newPos];
@@ -1386,15 +1388,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if ((int)self.motorNumber == 1)
     {
-        self.appExecutive.dampening1 = conv;
+        self.dampening1 = conv;
     }
     else if ((int)self.motorNumber == 2)
     {
-        self.appExecutive.dampening2 = conv;
+        self.dampening2 = conv;
     }
     else
     {
-        self.appExecutive.dampening3 = conv;
+        self.dampening3 = conv;
     }
 	
     [self.appExecutive.device motorSet: (int)self.motorNumber ContinuousSpeedAccelDecel: conv];
@@ -1439,21 +1441,16 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 - (IBAction) toogleJoystick:(id)sender {
     
     UISwitch *sw = sender;
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
     if (sw.isOn)
     {
-        self.appExecutive.useJoystick = NO;
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:2] forKey: @"useJoystick"];
+        settings.useJoystick = NO;
     }
     else
     {
-        self.appExecutive.useJoystick = YES;
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"useJoystick"];
+        settings.useJoystick = YES;
     }
-    
-    [self.appExecutive.defaults synchronize];
-    
-    NSLog(@"self.appExecutive.useJoystick: %i",self.appExecutive.useJoystick);
 }
 
 - (IBAction) enableLeft: (id) sender {
@@ -1651,15 +1648,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             
             if ((int)self.motorNumber == 1)
             {
-                self.appExecutive.microstep1 = 4;
+                self.settings.microstep1 = 4;
             }
             else if ((int)self.motorNumber == 2)
             {
-                self.appExecutive.microstep2 = 4;
+                self.settings.microstep2 = 4;
             }
             else
             {
-                self.appExecutive.microstep3 = 4;
+                self.settings.microstep3 = 4;
             }
             
             break;
@@ -1671,15 +1668,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             
             if ((int)self.motorNumber == 1)
             {
-                self.appExecutive.microstep1 = 8;
+                self.settings.microstep1 = 8;
             }
             else if ((int)self.motorNumber == 2)
             {
-                self.appExecutive.microstep2 = 8;
+                self.settings.microstep2 = 8;
             }
             else
             {
-                self.appExecutive.microstep3 = 8;
+                self.settings.microstep3 = 8;
             }
             
             break;
@@ -1691,15 +1688,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             
             if ((int)self.motorNumber == 1)
             {
-                self.appExecutive.microstep1 = 16;
+                self.settings.microstep1 = 16;
             }
             else if ((int)self.motorNumber == 2)
             {
-                self.appExecutive.microstep2 = 16;
+                self.settings.microstep2 = 16;
             }
             else
             {
-                self.appExecutive.microstep3 = 16;
+                self.settings.microstep3 = 16;
             }
             
             break;
@@ -1729,18 +1726,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if ((int)self.motorNumber == 1)
     {
-        self.appExecutive.endPoint1 = end;
-        self.appExecutive.startPoint1 = start;
+        self.settings.endPoint1 = end;
+        self.settings.startPoint1 = start;
     }
     else if ((int)self.motorNumber == 2)
     {
-        self.appExecutive.endPoint2 = end;
-        self.appExecutive.startPoint2 = start;
+        self.settings.endPoint2 = end;
+        self.settings.startPoint2 = start;
     }
     else
     {
-        self.appExecutive.endPoint3 = end;
-        self.appExecutive.startPoint3 = start;
+        self.settings.endPoint3 = end;
+        self.settings.startPoint3 = start;
     }
     
     [self getDistance];

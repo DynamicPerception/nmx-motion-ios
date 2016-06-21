@@ -127,14 +127,10 @@
         int queryStatus = [device mainQueryRunStatus];
         int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
         
-        AppExecutive *ae = [AppExecutive sharedInstance];
-        
         if (queryStatus == 99 || queryStatusKeyFrame == 99 ||
             queryStatus == NMXRunStatusUnknown || queryStatusKeyFrame == NMXRunStatusUnknown) {
             
             NSLog(@"stop everything");
-            
-            ae.resetController = YES;  // FIX ME: This needs to be handled
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self handleConnectionError];

@@ -73,6 +73,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *frameCount2;
 @property (weak, nonatomic) IBOutlet UILabel *frameCount3;
 
+@property JSDeviceSettings *settings;
+
 @end
 
 
@@ -113,6 +115,17 @@ NSArray static	*frameCountStrings = nil;
 
 #pragma mark - Object Management
 
+
+- (MotorRampingViewController *) init
+{
+    //mm - fixme - make sure this is called
+    
+    self = [super init];
+    
+    self.settings = self.appExecutive.device.settings;
+    
+    return self;
+}
 
 - (void) viewDidLoad {
     
@@ -310,7 +323,7 @@ NSArray static	*frameCountStrings = nil;
     
     UIColor *	blue	= [UIColor blueColor];
     UIColor *	white	= [UIColor whiteColor];
-    
+
     // set colors so motion of motor has same color along slider tracks
     
     self.tiltIncreaseStart.minimumTrackTintColor = white;
@@ -352,30 +365,26 @@ NSArray static	*frameCountStrings = nil;
     slide3PSlider3.minimumValue = slide3PSlider2.maximumValue + 1;
     slide3PSlider3.maximumValue = masterFrameCount;
     
-    slide3PSlider1.value = appExecutive.slide3PVal1;
-    slide3PSlider2.value = appExecutive.slide3PVal2;
-    slide3PSlider3.value = appExecutive.slide3PVal3;
+    slide3PSlider1.value = self.settings.slide3PVal1;
+    slide3PSlider2.value = self.settings.slide3PVal2;
+    slide3PSlider3.value = self.settings.slide3PVal3;
     
-    appExecutive.slide3PVal1 = slide3PSlider1.value;
-    appExecutive.slide3PVal2 = slide3PSlider2.value;
-    appExecutive.slide3PVal3 = slide3PSlider3.value;
+    self.settings.slide3PVal1 = slide3PSlider1.value;
+    self.settings.slide3PVal2 = slide3PSlider2.value;
+    self.settings.slide3PVal3 = slide3PSlider3.value;
     
     if (programMode == NMXProgramModeVideo)
     {
-        slide3P1Lbl.text = [NSString stringWithFormat:@"%f",appExecutive.slide3PVal1];
-        slide3P2Lbl.text = [NSString stringWithFormat:@"%f",appExecutive.slide3PVal2];
-        slide3P3Lbl.text = [NSString stringWithFormat:@"%f",appExecutive.slide3PVal3];
+        slide3P1Lbl.text = [NSString stringWithFormat:@"%f",self.settings.slide3PVal1];
+        slide3P2Lbl.text = [NSString stringWithFormat:@"%f",self.settings.slide3PVal2];
+        slide3P3Lbl.text = [NSString stringWithFormat:@"%f",self.settings.slide3PVal3];
     }
     else
     {
-        slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal1];
-        slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal2];
-        slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal3];
+        slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal1];
+        slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal2];
+        slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal3];
     }
-    
-    NSLog(@"appExecutive.slide3PVal1: %f",appExecutive.slide3PVal1);
-    NSLog(@"appExecutive.slide3PVal2: %f",appExecutive.slide3PVal2);
-    NSLog(@"appExecutive.slide3PVal3: %f",appExecutive.slide3PVal3);
     
     slide3PSlider1.minimumTrackTintColor = blue;
     slide3PSlider1.maximumTrackTintColor = white;
@@ -398,9 +407,9 @@ NSArray static	*frameCountStrings = nil;
                   
             //int sd = [self.appExecutive.shotDurationNumber intValue];
             
-            float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-            float per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
-            float per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
+            float per1 = (float)self.settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+            float per2 = (float)self.settings.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
+            float per3 = (float)self.settings.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
             
             NSLog(@"per1: %f",per1);
             NSLog(@"per2: %f",per2);
@@ -639,31 +648,12 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) showVoltageTimer {
     
-//    float voltage = self.appExecutive.voltage;
-//    
-//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-//    
-//    float diff = self.appExecutive.voltageHigh - voltage;
-//    
-//    float per = diff/range;
-//    
-//    float per2 = voltage/self.appExecutive.voltageHigh;
-    
-    //per2 = .35;
-    
-//    NSLog(@"voltage: %.02f",voltage);
-//    NSLog(@"high: %.02f",self.appExecutive.voltageHigh);
-//    NSLog(@"low: %.02f",self.appExecutive.voltageLow);
-//    NSLog(@"range: %.02f",range);
-//    NSLog(@"diff: %.02f",diff);
-//    NSLog(@"per: %.02f",per);
-//    NSLog(@"per2: %.02f",per2);
-    
-    float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    float newBase = settings.voltageHigh - settings.voltageLow;
     
     //NSLog(@"newBase: %.02f",newBase);
     
-    float newVoltage = self.appExecutive.voltage - self.appExecutive.voltageLow;
+    float newVoltage = settings.voltage - settings.voltageLow;
     
     //NSLog(@"newVoltage: %.02f",newVoltage);
     
@@ -1563,13 +1553,13 @@ NSArray static	*frameCountStrings = nil;
     
     UISlider *s = sender;
     
-    appExecutive.slide3PVal1 = s.value;
+    self.settings.slide3PVal1 = s.value;
     
-    currentSelectedFrameValue = appExecutive.slide3PVal1;
+    currentSelectedFrameValue = self.settings.slide3PVal1;
     
     NSLog(@"s.value: %f",s.value);
     
-    slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal1];
+    slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal1];
     
     if (programMode == NMXProgramModeVideo)
     {
@@ -1577,7 +1567,7 @@ NSArray static	*frameCountStrings = nil;
         
         //int sd = [self.appExecutive.shotDurationNumber intValue];
         
-        float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+        float per1 = (float)self.settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
         
         float val1 = sd * per1;
         
@@ -1595,7 +1585,7 @@ NSArray static	*frameCountStrings = nil;
         slide3P1Lbl.text = a;
     }
     
-    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:self.settings.slide3PVal1] forKey: @"slide3PVal1"];
     [appExecutive.userDefaults synchronize];
 }
 
@@ -1603,13 +1593,13 @@ NSArray static	*frameCountStrings = nil;
     
     UISlider *s = sender;
     
-    appExecutive.slide3PVal2 = s.value;
+    self.settings.slide3PVal2 = s.value;
     
-    currentSelectedFrameValue = appExecutive.slide3PVal2;
+    currentSelectedFrameValue = self.settings.slide3PVal2;
     
     //NSLog(@"slide3PVal2: %f",appExecutive.slide3PVal2);
     
-    slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal2];
+    slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal2];
     
     if (programMode == NMXProgramModeVideo)
     {
@@ -1617,7 +1607,7 @@ NSArray static	*frameCountStrings = nil;
         
         //int sd = [self.appExecutive.shotDurationNumber intValue];
         
-        float per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
+        float per2 = (float)self.settings.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
         
         float val2 = sd * per2;
         
@@ -1629,20 +1619,17 @@ NSArray static	*frameCountStrings = nil;
         
         slide3P2Lbl.text = a;
     }
-    
-    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-    [appExecutive.userDefaults synchronize];
 }
 
 - (IBAction) handleSlide3PSlider3:(id)sender {
     
     UISlider *s = sender;
     
-    appExecutive.slide3PVal3 = s.value;
+    self.settings.slide3PVal3 = s.value;
     
-    currentSelectedFrameValue = appExecutive.slide3PVal3;
+    currentSelectedFrameValue = self.settings.slide3PVal3;
     
-    slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal3];
+    slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal3];
     
     //NSLog(@"slide3PVal3: %f",appExecutive.slide3PVal3);
     
@@ -1652,7 +1639,7 @@ NSArray static	*frameCountStrings = nil;
         
         //int sd = [self.appExecutive.shotDurationNumber intValue];
         
-        float per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
+        float per3 = (float)self.settings.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
         
         float val3 = sd * per3;
         
@@ -1664,9 +1651,6 @@ NSArray static	*frameCountStrings = nil;
         
         slide3P3Lbl.text = a;
     }
-    
-    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-    [appExecutive.userDefaults synchronize];
 }
 
 - (IBAction) updateRampEasingValue:(id)sender {
@@ -1720,11 +1704,11 @@ NSArray static	*frameCountStrings = nil;
     sliderValue = slider.value;
     slidername = slider.restorationIdentifier;
     
-    appExecutive.slide3PVal1 = sliderValue;
+    self.settings.slide3PVal1 = sliderValue;
     
-    NSLog(@"upsl3p1 appExecutive.slide3PVal1: %f",appExecutive.slide3PVal1);
+    NSLog(@"upsl3p1 appExecutive.slide3PVal1: %f",self.settings.slide3PVal1);
     
-    slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal1];
+    slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal1];
     
     if (programMode == NMXProgramModeVideo)
     {
@@ -1735,7 +1719,7 @@ NSArray static	*frameCountStrings = nil;
         
         //int sd = [self.appExecutive.shotDurationNumber intValue];
         
-        float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+        float per1 = (float)self.settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
         
         NSLog(@"upsl3p1 per1: %f",per1);
         
@@ -1750,27 +1734,16 @@ NSArray static	*frameCountStrings = nil;
     
     [self.slide3PView setNeedsDisplay];
     
-    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-    [appExecutive.userDefaults synchronize];
-    
-    //[self saveSlideIncreaseValues];
 }
 
 - (void) updateSlide3PVal2: (UISlider *) slider {
     
-//    if (slider.value > appExecutive.slide3PVal2)
-//        appExecutive.slide3PVal2 = slider.value;
-    
     sliderValue = slider.value;
     slidername = slider.restorationIdentifier;
     
-    appExecutive.slide3PVal2 = sliderValue;
+    self.settings.slide3PVal2 = sliderValue;
     
-    //NSLog(@"updateSlide3PVal2 appExecutive.slide3PVal2: %f",appExecutive.slide3PVal2);
-    
-    //slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal2];
-    
-    slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal2];
+    slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal2];
     
     if (programMode == NMXProgramModeVideo)
     {
@@ -1781,25 +1754,16 @@ NSArray static	*frameCountStrings = nil;
     
     [self.slide3PView setNeedsDisplay];
     
-    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-    [appExecutive.userDefaults synchronize];
-    
-    //[self saveSlideIncreaseValues];
 }
 
 - (void) updateSlide3PVal3: (UISlider *) slider {
     
-    //NSLog(@"updateSlide3PVal3");
-    
-    //    if (slider.value > appExecutive.slide3PVal2)
-    //        appExecutive.slide3PVal2 = slider.value;
-    
     sliderValue = slider.value;
     slidername = slider.restorationIdentifier;
     
-    appExecutive.slide3PVal3 = sliderValue;
+    self.settings.slide3PVal3 = sliderValue;
     
-    slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal3];
+    slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal3];
     
     if (programMode == NMXProgramModeVideo)
     {
@@ -1809,11 +1773,6 @@ NSArray static	*frameCountStrings = nil;
     }
     
     [self.slide3PView setNeedsDisplay];
-    
-    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-    [appExecutive.userDefaults synchronize];
-    
-    //[self saveSlideIncreaseValues];
 }
 
 //increase start
@@ -2234,15 +2193,15 @@ NSArray static	*frameCountStrings = nil;
         
         if ([currentFrameTarget isEqualToString:@"3PS"])
         {
-            selected3PVal = appExecutive.slide3PVal1;
+            selected3PVal = self.settings.slide3PVal1;
         }
         else if ([currentFrameTarget isEqualToString:@"3PM"])
         {
-            selected3PVal = appExecutive.slide3PVal2;
+            selected3PVal = self.settings.slide3PVal2;
         }
         else if ([currentFrameTarget isEqualToString:@"3PE"])
         {
-            selected3PVal = appExecutive.slide3PVal3;
+            selected3PVal = self.settings.slide3PVal3;
         }
         
         int sd = [self.appExecutive.videoLengthNumber intValue];
@@ -2499,7 +2458,7 @@ NSArray static	*frameCountStrings = nil;
         
         slide3PSlider1.value = currentSelectedFrameValue;
         
-        appExecutive.slide3PVal1 = sliderValue;
+        self.settings.slide3PVal1 = sliderValue;
         
         [self updateSlide3PVal1:slide3PSlider1];
     }

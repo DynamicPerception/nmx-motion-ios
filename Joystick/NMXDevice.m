@@ -256,7 +256,7 @@ bool waitForResponse;
         waitForResponse = true;
         
         self.address = [NMXDevice defaultAddress];        // default the address to 3 if it hasn't been set already
-
+        self.settings = [appExecutive defaultsForDevice: self];
         
         self.serviceDiscoveryRetryCount = 3;
         

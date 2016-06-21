@@ -57,8 +57,9 @@ static const char *SIMULATE_DEVICE	= "SIMULATE_DEVICE";
     self.voltageLowTxt.delegate = self;
     self.voltageHighTxt.delegate = self;
     
-    self.voltageHighTxt.text = [NSString stringWithFormat:@"%.02f",self.device.voltageHigh];
-    self.voltageLowTxt.text = [NSString stringWithFormat:@"%.02f",self.device.voltageLow];
+    
+    self.voltageHighTxt.text = [NSString stringWithFormat:@"%.02f",self.device.settings.voltageHigh];
+    self.voltageLowTxt.text = [NSString stringWithFormat:@"%.02f",self.device.settings.voltageLow];
     
     //voltageHighTxt.layer.borderColor=[[UIColor whiteColor]CGColor];
     
@@ -209,28 +210,24 @@ static const char *SIMULATE_DEVICE	= "SIMULATE_DEVICE";
 
 - (BOOL) textFieldShouldReturn:(UITextField*)textField {
     
-    self.device.voltageHigh = [self.voltageHighTxt.text floatValue];
-    self.device.voltageLow = [self.voltageLowTxt.text floatValue];
+    self.device.settings.voltageHigh = [self.voltageHighTxt.text floatValue];
+    self.device.settings.voltageLow = [self.voltageLowTxt.text floatValue];
     
     
-    if (self.device.voltageHigh <= self.device.voltage)
+    if (self.device.settings.voltageHigh <= self.device.settings.voltage)
     {
-        self.device.voltageHigh = self.device.voltage;
-        self.voltageHighTxt.text = [NSString stringWithFormat:@"%.02f", self.device.voltageHigh];
+        self.device.settings.voltageHigh = self.device.settings.voltage;
+        self.voltageHighTxt.text = [NSString stringWithFormat:@"%.02f", self.device.settings.voltageHigh];
     }
     
-    if (self.device.voltageLow >= self.device.voltage)
+    if (self.device.settings.voltageLow >= self.device.settings.voltage)
     {
-        self.device.voltageLow = self.device.voltage;
-        self.voltageLowTxt.text = [NSString stringWithFormat:@"%.02f", self.device.voltageLow];
+        self.device.settings.voltageLow = self.device.settings.voltage;
+        self.voltageLowTxt.text = [NSString stringWithFormat:@"%.02f", self.device.settings.voltageLow];
     }
     
     [textField resignFirstResponder];
     
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.device.voltageLow] forKey: @"voltageLow"];
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.device.voltageHigh] forKey: @"voltageHigh"];
-    
-    [self.appExecutive.defaults synchronize];
     
     return YES;
 }

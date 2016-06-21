@@ -226,10 +226,10 @@
     NSString *updatesAvailFor = @"";
     BOOL ready = YES;
 
-    AppExecutive * appExecutive = [AppExecutive sharedInstance];
-
 #if !TARGET_IPHONE_SIMULATOR
 
+    AppExecutive *appExecutive = [AppExecutive sharedInstance];
+    
     NSArray *cells = [self.tableView visibleCells];
     for (DeviceTableViewCell *cell in cells)
     {

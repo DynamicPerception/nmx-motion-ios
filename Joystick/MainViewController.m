@@ -59,12 +59,6 @@
 @property (assign)                          bool                        showingModalScreen;
 @property (weak, nonatomic)     IBOutlet    UIImageView *image3P;
 
-@property int start2pSet;
-@property int end2pSet;
-@property int start3PSet;
-@property int mid3PSet;
-@property int end3PSet;
-
 @end
 
 //------------------------------------------------------------------------------
@@ -132,58 +126,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 	return [self.appExecutive.sensitivityNumber floatValue];
 }
-
-- (int) start2pSet
-{
-    return (int)[self.appExecutive.defaults integerForKey:@"start2pSet"];
-}
-
-- (void) setStart2pSet:(int)start2pSet
-{
-    [self.appExecutive.defaults setObject: [NSNumber numberWithInt:start2pSet] forKey: @"start2pSet"];
-}
-
-- (int) end2pSet
-{
-    return (int)[self.appExecutive.defaults integerForKey:@"end2pSet"];
-}
-
-- (void) setEnd2pSet:(int)end2pSet
-{
-    [self.appExecutive.defaults setObject: [NSNumber numberWithInt:end2pSet] forKey: @"end2pSet"];
-}
-
-- (int) start3pSet
-{
-    return (int)[self.appExecutive.defaults integerForKey:@"start3pSet"];
-}
-
-- (void) setStart3pSet:(int)start3pSet
-{
-    [self.appExecutive.defaults setObject: [NSNumber numberWithInt:start3pSet] forKey: @"start3pSet"];
-}
-
-- (int) mid3pSet
-{
-    return (int)[self.appExecutive.defaults integerForKey:@"mid3pSet"];
-}
-
-- (void) setMid3pSet:(int)mid3pSet
-{
-    [self.appExecutive.defaults setObject: [NSNumber numberWithInt:mid3pSet] forKey: @"mid3pSet"];
-}
-
-- (int) end3pSet
-{
-    return (int)[self.appExecutive.defaults integerForKey:@"end3pSet"];
-}
-
-- (void) setEnd3pSet:(int)end3pSet
-{
-    [self.appExecutive.defaults setObject: [NSNumber numberWithInt:end3pSet] forKey: @"end3pSet"];
-}
-
-
 
 @synthesize dominantAxisSwitch;
 
@@ -295,6 +237,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     float e = [self.appExecutive.defaults floatForKey:@"panMotorCustomValue"];//panLinearCustom = 0.00;
     float f = [self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"];//tiltLinearCustom = 0.00;
     
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
     if([appExecutive.defaults objectForKey:@"slideMotor"] != nil)
     {
         if (a == 1)
@@ -395,29 +339,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         [appExecutive.defaults setObject:self.tiltDirectionMode forKey:@"tiltDirectionMode"];
     }
     
-    if ([self.appExecutive.defaults integerForKey:@"useJoystick"] == 2)
-    {
-        //NSLog(@"dont use joystick1");
-        
-        self.appExecutive.useJoystick = NO;
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:2] forKey: @"useJoystick"];
-        
-        //self.appExecutive.useJoystick = [self.appExecutive.defaults integerForKey:@"useJoystick"];
-    }
-    else
-    {
-        //NSLog(@"use joystick1");
-        
-        //        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"useJoystick"];
-        //        [self.appExecutive.defaults synchronize];
-        
-        self.appExecutive.useJoystick = YES;
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"useJoystick"];
-    }
-    
-    [self.appExecutive.defaults synchronize];
-    
-    if (self.appExecutive.useJoystick == NO)
+    if (settings.useJoystick == NO)
     {
         joystickViefw.hidden = YES;
         
@@ -592,6 +514,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
     } completion:^(BOOL finished) {
         
+        JSDeviceSettings *settings = self.appExecutive.device.settings;
+        
         if (swe.isOn)
         {
             [self.flipButton setTitle:@"Set Mid" forState:UIControlStateNormal];
@@ -600,7 +524,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
             mode3PLbl2.text = @"3-Point Move";
             image3P.image = [UIImage imageNamed:@"3p.png"];
             
-            if (self.mid3PSet == 2)
+            if (settings.mid3PSet == 2)
             {
                 self.flipButton.selected = YES;
             }
@@ -635,12 +559,12 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
             image3P.image = [UIImage imageNamed:@"2p.png"];
             self.flipButton.selected = NO;
             
-            if (start2pTotals != 0 || self.start2pSet == 1)
+            if (start2pTotals != 0 || settings.start2pSet == 1)
             {
                 self.setStartButton.selected = YES;
             }
             
-            if (end2pTotals != 0 || self.end2pSet == 1)
+            if (end2pTotals != 0 || settings.end2pSet == 1)
             {
                 self.setStopButton.selected = YES;
             }
@@ -822,13 +746,13 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (void) viewDidAppear: (BOOL) animated {
     
-    //NSLog(@"didappear self.appExecutive.useJoystick: %i",self.appExecutive.useJoystick);
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
     self.setStartButton.selected = NO;
     self.setStopButton.selected = NO;
     self.flipButton.selected = NO;
     
-    if (self.appExecutive.useJoystick == NO)
+    if (settings.useJoystick == NO)
     {
         joystickViefw.hidden = YES;
         
@@ -852,32 +776,24 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     }
 
     startEndTotal =
-        appExecutive.startPoint1 + appExecutive.endPoint1 +
-        appExecutive.startPoint2 + appExecutive.endPoint2 +
-        appExecutive.startPoint3 + appExecutive.endPoint3;
+        settings.startPoint1 + settings.endPoint1 +
+        settings.startPoint2 + settings.endPoint2 +
+        settings.startPoint3 + settings.endPoint3;
     
-    startTotals = self.appExecutive.start3PSlideDistance +
-    self.appExecutive.start3PPanDistance +
-    self.appExecutive.start3PTiltDistance;
-    
-    midTotals = self.appExecutive.mid3PSlideDistance +
-    self.appExecutive.mid3PPanDistance +
-    self.appExecutive.mid3PTiltDistance;
-    
-    endTotals = self.appExecutive.end3PSlideDistance +
-    self.appExecutive.end3PPanDistance +
-    self.appExecutive.end3PTiltDistance;
+    startTotals = settings.start3PSlideDistance + settings.start3PPanDistance + settings.start3PTiltDistance;
+    midTotals = settings.mid3PSlideDistance + settings.mid3PPanDistance + settings.mid3PTiltDistance;
+    endTotals = settings.end3PSlideDistance +  settings.end3PPanDistance + settings.end3PTiltDistance;
     
     if (self.appExecutive.is3P == NO)
     {
         NSLog(@"startEndTotal: %i",startEndTotal);
         
-        if (start2pTotals != 0 || self.start2pSet == 1) {
+        if (start2pTotals != 0 || settings.start2pSet == 1) {
             
             self.setStartButton.selected = YES;
         }
         
-        if (end2pTotals != 0 || self.end2pSet == 1) {
+        if (end2pTotals != 0 || settings.end2pSet == 1) {
             
             self.setStopButton.selected = YES;
         }
@@ -935,9 +851,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
             [switch2P setOn:YES];
         }
         
-        self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
-        self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
-        self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
         [self showVoltage];
         [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
     }
@@ -974,156 +887,72 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     [self exitJoystickMode];
     
-    //[appExecutive setPoints];
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-//    if (!self.appExecutive.resetController == YES)
-//    {
-//        self.appExecutive.startPoint1 = [self.appExecutive.device queryProgramStartPoint:1];
-//        self.appExecutive.endPoint1 = [self.appExecutive.device queryProgramEndPoint:1];
-//        
-//        NSLog(@"mvc startPoint1: %i",self.appExecutive.startPoint1);
-//        NSLog(@"mvc endPoint1: %i",self.appExecutive.endPoint1);
-//        
-//        self.appExecutive.startPoint2 = [self.appExecutive.device queryProgramStartPoint:2];
-//        self.appExecutive.endPoint2 = [self.appExecutive.device queryProgramEndPoint:2];
-//        
-//        NSLog(@"mvc startPoint2: %i",self.appExecutive.startPoint2);
-//        NSLog(@"mvc endPoint2: %i",self.appExecutive.endPoint2);
-//        
-//        self.appExecutive.startPoint3 = [self.appExecutive.device queryProgramStartPoint:3];
-//        self.appExecutive.endPoint3 = [self.appExecutive.device queryProgramEndPoint:3];
-//        
-//        NSLog(@"mvc startPoint3: %i",self.appExecutive.startPoint3);
-//        NSLog(@"mvc endPoint3: %i",self.appExecutive.endPoint3);
-//    }
-//    else
-//    {
-//        NSLog(@"reset mvc startPoint1: %i",self.appExecutive.startPoint1);
-//        NSLog(@"reset mvc endPoint1: %i",self.appExecutive.endPoint1);
-//        
-//        NSLog(@"reset mvc startPoint2: %i",self.appExecutive.startPoint2);
-//        NSLog(@"reset mvc endPoint2: %i",self.appExecutive.endPoint2);
-//        
-//        NSLog(@"reset mvc startPoint3: %i",self.appExecutive.startPoint3);
-//        NSLog(@"reset mvc endPoint3: %i",self.appExecutive.endPoint3);
-//        
-//        self.appExecutive.resetController = NO;
-//    }
+    settings.startPoint1 = [self.appExecutive.device queryProgramStartPoint:1];
+    settings.endPoint1 = [self.appExecutive.device queryProgramEndPoint:1];
     
-    self.appExecutive.startPoint1 = [self.appExecutive.device queryProgramStartPoint:1];
-    self.appExecutive.endPoint1 = [self.appExecutive.device queryProgramEndPoint:1];
+    settings.startPoint2 = [self.appExecutive.device queryProgramStartPoint:2];
+    settings.endPoint2 = [self.appExecutive.device queryProgramEndPoint:2];
     
-    NSLog(@"mvc startPoint1: %i",self.appExecutive.startPoint1);
-    NSLog(@"mvc endPoint1: %i",self.appExecutive.endPoint1);
-    
-    self.appExecutive.startPoint2 = [self.appExecutive.device queryProgramStartPoint:2];
-    self.appExecutive.endPoint2 = [self.appExecutive.device queryProgramEndPoint:2];
-    
-    NSLog(@"mvc startPoint2: %i",self.appExecutive.startPoint2);
-    NSLog(@"mvc endPoint2: %i",self.appExecutive.endPoint2);
-    
-    self.appExecutive.startPoint3 = [self.appExecutive.device queryProgramStartPoint:3];
-    self.appExecutive.endPoint3 = [self.appExecutive.device queryProgramEndPoint:3];
-    
-    NSLog(@"mvc startPoint3: %i",self.appExecutive.startPoint3);
-    NSLog(@"mvc endPoint3: %i",self.appExecutive.endPoint3);
+    settings.startPoint3 = [self.appExecutive.device queryProgramStartPoint:3];
+    settings.endPoint3 = [self.appExecutive.device queryProgramEndPoint:3];
     
     
-    
-    start2pTotals = appExecutive.startPoint1 + appExecutive.startPoint2 + appExecutive.startPoint3;
-    end2pTotals = appExecutive.endPoint1 + appExecutive.endPoint2 + appExecutive.endPoint3;
+    start2pTotals = settings.startPoint1 + settings.startPoint2 + settings.startPoint3;
+    end2pTotals = settings.endPoint1 + settings.endPoint2 + settings.endPoint3;
     
     startEndTotal =
-    appExecutive.startPoint1 + appExecutive.endPoint1 +
-    appExecutive.startPoint2 + appExecutive.endPoint2 +
-    appExecutive.startPoint3 + appExecutive.endPoint3;
+    settings.startPoint1 + settings.endPoint1 +
+    settings.startPoint2 + settings.endPoint2 +
+    settings.startPoint3 + settings.endPoint3;
     
     // initialize microstep based on the device's last settings
-    self.appExecutive.microstep1 = [self.appExecutive.device motorQueryMicrostep2:1];
-    self.appExecutive.microstep2 = [self.appExecutive.device motorQueryMicrostep2:2];
-    self.appExecutive.microstep3 = [self.appExecutive.device motorQueryMicrostep2:3];
-    
-//    NSLog(@"self.appExecutive.microstep1: %f",(float)self.appExecutive.microstep1);
-//    NSLog(@"self.appExecutive.microstep2: %f",(float)self.appExecutive.microstep2);
-//    NSLog(@"self.appExecutive.microstep3: %f",(float)self.appExecutive.microstep3);
+    settings.microstep1 = [self.appExecutive.device motorQueryMicrostep2:1];
+    settings.microstep2 = [self.appExecutive.device motorQueryMicrostep2:2];
+    settings.microstep3 = [self.appExecutive.device motorQueryMicrostep2:3];
     
     bool pc = [self.appExecutive.device queryPowerCycle];
     
     if (pc == 0)
     {
-        NSLog(@"startEndTotal 2: %i",startEndTotal);
-        
         if (self.appExecutive.is3P == YES) {
             
-            if (self.start3PSet == 2)
+            if (settings.start3PSet == 2)
             {
                 self.setStartButton.selected = YES;
             }
             
-            if (self.end3PSet == 2)
+            if (settings.end3PSet == 2)
             {
                 self.setStopButton.selected = YES;
             }
             
-            if (self.mid3PSet == 2)
+            if (settings.mid3PSet == 2)
             {
                 self.flipButton.selected = YES;
             }
         }
         
-        //NSLog(@"start3PSlideDistance: %f", [appExecutive.defaults floatForKey:@"start3PSlideDistance"]);
+        startTotals = settings.start3PSlideDistance + settings.start3PPanDistance + settings.start3PTiltDistance;
+        midTotals = settings.mid3PSlideDistance + settings.mid3PPanDistance + settings.mid3PTiltDistance;
+        endTotals = settings.end3PSlideDistance + settings.end3PPanDistance + settings.end3PTiltDistance;
         
-        self.appExecutive.start3PSlideDistance = [appExecutive.defaults floatForKey:@"start3PSlideDistance"];
-        self.appExecutive.start3PPanDistance = [appExecutive.defaults floatForKey:@"start3PPanDistance"];
-        self.appExecutive.start3PTiltDistance = [appExecutive.defaults floatForKey:@"start3PTiltDistance"];
-        
-        self.appExecutive.mid3PSlideDistance = [appExecutive.defaults floatForKey:@"mid3PSlideDistance"];
-        self.appExecutive.mid3PPanDistance = [appExecutive.defaults floatForKey:@"mid3PPanDistance"];
-        self.appExecutive.mid3PTiltDistance = [appExecutive.defaults floatForKey:@"mid3PTiltDistance"];
-        
-        self.appExecutive.end3PSlideDistance = [appExecutive.defaults floatForKey:@"end3PSlideDistance"];
-        self.appExecutive.end3PPanDistance = [appExecutive.defaults floatForKey:@"end3PPanDistance"];
-        self.appExecutive.end3PTiltDistance = [appExecutive.defaults floatForKey:@"end3PTiltDistance"];
-        
-        startTotals = self.appExecutive.start3PSlideDistance + self.appExecutive.start3PPanDistance +
-                      self.appExecutive.start3PTiltDistance;
-        
-        midTotals = self.appExecutive.mid3PSlideDistance + self.appExecutive.mid3PPanDistance +
-                    self.appExecutive.mid3PTiltDistance;
-        
-        endTotals = self.appExecutive.end3PSlideDistance + self.appExecutive.end3PPanDistance +
-                    self.appExecutive.end3PTiltDistance;
-        
-        self.appExecutive.scaledStart3PSlideDistance = [appExecutive.defaults floatForKey:@"scaledStart3PSlideDistance"];
-        self.appExecutive.scaledStart3PPanDistance = [appExecutive.defaults floatForKey:@"scaledStart3PPanDistance"];
-        self.appExecutive.scaledStart3PTiltDistance = [appExecutive.defaults floatForKey:@"scaledStart3PTiltDistance"];
-        
-        self.appExecutive.scaledMid3PSlideDistance = [appExecutive.defaults floatForKey:@"scaledMid3PSlideDistance"];
-        self.appExecutive.scaledMid3PPanDistance = [appExecutive.defaults floatForKey:@"scaledMid3PPanDistance"];
-        self.appExecutive.scaledMid3PTiltDistance = [appExecutive.defaults floatForKey:@"scaledMid3PTiltDistance"];
-        
-        self.appExecutive.scaledEnd3PSlideDistance = [appExecutive.defaults floatForKey:@"scaledEnd3PSlideDistance"];
-        self.appExecutive.scaledEnd3PPanDistance = [appExecutive.defaults floatForKey:@"scaledEnd3PPanDistance"];
-        self.appExecutive.scaledEnd3PTiltDistance = [appExecutive.defaults floatForKey:@"scaledEnd3PTiltDistance"];
-
         if ([appExecutive.userDefaults integerForKey:@"is3P"] == 0)
         {
-            NSLog(@"its 2p");
-            
-            
-            if(start2pTotals != 0 || self.start2pSet == 1)
+            if(start2pTotals != 0 || settings.start2pSet == 1)
             {
                 self.setStartButton.selected = YES;
             }
             
-            if(end2pTotals != 0 || self.end2pSet == 1)
+            if(end2pTotals != 0 || settings.end2pSet == 1)
             {
                 self.setStopButton.selected = YES;
             }
         }
         else
         {
-            if (self.mid3PSet == 2)
+            if (settings.mid3PSet == 2)
             {
                 self.flipButton.selected = YES;
             }
@@ -1133,104 +962,49 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     {
         //NSLog(@"reset values");
         
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"start3PSlideDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"start3PPanDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"start3PTiltDistance"];
+        settings.start3PSlideDistance = 0.f;
+        settings.start3PPanDistance = 0.f;
+        settings.start3PTiltDistance = 0.f;
         
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"mid3PSlideDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"mid3PPanDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"mid3PTiltDistance"];
+        settings.mid3PSlideDistance = 0.f;
+        settings.mid3PPanDistance = 0.f;
+        settings.mid3PTiltDistance = 0.f;
         
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"end3PSlideDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"end3PPanDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"end3PTiltDistance"];
+        settings.end3PSlideDistance = 0.f;
+        settings.end3PPanDistance = 0.f;
+        settings.end3PTiltDistance = 0.f;
         
-        self.mid3PSet = 0;
-        self.start3PSet = 0;
-        self.end3PSet = 0;
+        settings.mid3PSet = 0.f;
+        settings.start3PSet = 0.f;
+        settings.end3PSet = 0.f;
+
+        settings.slide3PVal1 = 0.f;
+        settings.slide3PVal2 = 0.f;
+        settings.slide3PVal3 = 0.f;
+
+        settings.scaledStart3PSlideDistance = 0.f;
+        settings.scaledStart3PPanDistance = 0.f;
+        settings.scaledStart3PTiltDistance = 0.f;
         
-        [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal1"];
-        [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal2"];
-        [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:0] forKey: @"slide3PVal3"];
+        settings.scaledMid3PSlideDistance = 0.f;
+        settings.scaledMid3PPanDistance = 0.f;
+        settings.scaledMid3PTiltDistance = 0.f;
         
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledStart3PSlideDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledStart3PPanDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledStart3PTiltDistance"];
+        settings.scaledEnd3PSlideDistance = 0.f;
+        settings.scaledEnd3PPanDistance = 0.f;
+        settings.scaledEnd3PTiltDistance = 0.f;
+
+        settings.start2pSet = 0;
+        settings.end2pSet = 0;
         
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledMid3PSlideDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledMid3PPanDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledMid3PTiltDistance"];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledEnd3PSlideDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledEnd3PPanDistance"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"scaledEnd3PTiltDistance"];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"saved3PMicro1"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"saved3PMicro2"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:0] forKey: @"saved3PMicro3"];
-        
-        self.start2pSet = 0;
-        self.end2pSet = 0;
-        
-        [self.appExecutive.defaults synchronize];
+        [settings synchronize];
     }
     
-    if (([self.appExecutive.userDefaults floatForKey:@"slide3PVal1"] == 0))
-    {
-        //NSLog(@"set default 3P vals");
-        
-        self.appExecutive.slide3PVal1 = 1;
-        self.appExecutive.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue]/2;
-        self.appExecutive.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue];
-    }
-    else
-    {
-        //NSLog(@"get saved 3P vals");
-        
-        self.appExecutive.slide3PVal1 = [self.appExecutive.userDefaults floatForKey:@"slide3PVal1"];
-        self.appExecutive.slide3PVal2 = [self.appExecutive.userDefaults floatForKey:@"slide3PVal2"];
-        self.appExecutive.slide3PVal3 = [self.appExecutive.userDefaults floatForKey:@"slide3PVal3"];
-    }
-    
-//    //keyframe position
-//    
-//    NSLog(@"appExecutive.slide3PVal1: %f",appExecutive.slide3PVal1);
-//    NSLog(@"appExecutive.slide3PVal2: %f",appExecutive.slide3PVal2);
-//    NSLog(@"appExecutive.slide3PVal3: %f",appExecutive.slide3PVal3);
-    
-    //NSLog(@"sdn: %i",[self.appExecutive.shotDurationNumber intValue]);
-    //NSLog(@"appExecutive.slide3PVal2: %f",appExecutive.slide3PVal2);
-    
-    [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-    [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-    [self.appExecutive.userDefaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-    
-    if (![self.appExecutive.defaults floatForKey:@"voltageLow"])
-    {
-        //NSLog(@"set default voltages");
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:10.5] forKey: @"voltageLow"];
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:12.5] forKey: @"voltageHigh"];
-        
-        [self.appExecutive.defaults synchronize];
-    }
-    
-    self.appExecutive.voltageLow = [self.appExecutive.defaults floatForKey:@"voltageLow"];
-    self.appExecutive.voltageHigh = [self.appExecutive.defaults floatForKey:@"voltageHigh"];
-    
-    [self.appExecutive.defaults synchronize];
-    
-    appExecutive.dampening1 = [appExecutive.device motorQueryContinuousAccelDecel: 1]/100;
-    appExecutive.dampening2 = [appExecutive.device motorQueryContinuousAccelDecel: 2]/100;
-    appExecutive.dampening3 = [appExecutive.device motorQueryContinuousAccelDecel: 3]/100;
-    
-//    NSLog(@"appExecutive.dampening1: %f",appExecutive.dampening1);
-//    NSLog(@"appExecutive.dampening2: %f",appExecutive.dampening2);
-//    NSLog(@"appExecutive.dampening3: %f",appExecutive.dampening3);
+    [settings synchronize];
     
     if (([appExecutive.userDefaults integerForKey:@"is3P"] == 0 ||
          [appExecutive.userDefaults objectForKey:@"is3P"] == nil) &&
-        (self.start2pSet == 1 && self.end2pSet == 1))
+        (settings.start2pSet == 1 && settings.end2pSet == 1))
     {
         [UIView animateWithDuration:.4 animations:^{
             
@@ -1257,43 +1031,25 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (void) showVoltage {
     
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     #if TARGET_IPHONE_SIMULATOR
         
-        self.appExecutive.voltage = 12.1;
-        self.appExecutive.voltageLow = 10.5;
-        self.appExecutive.voltageHigh = 12.5;
+        settings.voltage = 12.1;
+        settings.voltageLow = 10.5;
+        settings.voltageHigh = 12.5;
         
     #else
         
-        self.appExecutive.voltage = [self.appExecutive.device mainQueryVoltage];
+        settings.voltage = [self.appExecutive.device mainQueryVoltage];
         
     #endif
     
-    
-//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-//    
-//    float diff = self.appExecutive.voltageHigh - self.appExecutive.voltage;
-//    
-//    float per = diff/range;
-//    
-//    float per2 = self.appExecutive.voltage/self.appExecutive.voltageHigh;
-    
-    //per2 = .35;
-    
-//    NSLog(@"voltage: %.02f",self.appExecutive.voltage);
-//    NSLog(@"high: %.02f",self.appExecutive.voltageHigh);
-//    NSLog(@"low: %.02f",self.appExecutive.voltageLow);
-//    NSLog(@"range: %.02f",range);
-//    NSLog(@"diff: %.02f",diff);
-//    NSLog(@"per: %.02f",per);
-//    NSLog(@"per2: %.02f",per2);
-    
-    float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
+    float newBase = settings.voltageHigh - settings.voltageLow;
     if (newBase == 0) newBase = 1;
     
     //NSLog(@"newBase: %.02f",newBase);
     
-    float newVoltage = self.appExecutive.voltage - self.appExecutive.voltageLow;
+    float newVoltage = settings.voltage - settings.voltageLow;
     
     //NSLog(@"newVoltage: %.02f",newVoltage);
     
@@ -1331,29 +1087,12 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     [batteryView removeFromSuperview];
         
-//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-//    
-//    float diff = self.appExecutive.voltageHigh - self.appExecutive.voltage;
-//    
-//    float per = diff/range;
-//    
-//    float per2 = self.appExecutive.voltage/self.appExecutive.voltageHigh;
-    
-    //per2 = .35;
-    
-//    NSLog(@"voltage: %.02f",self.appExecutive.voltage);
-//    NSLog(@"high: %.02f",self.appExecutive.voltageHigh);
-//    NSLog(@"low: %.02f",self.appExecutive.voltageLow);
-//    NSLog(@"range: %.02f",range);
-//    NSLog(@"diff: %.02f",diff);
-//    NSLog(@"per: %.02f",per);
-//    NSLog(@"per2: %.02f",per2);
-    
-    float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    float newBase = settings.voltageHigh - settings.voltageLow;
     
     NSLog(@"newBase: %.02f",newBase);
     
-    float newVoltage = self.appExecutive.voltage - self.appExecutive.voltageLow;
+    float newVoltage = settings.voltage - settings.voltageLow;
     
     NSLog(@"newVoltage: %.02f",newVoltage);
     
@@ -1437,21 +1176,11 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (void) updateLabels {
     
-//    NSLog(@"ul microstep1: %i",self.appExecutive.microstep1);
-//    NSLog(@"ul microstep2: %i",self.appExecutive.microstep2);
-//    NSLog(@"ul microstep3: %i",self.appExecutive.microstep3);
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-    distance1 = appExecutive.endPoint1 - appExecutive.startPoint1;
-    distance2 = appExecutive.endPoint2 - appExecutive.startPoint2;
-    distance3 = appExecutive.endPoint3 - appExecutive.startPoint3;
-    
-//    NSLog(@"ul distance1: %f",distance1);
-//    NSLog(@"ul distance2: %f",distance2);
-//    NSLog(@"ul distance3: %f",distance3);
-//    NSLog(@"\n");
-//
-//    NSLog(@"panRig: %@",panRig);
-//    NSLog(@"panGear: %f",panGear);
+    distance1 = settings.endPoint1 - settings.startPoint1;
+    distance2 = settings.endPoint2 - settings.startPoint2;
+    distance3 = settings.endPoint3 - settings.startPoint3;
     
     // Restore saved label values for direction
     if([appExecutive.defaults objectForKey:@"slideDirectionMode"] != nil)
@@ -1475,7 +1204,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
         NSDictionary *a = [self getDistance:
                                           1:
-               self.appExecutive.microstep1:
+                        settings.microstep1:
                                   distance1:
                                    slideRig:
                                   slideGear:
@@ -1483,7 +1212,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
         NSDictionary *b = [self getDistance:
                                           2:
-               self.appExecutive.microstep2:
+                        settings.microstep2:
                                   distance2:
                                      panRig:
                                     panGear:
@@ -1491,7 +1220,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
         NSDictionary *c = [self getDistance:
                                           3:
-               self.appExecutive.microstep3:
+                        settings.microstep3:
                                   distance3:
                                     tiltRig:
                                    tiltGear:
@@ -1499,9 +1228,9 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
         if (debugDistance) {
         
-        NSLog(@"getdistance dict1: %@",a);
-        NSLog(@"getdistance dict2: %@",b);
-        NSLog(@"getdistance dict3: %@",c);
+            NSLog(@"getdistance dict1: %@",a);
+            NSLog(@"getdistance dict2: %@",b);
+            NSLog(@"getdistance dict3: %@",c);
             
         }
         
@@ -1838,14 +1567,12 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 - (void) setupMicrosteps {
 
     NMXDevice *device = self.appExecutive.device;
+
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-//    UInt32 queryStartHere = [device mainQueryStartHere];
-//    
-//    NSLog(@"queryStartHere: %i", queryStartHere);
-    
-    [device motorSet: device.sledMotor Microstep: appExecutive.microstep1];
-    [device motorSet: device.panMotor Microstep: appExecutive.microstep2];
-    [device motorSet: device.tiltMotor Microstep: appExecutive.microstep3];
+    [device motorSet: device.sledMotor Microstep: settings.microstep1];
+    [device motorSet: device.panMotor Microstep: settings.microstep2];
+    [device motorSet: device.tiltMotor Microstep: settings.microstep3];
 }
 
 - (void) enterJoystickMode {
@@ -1900,7 +1627,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 //    });
 
         disconnected = YES;
-        self.appExecutive.resetController = YES;
 
         //mm If connected to multiple - don't go back... see if we can reconnect
         
@@ -2020,72 +1746,38 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     int pos2 = [self.appExecutive.device motorQueryCurrentPosition:2];
     int pos3 = [self.appExecutive.device motorQueryCurrentPosition:3];
     
-    self.appExecutive.start3PSlideDistance = pos1;
-    self.appExecutive.start3PPanDistance = pos2;
-    self.appExecutive.start3PTiltDistance = pos3;
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-    NSLog(@"appExecutive.microstep1: %f",(float)appExecutive.microstep1);
-    
-    NSLog(@"before start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
-    NSLog(@"before start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
-    NSLog(@"before start3PTiltDistance: %f",self.appExecutive.start3PTiltDistance);
+    settings.start3PSlideDistance = pos1;
+    settings.start3PPanDistance = pos2;
+    settings.start3PTiltDistance = pos3;
     
     [self convertUnits:1];
     
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.start3PSlideDistance]
-                                   forKey: @"start3PSlideDistance"];
+    settings.start3PSet = 2;
     
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.start3PPanDistance]
-                                   forKey: @"start3PPanDistance"];
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.start3PTiltDistance]
-                                   forKey: @"start3PTiltDistance"];
-    
-    self.start3PSet = 2;
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:(float)appExecutive.microstep1]
-                                   forKey: @"saved3PMicro1"];
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledStart3PSlideDistance]
-                                   forKey: @"scaledStart3PSlideDistance"];
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledStart3PPanDistance]
-                                   forKey: @"scaledStart3PPanDistance"];
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledStart3PTiltDistance]
-                                   forKey: @"scaledStart3PTiltDistance"];
-    
-    [self.appExecutive.defaults synchronize];
-    
-    startTotals = self.appExecutive.start3PSlideDistance +
-    self.appExecutive.start3PPanDistance +
-    self.appExecutive.start3PTiltDistance;
+    startTotals = settings.start3PSlideDistance + settings.start3PPanDistance + settings.start3PTiltDistance;
     
     if (self.appExecutive.is3P == NO)
     {
         [self.appExecutive.device mainSetStartHere];
         
-        self.start2pSet = 1;
+        settings.start2pSet = 1;
         
         int pos4 = [self.appExecutive.device queryProgramStartPoint:1];
         int pos5 = [self.appExecutive.device queryProgramStartPoint:2];
         int pos6 = [self.appExecutive.device queryProgramStartPoint:3];
         
-        self.appExecutive.startPoint1 = pos4;
+        settings.startPoint1 = pos4;
         
-        NSLog(@"set startPoint1: %i",self.appExecutive.startPoint1);
+        settings.startPoint2 = pos5;
         
-        self.appExecutive.startPoint2 = pos5;
+        settings.startPoint3 = pos6;
         
-        NSLog(@"set startPoint2: %i",self.appExecutive.startPoint2);
+        start2pTotals = settings.startPoint1 + settings.startPoint2 + settings.startPoint3;
+        end2pTotals = settings.endPoint1 + settings.endPoint2 + settings.endPoint3;
         
-        self.appExecutive.startPoint3 = pos6;
-        
-        NSLog(@"set startPoint3: %i",self.appExecutive.startPoint3);
-        
-        start2pTotals = appExecutive.startPoint1 + appExecutive.startPoint2 + appExecutive.startPoint3;
-        end2pTotals = appExecutive.endPoint1 + appExecutive.endPoint2 + appExecutive.endPoint3;
-        
-        if ((start2pTotals != 0 && end2pTotals != 0) || (self.start2pSet == 1 && self.end2pSet == 1))
+        if ((start2pTotals != 0 && end2pTotals != 0) || (settings.start2pSet == 1 && settings.end2pSet == 1))
         {
             [UIView animateWithDuration:.4 animations:^{
                 
@@ -2124,36 +1816,16 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     self.sendMotorsTimer = self.sendMotorsTimer;
     
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
     if (self.appExecutive.is3P == YES)
     {
-        NSLog(@"go to start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
-        NSLog(@"go to start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
-        NSLog(@"go to start3PTiltDistance: %f",self.appExecutive.start3PTiltDistance);
-        NSLog(@"\n");
-        
-        [self.appExecutive.device motorSet:1 SetMotorPosition: self.appExecutive.start3PSlideDistance];
-        [self.appExecutive.device motorSet:2 SetMotorPosition: self.appExecutive.start3PPanDistance];
-        [self.appExecutive.device motorSet:3 SetMotorPosition: self.appExecutive.start3PTiltDistance];
+        [self.appExecutive.device motorSet:1 SetMotorPosition: settings.start3PSlideDistance];
+        [self.appExecutive.device motorSet:2 SetMotorPosition: settings.start3PPanDistance];
+        [self.appExecutive.device motorSet:3 SetMotorPosition: settings.start3PTiltDistance];
     }
     else
     {
-//        [self.appExecutive.device resetLimits:1];
-//        [self.appExecutive.device resetLimits:2];
-//        [self.appExecutive.device resetLimits:3];
-        
-        NSLog(@"go to startPoint1: %i",self.appExecutive.startPoint1);
-        NSLog(@"go to startPoint2: %i",self.appExecutive.startPoint2);
-        NSLog(@"go to startPoint3: %i",self.appExecutive.startPoint3);
-        NSLog(@"\n");
-        
-//        [self.appExecutive.device motorSet:1 SetMotorPosition: self.appExecutive.startPoint1];
-//        [self.appExecutive.device motorSet:2 SetMotorPosition: self.appExecutive.startPoint2];
-//        [self.appExecutive.device motorSet:3 SetMotorPosition: self.appExecutive.startPoint3];
-        
-//        [self.appExecutive.device motorSendToStartPoint:1];
-//        [self.appExecutive.device motorSendToStartPoint:2];
-//        [self.appExecutive.device motorSendToStartPoint:3];
-        
         [self.appExecutive.device mainSendMotorsToStart];
     }
     
@@ -2189,48 +1861,17 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
         flipButton.selected = YES;
         
-        self.appExecutive.mid3PSlideDistance = [self.appExecutive.device motorQueryCurrentPosition:1];
-        self.appExecutive.mid3PPanDistance = [self.appExecutive.device motorQueryCurrentPosition:2];
-        self.appExecutive.mid3PTiltDistance = [self.appExecutive.device motorQueryCurrentPosition:3];
+        JSDeviceSettings *settings = self.appExecutive.device.settings;
         
-        NSLog(@"appExecutive.microstep2: %f",(float)appExecutive.microstep2);
-        
-        NSLog(@"before mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
-        NSLog(@"before mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
-        NSLog(@"before mid3PTiltDistance: %f",self.appExecutive.mid3PTiltDistance);
+        settings.mid3PSlideDistance = [self.appExecutive.device motorQueryCurrentPosition:1];
+        settings.mid3PPanDistance = [self.appExecutive.device motorQueryCurrentPosition:2];
+        settings.mid3PTiltDistance = [self.appExecutive.device motorQueryCurrentPosition:3];
         
         [self convertUnits:2];
         
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.mid3PSlideDistance]
-                                       forKey: @"mid3PSlideDistance"];
+        settings.mid3PSet = 2;
         
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.mid3PPanDistance]
-                                       forKey: @"mid3PPanDistance"];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.mid3PTiltDistance]
-                                       forKey: @"mid3PTiltDistance"];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:2] forKey: @"mid3PSet"];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:(float)appExecutive.microstep2]
-                                       forKey: @"saved3PMicro2"];
-        
-        self.mid3PSet = 2;
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledMid3PSlideDistance]
-                                       forKey: @"scaledMid3PSlideDistance"];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledMid3PPanDistance]
-                                       forKey: @"scaledMid3PPanDistance"];
-        
-        [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledMid3PTiltDistance]
-                                       forKey: @"scaledMid3PTiltDistance"];
-        
-        [self.appExecutive.defaults synchronize];
-        
-        midTotals = self.appExecutive.mid3PSlideDistance +
-        self.appExecutive.mid3PPanDistance +
-        self.appExecutive.mid3PTiltDistance;
+        midTotals = settings.mid3PSlideDistance + settings.mid3PPanDistance + settings.mid3PTiltDistance;
         
         [UIView animateWithDuration:.4 animations:^{
             
@@ -2254,14 +1895,11 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
     if (self.appExecutive.is3P == YES)
     {
-        NSLog(@"go to mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
-        NSLog(@"go to mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
-        NSLog(@"go to mid3PTiltDistance: %f",self.appExecutive.mid3PTiltDistance);
-        NSLog(@"\n");
-        
-        [self.appExecutive.device motorSet:1 SetMotorPosition: self.appExecutive.mid3PSlideDistance];
-        [self.appExecutive.device motorSet:2 SetMotorPosition: self.appExecutive.mid3PPanDistance];
-        [self.appExecutive.device motorSet:3 SetMotorPosition: self.appExecutive.mid3PTiltDistance];
+        JSDeviceSettings *settings = self.appExecutive.device.settings;
+
+        [self.appExecutive.device motorSet:1 SetMotorPosition: settings.mid3PSlideDistance];
+        [self.appExecutive.device motorSet:2 SetMotorPosition: settings.mid3PPanDistance];
+        [self.appExecutive.device motorSet:3 SetMotorPosition: settings.mid3PTiltDistance];
     }
     
     [UIView animateWithDuration:.4 animations:^{
@@ -2300,73 +1938,36 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     int pos2 = [self.appExecutive.device motorQueryCurrentPosition:2];
     int pos3 = [self.appExecutive.device motorQueryCurrentPosition:3];
     
-    self.appExecutive.end3PSlideDistance = pos1;
-    self.appExecutive.end3PPanDistance = pos2;
-    self.appExecutive.end3PTiltDistance = pos3;
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-    NSLog(@"appExecutive.microstep3: %f",(float)appExecutive.microstep3);
-    
-    NSLog(@"before end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
-    NSLog(@"before end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
-    NSLog(@"before end3PTiltDistance: %f",self.appExecutive.end3PTiltDistance);
+    settings.end3PSlideDistance = pos1;
+    settings.end3PPanDistance = pos2;
+    settings.end3PTiltDistance = pos3;
     
     [self convertUnits:3];
     
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.end3PSlideDistance]
-                                   forKey: @"end3PSlideDistance"];
+    settings.end3PSet = 2;
     
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.end3PPanDistance]
-                                   forKey: @"end3PPanDistance"];
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.end3PTiltDistance]
-                                   forKey: @"end3PTiltDistance"];
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:(float)appExecutive.microstep3]
-                                   forKey: @"saved3PMicro3"];
-    
-    self.end3PSet = 2;
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledEnd3PSlideDistance]
-                                   forKey: @"scaledEnd3PSlideDistance"];
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledEnd3PPanDistance]
-                                   forKey: @"scaledEnd3PPanDistance"];
-    
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.scaledEnd3PTiltDistance]
-                                   forKey: @"scaledEnd3PTiltDistance"];
-    
-    [self.appExecutive.defaults synchronize];
-    
-    endTotals = self.appExecutive.end3PSlideDistance +
-    self.appExecutive.end3PPanDistance +
-    self.appExecutive.end3PTiltDistance;
+    endTotals = settings.end3PSlideDistance + settings.end3PPanDistance + settings.end3PTiltDistance;
     
     if (self.appExecutive.is3P == NO)
     {
         [self.appExecutive.device mainSetStopHere];
         
-        self.end2pSet = 1;
+        settings.end2pSet = 1;
         
         int pos4 = [self.appExecutive.device queryProgramEndPoint:1];
         int pos5 = [self.appExecutive.device queryProgramEndPoint:2];
         int pos6 = [self.appExecutive.device queryProgramEndPoint:3];
         
-        self.appExecutive.endPoint1 = pos4;
+        settings.endPoint1 = pos4;
+        settings.endPoint2 = pos5;
+        settings.endPoint3 = pos6;
         
-        NSLog(@"set endPoint1: %i",self.appExecutive.endPoint1);
+        start2pTotals = settings.startPoint1 + settings.startPoint2 + settings.startPoint3;
+        end2pTotals = settings.endPoint1 + settings.endPoint2 + settings.endPoint3;
         
-        self.appExecutive.endPoint2 = pos5;
-        
-        NSLog(@"set endPoint2: %i",self.appExecutive.endPoint2);
-        
-        self.appExecutive.endPoint3 = pos6;
-        
-        NSLog(@"set endPoint3: %i",self.appExecutive.endPoint3);
-        
-        start2pTotals = appExecutive.startPoint1 + appExecutive.startPoint2 + appExecutive.startPoint3;
-        end2pTotals = appExecutive.endPoint1 + appExecutive.endPoint2 + appExecutive.endPoint3;
-        
-        if ((start2pTotals != 0 && end2pTotals != 0) || (self.start2pSet == 1 && self.end2pSet == 1))
+        if ((start2pTotals != 0 && end2pTotals != 0) || (settings.start2pSet == 1 && settings.end2pSet == 1))
         {
             [UIView animateWithDuration:.4 animations:^{
                 
@@ -2408,24 +2009,17 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     self.sendMotorsTimer = self.sendMotorsTimer;
+
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
     if (self.appExecutive.is3P == YES)
     {
-        NSLog(@"go to end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
-        NSLog(@"go to end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
-        NSLog(@"go to end3PTiltDistance: %f",self.appExecutive.end3PTiltDistance);
-        NSLog(@"\n");
-        
-        [self.appExecutive.device motorSet:1 SetMotorPosition: self.appExecutive.end3PSlideDistance];
-        [self.appExecutive.device motorSet:2 SetMotorPosition: self.appExecutive.end3PPanDistance];
-        [self.appExecutive.device motorSet:3 SetMotorPosition: self.appExecutive.end3PTiltDistance];
+        [self.appExecutive.device motorSet:1 SetMotorPosition: settings.end3PSlideDistance];
+        [self.appExecutive.device motorSet:2 SetMotorPosition: settings.end3PPanDistance];
+        [self.appExecutive.device motorSet:3 SetMotorPosition: settings.end3PTiltDistance];
     }
     else
     {
-        NSLog(@"goto endpoint1: %i",self.appExecutive.endPoint1);
-        NSLog(@"goto endpoint2: %i",self.appExecutive.endPoint2);
-        NSLog(@"goto endpoint3: %i",self.appExecutive.endPoint3);
-        
         [self.appExecutive.device motorSendToEndPoint:1];
         [self.appExecutive.device motorSendToEndPoint:2];
         [self.appExecutive.device motorSendToEndPoint:3];
@@ -2882,6 +2476,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     int convertVal[3];
     
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
     for(int i = 0; i < 3; i++) {
         
         // The raw value from the controller is queried here
@@ -2896,17 +2492,17 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         {
             case 0:
                 
-                thisMicros = self.appExecutive.microstep1;
+                thisMicros = settings.microstep1;
                 break;
                 
             case 1:
                 
-                thisMicros = self.appExecutive.microstep2;
+                thisMicros = settings.microstep2;
                 break;
                 
             case 2:
                 
-                thisMicros = self.appExecutive.microstep3;
+                thisMicros = settings.microstep3;
                 break;
         }
         
@@ -2924,34 +2520,27 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     }
     
     if (pointIndex == 1) {
-        
-        NSLog(@"convert start keyframes");
-        
-        self.appExecutive.scaledStart3PSlideDistance = (float)convertVal[0];
-        self.appExecutive.scaledStart3PPanDistance = (float)convertVal[1];
-        self.appExecutive.scaledStart3PTiltDistance = (float)convertVal[2];
+        settings.scaledStart3PSlideDistance = (float)convertVal[0];
+        settings.scaledStart3PPanDistance = (float)convertVal[1];
+        settings.scaledStart3PTiltDistance = (float)convertVal[2];
     }
     else if (pointIndex == 2) {
-        
-        NSLog(@"convert mid keyframes");
-        
-        self.appExecutive.scaledMid3PSlideDistance = (float)convertVal[0];
-        self.appExecutive.scaledMid3PPanDistance = (float)convertVal[1];
-        self.appExecutive.scaledMid3PTiltDistance = (float)convertVal[2];
+        settings.scaledMid3PSlideDistance = (float)convertVal[0];
+        settings.scaledMid3PPanDistance = (float)convertVal[1];
+        settings.scaledMid3PTiltDistance = (float)convertVal[2];
     }
     else if (pointIndex == 3) {
-        
-        NSLog(@"convert stop keyframes");
-        
-        self.appExecutive.scaledEnd3PSlideDistance = (float)convertVal[0];
-        self.appExecutive.scaledEnd3PPanDistance = (float)convertVal[1];
-        self.appExecutive.scaledEnd3PTiltDistance = (float)convertVal[2];
+        settings.scaledEnd3PSlideDistance = (float)convertVal[0];
+        settings.scaledEnd3PPanDistance = (float)convertVal[1];
+        settings.scaledEnd3PTiltDistance = (float)convertVal[2];
     }
 }
 
 - (void) convertUnits3 : (int)pointIndex {
     
     int convertVal[3];
+    
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
     for (int i = 0; i < 3; i++) {
         
@@ -2978,17 +2567,17 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         {
             case 0:
                 
-                thisMicros = self.appExecutive.microstep1;
+                thisMicros = settings.microstep1;
                 break;
                 
             case 1:
                 
-                thisMicros = self.appExecutive.microstep2;
+                thisMicros = settings.microstep2;
                 break;
                 
             case 2:
                 
-                thisMicros = self.appExecutive.microstep3;
+                thisMicros = settings.microstep3;
                 break;
         }
         
@@ -3006,28 +2595,19 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     }
     
     if (pointIndex == 1) {
-        
-        NSLog(@"convert start");
-        
-        self.appExecutive.scaledStart3PSlideDistance = (float)convertVal[0];
-        self.appExecutive.scaledStart3PPanDistance = (float)convertVal[1];
-        self.appExecutive.scaledStart3PTiltDistance = (float)convertVal[2];
+        settings.scaledStart3PSlideDistance = (float)convertVal[0];
+        settings.scaledStart3PPanDistance = (float)convertVal[1];
+        settings.scaledStart3PTiltDistance = (float)convertVal[2];
     }
     else if (pointIndex == 2) {
-        
-        NSLog(@"convert mid");
-        
-        self.appExecutive.scaledMid3PSlideDistance = (float)convertVal[0];
-        self.appExecutive.scaledMid3PPanDistance = (float)convertVal[1];
-        self.appExecutive.scaledMid3PTiltDistance = (float)convertVal[2];
+        settings.scaledMid3PSlideDistance = (float)convertVal[0];
+        settings.scaledMid3PPanDistance = (float)convertVal[1];
+        settings.scaledMid3PTiltDistance = (float)convertVal[2];
     }
     else if (pointIndex == 3) {
-        
-        NSLog(@"convert stop");
-        
-        self.appExecutive.scaledEnd3PSlideDistance = (float)convertVal[0];
-        self.appExecutive.scaledEnd3PPanDistance = (float)convertVal[1];
-        self.appExecutive.scaledEnd3PTiltDistance = (float)convertVal[2];
+        settings.scaledEnd3PSlideDistance = (float)convertVal[0];
+        settings.scaledEnd3PPanDistance = (float)convertVal[1];
+        settings.scaledEnd3PTiltDistance = (float)convertVal[2];
     }
 }
 
@@ -3039,27 +2619,23 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     int thisMicros = 0;
     
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
     switch(pointIndex)
     {
         case 1:
             
-            thisMicros = self.appExecutive.microstep1;
-            
-            //thisMicros = [appExecutive.defaults floatForKey:@"saved3PMicro1"];
+            thisMicros = settings.microstep1;
             break;
             
         case 2:
             
-            thisMicros = self.appExecutive.microstep2;
-            
-            //thisMicros = [appExecutive.defaults floatForKey:@"saved3PMicro2"];
+            thisMicros = settings.microstep2;
             break;
             
         case 3:
             
-            thisMicros = self.appExecutive.microstep3;
-            
-            //thisMicros = [appExecutive.defaults floatForKey:@"saved3PMicro3"];
+            thisMicros = settings.microstep3;
             break;
     }
     
@@ -3088,9 +2664,11 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     UIAlertView *alertView;
     
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
     if (appExecutive.is3P)
     {
-        if (self.start3PSet != 2)
+        if (settings.start3PSet != 2)
         {
             alertView = [[UIAlertView alloc]
                          initWithTitle:@"3-Point Move"
@@ -3102,7 +2680,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
             return;
         }
         
-        if (self.mid3PSet != 2)
+        if (settings.mid3PSet != 2)
         {
             alertView = [[UIAlertView alloc]
                          initWithTitle:@"3-Point Move"
@@ -3114,7 +2692,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
             return;
         }
         
-        if (self.end3PSet != 2)
+        if (settings.end3PSet != 2)
         {
             alertView = [[UIAlertView alloc]
                          initWithTitle:@"3-Point Move"

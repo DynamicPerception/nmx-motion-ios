@@ -237,8 +237,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
      selector:@selector(handleNotificationRemoveSubviews:)
      name:@"removeSubviews" object:nil];
     
-    appDelegate.isHome = NO;
-    
     if (self.appExecutive.isVideo == YES) {
         
         NSLog(@"isVideo");
@@ -268,40 +266,11 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 }
 
 - (void) showVoltageTimer {
-    
-    
-	
-//    float voltage = self.appExecutive.voltage;
-//    
-//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-//    
-//    float diff = self.appExecutive.voltageHigh - voltage;
-//    
-//    float per = diff/range;
-//    
-//    float per2 = voltage/self.appExecutive.voltageHigh;
-    
-    //per2 = .35;
-    
-//    NSLog(@"voltage: %.02f",voltage);
-//    NSLog(@"high: %.02f",self.appExecutive.voltageHigh);
-//    NSLog(@"low: %.02f",self.appExecutive.voltageLow);
-//    NSLog(@"range: %.02f",range);
-//    NSLog(@"diff: %.02f",diff);
-//    NSLog(@"per: %.02f",per);
-//    NSLog(@"per2: %.02f",per2);
-    
-    float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newBase: %.02f",newBase);
-    
-    float newVoltage = self.appExecutive.voltage - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newVoltage: %.02f",newVoltage);
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    float newBase = settings.voltageHigh - settings.voltageLow;
+    float newVoltage = settings.voltage - settings.voltageLow;
     
     float per4 = newVoltage/newBase;
-    
-    //NSLog(@"per4: %.02f",per4);
     
     if (per4 > 1)
     {
@@ -410,40 +379,31 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) popMinSeconds {
     
-    int microstepSetting1 = appExecutive.microstep1 * 200;
-    int microstepSetting2 = appExecutive.microstep2 * 200;
-    int microstepSetting3 = appExecutive.microstep3 * 200;
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-//    NSLog(@"appExecutive.microstep1: %i",appExecutive.microstep1);
-//    NSLog(@"appExecutive.microstep2: %i",appExecutive.microstep2);
-//    NSLog(@"appExecutive.microstep3: %i",appExecutive.microstep3);
+    int microstepSetting1 = settings.microstep1 * 200;
+    int microstepSetting2 = settings.microstep2 * 200;
+    int microstepSetting3 = settings.microstep3 * 200;
     
-    int start1 = appExecutive.startPoint1;
-    int end1 = appExecutive.endPoint1;
+    int start1 = settings.startPoint1;
+    int end1 = settings.endPoint1;
     int distance1 = start1 - end1;
     
-    int start2 = appExecutive.startPoint2;
-    int end2 = appExecutive.endPoint2;
+    int start2 = settings.startPoint2;
+    int end2 = settings.endPoint2;
     int distance2 = start2 - end2;
     
-    int start3 = appExecutive.startPoint3;
-    int end3 = appExecutive.endPoint3;
+    int start3 = settings.startPoint3;
+    int end3 = settings.endPoint3;
     int distance3 = start3 - end3;
     
     int con1 = abs([self convert:distance1:microstepSetting1]);
     int con2 = abs([self convert:distance2:microstepSetting2]);
     int con3 = abs([self convert:distance3:microstepSetting3]);
     
-//    NSLog(@"converted1: %i",con1);
-//    NSLog(@"converted2: %i",con2);
-//    NSLog(@"converted3: %i",con3);
-    
     float max = MAX(MAX(con1, con2), con3);
     
     float minSeconds = max/3300;
-    
-//    NSLog(@"minSeconds: %f",minSeconds);
-//    NSLog(@"minSecondsInt: %i",(int)minSeconds);
     
     minimuDurationLbl.text = [SetupViewController stringForTime2:minSeconds * 1000];
 }

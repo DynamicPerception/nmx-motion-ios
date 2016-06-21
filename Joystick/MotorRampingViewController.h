@@ -94,14 +94,6 @@ NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewC
 - (IBAction) handleSlide3PSlider2:(id)sender;
 - (IBAction) handleSlide3PSlider3:(id)sender;
 
-- (IBAction) handlePan3PSlider1:(id)sender;
-- (IBAction) handlePan3PSlider2:(id)sender;
-- (IBAction) handlePan3PSlider3:(id)sender;
-
-- (IBAction) handleTilt3PSlider1:(id)sender;
-- (IBAction) handleTilt3PSlider2:(id)sender;
-- (IBAction) handleTilt3PSlider3:(id)sender;
-
 - (IBAction) updateRampEasingValue:(id)sender;
 - (void) saveFrame: (NSNumber *)number;
 

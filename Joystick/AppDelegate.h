@@ -26,8 +26,6 @@
 
 @property UIColor *appBlue;
 
-@property bool isHome;
-
 @property (strong, nonatomic) Reachability *internetReachableFoo;
 @property (strong, nonatomic) Reachability *hostReachableFoo;
 @property BOOL internetActive;

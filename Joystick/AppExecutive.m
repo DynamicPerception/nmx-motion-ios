@@ -108,10 +108,6 @@ NSString        static *kDefaultsProgramDelayTime         = @"programDelayTimer"
 NSString        static *kDefaultsProgramDelayTimeSetAt    = @"programDelayTimerSetAtTime";
 NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDelayTimer";
 
-#define kDefaultsMotorSledMicrosteps   @"MotorSledMicrosteps"
-#define kDefaultsMotorPanMicrosteps   @"MotorPanMicrosteps"
-#define kDefaultsMotorTiltMicrosteps   @"MotorTiltMicrosteps"
-
 
 #pragma mark Public Property Synthesis
 
@@ -147,16 +143,12 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 @synthesize slideIncreaseValues;
 @synthesize slideDecreaseValues;
 
-@synthesize microstep1 = _microstep1;
-@synthesize microstep2 = _microstep2;
-@synthesize microstep3 = _microstep3;
-
 #pragma mark Private Property Synthesis
 
 @synthesize defaults;
 @synthesize forFrameRate;
 
-@synthesize selectedMotorFrame, startPoint1,endPoint1, startPoint2,endPoint2, startPoint3, endPoint3, stopMicrostep1, stopMicrostep2, stopMicrostep3, motor2MicrostepChanged,motor3MicrostepChanged, appBlueColor, is3P,slide3PVal1,slide3PVal3,slide3PVal2,pan3PVal1,pan3PVal2,pan3PVal3,tilt3PVal1,tilt3PVal2,tilt3PVal3,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,midSet,start3PSlideDistance,start3PPanDistance,start3PTiltDistance,mid3PSlideDistance,mid3PPanDistance,mid3PTiltDistance,end3PSlideDistance,end3PPanDistance,end3PTiltDistance,useJoystick,isContinuous,scaledEnd3PPanDistance,scaledMid3PPanDistance,scaledStart3PPanDistance,scaledEnd3PSlideDistance,scaledEnd3PTiltDistance,scaledMid3PSlideDistance,scaledMid3PTiltDistance,scaledStart3PSlideDistance,scaledStart3PTiltDistance,isVideo,printTilt,dampening1,dampening2,dampening3,resetController;
+@synthesize is3P,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,isVideo;
 
 //------------------------------------------------------------------------------
 
@@ -649,37 +641,6 @@ NSArray *defaultRampingValues() {
     [self saveValue: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
 }
 
--(float) voltageLow
-{
-    return self.device.voltageLow;
-}
-
-- (void) setVoltageLow:(float)voltageLow
-{
-    self.device.voltageLow = voltageLow;
-}
-
--(float) voltage
-{
-    return self.device.voltage;
-}
-
-- (void) setVoltage:(float)voltage
-{
-    self.device.voltage = voltage;
-}
-
--(float) voltageHigh
-{
-    return self.device.voltageHigh;
-}
-
-- (void) setVoltageHigh:(float)voltageHigh
-{
-    self.device.voltageHigh = voltageHigh;
-}
-
-
 //------------------------------------------------------------------------------
 
 #pragma mark - Defaults
@@ -1145,100 +1106,6 @@ NSArray *defaultRampingValues() {
     
     [self.defaults synchronize];
     [self.userDefaults synchronize];
-}
-
-- (void) setPoints {
-    
-    startPoint1 = [self.device queryProgramStartPoint:1];
-    endPoint1 = [self.device queryProgramEndPoint:1];
-    
-//    NSLog(@"mvc startPoint1: %i",startPoint1);
-//    NSLog(@"mvc endPoint1: %i",endPoint1);
-    
-    startPoint2 = [self.device queryProgramStartPoint:2];
-    endPoint2 = [self.device queryProgramEndPoint:2];
-    
-//    NSLog(@"mvc startPoint2: %i",startPoint2);
-//    NSLog(@"mvc endPoint2: %i",endPoint2);
-    
-    startPoint3 = [self.device queryProgramStartPoint:3];
-    endPoint3 = [self.device queryProgramEndPoint:3];
-    
-//    NSLog(@"mvc startPoint3: %i",startPoint3);
-//    NSLog(@"mvc stopPoint3: %i",endPoint3);
-    
-    int startStopVal =
-    startPoint1 + endPoint1 +
-    startPoint2 + endPoint2 +
-    startPoint3 + endPoint3;
-    
-        NSLog(@"startStopVal: %i",startStopVal);
-    
-//        if (startStopVal > 0) {
-//            
-//            self.setStartButton.selected = YES;
-//            self.setStopButton.selected = YES;
-//        }
-}
-
-- (void) setMicrostep1:(int)microstep1
-{
-    _microstep1 = microstep1;
-    [self.userDefaults setInteger: microstep1 forKey: kDefaultsMotorSledMicrosteps];
-    [self.defaults synchronize];
-}
-
-- (int) microstep1
-{
-    if (_microstep1 > 0) return _microstep1;
-    
-    _microstep1 = (int)[self.userDefaults integerForKey: kDefaultsMotorSledMicrosteps];
-    if (0 == _microstep1)
-    {
-        _microstep1 = 4;
-    }
-    
-    return _microstep1;
-}
-
-- (void) setMicrostep2:(int)microstep2
-{
-    _microstep2 = microstep2;
-    [self.userDefaults setInteger: microstep2 forKey: kDefaultsMotorPanMicrosteps];
-    [self.userDefaults synchronize];
-}
-
-- (int) microstep2
-{
-    if (_microstep2 > 0) return _microstep2;
-    
-    _microstep2 = (int)[self.userDefaults integerForKey: kDefaultsMotorPanMicrosteps];
-    if (0 == _microstep2)
-    {
-        _microstep2 = 16;
-    }
-    
-    return self.microstep2;
-}
-
-- (void) setMicrostep3:(int)microstep3
-{
-    _microstep3 = microstep3;
-    [self.userDefaults setInteger: microstep3 forKey: kDefaultsMotorTiltMicrosteps];
-    [self.userDefaults synchronize];
-}
-
-- (int) microstep3
-{
-    if (_microstep3 > 0) return _microstep3;
-    
-    _microstep3 = (int)[self.userDefaults integerForKey: kDefaultsMotorTiltMicrosteps];
-    if (0 == _microstep3)
-    {
-        _microstep3 = 16;
-    }
-    
-    return _microstep3;
 }
 
 #pragma mark batch device comm

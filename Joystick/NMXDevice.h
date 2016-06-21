@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
+@class JSDeviceSettings;
+
 #define kDeviceDisconnectedNotification     @"com.dynamicperception.disconnect"
 
 typedef enum : unsigned char {
@@ -173,9 +175,7 @@ typedef enum : unsigned char {
 @property (readonly) BOOL fwVersionUpdateAvailable;
 @property (readonly) bool disconnected;
 @property (atomic) int serviceDiscoveryRetryCount;
-@property float voltageLow;
-@property float voltageHigh;
-@property float voltage;
+@property JSDeviceSettings *settings;
 
 - (void) setHomePosition : (int) motor;
 

@@ -21,7 +21,7 @@
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 
-@synthesize isHome,appBlue,nav,window;
+@synthesize appBlue,nav,window;
 
 @synthesize internetActive,internetReachableFoo,hostActive,hostReachableFoo;
 
