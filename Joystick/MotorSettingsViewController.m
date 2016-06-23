@@ -301,45 +301,36 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
     if (self.motorNumber == 1)
     {
-        if ([self.appExecutive.defaults integerForKey:@"slideGear"])
+        if (self.settings.slideGear)
         {
-            NSLog(@"slide setting");
-            
-            self.appExecutive.slideGear = (int)[self.appExecutive.defaults integerForKey:@"slideGear"];
-            
-            NSLog(@"get slideGear: %i",self.appExecutive.slideGear);
-            
-            if (self.appExecutive.slideGear == 1)
+            if (self.settings.slideGear == 1)
             {
                 gearRatioLbl.text = @"27:1";
             }
-            else if (self.appExecutive.slideGear == 2)
+            else if (self.settings.slideGear == 2)
             {
                 gearRatioLbl.text = @"19:1";
             }
-            else if (self.appExecutive.slideGear == 3)
+            else if (self.settings.slideGear == 3)
             {
                 gearRatioLbl.text = @"5:1";
             }
         }
         
-        if ([self.appExecutive.defaults integerForKey:@"slideMotor"])
+        if (self.settings.slideMotor)
         {
-            self.appExecutive.slideMotor = (int)[self.appExecutive.defaults integerForKey:@"slideMotor"];
-            
-            if (self.appExecutive.slideMotor == 1)
+            if (self.settings.slideMotor == 1)
             {
                 rigRatioLbl.text = @"Stage R";
             }
-            else if (self.appExecutive.slideMotor == 2)
+            else if (self.settings.slideMotor == 2)
             {
                 rigRatioLbl.text = @"Stage 1/0";
             }
-            else if (self.appExecutive.slideMotor == 3)
+            else if (self.settings.slideMotor == 3)
             {
-                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"]];
-                
-                customLinearParam = [self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"];
+                customLinearParam = self.settings.slideMotorCustomValue;
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f", customLinearParam];
             }
             
             //NSLog(@"self.appExecutive.slideMotor: %i",self.appExecutive.slideMotor);
@@ -347,81 +338,71 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     else if (self.motorNumber == 2)
     {
-        if ([self.appExecutive.defaults integerForKey:@"panGear"])
+        if (self.settings.panGear)
         {
-            self.appExecutive.panGear = (int)[self.appExecutive.defaults integerForKey:@"panGear"];
-            
-            if (self.appExecutive.panGear == 1)
+            if (self.settings.panGear == 1)
             {
                 gearRatioLbl.text = @"27:1";
             }
-            else if (self.appExecutive.panGear == 2)
+            else if (self.settings.panGear == 2)
             {
                 gearRatioLbl.text = @"19:1";
             }
-            else if (self.appExecutive.panGear == 3)
+            else if (self.settings.panGear == 3)
             {
                 gearRatioLbl.text = @"5:1";
             }
         }
         
-        if ([self.appExecutive.defaults integerForKey:@"panMotor"])
+        if (self.settings.panMotor)
         {
-            self.appExecutive.panMotor = (int)[self.appExecutive.defaults integerForKey:@"panMotor"];
-            
-            if (self.appExecutive.panMotor == 1)
+            if (self.settings.panMotor == 1)
             {
                 rigRatioLbl.text = @"Stage R";
             }
-            else if (self.appExecutive.panMotor == 2)
+            else if (self.settings.panMotor == 2)
             {
                 rigRatioLbl.text = @"Stage 1/0";
             }
-            else if (self.appExecutive.panMotor == 3)
+            else if (self.settings.panMotor == 3)
             {
-                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"panMotorCustomValue"]];
-                
-                customLinearParam = [self.appExecutive.defaults floatForKey:@"panMotorCustomValue"];
+                customLinearParam = self.settings.panMotorCustomValue;
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",customLinearParam];
             }
         }
     }
     else if (self.motorNumber == 3)
     {
-        if ([self.appExecutive.defaults integerForKey:@"tiltGear"])
+        if (self.settings.tiltGear)
         {
-            self.appExecutive.tiltGear = (int)[self.appExecutive.defaults integerForKey:@"tiltGear"];
-            
-            if (self.appExecutive.tiltGear == 1)
+            if (self.settings.tiltGear == 1)
             {
                 gearRatioLbl.text = @"27:1";
             }
-            else if (self.appExecutive.tiltGear == 2)
+            else if (self.settings.tiltGear == 2)
             {
                 gearRatioLbl.text = @"19:1";
             }
-            else if (self.appExecutive.tiltGear == 3)
+            else if (self.settings.tiltGear == 3)
             {
                 gearRatioLbl.text = @"5:1";
             }
         }
         
-        if ([self.appExecutive.defaults integerForKey:@"tiltMotor"])
+        if (self.settings.tiltMotor)
         {
-            self.appExecutive.tiltMotor = (int)[self.appExecutive.defaults integerForKey:@"tiltMotor"];
-            
-            if (self.appExecutive.tiltMotor == 1)
+            if (self.settings.tiltMotor == 1)
             {
                 rigRatioLbl.text = @"Stage R";
             }
-            else if (self.appExecutive.tiltMotor == 2)
+            else if (self.settings.tiltMotor == 2)
             {
                 rigRatioLbl.text = @"Stage 1/0";
             }
-            else if (self.appExecutive.tiltMotor == 3)
+            else if (self.settings.tiltMotor == 3)
             {
-                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"]];
-                
-                customLinearParam = [self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"];
+                customLinearParam = self.settings.tiltMotorCustomValue;
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",customLinearParam];
             }
         }
     }
@@ -538,37 +519,21 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     {
         customLinearParam = [[preset objectForKey:@"val1"] floatValue];
         
-        NSLog(@"customLinearParam: %.02f",customLinearParam);
-        
         if (self.motorNumber == 1)
         {
-            self.appExecutive.slideMotor = 3;
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.slideMotor] forKey: @"slideMotor"];
-            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"slideMotorCustomValue"];
-            
-            NSLog(@"set slideMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
+            self.settings.slideMotor = 3;
+            self.settings.slideMotorCustomValue = customLinearParam;
         }
         else if (self.motorNumber == 2)
         {
-            self.appExecutive.panMotor = 3;
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.panMotor] forKey: @"panMotor"];
-            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"panMotorCustomValue"];
-            
-            NSLog(@"set panMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"panMotor"]);
+            self.settings.panMotor = 3;
+            self.settings.panMotorCustomValue = customLinearParam;
         }
         else if (self.motorNumber == 3)
         {
-            self.appExecutive.tiltMotor = 3;
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.tiltMotor] forKey: @"tiltMotor"];
-            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"tiltMotorCustomValue"];
-            
-            NSLog(@"set tiltMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltMotor"]);
+            self.settings.tiltMotor = 3;
+            self.settings.tiltMotorCustomValue = customLinearParam;
         }
-        
-        [self.appExecutive.defaults synchronize];
     }
     
     [self getDistance];
@@ -654,61 +619,46 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         {
             if ([preset isEqualToString:@"27:1"])
             {
-                self.appExecutive.slideGear = 1;
+                self.settings.slideGear = 1;
             }
             else if ([preset isEqualToString:@"19:1"])
             {
-                self.appExecutive.slideGear = 2;
+                self.settings.slideGear = 2;
             }
             else if ([preset isEqualToString:@"5:1"])
             {
-                self.appExecutive.slideGear = 3;
+                self.settings.slideGear = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.slideGear] forKey: @"slideGear"];
-            [self.appExecutive.defaults synchronize];
-            
-            NSLog(@"set slideGear: %li",(long)[self.appExecutive.defaults integerForKey:@"slideGear"]);
         }
         else if (self.motorNumber == 2)
         {
             if ([preset isEqualToString:@"27:1"])
             {
-                self.appExecutive.panGear = 1;
+                self.settings.panGear = 1;
             }
             else if ([preset isEqualToString:@"19:1"])
             {
-                self.appExecutive.panGear = 2;
+                self.settings.panGear = 2;
             }
             else if ([preset isEqualToString:@"5:1"])
             {
-                self.appExecutive.panGear = 3;
+                self.settings.panGear = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.panGear] forKey: @"panGear"];
-            [self.appExecutive.defaults synchronize];
-            
-            NSLog(@"set panGear: %li",(long)[self.appExecutive.defaults integerForKey:@"panGear"]);
         }
         else if (self.motorNumber == 3)
         {
             if ([preset isEqualToString:@"27:1"])
             {
-                self.appExecutive.tiltGear = 1;
+                self.settings.tiltGear = 1;
             }
             else if ([preset isEqualToString:@"19:1"])
             {
-                self.appExecutive.tiltGear = 2;
+                self.settings.tiltGear = 2;
             }
             else if ([preset isEqualToString:@"5:1"])
             {
-                self.appExecutive.tiltGear = 3;
+                self.settings.tiltGear = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.tiltGear] forKey: @"tiltGear"];
-            [self.appExecutive.defaults synchronize];
-            
-            NSLog(@"set tiltGear: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltGear"]);
         }
     }
     if (selectedSetting == 2)  // Direction label changed
@@ -721,22 +671,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
         [self confirmRigAndDirectionLablesAreCompatible];
         
-        NSString *defaultsKey;
         if (self.motorNumber == 1)
         {
-            defaultsKey = @"slideDirectionMode";
+            self.settings.slideDirectionMode = self.directionLabelMode;
         }
         else if (self.motorNumber == 2)
         {
-            defaultsKey = @"panDirectionMode";
+            self.settings.panDirectionMode = self.directionLabelMode;
         }
         else if (self.motorNumber == 3)
         {
-            defaultsKey = @"tiltDirectionMode";
+            self.settings.tiltDirectionMode = self.directionLabelMode;
         }
-        
-        [appExecutive.defaults setObject:self.directionLabelMode forKey:defaultsKey];
-        [self.appExecutive.defaults synchronize];
     }
     else
     {
@@ -748,62 +694,47 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         {
             if ([preset isEqualToString:@"Stage R"])
             {
-                self.appExecutive.slideMotor = 1;
+                self.settings.slideMotor = 1;
             }
             else if ([preset isEqualToString:@"Stage 1/0"])
             {
-                self.appExecutive.slideMotor = 2;
+                self.settings.slideMotor = 2;
             }
             else if ([preset containsString:@"Linear Custom"])
             {
-                self.appExecutive.slideMotor = 3;
+                self.settings.slideMotor = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.slideMotor] forKey: @"slideMotor"];
-            
-            NSLog(@"set slideMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
         }
         else if (self.motorNumber == 2)
         {
             if ([preset isEqualToString:@"Stage R"])
             {
-                self.appExecutive.panMotor = 1;
+                self.settings.panMotor = 1;
             }
             else if ([preset isEqualToString:@"Stage 1/0"])
             {
-                self.appExecutive.panMotor = 2;
+                self.settings.panMotor = 2;
             }
             else if ([preset isEqualToString:@"Linear Custom"])
             {
-                self.appExecutive.panMotor = 3;
+                self.settings.panMotor = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.panMotor] forKey: @"panMotor"];
-            
-            NSLog(@"set panMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"panMotor"]);
         }
         else if (self.motorNumber == 3)
         {
             if ([preset isEqualToString:@"Stage R"])
             {
-                self.appExecutive.tiltMotor = 1;
+                self.settings.tiltMotor = 1;
             }
             else if ([preset isEqualToString:@"Stage 1/0"])
             {
-                self.appExecutive.tiltMotor = 2;
+                self.settings.tiltMotor = 2;
             }
             else if ([preset isEqualToString:@"Linear Custom"])
             {
-                self.appExecutive.tiltMotor = 3;
+                self.settings.tiltMotor = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.tiltMotor] forKey: @"tiltMotor"];
-            
-            
-            NSLog(@"set tiltMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltMotor"]);
         }
-        
-        [self.appExecutive.defaults synchronize];
     }
     
     [self getDistance];
@@ -1432,15 +1363,14 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 - (IBAction) toogleJoystick:(id)sender {
     
     UISwitch *sw = sender;
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
     if (sw.isOn)
     {
-        settings.useJoystick = NO;
+        self.settings.useJoystick = NO;
     }
     else
     {
-        settings.useJoystick = YES;
+        self.settings.useJoystick = YES;
     }
 }
 
@@ -1793,15 +1723,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if ((int)self.motorNumber == 1)
     {
-        [self.appExecutive.defaults setObject: direction forKey: @"slideDirection"];
+        self.settings.slideDirection = direction;
     }
     else if ((int)self.motorNumber == 2)
     {
-        [self.appExecutive.defaults setObject: direction forKey: @"panDirection"];
+        self.settings.panDirection = direction;
     }
     else if ((int)self.motorNumber == 3)
     {
-        [self.appExecutive.defaults setObject: direction forKey: @"tiltDirection"];
+        self.settings.tiltDirection = direction;
     }
     
 }
@@ -2026,22 +1956,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         self.directionLabelMode = [NSNumber numberWithInt: newLabelIdx];
         self.directionLbl.text = [DistancePresetViewController labelForDirectionIndex: [self.directionLabelMode intValue]];
         
-        NSString *defaultsKey;
         if (self.motorNumber == 1)
         {
-            defaultsKey = @"slideDirectionMode";
+            self.settings.slideDirectionMode = self.directionLabelMode;
         }
         else if (self.motorNumber == 2)
         {
-            defaultsKey = @"panDirectionMode";
+            self.settings.panDirectionMode = self.directionLabelMode;
         }
         else if (self.motorNumber == 3)
         {
-            defaultsKey = @"tiltDirectionMode";
+            self.settings.tiltDirectionMode = self.directionLabelMode;
         }
-        
-        [appExecutive.defaults setObject:self.directionLabelMode forKey:defaultsKey];
-        [self.appExecutive.defaults synchronize];
         
         [self updateInvertUI];
     }

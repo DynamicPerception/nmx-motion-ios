@@ -8,6 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum
+{
+    kLeftRightLabel,
+    kClockwiseCounterClockwiseLabel,
+    kUpDownLabel,
+    kInOutLabel,
+} DirectionLabels;
+
+
 @interface JSDeviceSettings : NSObject
 
 - (JSDeviceSettings *)initWithDevice:(NSString *)device;
@@ -85,6 +94,26 @@
 @property int mid3PSet;
 @property int end3PSet;
 
+@property int slideGear;
+@property int slideMotor;
+
+@property int panGear;
+@property int panMotor;
+
+@property int tiltGear;
+@property int tiltMotor;
+
+@property float slideMotorCustomValue;
+@property float panMotorCustomValue;
+@property float tiltMotorCustomValue;
+
+@property NSString *slideDirection;
+@property NSString *panDirection;
+@property NSString *tiltDirection;
+
+@property NSNumber *slideDirectionMode;   // CW/CCW, In/Out, etc.
+@property NSNumber *panDirectionMode;     // CW/CCW, In/Out, etc.
+@property NSNumber *tiltDirectionMode;    // CW/CCW, In/Out, etc.
 
 @end
 

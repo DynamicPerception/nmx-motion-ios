@@ -517,6 +517,207 @@
     
 }
 
+- (void) setSlideGear :(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"slideGear"];
+}
+
+- (int)slideGear
+{
+    int val = [self integerForKey:@"slideGear"];
+    return  val;
+    
+}
+
+- (void) setSlideMotor :(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"slideMotor"];
+}
+
+- (int)slideMotor
+{
+    int val = [self integerForKey:@"slideMotor"];
+    return  val;
+    
+}
+
+- (void) setPanGear :(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"panGear"];
+}
+
+- (int)panGear
+{
+    int val = [self integerForKey:@"panGear"];
+    return  val;
+    
+}
+
+- (void) setPanMotor :(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"panMotor"];
+}
+
+- (int)panMotor
+{
+    int val = [self integerForKey:@"panMotor"];
+    return  val;
+    
+}
+
+- (void) setTiltGear:(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"tiltGear"];
+}
+
+- (int)tiltGear
+{
+    int val = [self integerForKey:@"tiltGear"];
+    return  val;
+    
+}
+
+- (void) setTiltMotor:(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"tiltMotor"];
+}
+
+- (int)tiltMotor
+{
+    int val = [self integerForKey:@"tiltMotor"];
+    return  val;
+    
+}
+
+- (void) setSlideMotorCustomValue :(float)value
+{
+    [self setObject: [NSNumber numberWithFloat: value] forKey: @"slideMotorCustomValue"];
+}
+
+- (float)slideMotorCustomValue
+{
+    float val = [self floatForKey: @"slideMotorCustomValue"];
+    return val;
+}
+
+- (void) setPanMotorCustomValue :(float)value
+{
+    [self setObject: [NSNumber numberWithFloat: value] forKey: @"panMotorCustomValue"];
+}
+
+- (float)panMotorCustomValue
+{
+    float val = [self floatForKey: @"panMotorCustomValue"];
+    return val;
+}
+
+- (void) setTiltMotorCustomValue :(float)value
+{
+    [self setObject: [NSNumber numberWithFloat: value] forKey: @"tiltMotorCustomValue"];
+}
+
+- (float)tiltMotorCustomValue
+{
+    float val = [self floatForKey: @"tiltMotorCustomValue"];
+    return val;
+}
+
+- (void) setSlideDirection:(NSString *)str
+{
+    [self setObject: str forKey: @"slideDirection"];
+}
+
+- (NSString *)slideDirection
+{
+    NSString *str = [self objectForKey:@"slideDirection"];
+    if (nil == str)
+    {
+        str = @"R";
+    }
+    return str;
+}
+
+- (void) setPanDirection:(NSString *)str
+{
+    [self setObject: str forKey: @"panDirection"];
+}
+
+- (NSString *)panDirection
+{
+    NSString *str = [self objectForKey:@"panDirection"];
+    if (nil == str)
+    {
+        str = @"CCW";
+    }
+    return str;
+
+}
+
+- (void) setTiltDirection:(NSString *)str
+{
+    [self setObject: str forKey: @"tiltDirection"];
+}
+
+- (NSString *)tiltDirection
+{
+    NSString *str = [self objectForKey:@"tiltDirection"];
+    if (nil == str)
+    {
+        str = @"UP";
+    }
+    return str;
+
+}
+
+- (void) setSlideDirectionMode:(NSNumber *)num
+{
+    [self setObject: num forKey: @"slideDirectionMode"];
+}
+
+- (NSNumber *)slideDirectionMode
+{
+    NSNumber *num = [self objectForKey:@"slideDirectionMode"];
+    if (nil == num)
+    {
+        num = [NSNumber numberWithInt:kLeftRightLabel];
+    }
+    
+    return num;
+}
+
+- (void) setPanDirectionMode:(NSNumber *)num
+{
+    [self setObject: num forKey: @"panDirectionMode"];
+}
+
+- (NSNumber *)panDirectionMode
+{
+    NSNumber *num = [self objectForKey:@"panDirectionMode"];
+    if (nil == num)
+    {
+        num = [NSNumber numberWithInt:kClockwiseCounterClockwiseLabel];
+    }
+    
+    return num;
+
+}
+
+- (void) setTiltDirectionMode:(NSNumber *)num
+{
+    [self setObject: num forKey: @"tiltDirectionMode"];
+}
+
+- (NSNumber *)tiltDirectionMode
+{
+    NSNumber *num =  [self objectForKey:@"tiltDirectionMode"];
+    if (nil == num)
+    {
+        num = [NSNumber numberWithInt:kUpDownLabel];
+    }
+    
+    return num;
+
+}
 
 
 @end

@@ -230,15 +230,6 @@ bool waitForResponse;
         moving[2] = NMXMovingStopped;
         moving[3] = NMXMovingStopped;
 
-        AppExecutive *appExecutive = [AppExecutive sharedInstance];
-        
-        JSDeviceSettings *defaults = [appExecutive defaultsForDevice: self];
-        
-        invertDirection[0] = false;
-        invertDirection[1] = [defaults boolForKey: kDefaultsMotorSledInvert];
-        invertDirection[2] = [defaults boolForKey: kDefaultsMotorPanInvert];
-        invertDirection[3] = [defaults boolForKey: kDefaultsMotorTiltInvert];
-        
         disabled[0] = false;
         disabled[1] = false;
         disabled[2] = false;
@@ -256,8 +247,14 @@ bool waitForResponse;
         waitForResponse = true;
         
         self.address = [NMXDevice defaultAddress];        // default the address to 3 if it hasn't been set already
+        AppExecutive *appExecutive = [AppExecutive sharedInstance];
         self.settings = [appExecutive defaultsForDevice: self];
-        
+
+        invertDirection[0] = false;
+        invertDirection[1] = [self.settings boolForKey: kDefaultsMotorSledInvert];
+        invertDirection[2] = [self.settings boolForKey: kDefaultsMotorPanInvert];
+        invertDirection[3] = [self.settings boolForKey: kDefaultsMotorTiltInvert];
+
         self.serviceDiscoveryRetryCount = 3;
         
     }
@@ -1394,21 +1391,20 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) motorSet: (int) motorNumber InvertDirection: (bool) inInvertDirection {
     
     invertDirection[motorNumber] = inInvertDirection;
-    AppExecutive *appExecutive = [AppExecutive sharedInstance];
     
     switch (motorNumber)
     {
         case 1:
-            [appExecutive.defaults setBool: inInvertDirection forKey: kDefaultsMotorSledInvert];
+            [self.settings setBool: inInvertDirection forKey: kDefaultsMotorSledInvert];
             break;
         case 2:
-            [appExecutive.defaults setBool: inInvertDirection forKey: kDefaultsMotorPanInvert];
+            [self.settings setBool: inInvertDirection forKey: kDefaultsMotorPanInvert];
             break;
         case 3:
-            [appExecutive.defaults setBool: inInvertDirection forKey: kDefaultsMotorTiltInvert];
+            [self.settings setBool: inInvertDirection forKey: kDefaultsMotorTiltInvert];
             break;
     }
-    [appExecutive.defaults synchronize];
+    [self.settings synchronize];
 }
 
 - (void) motorSet: (int) motorNumber Disabled: (bool) inDisabled {

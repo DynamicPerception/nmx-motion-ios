@@ -221,25 +221,21 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     panLinearCustom = 0.00;
     tiltLinearCustom = 0.00;
     
-    slideDirection = @"R";
-    panDirection = @"CCW";
-    tiltDirection = @"UP";
-    
     slideRig = @"Stage 1/0";
     panRig = @"Stage R";
     tiltRig = @"Stage R";
-    
-    int a = (int)[self.appExecutive.defaults integerForKey:@"slideMotor"];
-    int b = (int)[self.appExecutive.defaults integerForKey:@"panMotor"];
-    int c = (int)[self.appExecutive.defaults integerForKey:@"tiltMotor"];
-    
-    float d = [self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"];//slideLinearCustom = 0.00;
-    float e = [self.appExecutive.defaults floatForKey:@"panMotorCustomValue"];//panLinearCustom = 0.00;
-    float f = [self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"];//tiltLinearCustom = 0.00;
-    
+
     JSDeviceSettings *settings = self.appExecutive.device.settings;
     
-    if([appExecutive.defaults objectForKey:@"slideMotor"] != nil)
+    int a = settings.slideMotor;
+    int b = settings.panMotor;
+    int c = settings.tiltMotor;
+    
+    float d = settings.slideMotorCustomValue; //slideLinearCustom = 0.00;
+    float e = settings.panMotorCustomValue;   //panLinearCustom = 0.00;
+    float f = settings.tiltMotorCustomValue;  //tiltLinearCustom = 0.00;
+    
+    if(a)
     {
         if (a == 1)
         {
@@ -257,7 +253,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         }
     }
     
-    if([appExecutive.defaults objectForKey:@"panMotor"] != nil)
+    if(b)
     {
         if (b == 1)
         {
@@ -274,7 +270,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         }
     }
     
-    if([appExecutive.defaults objectForKey:@"tiltMotor"] != nil)
+    if(c)
     {
         if (c == 1)
         {
@@ -291,53 +287,9 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         }
     }
     
-    if([appExecutive.defaults objectForKey:@"slideDirection"] != nil)
-    {
-        slideDirection = [appExecutive.defaults objectForKey:@"slideDirection"] ;
-    }
-    
-    if([appExecutive.defaults objectForKey:@"panDirection"] != nil)
-    {
-        panDirection = [appExecutive.defaults objectForKey:@"panDirection"] ;
-    }
-    
-    if([appExecutive.defaults objectForKey:@"tiltDirection"] != nil)
-    {
-        tiltDirection = [appExecutive.defaults objectForKey:@"tiltDirection"];
-    }
-    
-    
-    self.slideDirectionMode = [NSNumber numberWithInt:kLeftRightLabel];
-    self.panDirectionMode = [NSNumber numberWithInt:kClockwiseCounterClockwiseLabel];
-    self.tiltDirectionMode = [NSNumber numberWithInt:kUpDownLabel];
-    
-    // Restore saved label values for direction
-    if([appExecutive.defaults objectForKey:@"slideDirectionMode"] != nil)
-    {
-        self.slideDirectionMode = [appExecutive.defaults objectForKey:@"slideDirectionMode"] ;
-    }
-    else
-    {
-        [appExecutive.defaults setObject:self.slideDirectionMode forKey:@"slideDirectionMode"];
-    }
-    
-    if([appExecutive.defaults objectForKey:@"panDirectionMode"] != nil)
-    {
-        self.panDirectionMode = [appExecutive.defaults objectForKey:@"panDirectionMode"] ;
-    }
-    else
-    {
-        [appExecutive.defaults setObject:self.panDirectionMode forKey:@"panDirectionMode"];
-    }
-    
-    if([appExecutive.defaults objectForKey:@"tiltDirectionMode"] != nil)
-    {
-        self.tiltDirectionMode = [appExecutive.defaults objectForKey:@"tiltDirectionMode"];
-    }
-    else
-    {
-        [appExecutive.defaults setObject:self.tiltDirectionMode forKey:@"tiltDirectionMode"];
-    }
+    slideDirection = settings.slideDirection;
+    panDirection = settings.panDirection;
+    tiltDirection = settings.tiltDirection;
     
     if (settings.useJoystick == NO)
     {
@@ -379,9 +331,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (void) timerName4 {
 	
-    if ([self.appExecutive.userDefaults integerForKey:@"is3P"] == 1)
+    if (self.appExecutive.is3P)
     {
-        self.appExecutive.is3P = YES;
         [switch2P setOn:YES];
         
         [self.flipButton setTitle:@"Set Mid" forState:UIControlStateNormal];
@@ -594,17 +545,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
     }];
     
-    if (swe.isOn)
-    {
-        self.appExecutive.is3P = YES;
-    }
-    else
-    {
-        self.appExecutive.is3P = NO;
-    }
-    
-    [self.appExecutive.userDefaults setObject: [NSNumber numberWithInt:self.appExecutive.is3P] forKey: @"is3P"];
-    
+    self.appExecutive.is3P = swe.isOn;
 }
 
 - (void) resetTimers {
@@ -938,7 +879,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         midTotals = settings.mid3PSlideDistance + settings.mid3PPanDistance + settings.mid3PTiltDistance;
         endTotals = settings.end3PSlideDistance + settings.end3PPanDistance + settings.end3PTiltDistance;
         
-        if ([appExecutive.userDefaults integerForKey:@"is3P"] == 0)
+        if (appExecutive.is3P == NO)
         {
             if(start2pTotals != 0 || settings.start2pSet == 1)
             {
@@ -1002,9 +943,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     [settings synchronize];
     
-    if (([appExecutive.userDefaults integerForKey:@"is3P"] == 0 ||
-         [appExecutive.userDefaults objectForKey:@"is3P"] == nil) &&
-        (settings.start2pSet == 1 && settings.end2pSet == 1))
+    if (appExecutive.is3P == NO && (settings.start2pSet == 1 && settings.end2pSet == 1))
     {
         [UIView animateWithDuration:.4 animations:^{
             
@@ -1182,22 +1121,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     distance2 = settings.endPoint2 - settings.startPoint2;
     distance3 = settings.endPoint3 - settings.startPoint3;
     
-    // Restore saved label values for direction
-    if([appExecutive.defaults objectForKey:@"slideDirectionMode"] != nil)
-    {
-        self.slideDirectionMode = [appExecutive.defaults objectForKey:@"slideDirectionMode"] ;
-    }
-    
-    if([appExecutive.defaults objectForKey:@"panDirectionMode"] != nil)
-    {
-        self.panDirectionMode = [appExecutive.defaults objectForKey:@"panDirectionMode"] ;
-    }
-    
-    if([appExecutive.defaults objectForKey:@"tiltDirectionMode"] != nil)
-    {
-        self.tiltDirectionMode = [appExecutive.defaults objectForKey:@"tiltDirectionMode"];
-    }
-    
     if (distance1 != 0 || distance2 != 0 || distance3 != 0)
     {
         NSLog(@"\n");
@@ -1269,7 +1192,9 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     NSString *direction;
     NSString *displayString;
 
-    int directionMode = [self.slideDirectionMode intValue];
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
+    int directionMode = [settings.slideDirectionMode intValue];
     if (inverted1 == 1)
     {
         direction = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
@@ -1298,7 +1223,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     distanceSlideLbl.text = displayString;
 
-    directionMode = [self.panDirectionMode intValue];
+    directionMode = [settings.panDirectionMode intValue];
     if (inverted2 == 1)
     {
         direction = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
@@ -1328,7 +1253,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     distancePanLbl.text = displayString;
 
     
-    directionMode = [self.tiltDirectionMode intValue];
+    directionMode = [settings.tiltDirectionMode intValue];
     if (inverted3 == 1)
     {
         direction = [DistancePresetViewController leftDirectionLabelForIndex: directionMode];
@@ -1497,18 +1422,20 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
     }
 
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
     int directionMode;
     if (motor == 1)
     {
-        directionMode = [self.slideDirectionMode intValue];
+        directionMode = [settings.slideDirectionMode intValue];
     }
     else if (motor == 2)
     {
-        directionMode = [self.panDirectionMode intValue];
+        directionMode = [settings.panDirectionMode intValue];
     }
     else
     {
-        directionMode = [self.tiltDirectionMode intValue];
+        directionMode = [settings.tiltDirectionMode intValue];
     }
     
     NSString *displayString;
@@ -1660,6 +1587,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (void) prepareForSegue: (UIStoryboardSegue *) segue sender: (id) sender {
     
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
 	if ([segue.identifier isEqualToString: EmbedJoystickViewController])
 	{
         // joystick view controller is embedded, net to set its delegagte
@@ -1687,7 +1616,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 		msvc.motorName = @"Slide";
 		msvc.motorNumber = self.appExecutive.device.sledMotor;
-        msvc.directionLabelMode = self.slideDirectionMode;
+        msvc.directionLabelMode = settings.slideDirectionMode;
         
         [self exitJoystickMode];
         self.showingModalScreen = true;
@@ -1698,7 +1627,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 		msvc.motorName = @"Pan";
 		msvc.motorNumber = self.appExecutive.device.panMotor;
-        msvc.directionLabelMode = self.panDirectionMode;
+        msvc.directionLabelMode = settings.panDirectionMode;
 
         [self exitJoystickMode];
         self.showingModalScreen = true;
@@ -1709,7 +1638,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 		msvc.motorName = @"Tilt";
 		msvc.motorNumber = self.appExecutive.device.tiltMotor;
-        msvc.directionLabelMode = self.tiltDirectionMode;
+        msvc.directionLabelMode = settings.tiltDirectionMode;
         
         [self exitJoystickMode];
         self.showingModalScreen = true;

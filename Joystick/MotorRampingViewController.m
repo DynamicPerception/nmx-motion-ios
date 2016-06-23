@@ -1577,9 +1577,6 @@ NSArray static	*frameCountStrings = nil;
         
         slide3P1Lbl.text = a;
     }
-    
-    [appExecutive.userDefaults setObject: [NSNumber numberWithFloat:self.settings.slide3PVal1] forKey: @"slide3PVal1"];
-    [appExecutive.userDefaults synchronize];
 }
 
 - (IBAction) handleSlide3PSlider2:(id)sender {

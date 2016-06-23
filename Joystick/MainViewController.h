@@ -130,12 +130,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *cancelStopBtn;
 @property (weak, nonatomic) IBOutlet UIView *controlBackground;
 
-@property NSNumber *slideDirectionMode;   // CW/CCW, In/Out, etc.
-@property NSNumber *panDirectionMode;     // CW/CCW, In/Out, etc.
-@property NSNumber *tiltDirectionMode;    // CW/CCW, In/Out, etc.
-
 @property (nonatomic, strong)				NSTimer *			sendMotorsTimer;
-
 
 - (IBAction) setStartPoint1:(id)sender;
 - (IBAction) goToStartPoint1:(id)sender;

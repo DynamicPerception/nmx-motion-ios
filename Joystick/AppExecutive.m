@@ -148,12 +148,21 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 @synthesize defaults;
 @synthesize forFrameRate;
 
-@synthesize is3P,slideGear,slideMotor,panGear,panMotor,tiltGear,tiltMotor,isVideo;
+@synthesize isVideo;
 
 //------------------------------------------------------------------------------
 
 #pragma mark - Public Property Methods
 
+- (void) setIs3P:(BOOL)is3P
+{
+    [self.userDefaults setObject: [NSNumber numberWithInt: is3P ?1:0 ] forKey: @"is3P"];
+}
+
+- (BOOL) is3P
+{
+    return ([self.userDefaults integerForKey:@"is3P"] == 1);
+}
 
 - (void) setJoystick: (CGPoint) position {
     
@@ -474,6 +483,7 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
     }
 }
 
+//mm search "self.defaults"  -- some of these things need to get moved to device settings
 - (NSNumber *) sensitivityNumber {
     
     if (sensitivityNumber == nil)
@@ -1044,6 +1054,8 @@ NSArray *defaultRampingValues() {
 
 - (void) restoreDefaults {
     
+    //mm double check that these go here --- some likely go in the device settings
+    
     NSLog(@"restoreDefaults");
     
     //defaults
@@ -1081,6 +1093,7 @@ NSArray *defaultRampingValues() {
     lockAxisNumber = [NSNumber numberWithBool: defaultLockAxisState];
     [self.defaults setObject: lockAxisNumber forKey: kDefaultsLockAxisState];
     
+
     sensitivityNumber = [NSNumber numberWithFloat: defaultSensitivity];
     [self.defaults setObject: sensitivityNumber forKey: kDefaultsSensitivity];
     

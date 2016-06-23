@@ -13,15 +13,6 @@
 #import "LinearRotaryViewController.h"
 
 
-typedef enum
-{
-    kLeftRightLabel,
-    kClockwiseCounterClockwiseLabel,
-    kUpDownLabel,
-    kInOutLabel,
-} DirectionLabels;
-
-
 
 @protocol DistancePresetDelegate
 

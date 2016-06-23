@@ -58,15 +58,6 @@
 @property (nonatomic, readonly)		JSDeviceSettings *    defaults;
 @property (strong, atomic)          NSArray<NMXDevice *> *deviceList;
 
-@property int slideGear;
-@property int slideMotor;
-
-@property int panGear;
-@property int panMotor;
-
-@property int tiltGear;
-@property int tiltMotor;
-
 @property BOOL is3P;
 
 ///////////////////////
