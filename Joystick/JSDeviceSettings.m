@@ -131,7 +131,8 @@
 
 - (BOOL) useJoystick
 {
-    if ([self integerForKey:@"useJoystick"] == 1)
+    int val = [self integerForKey:@"useJoystick"];
+    if ( val == 1 || val == 0)   // 0 => not set, default to YES
     {
         return YES;
     }
@@ -140,7 +141,7 @@
 
 - (void) setUseJoystick:(BOOL)useJoystick
 {
-    [self setObject: [NSNumber numberWithInt:useJoystick?1:0] forKey: @"useJoystick"];
+    [self setObject: [NSNumber numberWithInt:useJoystick?1:2] forKey: @"useJoystick"];
 }
 
 - (void) setStart3PSlideDistance:(float)start3PSlideDistance
@@ -344,32 +345,32 @@
     return (int)[self integerForKey:@"end2pSet"];
 }
 
-- (void) setStart3pSet:(int)start3pSet
+- (void) setStart3PSet:(int)start3PSet
 {
-    [self setObject: [NSNumber numberWithInt:start3pSet] forKey: @"start3pSet"];
+    [self setObject: [NSNumber numberWithInt:start3PSet] forKey: @"start3pSet"];
 }
 
-- (int) start3pSet
+- (int) start3PSet
 {
     return (int)[self integerForKey:@"start3pSet"];
 }
 
-- (void) setMid3pSet:(int)mid3pSet
+- (void) setMid3PSet:(int)mid3PSet
 {
-    [self setObject: [NSNumber numberWithInt:mid3pSet] forKey: @"mid3pSet"];
+    [self setObject: [NSNumber numberWithInt:mid3PSet] forKey: @"mid3pSet"];
 }
 
-- (int) mid3pSet
+- (int) mid3PSet
 {
     return (int)[self integerForKey:@"mid3pSet"];
 }
 
-- (void) setEnd3pSet:(int)end3pSet
+- (void) setEnd3PSet:(int)end3PSet
 {
-    [self setObject: [NSNumber numberWithInt:end3pSet] forKey: @"end3pSet"];
+    [self setObject: [NSNumber numberWithInt:end3PSet] forKey: @"end3pSet"];
 }
 
-- (int) end3pSet
+- (int) end3PSet
 {
     return (int)[self integerForKey:@"end3pSet"];
 }

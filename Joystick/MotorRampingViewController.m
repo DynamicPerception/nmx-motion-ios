@@ -115,23 +115,13 @@ NSArray static	*frameCountStrings = nil;
 
 #pragma mark - Object Management
 
-
-- (MotorRampingViewController *) init
-{
-    //mm - fixme - make sure this is called
-    
-    self = [super init];
-    
-    self.settings = self.appExecutive.device.settings;
-    
-    return self;
-}
-
 - (void) viewDidLoad {
     
     self.picker.delegate = self;
     self.picker.dataSource = self;
     
+    self.settings = self.appExecutive.device.settings;
+
     device = [AppExecutive sharedInstance].device;
     
     [self.appExecutive.device mainSetJoystickMode: false];
@@ -1475,6 +1465,9 @@ NSArray static	*frameCountStrings = nil;
     //NMXDevice * device = [AppExecutive sharedInstance].device;
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    [settings synchronize];
     
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         

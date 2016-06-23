@@ -733,6 +733,9 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) checkProgramAndHandleNext {
 
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    [settings synchronize];
+    
     if (appExecutive.is3P == NO) {
 
         if (NO == [appExecutive queryMotorFeasibility])

@@ -1799,6 +1799,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         [self updateLabels];
     }
     
+    [settings synchronize];
+    
     [UIView animateWithDuration:.4 animations:^{
         
         setStartView.alpha = 0;
@@ -1880,6 +1882,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         } completion:^(BOOL finished) {
             
         }];
+        
+        [settings synchronize];
         
         [self enterJoystickMode];
     }
@@ -2665,6 +2669,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     UIAlertView *alertView;
     
     JSDeviceSettings *settings = self.appExecutive.device.settings;
+    [settings synchronize];
     
     if (appExecutive.is3P)
     {

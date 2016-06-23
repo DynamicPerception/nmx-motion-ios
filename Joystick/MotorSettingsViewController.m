@@ -64,17 +64,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 //------------------------------------------------------------------------------
 
-- (MotorSettingsViewController *) init
-{
-    self = [super init];
-
-    self.settings = self.appExecutive.device.settings;
-    
-    return self;
-}
-
 - (void) viewDidLoad {
     
+    self.settings = self.appExecutive.device.settings;
+
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -83,8 +76,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     start = [self.appExecutive.device queryProgramStartPoint:(int)self.motorNumber];
     end = [self.appExecutive.device queryProgramEndPoint:(int)self.motorNumber];
-    
-    //mm - confirm that self.settings is not nil!!!!
     
     switch (self.motorNumber) {
         case 1:
