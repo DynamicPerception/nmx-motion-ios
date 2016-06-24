@@ -50,8 +50,6 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
 //    int minutes;
 //    int seconds;
     
-    NMXDevice * device;
-    
     float masterFrameCount;
     float graphWidth;
     

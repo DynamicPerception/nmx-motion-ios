@@ -249,8 +249,6 @@ typedef enum{
         
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
-    device = [AppExecutive sharedInstance].device;
-    
     screenWidth = self.view.frame.size.width;
     
     lastFrameValue = framesShotValueLabel.text;
@@ -294,11 +292,11 @@ typedef enum{
 
     [self setupIcons];
 
-    if (device.fwVersion < 52)
+    if (self.appExecutive.device.fwVersion < 52)
     {
         [self.atProgramEndControl removeSegmentAtIndex:AtProgramEndPingPong animated:NO];
     }
-    else if ([device mainQueryPingPongMode])
+    else if ([self.appExecutive.device mainQueryPingPongMode])
     {
         [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
     }
@@ -401,7 +399,8 @@ typedef enum{
     
     [self setControlVisibilityForDelayState:YES];
     
-    [device setDelayProgramStartTimer:countdownTime];
+    //mm Fix this for multi
+    [self.appExecutive.device setDelayProgramStartTimer:countdownTime];
     
     [self manageCountdownTimer];
     
@@ -412,15 +411,16 @@ typedef enum{
 {
     timerContainer.hidden = NO;
     
+    //mm fix this for multi
     if (self.appExecutive.is3P == NO)
     {
-        self.totalRunTime = [device mainQueryTotalRunTime];
-        self.lastRunTime = [device mainQueryRunTime];
+        self.totalRunTime = [self.appExecutive.device mainQueryTotalRunTime];
+        self.lastRunTime = [self.appExecutive.device mainQueryRunTime];
     }
     else
     {
-        self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
-        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+        self.lastRunTime = [self.appExecutive.device queryKeyFrameProgramCurrentTime];
+        self.totalRunTime = [self.appExecutive.device queryKeyFrameProgramMaxTime];
     }
     
     self.timeOfLastRunTime = time(nil);
@@ -583,9 +583,15 @@ typedef enum{
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
 
-        [[AppExecutive sharedInstance].device takeUpBacklashKeyFrameProgram];
-        [[AppExecutive sharedInstance].device startKeyFrameProgram];
-
+        //mm
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device takeUpBacklashKeyFrameProgram];
+        }
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device startKeyFrameProgram];
+        }
         [self startKeyframeTimer];
     
         [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -603,7 +609,11 @@ typedef enum{
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+        //mm
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainStartPlannedMove];
+        }
     }
     
     if(self.programMode != NMXProgramModeVideo)
@@ -617,17 +627,17 @@ typedef enum{
     
     if (self.appExecutive.is3P == NO)
     {
-        self.totalRunTime = [device mainQueryTotalRunTime];
+        self.totalRunTime = [self.appExecutive.device mainQueryTotalRunTime];
         self.statusTimer = self.statusTimer;
     }
     else
     {
-        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+        self.totalRunTime = [self.appExecutive.device queryKeyFrameProgramMaxTime];
     }
     
     if (self.programMode != NMXProgramModeVideo)
     {
-        self.timePerFrame = self.totalRunTime / [device cameraQueryMaxShots];
+        self.timePerFrame = self.totalRunTime / [self.appExecutive.device cameraQueryMaxShots];
     }
 }
 
@@ -653,7 +663,11 @@ typedef enum{
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+        //mm
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainStartPlannedMove];
+        }
     }
     
     [self transitionToState: ControllerStatePauseProgram];
@@ -702,17 +716,17 @@ typedef enum{
     
     if (appExecutive.is3P == YES)
     {
-        runStatus = [device queryKeyFrameProgramRunState];
+        runStatus = [self.appExecutive.device queryKeyFrameProgramRunState];
     }
     else
     {
-        runStatus = [device mainQueryRunStatus];
+        runStatus = [self.appExecutive.device mainQueryRunStatus];
     }
 
     [self.view bringSubviewToFront:timerContainer];
     timerContainer.hidden = YES;
     
-    queryFPS = [device mainQueryFPS];
+    queryFPS = [self.appExecutive.device mainQueryFPS];
     
     switch (queryFPS)
     {
@@ -810,7 +824,7 @@ typedef enum{
                 [self transitionToPauseProgramState];
             }
 
-            self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+            self.totalRunTime = [self.appExecutive.device queryKeyFrameProgramMaxTime];
             
             [self startKeyframeTimer];
         }
@@ -827,7 +841,10 @@ typedef enum{
         if (!(runStatus & NMXRunStatusRunning) &&
             !(runStatus & NMXRunStatusPaused) && !camClosed)
         {
-            [self initKeyFrameValues];
+            for (NMXDevice *device in self.appExecutive.deviceList)
+            {
+                [self initKeyFrameValues: device];
+            }
         }
     }
     else
@@ -849,7 +866,7 @@ typedef enum{
     [self showVoltage];
 }
 
-- (void) initKeyFrameValues {
+- (void) initKeyFrameValues: (NMXDevice *)device {
     
     //for shoot move, absicssa is multiple of 1000
 
@@ -875,8 +892,8 @@ typedef enum{
     //slide motor
     
     
-    [appExecutive.device setCurrentKeyFrameAxis:0];
-    [appExecutive.device setKeyFrameCount:3];
+    [device setCurrentKeyFrameAxis:0];
+    [device setKeyFrameCount:3];
     
 //    int sd = [self.appExecutive.shotDurationNumber intValue];
 //        
@@ -884,10 +901,10 @@ typedef enum{
     
     if (self.programMode == NMXProgramModeVideo)
     {
-        [appExecutive.device setKeyFrameVideoTime:[self.appExecutive.videoLengthNumber intValue]];
+        [device setKeyFrameVideoTime:[self.appExecutive.videoLengthNumber intValue]];
     }
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    JSDeviceSettings *settings = device.settings;
     
     float val1 = (float)((int)(settings.slide3PVal1 - 1));
     float val2 = (float)((int)(settings.slide3PVal2 - 1));
@@ -929,29 +946,29 @@ typedef enum{
     kfm.position = endSlideOut;
     kfm.velocity = 0;
     
-    [appExecutive.device setKeyFrameAbscissa:val1];
-    [appExecutive.device setKeyFrameAbscissa:val2];
-    [appExecutive.device setKeyFrameAbscissa:val3];
+    [device setKeyFrameAbscissa:val1];
+    [device setKeyFrameAbscissa:val2];
+    [device setKeyFrameAbscissa:val3];
     [hs optimizePointVelForAxis:keyframeArray];
 
-    [appExecutive.device setKeyFramePosition:startSlideOut];
-    [appExecutive.device setKeyFramePosition:midSlideOut];
-    [appExecutive.device setKeyFramePosition:endSlideOut];
+    [device setKeyFramePosition:startSlideOut];
+    [device setKeyFramePosition:midSlideOut];
+    [device setKeyFramePosition:endSlideOut];
     
-    [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:keyframeArray[1].velocity];
+    [device setKeyFrameVelocity:(float)0];
     
-    [appExecutive.device endKeyFrameTransmission];
+    [device endKeyFrameTransmission];
     
     //pan motor
     
-    [appExecutive.device setCurrentKeyFrameAxis:1];
-    [appExecutive.device setKeyFrameCount:3];
+    [device setCurrentKeyFrameAxis:1];
+    [device setKeyFrameCount:3];
     
-    [appExecutive.device setKeyFrameAbscissa:val1]; //15
-    [appExecutive.device setKeyFrameAbscissa:val2]; //100
-    [appExecutive.device setKeyFrameAbscissa:val3]; //250
+    [device setKeyFrameAbscissa:val1]; //15
+    [device setKeyFrameAbscissa:val2]; //100
+    [device setKeyFrameAbscissa:val3]; //250
     
     float conversionFactor2 = (float)settings.microstep2 / 16;
     
@@ -974,24 +991,24 @@ typedef enum{
 
     [hs optimizePointVelForAxis:keyframeArray];
     
-    [appExecutive.device setKeyFramePosition:startPanOut];
-    [appExecutive.device setKeyFramePosition:midPanOut];
-    [appExecutive.device setKeyFramePosition:endPanOut];
+    [device setKeyFramePosition:startPanOut];
+    [device setKeyFramePosition:midPanOut];
+    [device setKeyFramePosition:endPanOut];
     
-    [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:keyframeArray[1].velocity];
+    [device setKeyFrameVelocity:(float)0];
     
-    [appExecutive.device endKeyFrameTransmission];
+    [device endKeyFrameTransmission];
     
     //tilt motor
     
-    [appExecutive.device setCurrentKeyFrameAxis:2];
-    [appExecutive.device setKeyFrameCount:3];
+    [device setCurrentKeyFrameAxis:2];
+    [device setKeyFrameCount:3];
     
-    [appExecutive.device setKeyFrameAbscissa:val1]; //15
-    [appExecutive.device setKeyFrameAbscissa:val2]; //100
-    [appExecutive.device setKeyFrameAbscissa:val3]; //250
+    [device setKeyFrameAbscissa:val1]; //15
+    [device setKeyFrameAbscissa:val2]; //100
+    [device setKeyFrameAbscissa:val3]; //250
     
     float conversionFactor3 = (float)settings.microstep3 / 16;
     
@@ -1016,17 +1033,17 @@ typedef enum{
     
     [hs optimizePointVelForAxis:keyframeArray];
     
-    [appExecutive.device setKeyFramePosition:startTiltOut];
-    [appExecutive.device setKeyFramePosition:midTiltOut];
-    [appExecutive.device setKeyFramePosition:endTiltOut];
+    [device setKeyFramePosition:startTiltOut];
+    [device setKeyFramePosition:midTiltOut];
+    [device setKeyFramePosition:endTiltOut];
     
-    [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:keyframeArray[1].velocity];
+    [device setKeyFrameVelocity:(float)0];
     
     NSLog(@"mid tilt Velocity: %g",keyframeArray[1].velocity);
     
-    [appExecutive.device endKeyFrameTransmission];
+    [device endKeyFrameTransmission];
         
     //    if (self.programMode == NMXProgramModeSMS)
     //    {
@@ -1045,9 +1062,7 @@ typedef enum{
 
 - (void) setupAfterConnection {
 
-    device = [AppExecutive sharedInstance].device;
-
-    self.programMode = [device mainQueryProgramMode];
+    self.programMode = [self.appExecutive.device mainQueryProgramMode];
     
     switch (self.programMode)
     {
@@ -1070,7 +1085,7 @@ typedef enum{
             self.timelapseView.hidden = YES;
             self.videoView.hidden = NO;
             
-            if ([device mainQueryPingPongMode])
+            if ([self.appExecutive.device mainQueryPingPongMode])
             {
                 self.videoTitle.text = @"Video Ping Pong";
             }
@@ -1084,11 +1099,11 @@ typedef enum{
     NMXRunStatus runStatus;
     if (self.appExecutive.is3P == NO)
     {
-        runStatus = [device mainQueryRunStatus];
+        runStatus = [self.appExecutive.device mainQueryRunStatus];
     }
     else
     {
-        runStatus = [device queryKeyFrameProgramRunState];
+        runStatus = [self.appExecutive.device queryKeyFrameProgramRunState];
     }
 
     if (runStatus & NMXRunStatusDelayTimer)
@@ -1208,10 +1223,13 @@ typedef enum{
     [appExecutive.userDefaults setObject: [NSNumber numberWithLong:atEndSelection] forKey: @"keepAlive"];
     [appExecutive.userDefaults synchronize];
     
-    [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
-    if (device.fwVersion >= 52)
+    for (NMXDevice *device in self.appExecutive.deviceList)
     {
-        [device mainSetPingPongMode: atEndSelection==AtProgramEndPingPong];
+        [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
+        if (device.fwVersion >= 52)
+        {
+            [device mainSetPingPongMode: atEndSelection==AtProgramEndPingPong];
+        }
     }
 
 }
@@ -1221,19 +1239,23 @@ typedef enum{
     cancelBtn.hidden = YES;
     goBtn.hidden = YES;
     
-    //[device setDelayProgramStartTimer:0];
-    
     if (appExecutive.is3P == YES)
     {
         originalCountdownTime = 0;
-        [[AppExecutive sharedInstance].device stopKeyFrameProgram];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device stopKeyFrameProgram];
+        }
         
         [keyframeTimer invalidate];
         keyframeTimer = nil;
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStopPlannedMove];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainStopPlannedMove];
+        }
         
         [self.statusTimer invalidate];
         self.statusTimer = nil;
@@ -1261,14 +1283,23 @@ typedef enum{
     if (appExecutive.is3P == YES)
     {
         originalCountdownTime = 0;
-        [[AppExecutive sharedInstance].device stopKeyFrameProgram];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device stopKeyFrameProgram];
+        }
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStopPlannedMove];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainStopPlannedMove];
+        }
     }
     
-    [device setDelayProgramStartTimer:0];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device setDelayProgramStartTimer:0];
+    }
     
     [NSTimer scheduledTimerWithTimeInterval:0.150 target:self selector:@selector(removeDelayTimer) userInfo:nil repeats:NO];
 }
@@ -1285,7 +1316,10 @@ typedef enum{
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainStartPlannedMove];
+        }
     }
     
     [self showKeepAliveView];
@@ -1306,12 +1340,15 @@ typedef enum{
     [appExecutive.userDefaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
     [appExecutive.userDefaults synchronize];
     
-    // Set to fastest setting to allow return to home to perform optimally
-    [device motorSet: device.sledMotor Microstep: 4];
-    [device motorSet: device.panMotor Microstep: 4];
-    [device motorSet: device.tiltMotor Microstep: 4];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        // Set to fastest setting to allow return to home to perform optimally
+        [device motorSet: device.sledMotor Microstep: 4];
+        [device motorSet: device.panMotor Microstep: 4];
+        [device motorSet: device.tiltMotor Microstep: 4];
     
-    [device mainSendMotorsToStart];
+        [device mainSendMotorsToStart];
+    }
 
 	[self transitionToState: ControllerStateMotorRampingOrStartProgram];
     
@@ -1323,7 +1360,10 @@ typedef enum{
 	DDLogDebug(@"Start Program Button");
     originalCountdownTime = 0;
 
-    [device setDelayProgramStartTimer:0];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device setDelayProgramStartTimer:0];
+    }
 
     [self startProgram];
 }
@@ -1348,12 +1388,18 @@ typedef enum{
         [keyframeTimer invalidate];
         keyframeTimer = nil;
 
-        [[AppExecutive sharedInstance].device pauseKeyFrameProgram];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device pauseKeyFrameProgram];
+        }
     }
     else
     {
         self.statusTimer = nil;
-        [[AppExecutive sharedInstance].device mainPausePlannedMove];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainPausePlannedMove];
+        }
     }
 }
 
@@ -1371,7 +1417,10 @@ typedef enum{
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainStartPlannedMove];
+        }
     }
 }
 
@@ -1385,19 +1434,23 @@ typedef enum{
     [appExecutive.userDefaults synchronize];
 
 	[self transitionToState: ControllerStateMotorRampingOrSendMotors];
-    
-    if (appExecutive.is3P == YES)
+
+    for (NMXDevice *device in self.appExecutive.deviceList)
     {
-        [[AppExecutive sharedInstance].device stopKeyFrameProgram];
-    }
-    else
-    {
-        [[AppExecutive sharedInstance].device mainStopPlannedMove];
         
-        [device keepAlive:0];
-        if (device.fwVersion >= 52)
+        if (appExecutive.is3P == YES)
         {
-            [device mainSetPingPongMode: NO];
+            [device stopKeyFrameProgram];
+        }
+        else
+        {
+            [[AppExecutive sharedInstance].device mainStopPlannedMove];
+            
+            [self.appExecutive.device keepAlive:0];
+            if (self.appExecutive.device.fwVersion >= 52)
+            {
+                [self.appExecutive.device mainSetPingPongMode: NO];
+            }
         }
     }
     
@@ -1656,14 +1709,22 @@ typedef enum{
 
 - (void) handleSendMotorsTimer: (NSTimer *) sender {
     
-    bool moving;
+    bool moving = NO;
     
-    moving = [device motorQueryRunning: device.sledMotor];
-    
-    if (!moving)
-        moving = [device motorQueryRunning: device.panMotor];
-    if (!moving)
-        moving = [device motorQueryRunning: device.tiltMotor];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        if (!moving)
+            moving = [device motorQueryRunning: device.sledMotor];
+        if (!moving)
+            moving = [device motorQueryRunning: device.panMotor];
+        if (!moving)
+            moving = [device motorQueryRunning: device.tiltMotor];
+        
+        if (moving)
+        {
+            break;
+        }
+    }
 
     if (!moving)
     {
@@ -1674,18 +1735,20 @@ typedef enum{
             
             self.startProgramButton.enabled = YES;
             
-            if (!self.appExecutive.is3P || [device fwVersion] >= 61)
+            if (!self.appExecutive.is3P || [self.appExecutive.device fwVersion] >= 61)
             {
                 startTimerBtn.hidden = NO;
             }
-            
-            JSDeviceSettings *settings = self.appExecutive.device.settings;
 
-            // Reset motors to correct microstep values
-            [device motorSet: device.sledMotor Microstep: settings.microstep1];
-            [device motorSet: device.panMotor Microstep: settings.microstep2];
-            [device motorSet: device.tiltMotor Microstep: settings.microstep3];
-            
+            for (NMXDevice *device in self.appExecutive.deviceList)
+            {
+                JSDeviceSettings *settings = device.settings;
+
+                // Reset motors to correct microstep values
+                [device motorSet: device.sledMotor Microstep: settings.microstep1];
+                [device motorSet: device.panMotor Microstep: settings.microstep2];
+                [device motorSet: device.tiltMotor Microstep: settings.microstep3];
+            }
             [MBProgressHUD hideHUDForView:self.view animated:YES];
         });
     }
@@ -1707,6 +1770,8 @@ typedef enum{
 }
 
 - (void) handleKeyFrameStatusTimer: (NSTimer *) sender {
+    
+    NMXDevice *device = self.appExecutive.device;
     
     NMXRunStatus runStatus = [device queryKeyFrameProgramRunState];
     
@@ -1914,6 +1979,7 @@ typedef enum{
 
 - (void) handleStatusTimer: (NSTimer *) sender {
     
+    NMXDevice *device = self.appExecutive.device;
     NMXRunStatus runStatus = [device mainQueryRunStatus];
     
     if (runStatus & NMXRunStatusPaused) {
@@ -2149,6 +2215,7 @@ typedef enum{
 
 - (void) calculatePingPongReverse
 {
+    NMXDevice *device = self.appExecutive.device;
     int runningBackwards = 0;
     
     if (AtProgramEndPingPong != self.atProgramEndControl.selectedSegmentIndex)
@@ -2189,6 +2256,7 @@ typedef enum{
 
 - (void) transitionToPauseProgramState {
     
+    NMXDevice *device = self.appExecutive.device;
 	DDLogDebug(@"transitionToPauseProgramState");
 
 	self.pauseProgramButton.hidden = NO;
@@ -2255,11 +2323,12 @@ typedef enum{
 
 - (void) setupGraphViews3P {
     
+    NMXDevice *device = self.appExecutive.device;
     masterFrameCount = [self.appExecutive.frameCountNumber floatValue];
     
     graph3P.is3P = YES;
 
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    JSDeviceSettings *settings = device.settings;
 
     graph3P.frame1 = settings.slide3PVal1;
     graph3P.frame2 = settings.slide3PVal2;
@@ -2402,7 +2471,7 @@ typedef enum{
     tiltGraph.headerString = @"Tilt";
     tiltGraph.frameCount = masterFrameCount;
     
-    self.programMode = [device mainQueryProgramMode];
+    self.programMode = [self.appExecutive.device mainQueryProgramMode];
     
     if(self.programMode == NMXProgramModeVideo)
     {

@@ -22,7 +22,6 @@ NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewC
     //id myDelegate;
     
     NMXProgramMode      programMode;
-    NMXDevice *device;
     bool isVideo;
     UInt32  rampMode;
     float masterFrameCount;

@@ -510,7 +510,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
-    //NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);
+    NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);
     
     if (true == self.disconnected)
     {
@@ -2377,7 +2377,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
     
-    [self sendCommand: newData WithDesc: @"Start KeyFrame Program" WaitForResponse: true WithTimeout: 0.2];
+    [self sendCommand: newData WithDesc: @"Start KeyFrame Program" WaitForResponse: false WithTimeout: 0.2];
 }
 
 - (void) stopKeyFrameProgram {
