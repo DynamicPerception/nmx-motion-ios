@@ -510,7 +510,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
-    NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);
+    //NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);
     
     if (true == self.disconnected)
     {

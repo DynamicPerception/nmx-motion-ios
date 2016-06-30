@@ -270,6 +270,8 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     float newBase = settings.voltageHigh - settings.voltageLow;
     float newVoltage = settings.voltage - settings.voltageLow;
     
+    if (newBase <= 0) newBase = 1;
+    
     float per4 = newVoltage/newBase;
     
     if (per4 > 1)
@@ -282,16 +284,19 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         per4 = 0;
     }
     
-    float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
+    if (per4 > 0)
+    {
+        float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
     
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
-                                                         batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
-                                                         batteryIcon.frame.size.width * .47,
-                                                         batteryIcon.frame.size.height * per4)];
+        UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
+                                                             batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
+                                                             batteryIcon.frame.size.width * .47,
+                                                             batteryIcon.frame.size.height * per4)];
     
-    v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
+        v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
     
-    [self.view addSubview:v];
+        [self.view addSubview:v];
+    }
 }
 
 - (int) convert: (int)val : (int)setting {

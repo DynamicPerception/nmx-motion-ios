@@ -14,6 +14,7 @@
 #import "JoyButton.h"
 #import "AppExecutive.h"
 #import "MBProgressHUD.h"
+#import "JSMotorRampingTableViewCell.h"
 
 //------------------------------------------------------------------------------
 
@@ -73,7 +74,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *frameCount2;
 @property (weak, nonatomic) IBOutlet UILabel *frameCount3;
 
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+
 @property JSDeviceSettings *settings;
+
 
 @end
 
@@ -128,7 +132,7 @@ NSArray static	*frameCountStrings = nil;
     
     programMode = [self.appExecutive.device mainQueryProgramMode];
     
-    
+    //    self.tableView.rowHeight = 200;
     
 #if TARGET_IPHONE_SIMULATOR
     
@@ -645,6 +649,8 @@ NSArray static	*frameCountStrings = nil;
     
     //NSLog(@"newVoltage: %.02f",newVoltage);
     
+    if (newBase <= 0) newBase = 1;
+    
     float per4 = newVoltage/newBase;
     
     //NSLog(@"per4: %.02f",per4);
@@ -661,14 +667,17 @@ NSArray static	*frameCountStrings = nil;
         
     float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
     
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
-                                                         batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
-                                                         batteryIcon.frame.size.width * .47,
-                                                         batteryIcon.frame.size.height * per4)];
+    if (per4 > 0)
+    {
+        UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
+                                                             batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
+                                                             batteryIcon.frame.size.width * .47,
+                                                             batteryIcon.frame.size.height * per4)];
+        
+        v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
     
-    v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
-    
-    [contentBG addSubview:v];
+        [contentBG addSubview:v];
+    }
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
@@ -2667,7 +2676,9 @@ NSArray static	*frameCountStrings = nil;
     [NSTimer scheduledTimerWithTimeInterval:0.250 target:self selector:@selector(frameValueSelected) userInfo:nil repeats:NO];
 }
 
+ //mm
 - (void) setupSliderFunctions {
+    /*
 
     frameView.alpha = 0;
     framePickerView.alpha = 0;
@@ -2748,7 +2759,9 @@ NSArray static	*frameCountStrings = nil;
         [s setThumbImage:i forState:UIControlStateSelected];
         //[s setThumbTintColor:[UIColor whiteColor]];
     }
+*/
 }
+ 
 
 #pragma mark - UIPickerViewDelegate Protocol Methods
 
@@ -2801,5 +2814,28 @@ NSArray static	*frameCountStrings = nil;
     return frameCountStrings.count;
 }
 
+#pragma mark - Table View Delegate
+
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
+    
+    return 1;
+}
+
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
+    //mm FIXME
+    return 3;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    
+    JSMotorRampingTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceRampingCell" forIndexPath:indexPath];
+    //    cell.textLabel.textColor = [UIColor whiteColor];
+    //    cell.textLabel.backgroundColor = [UIColor clearColor];
+    
+    return cell;
+}
 
 @end

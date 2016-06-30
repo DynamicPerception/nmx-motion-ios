@@ -160,6 +160,7 @@
 		23FD81081A23D78800FD9D49 /* CameraSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23FD81071A23D78800FD9D49 /* CameraSettingsViewController.m */; };
 		23FD810B1A23D8FC00FD9D49 /* ReviewStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23FD810A1A23D8FC00FD9D49 /* ReviewStatusViewController.m */; };
 		301A1BFA1CED22FA00A26D14 /* JSDeviceSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 301A1BF91CED22FA00A26D14 /* JSDeviceSettings.m */; };
+		3035829A1D25982300C4FCC4 /* JSMotorRampingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 303582991D25982300C4FCC4 /* JSMotorRampingTableViewCell.m */; };
 		3048A1121C40657C00855EB0 /* DeviceState_Ready.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */; };
 		3048A1131C40657C00855EB0 /* DeviceState_Ready@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */; };
 		3048A1141C40657C00855EB0 /* DeviceState_Indeterminate.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */; };
@@ -404,6 +405,8 @@
 		23FD810A1A23D8FC00FD9D49 /* ReviewStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReviewStatusViewController.m; sourceTree = "<group>"; };
 		301A1BF81CED22FA00A26D14 /* JSDeviceSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeviceSettings.h; sourceTree = "<group>"; };
 		301A1BF91CED22FA00A26D14 /* JSDeviceSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDeviceSettings.m; sourceTree = "<group>"; };
+		303582981D25982300C4FCC4 /* JSMotorRampingTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMotorRampingTableViewCell.h; sourceTree = "<group>"; };
+		303582991D25982300C4FCC4 /* JSMotorRampingTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSMotorRampingTableViewCell.m; sourceTree = "<group>"; };
 		3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Ready.png; sourceTree = "<group>"; };
 		3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Ready@2x.png"; sourceTree = "<group>"; };
 		3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Indeterminate.png; sourceTree = "<group>"; };
@@ -830,6 +833,8 @@
 		5D6A79A31B27558600F93B71 /* SettingsViews */ = {
 			isa = PBXGroup;
 			children = (
+				303582981D25982300C4FCC4 /* JSMotorRampingTableViewCell.h */,
+				303582991D25982300C4FCC4 /* JSMotorRampingTableViewCell.m */,
 				5D25BC641A5B862B00F324AD /* DeviceSettingsViewController.h */,
 				5D25BC651A5B862B00F324AD /* DeviceSettingsViewController.m */,
 				306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */,
@@ -1182,6 +1187,7 @@
 				10871B711B8BA7F700B1D017 /* SavePresetViewController.m in Sources */,
 				10F9DE2F1BEBC0C20059A727 /* ELCAlbumPickerController.m in Sources */,
 				5D25BC661A5B862B00F324AD /* DeviceSettingsViewController.m in Sources */,
+				3035829A1D25982300C4FCC4 /* JSMotorRampingTableViewCell.m in Sources */,
 				10871B5F1B8B94B900B1D017 /* PresetViewController.m in Sources */,
 				23A14CEC19E46CC500295312 /* SetupViewController.m in Sources */,
 				2389AC4119DD949400FB2679 /* JoystickViewController.m in Sources */,
