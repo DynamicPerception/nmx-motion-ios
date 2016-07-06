@@ -422,7 +422,6 @@ NSArray static	*frameCountStrings = nil;
 	
     if (appExecutive.is3P == NO)
     {
-        
         for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
         {
             for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
@@ -1452,26 +1451,50 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) updateIncreaseStartSliders: (UISlider *) slider
 {
-    //mm TO DO sliders are locked - update all others to match
-    // see updateTiltDecreaseStart for example
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+    {
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell updateIncreaseStart:slider];
+        }
+    }
 }
 
 - (void) updateIncreaseFinalSliders: (UISlider *) slider
 {
-    //mm TO DO sliders are locked - update all others to match
-    // see updateTiltDecreaseStart for example
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+    {
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell updateIncreaseFinal:slider];
+        }
+    }
 }
 
 - (void) updateDecreaseStartSliders: (UISlider *) slider
 {
-    //mm TO DO sliders are locked - update all others to match
-    // see updateTiltDecreaseStart for example
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+    {
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell updateDecreaseStart:slider];
+        }
+    }
 }
 
 - (void) updateDecreaseFinalSliders: (UISlider *) slider
 {
-    //mm TO DO sliders are locked - update all others to match
-    // see updateTiltDecreaseStart for example
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+    {
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell updateDecreaseFinal:slider];
+        }
+    }
 }
 
 //------------------------------------------------------------------------------

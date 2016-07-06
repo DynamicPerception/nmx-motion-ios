@@ -454,6 +454,9 @@
 
 - (void) updateIncreaseStart: (UISlider *) slider
 {
+    // This method is used to sync slider with other increaseStart sliders, no need to sync with itself so bail early if that's the case
+    if (slider == self.increaseStart) return;
+    
     if (slider.value > self.increaseFinal.value)
         self.increaseFinal.value = slider.value;
     
@@ -474,13 +477,22 @@
 
 - (void) updateIncreaseFinal: (UISlider *) slider
 {
+    // This method is used to sync slider with other increaseFinal sliders, no need to sync with itself so bail early if that's the case
+    if (slider == self.increaseFinal) return;
+
     if (slider.value < self.increaseStart.value)
         self.increaseStart.value = slider.value;
+
+    self.increaseFinal.value = slider.value;
     
     self.slideView.increaseStart = [self locationOfThumb: self.increaseStart];
     self.slideView.increaseFinal = [self locationOfThumb: self.increaseFinal];
     
     [self.slideView setNeedsDisplay];
+    
+    self.lbl2.frame = CGRectMake([self xPositionFromSliderValue:slider], self.lbl2.frame.origin.y, self.lbl2.frame.size.width, self.lbl2.frame.size.height);
+    self.lbl2.text = [NSString stringWithFormat:@"%i",(int)self.mrvc.currentSelectedFrameValue];
+    
     [self saveSlideIncreaseValues];
     
     [self updateSlideIncreaseFinalLabel];
@@ -488,13 +500,22 @@
 
 - (void) updateDecreaseStart: (UISlider *) slider
 {
+    // This method is used to sync slider with other decreaseStart sliders, no need to sync with itself so bail early if that's the case
+    if (slider == self.decreaseStart) return;
+
     if (slider.value > self.decreaseFinal.value)
         self.decreaseFinal.value = slider.value;
+
+    self.decreaseStart.value = slider.value;
     
     self.slideView.decreaseStart = [self locationOfThumb: self.decreaseStart];
     self.slideView.decreaseFinal = [self locationOfThumb: self.decreaseFinal];
     
     [self.slideView setNeedsDisplay];
+    
+    self.lbl3.frame = CGRectMake([self xPositionFromSliderValue:slider], self.lbl3.frame.origin.y, self.lbl3.frame.size.width, self.lbl3.frame.size.height);
+    self.lbl3.text = [NSString stringWithFormat:@"%i",(int)self.mrvc.currentSelectedFrameValue];
+    
     [self saveSlideDecreaseValues];
     
     [self updateSlideDecreaseStartLabel];
@@ -503,13 +524,22 @@
 
 - (void) updateDecreaseFinal: (UISlider *) slider
 {
+    // This method is used to sync slider with other decreaseFinal sliders, no need to sync with itself so bail early if that's the case
+    if (slider == self.decreaseFinal) return;
+
     if (slider.value < self.decreaseStart.value)
         self.decreaseStart.value = slider.value;
+    
+    self.decreaseFinal.value = slider.value;
     
     self.slideView.decreaseStart = [self locationOfThumb: self.decreaseStart];
     self.slideView.decreaseFinal = [self locationOfThumb: self.decreaseFinal];
     
     [self.slideView setNeedsDisplay];
+    
+    self.lbl4.frame = CGRectMake([self xPositionFromSliderValue:slider], self.lbl4.frame.origin.y, self.lbl4.frame.size.width, self.lbl4.frame.size.height);
+    self.lbl4.text = [NSString stringWithFormat:@"%i",(int)self.mrvc.currentSelectedFrameValue];
+    
     [self saveSlideDecreaseValues];
     
     [self updateSlideDecreaseFinalLabel];
