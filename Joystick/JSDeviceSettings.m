@@ -9,6 +9,15 @@
 #import "JSDeviceSettings.h"
 #import "AppExecutive.h"
 
+NSString		static *kDefaultsPanIncreaseValues		= @"kDefaultsPanIncreaseValues";
+NSString		static *kDefaultsPanDecreaseValues		= @"kDefaultsPanDecreaseValues";
+NSString		static *kDefaultsTiltIncreaseValues		= @"kDefaultsTiltIncreaseValues";
+NSString		static *kDefaultsTiltDecreaseValues		= @"kDefaultsTiltDecreaseValues";
+NSString		static *kDefaultsSlideIncreaseValues	= @"kDefaultsSlideIncreaseValues";
+NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues";
+
+
+
 @interface JSDeviceSettings()
 
 @property NSMutableDictionary *settings;
@@ -18,6 +27,10 @@
 
 
 @implementation JSDeviceSettings
+
+CGFloat			static defaultRampingStart	= 0.25;
+CGFloat			static defaultRampingFinal	= 0.75;
+
 
 - (JSDeviceSettings *)initWithDevice:(NSString *)device
 {
@@ -49,6 +62,9 @@
     }
     return 0;
 }
+
+
+
 
 - (float) floatForKey:(NSString *)key
 {
@@ -128,6 +144,21 @@
     [userDefaults setObject:_settings forKey: devName];
     [userDefaults synchronize];
 }
+
+- (void) restoreDefaults {
+
+    //ramping values
+    [self setObject: defaultRampingValues() forKey: kDefaultsPanIncreaseValues];
+    [self setObject: defaultRampingValues() forKey: kDefaultsPanDecreaseValues];
+    [self setObject: defaultRampingValues() forKey: kDefaultsTiltIncreaseValues];
+    [self setObject: defaultRampingValues() forKey: kDefaultsTiltDecreaseValues];
+    [self setObject: defaultRampingValues() forKey: kDefaultsSlideIncreaseValues];
+    [self setObject: defaultRampingValues() forKey: kDefaultsSlideDecreaseValues];
+
+}
+
+
+#pragma mark individual settings
 
 - (BOOL) useJoystick
 {
@@ -717,6 +748,87 @@
     
     return num;
 
+}
+
+NSArray *defaultRampingValues() {
+    
+    NSNumber *startValue	= [NSNumber numberWithFloat: defaultRampingStart];
+    NSNumber *finalValue	= [NSNumber numberWithFloat: defaultRampingFinal];
+    NSArray  *values		= [NSArray arrayWithObjects: startValue, finalValue, nil];
+    
+    return values;
+}
+
+
+- (NSArray *) rampingArrayForKey:(NSString *)key
+{
+    NSArray *values = [self arrayForKey: key];
+    
+    if (values == nil)
+    {
+        values = defaultRampingValues();
+        [self setObject: values forKey: key];
+    }
+    
+    return values;
+
+}
+
+- (NSArray *) panIncreaseValues
+{
+    return [self rampingArrayForKey:kDefaultsPanIncreaseValues];
+}
+
+- (void) setPanIncreaseValues: (NSArray *) array
+{
+    [self setObject: array forKey: kDefaultsPanIncreaseValues];
+}
+
+- (NSArray *) panDecreaseValues
+{
+    return [self rampingArrayForKey:kDefaultsPanDecreaseValues];
+}
+
+- (void) setPanDecreaseValues: (NSArray *) array
+{
+    [self setObject:array forKey: kDefaultsPanDecreaseValues];
+}
+
+- (NSArray *) tiltIncreaseValues
+{
+    return [self rampingArrayForKey:kDefaultsTiltIncreaseValues];
+}
+
+- (void) setTiltIncreaseValues: (NSArray *) array
+{
+    [self setObject: array forKey: kDefaultsTiltIncreaseValues];
+}
+
+- (NSArray *) tiltDecreaseValues {
+    return [self rampingArrayForKey:kDefaultsTiltDecreaseValues];
+}
+
+- (void) setTiltDecreaseValues: (NSArray *) array
+{
+    [self setObject: array forKey: kDefaultsTiltDecreaseValues];
+}
+
+- (NSArray *) slideIncreaseValues {
+    return [self rampingArrayForKey:kDefaultsSlideIncreaseValues];
+}
+
+- (void) setSlideIncreaseValues: (NSArray *) array {
+    
+    [self setObject: array forKey: kDefaultsSlideIncreaseValues];
+}
+
+- (NSArray *) slideDecreaseValues {
+    return [self rampingArrayForKey:kDefaultsSlideDecreaseValues];
+}
+
+- (void) setSlideDecreaseValues: (NSArray *) array {
+    
+    [self setObject: array forKey: kDefaultsSlideDecreaseValues];
 }
 
 

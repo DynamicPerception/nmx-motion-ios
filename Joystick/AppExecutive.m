@@ -76,9 +76,6 @@ NSInteger		static	defaultFrameRate	= 24;				// frames per second
 BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
 CGFloat			static defaultSensitivity	= 100.0;	// 100% joystick sensitivity
 
-CGFloat			static defaultRampingStart	= 0.25;
-CGFloat			static defaultRampingFinal	= 0.75;
-
 NSString		static 	*kDefaultsExposure		= @"kDefaultsExposure";
 NSString		static 	*kDefaultsBuffer		= @"kDefaultsBuffer";
 NSString		static 	*kDefaultsShotDuration	= @"kDefaultsShotDuration";
@@ -96,13 +93,6 @@ NSString		static 	*kDefaultsDeviceHandles	= @"kDefaultsDeviceHandles";
 
 NSString		static 	*kDefaultsLockAxisState	= @"kDefaultsLockAxisState";
 NSString		static 	*kDefaultsSensitivity	= @"kDefaultsSensitivity";
-
-NSString		static *kDefaultsPanIncreaseValues		= @"kDefaultsPanIncreaseValues";
-NSString		static *kDefaultsPanDecreaseValues		= @"kDefaultsPanDecreaseValues";
-NSString		static *kDefaultsTiltIncreaseValues		= @"kDefaultsTiltIncreaseValues";
-NSString		static *kDefaultsTiltDecreaseValues		= @"kDefaultsTiltDecreaseValues";
-NSString		static *kDefaultsSlideIncreaseValues	= @"kDefaultsSlideIncreaseValues";
-NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues";
 
 NSString        static *kDefaultsProgramDelayTime         = @"programDelayTimer";
 NSString        static *kDefaultsProgramDelayTimeSetAt    = @"programDelayTimerSetAtTime";
@@ -132,16 +122,6 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 
 @synthesize lockAxisNumber;
 @synthesize sensitivityNumber;
-
-
-// Ramping Settings
-
-@synthesize panIncreaseValues;
-@synthesize panDecreaseValues;
-@synthesize tiltIncreaseValues;
-@synthesize tiltDecreaseValues;
-@synthesize slideIncreaseValues;
-@synthesize slideDecreaseValues;
 
 #pragma mark Private Property Synthesis
 
@@ -510,146 +490,6 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 }
 
 
-NSArray *defaultRampingValues() {
-    
-    NSNumber *startValue	= [NSNumber numberWithFloat: defaultRampingStart];
-    NSNumber *finalValue	= [NSNumber numberWithFloat: defaultRampingFinal];
-    NSArray  *values		= [NSArray arrayWithObjects: startValue, finalValue, nil];
-    
-    return values;
-}
-
-- (NSArray *) panIncreaseValues {
-    
-    if (panIncreaseValues == nil)
-    {
-        panIncreaseValues = [self.userDefaults arrayForKey: kDefaultsPanIncreaseValues];
-        
-        if (panIncreaseValues == nil)
-        {
-            panIncreaseValues = defaultRampingValues();
-            [self.userDefaults setObject: panIncreaseValues forKey: kDefaultsPanIncreaseValues];
-        }
-    }
-    
-    return panIncreaseValues;
-}
-
-- (void) setPanIncreaseValues: (NSArray *) array {
-    
-    panIncreaseValues = array;
-    [self saveValue: panIncreaseValues forKey: kDefaultsPanIncreaseValues];
-}
-
-- (NSArray *) panDecreaseValues {
-    
-    if (panDecreaseValues == nil)
-    {
-        panDecreaseValues = [self.userDefaults arrayForKey: kDefaultsPanDecreaseValues];
-        
-        if (panDecreaseValues == nil)
-        {
-            panDecreaseValues = defaultRampingValues();
-            [self.userDefaults setObject: panDecreaseValues forKey: kDefaultsPanDecreaseValues];
-        }
-    }
-    
-    return panDecreaseValues;
-}
-
-- (void) setPanDecreaseValues: (NSArray *) array {
-    
-    panDecreaseValues = array;
-    [self saveValue: panDecreaseValues forKey: kDefaultsPanDecreaseValues];
-}
-
-- (NSArray *) tiltIncreaseValues {
-    
-    if (tiltIncreaseValues == nil)
-    {
-        tiltIncreaseValues = [self.userDefaults arrayForKey: kDefaultsTiltIncreaseValues];
-        
-        if (tiltIncreaseValues == nil)
-        {
-            tiltIncreaseValues = defaultRampingValues();
-            [self.userDefaults setObject: tiltIncreaseValues forKey: kDefaultsTiltIncreaseValues];
-        }
-    }
-    
-    return tiltIncreaseValues;
-}
-
-- (void) setTiltIncreaseValues: (NSArray *) array {
-    
-    tiltIncreaseValues = array;
-    [self saveValue: tiltIncreaseValues forKey: kDefaultsTiltIncreaseValues];
-}
-
-- (NSArray *) tiltDecreaseValues {
-    
-    if (tiltDecreaseValues == nil)
-    {
-        tiltDecreaseValues = [self.userDefaults arrayForKey: kDefaultsTiltDecreaseValues];
-        
-        if (tiltDecreaseValues == nil)
-        {
-            tiltDecreaseValues = defaultRampingValues();
-            [self.userDefaults setObject: tiltDecreaseValues forKey: kDefaultsTiltDecreaseValues];
-        }
-    }
-    
-    return tiltDecreaseValues;
-}
-
-- (void) setTiltDecreaseValues: (NSArray *) array {
-    
-    tiltDecreaseValues = array;
-    [self saveValue: tiltDecreaseValues forKey: kDefaultsTiltDecreaseValues];
-}
-
-- (NSArray *) slideIncreaseValues {
-    
-    if (slideIncreaseValues == nil)
-    {
-        slideIncreaseValues = [self.userDefaults arrayForKey: kDefaultsSlideIncreaseValues];
-        
-        if (slideIncreaseValues == nil)
-        {
-            slideIncreaseValues = defaultRampingValues();
-            [self.userDefaults setObject: slideIncreaseValues forKey: kDefaultsSlideIncreaseValues];
-        }
-    }
-    
-    return slideIncreaseValues;
-}
-
-- (void) setSlideIncreaseValues: (NSArray *) array {
-    
-    slideIncreaseValues = array;
-    [self saveValue: slideIncreaseValues forKey: kDefaultsSlideIncreaseValues];
-}
-
-- (NSArray *) slideDecreaseValues {
-    
-    if (slideDecreaseValues == nil)
-    {
-        slideDecreaseValues = [self.userDefaults arrayForKey: kDefaultsSlideDecreaseValues];
-        
-        if (slideDecreaseValues == nil)
-        {
-            slideDecreaseValues = defaultRampingValues();
-            [self.userDefaults setObject: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
-        }
-    }
-    
-    return slideDecreaseValues;
-}
-
-- (void) setSlideDecreaseValues: (NSArray *) array {
-    
-    slideDecreaseValues = array;
-    [self saveValue: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
-}
 
 //------------------------------------------------------------------------------
 
@@ -1097,25 +937,10 @@ NSArray *defaultRampingValues() {
     sensitivityNumber = [NSNumber numberWithFloat: defaultSensitivity];
     [self.defaults setObject: sensitivityNumber forKey: kDefaultsSensitivity];
     
-    //ramping values
-    
-    panIncreaseValues = defaultRampingValues();
-    [self.userDefaults setObject: panIncreaseValues forKey: kDefaultsPanIncreaseValues];
-    
-    panDecreaseValues = defaultRampingValues();
-    [self.userDefaults setObject: panDecreaseValues forKey: kDefaultsPanDecreaseValues];
-    
-    tiltIncreaseValues = defaultRampingValues();
-    [self.userDefaults setObject: tiltIncreaseValues forKey: kDefaultsTiltIncreaseValues];
-    
-    tiltDecreaseValues = defaultRampingValues();
-    [self.userDefaults setObject: tiltDecreaseValues forKey: kDefaultsTiltDecreaseValues];
-    
-    slideIncreaseValues = defaultRampingValues();
-    [self.userDefaults setObject: slideIncreaseValues forKey: kDefaultsSlideIncreaseValues];
-    
-    slideDecreaseValues = defaultRampingValues();
-    [self.userDefaults setObject: slideDecreaseValues forKey: kDefaultsSlideDecreaseValues];
+    for (NMXDevice *device in self.deviceList)
+    {
+        [device.settings restoreDefaults];
+    }
     
     [self.defaults synchronize];
     [self.userDefaults synchronize];

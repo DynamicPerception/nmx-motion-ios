@@ -1042,6 +1042,9 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) handleNotificationSavePreset:(NSNotification *)pNotification {
     
+    //mm
+    /*  Implment this based on new motor ramping
+     
     NSLog(@"handleNotificationSavePreset");
     
     NSString *slideIncreaseString = [appExecutive.slideIncreaseValues componentsJoinedByString:@","];
@@ -1093,6 +1096,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
                                 cancelButtonTitle:@"OK"
                                 otherButtonTitles:nil];
     [insertAlert show];
+*/     
 }
 
 - (void) viewWillDisappear:(BOOL)animated {

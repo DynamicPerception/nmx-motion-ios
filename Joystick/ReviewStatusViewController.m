@@ -2367,6 +2367,9 @@ typedef enum{
 
 - (void) setupGraphViews {
     
+    //mm TODO -- Implement this based on new motor ramping
+/*
+    
     masterFrameCount = [self.appExecutive.frameCountNumber floatValue];
     
     NSArray *slideIncrease = [self.appExecutive slideIncreaseValues];
@@ -2498,6 +2501,7 @@ typedef enum{
     //NSLog(@"graphWidth: %f", graphWidth);
     
     screenRatio = (screenWidth - 32)/graphWidth;
+*/ 
 }
 
 #pragma mark - Share

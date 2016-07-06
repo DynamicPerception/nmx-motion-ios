@@ -35,6 +35,8 @@ typedef enum
 - (void) setBool: (BOOL)value forKey: (NSString *)key;
 - (void) synchronize;
 
+- (void) restoreDefaults;
+
 @property float voltageLow;
 @property float voltageHigh;
 @property float voltage;
@@ -114,6 +116,15 @@ typedef enum
 @property NSNumber *slideDirectionMode;   // CW/CCW, In/Out, etc.
 @property NSNumber *panDirectionMode;     // CW/CCW, In/Out, etc.
 @property NSNumber *tiltDirectionMode;    // CW/CCW, In/Out, etc.
+
+// Ramping Settings
+
+@property (nonatomic, strong)		NSArray *			panIncreaseValues;
+@property (nonatomic, strong)		NSArray *			panDecreaseValues;
+@property (nonatomic, strong)		NSArray *			tiltIncreaseValues;
+@property (nonatomic, strong)		NSArray *			tiltDecreaseValues;
+@property (nonatomic, strong)		NSArray *			slideIncreaseValues;
+@property (nonatomic, strong)		NSArray *			slideDecreaseValues;
 
 @end
 

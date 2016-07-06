@@ -41,15 +41,6 @@
 @property (nonatomic, strong)		NSNumber *			sensitivityNumber;
 
 
-// Ramping Settings
-
-@property (nonatomic, strong)		NSArray *			panIncreaseValues;
-@property (nonatomic, strong)		NSArray *			panDecreaseValues;
-@property (nonatomic, strong)		NSArray *			tiltIncreaseValues;
-@property (nonatomic, strong)		NSArray *			tiltDecreaseValues;
-@property (nonatomic, strong)		NSArray *			slideIncreaseValues;
-@property (nonatomic, strong)		NSArray *			slideDecreaseValues;
-
 // device
 
 @property (strong, atomic)          NMXDevice *           device;

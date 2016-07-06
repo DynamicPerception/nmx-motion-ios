@@ -8,40 +8,46 @@
 
 #import <UIKit/UIKit.h>
 
+@class MotorRampingViewController;
+@class MotorRampingView;
+@class NMXDevice;
+
+typedef enum
+{
+    kSlideChannel = 0,
+    kPanChannel = 1,
+    kTiltChannel = 2
+} JSChannelIdx;
+
 @interface JSMotorRampingTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UILabel *frameCount1;
-@property (weak, nonatomic) IBOutlet UILabel *frameCount2;
-@property (weak, nonatomic) IBOutlet UILabel *frameCount3;
+@property NMXDevice *device;
+@property MotorRampingViewController *mrvc;
 
-@property (nonatomic, strong)	IBOutlet	UISlider *	slideIncreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	slideIncreaseFinal;
-@property (nonatomic, strong)	IBOutlet	UISlider *	slideDecreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	slideDecreaseFinal;
+@property (strong, nonatomic) IBOutlet MotorRampingView *slideView;
+@property (weak, nonatomic) IBOutlet UILabel *frameCount;
+@property (strong, nonatomic) IBOutlet UILabel *channelLabel;
 
-@property (nonatomic, strong)	IBOutlet	UISlider *	panIncreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	panIncreaseFinal;
-@property (nonatomic, strong)	IBOutlet	UISlider *	panDecreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	panDecreaseFinal;
+@property (nonatomic, strong)	IBOutlet	UISlider *	increaseStart;
+@property (nonatomic, strong)	IBOutlet	UISlider *	increaseFinal;
+@property (nonatomic, strong)	IBOutlet	UISlider *	decreaseStart;
+@property (nonatomic, strong)	IBOutlet	UISlider *	decreaseFinal;
 
-@property (nonatomic, strong)	IBOutlet	UISlider *	tiltIncreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	tiltIncreaseFinal;
-@property (nonatomic, strong)	IBOutlet	UISlider *	tiltDecreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	tiltDecreaseFinal;
+@property (weak, nonatomic) IBOutlet UILabel *lbl1;
+@property (weak, nonatomic) IBOutlet UILabel *lbl2;
+@property (weak, nonatomic) IBOutlet UILabel *lbl3;
+@property (weak, nonatomic) IBOutlet UILabel *lbl4;
 
-@property (weak, nonatomic) IBOutlet UILabel *slideLbl1;
-@property (weak, nonatomic) IBOutlet UILabel *slideLbl2;
-@property (weak, nonatomic) IBOutlet UILabel *slideLbl3;
-@property (weak, nonatomic) IBOutlet UILabel *slideLbl4;
+@property JSChannelIdx channel;
 
-@property (weak, nonatomic) IBOutlet UILabel *panLbl1;
-@property (weak, nonatomic) IBOutlet UILabel *panLbl2;
-@property (weak, nonatomic) IBOutlet UILabel *panLbl3;
-@property (weak, nonatomic) IBOutlet UILabel *panLbl4;
+- (void) setThumbImage: (UIImage *)image;
 
-@property (weak, nonatomic) IBOutlet UILabel *tiltLbl1;
-@property (weak, nonatomic) IBOutlet UILabel *tiltLbl2;
-@property (weak, nonatomic) IBOutlet UILabel *tiltLbl3;
-@property (weak, nonatomic) IBOutlet UILabel *tiltLbl4;
+- (void) updateIncreaseStart: (UISlider *) slider;
+- (void) updateIncreaseFinal: (UISlider *) slider;
+- (void) updateDecreaseStart: (UISlider *) slider;
+- (void) updateDecreaseFinal: (UISlider *) slider;
+
+- (void) configure;
+- (void) setupDisplays;
 
 @end
