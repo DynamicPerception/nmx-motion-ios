@@ -411,7 +411,7 @@ NSArray static	*frameCountStrings = nil;
     [self.view layoutIfNeeded];
     
     setup = FALSE;
-    [self setupSliders];
+    //mm    [self setupSliders];
     
     [settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
     
@@ -1513,12 +1513,12 @@ NSArray static	*frameCountStrings = nil;
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
     
-    return 1;
+    //mm    return 1;
+    return self.appExecutive.deviceList.count;
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    
-    //mm FIXME
+    //mm    return 3 * self.appExecutive.deviceList.count;
     return 3;
 }
 
@@ -1530,15 +1530,23 @@ NSArray static	*frameCountStrings = nil;
     cell.mrvc = self;
     
     cell.device = self.appExecutive.device;
+    //mm    int deviceIndex = (int)(indexPath.row / 3);
+    //mm int row = indexPath.row % 3;
+    int deviceIndex = indexPath.section;
+    int row = indexPath.row;
     
-    int row = indexPath.row % 3;
     cell.channel = row;
-    cell.device = self.appExecutive.device;   //mm FIXME - should be the device from the active device list corresponding with this cell
+    cell.device = self.appExecutive.deviceList[deviceIndex];
     
-    //    cell.textLabel.textColor = [UIColor whiteColor];
-    //    cell.textLabel.backgroundColor = [UIColor clearColor];
+    [cell configure];
     
     return cell;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSString *name = [self.appExecutive stringWithHandleForDeviceName: self.appExecutive.deviceList[section].name];
+    return name;
 }
 
 @end
