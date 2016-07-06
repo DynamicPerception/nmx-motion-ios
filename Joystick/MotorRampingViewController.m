@@ -681,19 +681,9 @@ NSArray static	*frameCountStrings = nil;
 
 - (NSString *)convertTime2 : (float)val {
     
-    //int sd = [self.appExecutive.videoLengthNumber intValue];
-    
     int sd = [self.appExecutive.frameCountNumber intValue];
     
-    //float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-    //float val1 = sd * per1;
-    
     float per1 = val/[self.appExecutive.frameCountNumber floatValue];
-    
-    //per1 = val * (selectedFrameCount/2);
-    
-    NSLog(@"%f per: %f",val,per1);
-    
     float val1 = sd * per1;
     
     NSString *a = [self stringForTimeDisplay: (int)val1];
@@ -703,14 +693,7 @@ NSArray static	*frameCountStrings = nil;
 
 - (NSString *)convertTime : (UISlider *)slider {
     
-    //int sd = [self.appExecutive.videoLengthNumber intValue];
-    
     int sd = [self.appExecutive.frameCountNumber intValue];
-    
-    NSLog(@"");
-    
-    //float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-    //float val1 = sd * per1;
     
     float per1;
     

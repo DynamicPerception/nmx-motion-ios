@@ -78,8 +78,6 @@
 
 - (void) configSliders {
     
-    //NSLog(@"randall configSliders");
-    
     UIColor *	blue	= [UIColor blueColor];
     UIColor *	white	= [UIColor whiteColor];
     
@@ -99,13 +97,6 @@
     self.lbl2.alpha = 0;
     self.lbl3.alpha = 0;
     self.lbl4.alpha = 0;
-
-    self.slideView.increaseStart = [self locationOfThumb: self.increaseStart];
-    self.slideView.increaseFinal = [self locationOfThumb: self.increaseFinal];
-    self.slideView.decreaseStart = [self locationOfThumb: self.decreaseStart];
-    self.slideView.decreaseFinal = [self locationOfThumb: self.decreaseFinal];
-    
-    [self.slideView setNeedsDisplay];
     
     [self.increaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
     [self.decreaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
@@ -120,7 +111,6 @@
     UIImage *i = [self.mrvc imageWithImage:[UIImage imageNamed:@"thumb3.png"] scaledToSize:CGSizeMake(30.0, 30.0)];
     UIImage *b = [self.mrvc imageWithImage:[UIImage imageNamed:@"thumbBlue.png"] scaledToSize:CGSizeMake(30.0, 30.0)];
     //mm can I use the selected state to automatically set the blue thumb????
-    
     [self.increaseStart setThumbImage:i forState:UIControlStateNormal];
     [self.increaseStart setThumbImage:i forState:UIControlStateHighlighted];
     [self.increaseStart setThumbImage:i forState:UIControlStateSelected];
@@ -133,7 +123,7 @@
     [self.decreaseFinal setThumbImage:i forState:UIControlStateNormal];
     [self.decreaseFinal setThumbImage:i forState:UIControlStateHighlighted];
     [self.decreaseFinal setThumbImage:i forState:UIControlStateSelected];
-    
+
     self.increaseStart.restorationIdentifier = @"increaseStart";
     self.increaseFinal.restorationIdentifier = @"increaseFinal";
     self.decreaseStart.restorationIdentifier = @"decreaseStart";
@@ -165,6 +155,13 @@
     self.lbl4.frame = CGRectMake([self xPositionFromSliderValue:self.decreaseFinal], self.lbl4.frame.origin.y, self.lbl4.frame.size.width, self.lbl4.frame.size.height);
     [self.lbl4 setNeedsDisplay];
     
+    self.slideView.increaseStart = [self locationOfThumb: self.increaseStart];
+    self.slideView.increaseFinal = [self locationOfThumb: self.increaseFinal];
+    self.slideView.decreaseStart = [self locationOfThumb: self.decreaseStart];
+    self.slideView.decreaseFinal = [self locationOfThumb: self.decreaseFinal];
+    
+    [self.slideView setNeedsDisplay];
+
     [UIView animateWithDuration:.4 animations:^{
         
         self.lbl1.alpha = 1;
@@ -280,8 +277,6 @@
     self.slideView.increaseStart = [self locationOfThumb: sender];
     self.slideView.increaseFinal = [self locationOfThumb: self.increaseFinal];
     
-    //NSLog(@"start %@",self.slideView.increaseStart);
-    
     [self.slideView setNeedsDisplay];
     
     [self updateSlideIncreaseStartLabel];
@@ -326,8 +321,6 @@
     NSNumber *	finalValue	= [NSNumber numberWithFloat: self.increaseFinal.value];
     NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
     
-    //NSLog(@"rampValues: %@",rampValues);
-    
     if (self.channel == kSlideChannel)
     {
         self.device.settings.slideIncreaseValues = rampValues;
@@ -352,9 +345,6 @@
         
         [self updateSlideDecreaseFinalLabel];
     }
-    
-    NSLog(@"currentSelectedFrameValue: %f",self.mrvc.currentSelectedFrameValue);
-    //NSLog(@"sender.value: %f",sender.value);
     
     self.slideView.decreaseStart = [self locationOfThumb: sender];
     self.slideView.decreaseFinal = [self locationOfThumb: self.decreaseFinal];
@@ -423,7 +413,7 @@
 {
     [self.increaseStart setThumbImage:image forState:UIControlStateNormal];
     [self.increaseFinal setThumbImage:image forState:UIControlStateNormal];
-    [self.decreaseFinal setThumbImage:image forState:UIControlStateNormal];
+    [self.decreaseStart setThumbImage:image forState:UIControlStateNormal];
     [self.decreaseFinal setThumbImage:image forState:UIControlStateNormal];
 }
 
