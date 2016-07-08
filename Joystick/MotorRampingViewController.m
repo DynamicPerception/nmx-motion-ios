@@ -23,7 +23,6 @@
 
 @interface MotorRampingViewController () {
     
-    BOOL setup;
     float sliderValue;
     
     CGFloat minX;
@@ -410,115 +409,9 @@ NSArray static	*frameCountStrings = nil;
     [self.view setNeedsLayout];
     [self.view layoutIfNeeded];
     
-    setup = FALSE;
-    //mm    [self setupSliders];
-    
     [settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
-    
-    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName5) userInfo:nil repeats:NO];
 }
 
-- (void) timerName5 {
-	
-    if (appExecutive.is3P == NO)
-    {
-        for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
-        {
-            for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
-            {
-                JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
-                [cell setupDisplays];
-            }
-        }
-    }
-}
-
-//mm I put this in configSliders.  Do I really need this??? why?   -- Maybe to initialize the position of the frame labels. probably a better way
-/*
-- (void) setupDisplays {
-
-    slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseStart]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
-    
-    [slideLbl1 setNeedsDisplay];
-    
-    slideLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseFinal]-6, self.slideLbl2.frame.origin.y, slideLbl2.frame.size.width, slideLbl2.frame.size.height);
-    
-    [slideLbl2 setNeedsDisplay];
-    
-    slideLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.slideDecreaseStart]-6, self.slideLbl3.frame.origin.y, slideLbl3.frame.size.width, slideLbl3.frame.size.height);
-    
-    [slideLbl3 setNeedsDisplay];
-    
-    slideLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.slideDecreaseFinal]-6, self.slideLbl4.frame.origin.y, slideLbl4.frame.size.width, slideLbl4.frame.size.height);
-    
-    [slideLbl4 setNeedsDisplay];
-    
-    //pan
-    
-    panLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.panIncreaseStart]-6, self.panLbl1.frame.origin.y, panLbl1.frame.size.width, panLbl1.frame.size.height);
-    
-    [panLbl1 setNeedsDisplay];
-    
-    panLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.panIncreaseFinal]-6, self.panLbl2.frame.origin.y, panLbl2.frame.size.width, panLbl2.frame.size.height);
-    
-    [panLbl2 setNeedsDisplay];
-    
-    panLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.panDecreaseStart]-6, self.panLbl3.frame.origin.y, panLbl3.frame.size.width, panLbl3.frame.size.height);
-    
-    [panLbl3 setNeedsDisplay];
-    
-    panLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.panDecreaseFinal]-6, self.panLbl4.frame.origin.y, panLbl4.frame.size.width, panLbl4.frame.size.height);
-    
-    [panLbl4 setNeedsDisplay];
-    
-    //tilt
-    
-    tiltLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.tiltIncreaseStart]-6, self.tiltLbl1.frame.origin.y, tiltLbl1.frame.size.width, tiltLbl1.frame.size.height);
-    
-    [tiltLbl1 setNeedsDisplay];
-    
-    tiltLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.tiltIncreaseFinal]-6, self.tiltLbl2.frame.origin.y, tiltLbl2.frame.size.width, tiltLbl2.frame.size.height);
-    
-    [tiltLbl2 setNeedsDisplay];
-    
-    tiltLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.tiltDecreaseStart]-6, self.tiltLbl3.frame.origin.y, tiltLbl3.frame.size.width, tiltLbl3.frame.size.height);
-    
-    [tiltLbl3 setNeedsDisplay];
-    
-    tiltLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.tiltDecreaseFinal]-6, self.tiltLbl4.frame.origin.y, tiltLbl4.frame.size.width, tiltLbl4.frame.size.height);
-    
-    [tiltLbl4 setNeedsDisplay];
-    
-    [UIView animateWithDuration:.4 animations:^{
-        
-        slideLbl1.alpha = 1;
-        slideLbl2.alpha = 1;
-        slideLbl3.alpha = 1;
-        slideLbl4.alpha = 1;
-        
-        panLbl1.alpha = 1;
-        panLbl2.alpha = 1;
-        panLbl3.alpha = 1;
-        panLbl4.alpha = 1;
-        
-        tiltLbl1.alpha = 1;
-        tiltLbl2.alpha = 1;
-        tiltLbl3.alpha = 1;
-        tiltLbl4.alpha = 1;
-        
-        
-    } completion:^(BOOL finished) {
-        
-        [UIView animateWithDuration:.4 animations:^{
-            
-            
-        } completion:^(BOOL finished) {
-            
-        }];
-        
-    }];
-}
-*/
 
 - (float) xPositionFromSliderValue:(UISlider *)aSlider {   //mm delete?
     
@@ -636,46 +529,6 @@ NSArray static	*frameCountStrings = nil;
     slideFrame.origin = origin;
     slideFrame.size   = size;
     slider.frame      = slideFrame;
-}
-
-- (void) setupSliders {
-    
-    if (setup == FALSE)
-    {
-        //mm Delete?    we set the frames using Autolayout, do we really need this????  - try ipad
-/*
-        [self setFrameForIncreaseSlider: self.slideIncreaseStart];
-        [self setFrameForIncreaseSlider: self.slideIncreaseFinal];
-        [self setFrameForDecreaseSlider: self.slideDecreaseStart];
-        [self setFrameForDecreaseSlider: self.slideDecreaseFinal];
-        
-        [self setFrameForIncreaseSlider: self.panIncreaseStart];
-        [self setFrameForIncreaseSlider: self.panIncreaseFinal];
-        [self setFrameForDecreaseSlider: self.panDecreaseStart];
-        [self setFrameForDecreaseSlider: self.panDecreaseFinal];
-        
-        [self setFrameForIncreaseSlider: self.tiltIncreaseStart];
-        [self setFrameForIncreaseSlider: self.tiltIncreaseFinal];
-        [self setFrameForDecreaseSlider: self.tiltDecreaseStart];
-        [self setFrameForDecreaseSlider: self.tiltDecreaseFinal];
-*/
-
-        if (appExecutive.is3P == NO)
-        {
-            
-            for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
-            {
-                for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
-                {
-                    JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
-                    [cell configure];
-                }
-            }
-        }
-        
-        setup = TRUE;
-    }
-
 }
 
 - (NSString *)convertTime2 : (float)val {
@@ -1530,10 +1383,8 @@ NSArray static	*frameCountStrings = nil;
     cell.mrvc = self;
     
     cell.device = self.appExecutive.device;
-    //mm    int deviceIndex = (int)(indexPath.row / 3);
-    //mm int row = indexPath.row % 3;
-    int deviceIndex = indexPath.section;
-    int row = indexPath.row;
+    int deviceIndex = (int)indexPath.section;
+    int row = (int)indexPath.row;
     
     cell.channel = row;
     cell.device = self.appExecutive.deviceList[deviceIndex];

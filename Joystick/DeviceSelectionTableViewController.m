@@ -254,7 +254,10 @@
     }
     
     appExecutive.deviceList = [NSArray arrayWithArray:self.activeDevices];
-    appExecutive.device = self.activeDevices[0];
+    if (appExecutive.deviceList.count>0)
+    {
+        appExecutive.device = self.activeDevices[0];
+    }
     
 #endif
 

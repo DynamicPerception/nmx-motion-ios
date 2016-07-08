@@ -93,11 +93,6 @@
     self.decreaseFinal.minimumTrackTintColor = blue;
     self.decreaseFinal.maximumTrackTintColor = white;
     
-    self.lbl1.alpha = 0;
-    self.lbl2.alpha = 0;
-    self.lbl3.alpha = 0;
-    self.lbl4.alpha = 0;
-    
     [self.increaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
     [self.decreaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
     [self.increaseFinal addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
@@ -142,7 +137,33 @@
         self.lbl3.text = [self.mrvc convertTime2:[self.lbl3.text floatValue]];
         self.lbl4.text = [self.mrvc convertTime2:[self.lbl4.text floatValue]];
     }
+    
+    // hide this stuff until the view has been configured and can be drawn properly
+    self.lbl1.alpha = 0;
+    self.lbl2.alpha = 0;
+    self.lbl3.alpha = 0;
+    self.lbl4.alpha = 0;
+    self.slideView.increaseStart = CGPointMake(-10, -10);
+    self.slideView.increaseFinal = CGPointMake(-10, -10);
+    self.slideView.decreaseStart = CGPointMake(-10, -10);
+    self.slideView.decreaseFinal = CGPointMake(-10, -10);
+    [self.slideView setNeedsDisplay];
+
+    //[NSTimer scheduledTimerWithTimeInterval:0.15 target:self selector:@selector(setupDisplays) userInfo:nil repeats:NO];
+
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.15f target:self selector:@selector(setupDisplays) userInfo:nil repeats:NO];
+    [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+    
 }
+
+/*
+Theoretically this is what should trigger setupDisplays since subviews have been configured.  However, there is still some bounds that change
+related to our sliders so we calculate thumb positions incorrectly.  Our workaround is to call setupDisplay from a timer.
+- (void) layoutSubviews
+{
+    [self setupDisplays];
+}
+*/
 
 - (void) setupDisplays
 {
@@ -196,8 +217,6 @@
     CGFloat		thumbY		= thumbTrack.origin.y + thumbTrack.size.height / 2.0;
     CGPoint		thumbPoint	= CGPointMake(thumbX, thumbY);
     CGPoint		location	= [slider convertPoint: thumbPoint toView: slider.superview];
-    
-    //DDLogDebug(@"Thumb: (%g, %g)", location.x, location.y);
     
     return location;
 }
