@@ -16,7 +16,8 @@ typedef enum
 {
     kSlideChannel = 0,
     kPanChannel = 1,
-    kTiltChannel = 2
+    kTiltChannel = 2,
+    kNumChannels = 3
 } JSChannelIdx;
 
 @interface JSMotorRampingTableViewCell : UITableViewCell

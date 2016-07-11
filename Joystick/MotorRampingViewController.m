@@ -643,6 +643,12 @@ NSArray static	*frameCountStrings = nil;
 
 - (IBAction) handleEditProgramButton: (UIButton *) sender {
 
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
+        [settings synchronize];
+    }
+    
     return; // unwind
 }
 
@@ -652,44 +658,56 @@ NSArray static	*frameCountStrings = nil;
     //mm Test 3P mode works, I removed some code that was using the 2p sliders in 3p mode.  Not sure why that was there.
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    [settings synchronize];
+
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
+        [settings synchronize];
+    }
 
     NSString *unfeasibleDevice = nil;
 
     if (appExecutive.is3P == NO)
     {
-        
-        for (NSInteger j = 0; j < [self.tableView numberOfSections] && unfeasibleDevice == nil; ++j)
+        for (NMXDevice *device in self.appExecutive.deviceList)
         {
-            for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j] && unfeasibleDevice == nil; ++i)
+            for (int channel = 0; channel < kNumChannels; channel++)
             {
-                JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
-                NMXDevice *device = cell.device;
-                
+                NSArray *increaseValues, *decreaseValues;
                 unsigned char motor;
-                if (cell.channel == kSlideChannel)
+                if (channel == kSlideChannel)
                 {
                     motor = device.sledMotor;
+                    increaseValues = device.settings.slideIncreaseValues;
+                    decreaseValues = device.settings.slideDecreaseValues;
                 }
-                else if (cell.channel == kPanChannel)
+                else if (channel == kPanChannel)
                 {
                     motor = device.panMotor;
+                    increaseValues = device.settings.panIncreaseValues;
+                    decreaseValues = device.settings.panDecreaseValues;
                 }
                 else
                 {
                     motor = device.tiltMotor;
+                    increaseValues = device.settings.tiltIncreaseValues;
+                    decreaseValues = device.settings.tiltDecreaseValues;
                 }
                 
                 UInt32  durationInMS = [device motorQueryShotsTotalTravelTime: motor] +
-                [device motorQueryLeadInShotsOrTime: motor] +
-                [device motorQueryLeadOutShotsOrTime: motor];
+                                       [device motorQueryLeadInShotsOrTime: motor] +
+                                       [device motorQueryLeadOutShotsOrTime: motor];
                 UInt32  leadIn, leadOut, accelInMS, decelInMS;
-                leadIn = durationInMS * cell.increaseStart.value / 2;
-                accelInMS = durationInMS * (cell.increaseFinal.value - cell.increaseStart.value) / 2;
-                leadOut = durationInMS * (1 - cell.decreaseFinal.value) / 2;
-                decelInMS = durationInMS * (cell.decreaseFinal.value - cell.decreaseStart.value) / 2;
+                
+                float increaseStart = [[increaseValues firstObject] floatValue];
+                float increaseEnd = [[increaseValues lastObject] floatValue];
+                float decreaseStart = [[decreaseValues firstObject] floatValue];
+                float decreaseEnd = [[decreaseValues lastObject] floatValue];
+                
+                leadIn = durationInMS * increaseStart / 2;
+                accelInMS = durationInMS * (increaseEnd - increaseStart) / 2;
+                leadOut = durationInMS * (1 - decreaseEnd) / 2;
+                decelInMS = durationInMS * (decreaseEnd - decreaseStart) / 2;
                 
                 [device motorSet: motor SetLeadInShotsOrTime: leadIn];
                 [device motorSet: motor SetProgramAccel: accelInMS];
@@ -1185,31 +1203,21 @@ NSArray static	*frameCountStrings = nil;
 
     if (self.isLocked)
     {
-        for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+        if([self.currentFrameTarget isEqualToString:@"increaseStart"])
         {
-            for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
-            {
-                JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
-            
-                if([self.currentFrameTarget isEqualToString:@"increaseStart"])
-                {
-                    [cell updateIncreaseStart:self.selectedSlider];
-                }
-                else if([self.currentFrameTarget isEqualToString:@"increaseFinal"])
-                {
-                    [cell updateIncreaseFinal:self.selectedSlider];
-                }
-                else if([self.currentFrameTarget isEqualToString:@"decreaseStart"])
-                {
-                    [cell updateDecreaseStart:self.selectedSlider];
-                }
-                else if([self.currentFrameTarget isEqualToString:@"decreaseFinal"])
-                {
-                    [cell updateDecreaseFinal:self.selectedSlider];
-                }
-                
-            }
-
+            [self updateIncreaseStartSliders: self.selectedSlider];
+        }
+        else if([self.currentFrameTarget isEqualToString:@"increaseFinal"])
+        {
+            [self updateIncreaseFinalSliders: self.selectedSlider];
+        }
+        else if([self.currentFrameTarget isEqualToString:@"decreaseStart"])
+        {
+            [self updateDecreaseStartSliders: self.selectedSlider];
+        }
+        else if([self.currentFrameTarget isEqualToString:@"decreaseFinal"])
+        {
+            [self updateDecreaseFinalSliders: self.selectedSlider];
         }
     }
 }
@@ -1304,6 +1312,26 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) updateIncreaseStartSliders: (UISlider *) slider
 {
+    NSNumber *	startValue	= [NSNumber numberWithFloat: slider.value];
+
+    // update the device settings
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        NSNumber *final = [device.settings.slideIncreaseValues lastObject];
+        float finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *sliderampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        final = [device.settings.panIncreaseValues lastObject];
+        finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *panrampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        final = [device.settings.tiltIncreaseValues lastObject];
+        finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *tiltrampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        device.settings.slideIncreaseValues = sliderampValues;
+        device.settings.panIncreaseValues = panrampValues;
+        device.settings.tiltIncreaseValues = tiltrampValues;
+    }
+    
+    // update the visible sliders
     for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
     {
         for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
@@ -1316,6 +1344,26 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) updateIncreaseFinalSliders: (UISlider *) slider
 {
+    NSNumber *finalValue = [NSNumber numberWithFloat: slider.value];
+    
+    // update the device settings
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        NSNumber *start = [device.settings.slideIncreaseValues firstObject];
+        float startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *sliderampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        start = [device.settings.panIncreaseValues firstObject];
+        startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *panrampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        start = [device.settings.tiltIncreaseValues firstObject];
+        startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *tiltrampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        device.settings.slideIncreaseValues = sliderampValues;
+        device.settings.panIncreaseValues = panrampValues;
+        device.settings.tiltIncreaseValues = tiltrampValues;
+    }
+
+    // update the visible sliders
     for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
     {
         for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
@@ -1328,6 +1376,26 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) updateDecreaseStartSliders: (UISlider *) slider
 {
+    NSNumber *	startValue	= [NSNumber numberWithFloat: slider.value];
+    
+    // update the device settings
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        NSNumber *final = [device.settings.slideDecreaseValues lastObject];
+        float finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *sliderampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        final = [device.settings.panDecreaseValues lastObject];
+        finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *panrampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        final = [device.settings.tiltDecreaseValues lastObject];
+        finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *tiltrampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        device.settings.slideDecreaseValues = sliderampValues;
+        device.settings.panDecreaseValues = panrampValues;
+        device.settings.tiltDecreaseValues = tiltrampValues;
+    }
+    
+
     for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
     {
         for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
@@ -1340,6 +1408,25 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) updateDecreaseFinalSliders: (UISlider *) slider
 {
+    NSNumber *finalValue = [NSNumber numberWithFloat: slider.value];
+    
+    // update the device settings
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        NSNumber *start = [device.settings.slideDecreaseValues firstObject];
+        float startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *sliderampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        start = [device.settings.panDecreaseValues firstObject];
+        startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *panrampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        start = [device.settings.tiltDecreaseValues firstObject];
+        startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *tiltrampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        device.settings.slideDecreaseValues = sliderampValues;
+        device.settings.panDecreaseValues = panrampValues;
+        device.settings.tiltDecreaseValues = tiltrampValues;
+    }
+
     for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
     {
         for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
@@ -1365,13 +1452,10 @@ NSArray static	*frameCountStrings = nil;
 #pragma mark - Table View Delegate
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
-    
-    //mm    return 1;
     return self.appExecutive.deviceList.count;
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    //mm    return 3 * self.appExecutive.deviceList.count;
     return 3;
 }
 
