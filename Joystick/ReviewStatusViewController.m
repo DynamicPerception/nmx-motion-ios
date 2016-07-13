@@ -415,8 +415,10 @@ typedef enum{
     
     [self setControlVisibilityForDelayState:YES];
     
-    //mm Fix this for multi
-    [self.appExecutive.device setDelayProgramStartTimer:countdownTime];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device setDelayProgramStartTimer:countdownTime];
+    }
     
     [self manageCountdownTimer];
     
@@ -427,7 +429,6 @@ typedef enum{
 {
     timerContainer.hidden = NO;
     
-    //mm fix this for multi
     if (self.appExecutive.is3P == NO)
     {
         self.totalRunTime = [self.appExecutive.device mainQueryTotalRunTime];
@@ -599,7 +600,6 @@ typedef enum{
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
 
-        //mm
         for (NMXDevice *device in self.appExecutive.deviceList)
         {
             [device takeUpBacklashKeyFrameProgram];
@@ -625,7 +625,6 @@ typedef enum{
     }
     else
     {
-        //mm
         for (NMXDevice *device in self.appExecutive.deviceList)
         {
             [device mainStartPlannedMove];
@@ -679,7 +678,6 @@ typedef enum{
     }
     else
     {
-        //mm
         for (NMXDevice *device in self.appExecutive.deviceList)
         {
             [device mainStartPlannedMove];
@@ -1477,8 +1475,14 @@ typedef enum{
 
 - (IBAction) handleReconnect:(id)sender {
     
-    [AppExecutive sharedInstance].device.delegate = self;
-    [[AppExecutive sharedInstance].device connect];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        device.delegate = self;
+        if (device.disconnected)
+        {
+            [device connect];
+        }
+    }
     
     //mm this looks wrong!   should only do this on didConnect
     [self.disconnectedTimer invalidate];

@@ -1042,20 +1042,8 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) handleNotificationSavePreset:(NSNotification *)pNotification {
     
-    //mm
-    /*  Implment this based on new motor ramping
-     
     NSLog(@"handleNotificationSavePreset");
-    
-    NSString *slideIncreaseString = [appExecutive.slideIncreaseValues componentsJoinedByString:@","];
-    NSString *slideDecreaseString = [appExecutive.slideDecreaseValues componentsJoinedByString:@","];
-    
-    NSString *panIncreaseString = [appExecutive.panIncreaseValues componentsJoinedByString:@","];
-    NSString *panDecreaseString = [appExecutive.panDecreaseValues componentsJoinedByString:@","];
-    
-    NSString *tiltIncreaseString = [appExecutive.tiltIncreaseValues componentsJoinedByString:@","];
-    NSString *tiltDecreaseString = [appExecutive.tiltDecreaseValues componentsJoinedByString:@","];
-    
+
     entity = [NSEntityDescription entityForName:@"PresetOb" inManagedObjectContext:appDelegate.managedObjectContext];
     
     PresetOb *preset1 = [[PresetOb alloc] initWithEntity:entity insertIntoManagedObjectContext:appDelegate.managedObjectContext];
@@ -1073,12 +1061,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     preset1.delay = appExecutive.delayNumber;
     preset1.smscontinuous = [NSNumber numberWithInt:(int)recordModeControl.selectedSegmentIndex];
     preset1.timelapsevideo = [NSNumber numberWithInt:(int)timelapseModeControl.selectedSegmentIndex];
-    preset1.slideincrease = slideIncreaseString;
-    preset1.slidedecrease = slideDecreaseString;
-    preset1.panincrease = panIncreaseString;
-    preset1.pandecrease = panDecreaseString;
-    preset1.tiltincrease = tiltIncreaseString;
-    preset1.tiltdecrease = tiltDecreaseString;
     
     NSError *error = nil;
     
@@ -1096,7 +1078,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
                                 cancelButtonTitle:@"OK"
                                 otherButtonTitles:nil];
     [insertAlert show];
-*/     
+
 }
 
 - (void) viewWillDisappear:(BOOL)animated {

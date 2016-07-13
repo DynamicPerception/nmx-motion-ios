@@ -1605,7 +1605,7 @@
                                                 </constraints>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exposure" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Sn-CI-wE3" userLabel="Exposure Label">
-                                                <rect key="frame" x="8" y="48" width="181" height="17"/>
+                                                <rect key="frame" x="8" y="48" width="181.5" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -1651,8 +1651,8 @@
                                                     <constraint firstAttribute="height" constant="6" id="H81-lc-gnb"/>
                                                 </constraints>
                                             </view>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Buffer" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GN9-XX-Ofn" userLabel="Buffer Label">
-                                                <rect key="frame" x="197" y="48" width="182" height="17"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Buffer" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GN9-XX-Ofn" userLabel="Buffer Label">
+                                                <rect key="frame" x="197.5" y="48" width="181" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -1686,7 +1686,7 @@
                                                 </constraints>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="03L-Yk-jjc" userLabel="Interval Label">
-                                                <rect key="frame" x="395" y="48" width="181" height="17"/>
+                                                <rect key="frame" x="394" y="48" width="181.5" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -2505,27 +2505,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SB8-La-zmn" userLabel="Control Background">
-                                <rect key="frame" x="16" y="253" width="568" height="236"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SB8-La-zmn" userLabel="Control Background">
+                                <rect key="frame" x="20" y="226" width="560" height="290"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZCC-es-IIl" userLabel="Title">
-                                <rect key="frame" x="16" y="261" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZCC-es-IIl" userLabel="Title">
+                                <rect key="frame" x="20" y="234" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Set &lt;Variable&gt; Time is Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Me-fy-EAg" userLabel="Message">
-                                <rect key="frame" x="16" y="290" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set &lt;Variable&gt; Time is Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Me-fy-EAg" userLabel="Message">
+                                <rect key="frame" x="20" y="263" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9PV-vV-DYL">
-                                <rect key="frame" x="140" y="319" width="320" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9PV-vV-DYL">
+                                <rect key="frame" x="140" y="292" width="320" height="216"/>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Ed-h2-5RS" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Ed-h2-5RS" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="oQn-FK-9O1"/>
                                 </constraints>
@@ -2584,12 +2584,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g7n-1x-s2s" userLabel="Control Background">
-                                <rect key="frame" x="16" y="277" width="568" height="212"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g7n-1x-s2s" userLabel="Control Background">
+                                <rect key="frame" x="20" y="250" width="560" height="266"/>
                                 <color key="backgroundColor" red="0.1764705882352941" green="0.1764705882352941" blue="0.1764705882352941" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Set Backlash Typical Range 000-200" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="arG-gw-rr9">
-                                <rect key="frame" x="183" y="286" width="235" height="43"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Backlash Typical Range 000-200" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="arG-gw-rr9">
+                                <rect key="frame" x="183" y="259" width="235" height="43"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="235" id="UYc-XU-9g8"/>
                                 </constraints>
@@ -2597,15 +2597,15 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gaZ-Nq-0Bv">
-                                <rect key="frame" x="16" y="319" width="568" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gaZ-Nq-0Bv">
+                                <rect key="frame" x="20" y="292" width="560" height="216"/>
                                 <connections>
                                     <outlet property="dataSource" destination="Pjb-Ux-t6x" id="iHJ-Hy-ThN"/>
                                     <outlet property="delegate" destination="Pjb-Ux-t6x" id="lKb-bi-bO5"/>
                                 </connections>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s9A-V4-sJK" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s9A-V4-sJK" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="KFK-2I-HUU"/>
                                 </constraints>
@@ -4180,15 +4180,15 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mD3-tL-mwC" userLabel="Control Background">
-                                <rect key="frame" x="16" y="253" width="568" height="236"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mD3-tL-mwC" userLabel="Control Background">
+                                <rect key="frame" x="20" y="226" width="560" height="290"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aJA-If-Xoj">
-                                <rect key="frame" x="140" y="319" width="320" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aJA-If-Xoj">
+                                <rect key="frame" x="140" y="292" width="320" height="216"/>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3AE-h8-9Qb" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3AE-h8-9Qb" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="cVc-pd-uRJ"/>
                                 </constraints>
@@ -4201,14 +4201,14 @@ Ramping</string>
                                     <action selector="handleOkButton:" destination="g8C-ge-zKv" eventType="touchUpInside" id="ONv-z5-jjG"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9dD-6m-qYx">
-                                <rect key="frame" x="16" y="261" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9dD-6m-qYx">
+                                <rect key="frame" x="20" y="234" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Set Interval Time is Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUD-Jl-e2h">
-                                <rect key="frame" x="16" y="290" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Interval Time is Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUD-Jl-e2h">
+                                <rect key="frame" x="20" y="263" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -4257,27 +4257,27 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YXZ-9C-Psa" userLabel="Control Background">
-                                <rect key="frame" x="16" y="253" width="568" height="220"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YXZ-9C-Psa" userLabel="Control Background">
+                                <rect key="frame" x="20" y="226" width="560" height="274"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Frame Count" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K28-ne-04H">
-                                <rect key="frame" x="16" y="261" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Frame Count" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K28-ne-04H">
+                                <rect key="frame" x="20" y="234" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Set Total Number of Frames" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pJ9-w0-GCt">
-                                <rect key="frame" x="16" y="290" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Total Number of Frames" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pJ9-w0-GCt">
+                                <rect key="frame" x="20" y="263" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wl7-jY-e9p">
-                                <rect key="frame" x="140" y="319" width="320" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wl7-jY-e9p">
+                                <rect key="frame" x="140" y="292" width="320" height="216"/>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DGG-VD-V53" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DGG-VD-V53" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="6ag-78-IBh"/>
                                 </constraints>
@@ -4410,27 +4410,27 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sRC-NZ-Khs" userLabel="Control Background">
-                                <rect key="frame" x="16" y="253" width="568" height="236"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sRC-NZ-Khs" userLabel="Control Background">
+                                <rect key="frame" x="20" y="226" width="560" height="290"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Frame Rate" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RJ7-JH-mOR">
-                                <rect key="frame" x="16" y="261" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Frame Rate" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RJ7-JH-mOR">
+                                <rect key="frame" x="20" y="234" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Set Frames Per Second" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OB9-wU-VXC" userLabel="Message">
-                                <rect key="frame" x="16" y="290" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Frames Per Second" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OB9-wU-VXC" userLabel="Message">
+                                <rect key="frame" x="20" y="263" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Dy-Ya-io6">
-                                <rect key="frame" x="16" y="319" width="568" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Dy-Ya-io6">
+                                <rect key="frame" x="20" y="292" width="560" height="216"/>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1WE-iK-1VL" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1WE-iK-1VL" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="7eK-yX-xrw"/>
                                 </constraints>
@@ -4488,21 +4488,21 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Fr-sJ-daF" userLabel="Control Background">
-                                <rect key="frame" x="16" y="282" width="568" height="189"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Fr-sJ-daF" userLabel="Control Background">
+                                <rect key="frame" x="20" y="255" width="560" height="243"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Select Exposure Time in Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Hm-gR-CWB">
-                                <rect key="frame" x="16" y="290" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Exposure Time in Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Hm-gR-CWB">
+                                <rect key="frame" x="20" y="263" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5oc-Gp-Nw7">
-                                <rect key="frame" x="16" y="319" width="568" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5oc-Gp-Nw7">
+                                <rect key="frame" x="20" y="292" width="560" height="216"/>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yU5-sJ-RuL" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yU5-sJ-RuL" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="Muz-Hl-e4V"/>
                                 </constraints>
@@ -4584,11 +4584,11 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jhX-fC-lWw" userLabel="buttonView">
-                                <rect key="frame" x="16" y="168" width="568" height="30"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jhX-fC-lWw" userLabel="buttonView">
+                                <rect key="frame" x="20" y="168" width="560" height="30"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RGR-sK-eFa" customClass="JoyButton">
-                                        <rect key="frame" x="0.0" y="0.0" width="65" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RGR-sK-eFa" customClass="JoyButton">
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="30"/>
                                         <color key="backgroundColor" white="0.35444935579999998" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="A0q-QC-mvR"/>
@@ -4605,8 +4605,8 @@ Ramping</string>
                                             </mask>
                                         </variation>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QCH-6f-1nW" customClass="JoyButton">
-                                        <rect key="frame" x="356" y="0.0" width="65" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QCH-6f-1nW" customClass="JoyButton">
+                                        <rect key="frame" x="287" y="0.0" width="128" height="30"/>
                                         <color key="backgroundColor" white="0.35444935579999998" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="65" id="ptB-Dg-EWw"/>
@@ -4623,8 +4623,8 @@ Ramping</string>
                                             </mask>
                                         </variation>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R89-tJ-hS1" customClass="JoyButton">
-                                        <rect key="frame" x="503" y="0.0" width="65" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R89-tJ-hS1" customClass="JoyButton">
+                                        <rect key="frame" x="432" y="0.0" width="128" height="30"/>
                                         <color key="backgroundColor" white="0.35444935579999998" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="HbF-Go-vL1"/>
@@ -4641,8 +4641,8 @@ Ramping</string>
                                             </mask>
                                         </variation>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qdL-pW-04U" customClass="JoyButton">
-                                        <rect key="frame" x="147" y="0.0" width="65" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qdL-pW-04U" customClass="JoyButton">
+                                        <rect key="frame" x="145" y="0.0" width="128" height="30"/>
                                         <color key="backgroundColor" white="0.35444935579999998" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="iXy-YZ-SXa"/>
@@ -4730,17 +4730,17 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XkJ-uc-jaA">
-                                <rect key="frame" x="16" y="20" width="568" height="100"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XkJ-uc-jaA">
+                                <rect key="frame" x="20" y="20" width="560" height="100"/>
                                 <subviews>
-                                    <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="WkH-Yg-zIB">
-                                        <rect key="frame" x="-2" y="35" width="194" height="31"/>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="WkH-Yg-zIB">
+                                        <rect key="frame" x="-2" y="35" width="191.5" height="31"/>
                                     </slider>
-                                    <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="wfd-db-zje">
-                                        <rect key="frame" x="189" y="35" width="118" height="31"/>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="wfd-db-zje">
+                                        <rect key="frame" x="185.5" y="35" width="190.5" height="31"/>
                                     </slider>
-                                    <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="PZf-YM-6tj">
-                                        <rect key="frame" x="305" y="35" width="118" height="31"/>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="PZf-YM-6tj">
+                                        <rect key="frame" x="372" y="35" width="190.5" height="31"/>
                                     </slider>
                                 </subviews>
                                 <color key="backgroundColor" red="0.73725491759999995" green="0.89411771299999998" blue="0.61176472900000001" alpha="1" colorSpace="deviceRGB"/>
@@ -4782,29 +4782,29 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="I4N-TK-EBe" customClass="GraphView">
-                                <rect key="frame" x="16" y="40" width="568" height="100"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I4N-TK-EBe" customClass="GraphView">
+                                <rect key="frame" x="20" y="40" width="560" height="100"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="IqG-Ru-XNP"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UUz-zP-FB8" customClass="GraphView">
-                                <rect key="frame" x="16" y="148" width="568" height="100"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UUz-zP-FB8" customClass="GraphView">
+                                <rect key="frame" x="20" y="148" width="560" height="100"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="EON-gp-brH"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="efs-SF-olq" customClass="GraphView">
-                                <rect key="frame" x="16" y="256" width="568" height="100"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="efs-SF-olq" customClass="GraphView">
+                                <rect key="frame" x="20" y="256" width="560" height="100"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="bZP-2t-FrU"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="68n-5c-7Fg">
-                                <rect key="frame" x="11" y="40" width="5" height="316"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="68n-5c-7Fg">
+                                <rect key="frame" x="15" y="40" width="5" height="316"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="5" id="jtL-jt-ef5"/>
@@ -4812,7 +4812,7 @@ Ramping</string>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ce4-ur-hTG">
-                                <rect key="frame" x="11" y="364" width="255" height="30"/>
+                                <rect key="frame" x="0.0" y="0.0" width="113" height="30"/>
                                 <state key="normal" title="Test Notification">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -4898,28 +4898,28 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dOM-Aj-gHt" userLabel="Control Background">
-                                <rect key="frame" x="16" y="277" width="568" height="212"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dOM-Aj-gHt" userLabel="Control Background">
+                                <rect key="frame" x="20" y="250" width="560" height="266"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Preset" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="agS-nJ-cA9">
-                                <rect key="frame" x="16" y="287" width="568" height="22"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Preset" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="agS-nJ-cA9">
+                                <rect key="frame" x="20" y="260" width="560" height="22"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dyC-mH-bDf">
-                                <rect key="frame" x="16" y="319" width="568" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dyC-mH-bDf">
+                                <rect key="frame" x="20" y="292" width="560" height="216"/>
                                 <connections>
                                     <outlet property="dataSource" destination="6dr-zV-UI2" id="vIl-e8-GNm"/>
                                     <outlet property="delegate" destination="6dr-zV-UI2" id="z5E-VU-cus"/>
                                 </connections>
                             </pickerView>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c1X-QO-dt5">
-                                <rect key="frame" x="16" y="521" width="568" height="30"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c1X-QO-dt5">
+                                <rect key="frame" x="20" y="548" width="560" height="30"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fvr-08-kfh" customClass="JoyButton">
-                                        <rect key="frame" x="148" y="0.0" width="120" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fvr-08-kfh" customClass="JoyButton">
+                                        <rect key="frame" x="146" y="0.0" width="118" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="YUB-or-2sN"/>
                                             <constraint firstAttribute="width" constant="65" id="hac-pI-tiV"/>
@@ -4938,8 +4938,8 @@ Ramping</string>
                                             <action selector="overwritePreset:" destination="6dr-zV-UI2" eventType="touchUpInside" id="gbp-Mo-S5V"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Ks-dm-xWf" customClass="JoyButton">
-                                        <rect key="frame" x="295" y="0.0" width="120" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Ks-dm-xWf" customClass="JoyButton">
+                                        <rect key="frame" x="291" y="0.0" width="118" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="1Lf-8Q-xgA"/>
                                             <constraint firstAttribute="width" constant="65" id="MBr-al-jGz"/>
@@ -4958,8 +4958,8 @@ Ramping</string>
                                             <action selector="deletePreset:" destination="6dr-zV-UI2" eventType="touchUpInside" id="ywe-qp-IFo"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="teq-96-o3m" customClass="JoyButton">
-                                        <rect key="frame" x="448" y="0.0" width="120" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="teq-96-o3m" customClass="JoyButton">
+                                        <rect key="frame" x="441.5" y="0.0" width="118.5" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="1ri-y6-r98"/>
                                             <constraint firstAttribute="width" constant="65" id="7rU-VT-oKj"/>
@@ -4978,8 +4978,8 @@ Ramping</string>
                                             <action selector="cancel:" destination="6dr-zV-UI2" eventType="touchUpInside" id="WKD-Sb-Gmb"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JGt-nE-8as" customClass="JoyButton">
-                                        <rect key="frame" x="0.0" y="0.0" width="65" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JGt-nE-8as" customClass="JoyButton">
+                                        <rect key="frame" x="0.0" y="0.0" width="118.5" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="65" id="8fO-VM-fR4"/>
                                             <constraint firstAttribute="height" constant="30" id="UHq-P0-jhY"/>
@@ -5067,15 +5067,15 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="axB-76-ch4" userLabel="Control Background">
-                                <rect key="frame" x="16" y="277" width="568" height="212"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="axB-76-ch4" userLabel="Control Background">
+                                <rect key="frame" x="20" y="277" width="560" height="212"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="212" id="eWi-pZ-LVQ"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Save Preset" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R9U-uh-RjB">
-                                <rect key="frame" x="16" y="287" width="568" height="22"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Save Preset" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R9U-uh-RjB">
+                                <rect key="frame" x="20" y="287" width="560" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="dD9-ZK-7WA"/>
                                 </constraints>
@@ -5096,7 +5096,7 @@ Ramping</string>
                                 <rect key="frame" x="201" y="521" width="198" height="30"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z3s-x2-k5c" customClass="JoyButton">
-                                        <rect key="frame" x="103" y="0.0" width="75" height="30"/>
+                                        <rect key="frame" x="-201" y="-521" width="62" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="CANCEL">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5107,7 +5107,7 @@ Ramping</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uL0-5i-S9J" customClass="JoyButton">
-                                        <rect key="frame" x="20" y="0.0" width="75" height="30"/>
+                                        <rect key="frame" x="-201" y="-521" width="30" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="OK">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5170,8 +5170,8 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ehe-gW-QWT" userLabel="Control Background">
-                                <rect key="frame" x="16" y="277" width="568" height="212"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ehe-gW-QWT" userLabel="Control Background">
+                                <rect key="frame" x="20" y="277" width="560" height="212"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="212" id="fIQ-WE-yTR"/>
@@ -5180,8 +5180,8 @@ Ramping</string>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Klf-hc-56I">
                                 <rect key="frame" x="193" y="280" width="215" height="206"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I1u-hC-aY7" customClass="JoyButton">
-                                        <rect key="frame" x="20" y="136" width="175" height="50"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I1u-hC-aY7" customClass="JoyButton">
+                                        <rect key="frame" x="35.5" y="96" width="144" height="30"/>
                                         <state key="normal" title="RESTORE DEFAULTS">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -5189,8 +5189,8 @@ Ramping</string>
                                             <action selector="restoreDefaults:" destination="bdf-UY-Hcr" eventType="touchUpInside" id="LsM-2n-KDt"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LqZ-u7-7DR" customClass="JoyButton">
-                                        <rect key="frame" x="20" y="78" width="175" height="50"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LqZ-u7-7DR" customClass="JoyButton">
+                                        <rect key="frame" x="89" y="58" width="37" height="30"/>
                                         <state key="normal" title="SAVE">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -5198,8 +5198,8 @@ Ramping</string>
                                             <segue destination="ClN-RZ-38T" kind="show" id="3Cp-8b-XQh"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SSe-iz-X1C" customClass="JoyButton">
-                                        <rect key="frame" x="20" y="20" width="175" height="50"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SSe-iz-X1C" customClass="JoyButton">
+                                        <rect key="frame" x="87.5" y="20" width="40" height="30"/>
                                         <state key="normal" title="LOAD">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -5276,28 +5276,28 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZcQ-TK-PH5" userLabel="Control Background">
-                                <rect key="frame" x="16" y="277" width="568" height="212"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZcQ-TK-PH5" userLabel="Control Background">
+                                <rect key="frame" x="20" y="250" width="560" height="266"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Preset" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B4D-b8-GFE">
-                                <rect key="frame" x="16" y="287" width="568" height="22"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Preset" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B4D-b8-GFE">
+                                <rect key="frame" x="20" y="260" width="560" height="22"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fJS-mv-JGu">
-                                <rect key="frame" x="16" y="319" width="568" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fJS-mv-JGu">
+                                <rect key="frame" x="20" y="292" width="560" height="216"/>
                                 <connections>
                                     <outlet property="dataSource" destination="jsM-uL-p0H" id="O7R-Me-mnW"/>
                                     <outlet property="delegate" destination="jsM-uL-p0H" id="0qd-MY-0jn"/>
                                 </connections>
                             </pickerView>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gnn-AX-L6w">
-                                <rect key="frame" x="201" y="521" width="198" height="30"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gnn-AX-L6w">
+                                <rect key="frame" x="201" y="548" width="198" height="30"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Me-eq-qtX" customClass="JoyButton">
-                                        <rect key="frame" x="103" y="0.0" width="75" height="30"/>
+                                        <rect key="frame" x="-201" y="-548" width="62" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="CANCEL">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5308,7 +5308,7 @@ Ramping</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pe1-Xp-O9Z" customClass="JoyButton">
-                                        <rect key="frame" x="20" y="0.0" width="75" height="30"/>
+                                        <rect key="frame" x="-201" y="-548" width="30" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="OK">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5367,28 +5367,28 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7dE-cd-lBO" userLabel="Control Background">
-                                <rect key="frame" x="16" y="277" width="568" height="212"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7dE-cd-lBO" userLabel="Control Background">
+                                <rect key="frame" x="20" y="250" width="560" height="266"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Header" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vXQ-s9-JvU">
-                                <rect key="frame" x="16" y="287" width="568" height="22"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Header" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vXQ-s9-JvU">
+                                <rect key="frame" x="20" y="260" width="560" height="22"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BEP-hO-pcW">
-                                <rect key="frame" x="16" y="319" width="568" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BEP-hO-pcW">
+                                <rect key="frame" x="20" y="292" width="560" height="216"/>
                                 <connections>
                                     <outlet property="dataSource" destination="8nd-Na-IET" id="Xyv-wJ-uYG"/>
                                     <outlet property="delegate" destination="8nd-Na-IET" id="cr3-Fk-m8a"/>
                                 </connections>
                             </pickerView>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Iqq-Ci-98w">
-                                <rect key="frame" x="201" y="521" width="198" height="30"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Iqq-Ci-98w">
+                                <rect key="frame" x="201" y="548" width="198" height="30"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F2T-dc-XFn" customClass="JoyButton">
-                                        <rect key="frame" x="103" y="0.0" width="75" height="30"/>
+                                        <rect key="frame" x="-201" y="-548" width="62" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="CANCEL">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5399,7 +5399,7 @@ Ramping</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ewN-CM-aZj" customClass="JoyButton">
-                                        <rect key="frame" x="20" y="0.0" width="75" height="30"/>
+                                        <rect key="frame" x="-201" y="-548" width="30" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="OK">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5415,8 +5415,8 @@ Ramping</string>
                                     <constraint firstAttribute="width" constant="198" id="usb-av-cMS"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Enter distance per revolution in inches" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yb2-rK-SeE">
-                                <rect key="frame" x="16" y="315" width="568" height="15"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter distance per revolution in inches" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yb2-rK-SeE">
+                                <rect key="frame" x="20" y="288" width="560" height="15"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -5467,32 +5467,32 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FT1-ki-IB7" userLabel="Control Background">
-                                <rect key="frame" x="16" y="28" width="568" height="726"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FT1-ki-IB7" userLabel="Control Background">
+                                <rect key="frame" x="20" y="28" width="560" height="726"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Help" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9YJ-RA-aoO">
-                                <rect key="frame" x="16" y="43" width="568" height="22"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Help" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9YJ-RA-aoO">
+                                <rect key="frame" x="20" y="43" width="560" height="22"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ah3-qU-Tzr">
-                                <rect key="frame" x="201" y="521" width="198" height="30"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ah3-qU-Tzr">
+                                <rect key="frame" x="201" y="822" width="198" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="q0P-0x-fFh"/>
                                     <constraint firstAttribute="width" constant="198" id="v75-qN-scA"/>
                                 </constraints>
                             </view>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SY3-d5-3FN">
-                                <rect key="frame" x="159" y="317" width="240" height="128"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SY3-d5-3FN">
+                                <rect key="frame" x="20" y="73" width="560" height="673"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bcB-3d-ENN" customClass="JoyButton">
-                                <rect key="frame" x="263" y="762" width="75" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bcB-3d-ENN" customClass="JoyButton">
+                                <rect key="frame" x="275.5" y="762" width="50" height="30"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="CLOSE">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5519,6 +5519,7 @@ Ramping</string>
                             <constraint firstItem="9YJ-RA-aoO" firstAttribute="top" secondItem="FT1-ki-IB7" secondAttribute="top" constant="15" id="odW-Xd-lsB"/>
                             <constraint firstItem="SY3-d5-3FN" firstAttribute="bottom" secondItem="FT1-ki-IB7" secondAttribute="bottom" constant="-8" id="tzu-Jz-SAk"/>
                             <constraint firstItem="FT1-ki-IB7" firstAttribute="top" secondItem="tFY-4m-HqA" secondAttribute="bottom" constant="8" id="wzR-wr-x6Z"/>
+                            <constraint firstItem="ah3-qU-Tzr" firstAttribute="top" secondItem="SY3-d5-3FN" secondAttribute="bottom" constant="76" id="zah-Qb-81d"/>
                         </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -5543,21 +5544,21 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FHW-Tr-TLB" userLabel="Control Background">
-                                <rect key="frame" x="16" y="277" width="568" height="212"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FHW-Tr-TLB" userLabel="Control Background">
+                                <rect key="frame" x="20" y="342.5" width="560" height="115"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="115" id="RPs-Qg-f1e"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Sidereal" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R46-VS-sA6">
-                                <rect key="frame" x="189" y="286" width="235" height="43"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sidereal" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R46-VS-sA6">
+                                <rect key="frame" x="264.5" y="351.5" width="71" height="21.5"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9f7-QV-jOp" customClass="JoyButton">
-                                <rect key="frame" x="189" y="352" width="235" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9f7-QV-jOp" customClass="JoyButton">
+                                <rect key="frame" x="264.5" y="396" width="71" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="oSC-Kj-zai"/>
                                 </constraints>
@@ -5617,15 +5618,15 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YUX-ah-SUc" userLabel="Control Background">
-                                <rect key="frame" x="16" y="253" width="568" height="236"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YUX-ah-SUc" userLabel="Control Background">
+                                <rect key="frame" x="20" y="247" width="560" height="269"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VdD-mb-tvC">
-                                <rect key="frame" x="140" y="319" width="320" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VdD-mb-tvC">
+                                <rect key="frame" x="140" y="292" width="320" height="216"/>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BW0-IW-YmJ" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BW0-IW-YmJ" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="Nq6-4D-AEy"/>
                                 </constraints>
@@ -5638,14 +5639,14 @@ Ramping</string>
                                     <action selector="handleOkButton:" destination="7z0-f4-GY0" eventType="touchUpInside" id="yda-mj-HDq"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Overall Distance" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7rB-P7-Tkm">
-                                <rect key="frame" x="16" y="261" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Overall Distance" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7rB-P7-Tkm">
+                                <rect key="frame" x="20" y="255" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pwz-EJ-9Sg">
-                                <rect key="frame" x="16" y="290" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pwz-EJ-9Sg">
+                                <rect key="frame" x="20" y="284" width="560" height="0.0"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -5695,15 +5696,15 @@ Ramping</string>
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NHP-WV-Q2n" userLabel="Control Background">
-                                <rect key="frame" x="16" y="253" width="568" height="236"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NHP-WV-Q2n" userLabel="Control Background">
+                                <rect key="frame" x="20" y="226" width="560" height="290"/>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <pickerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bcz-bV-Eej">
-                                <rect key="frame" x="140" y="319" width="320" height="162"/>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bcz-bV-Eej">
+                                <rect key="frame" x="140" y="292" width="320" height="216"/>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Akc-PP-Cwq" customClass="JoyButton">
-                                <rect key="frame" x="275" y="521" width="50" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Akc-PP-Cwq" customClass="JoyButton">
+                                <rect key="frame" x="275" y="548" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="6fq-8f-InF"/>
                                 </constraints>
@@ -5716,14 +5717,14 @@ Ramping</string>
                                     <action selector="handleOkButton:" destination="LPk-5C-cjb" eventType="touchUpInside" id="MLb-MC-dbs"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Ou-QI-6Tz">
-                                <rect key="frame" x="16" y="261" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Ou-QI-6Tz">
+                                <rect key="frame" x="20" y="234" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Set Interval Time is Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7o-Fa-VeK">
-                                <rect key="frame" x="16" y="290" width="568" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Interval Time is Seconds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7o-Fa-VeK">
+                                <rect key="frame" x="20" y="263" width="560" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -5847,19 +5848,19 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="B0O-MD-mVD"/>
-        <segue reference="HUL-Rp-DYU"/>
-        <segue reference="6SS-hE-J9g"/>
+        <segue reference="RMu-iv-gcK"/>
         <segue reference="5Fi-kf-KP0"/>
-        <segue reference="eIy-q4-84e"/>
+        <segue reference="6SS-hE-J9g"/>
+        <segue reference="HUL-Rp-DYU"/>
+        <segue reference="oNZ-l0-vdW"/>
+        <segue reference="br4-PB-JjF"/>
         <segue reference="k3P-Db-zBC"/>
+        <segue reference="rGc-Y0-TPg"/>
+        <segue reference="eIy-q4-84e"/>
+        <segue reference="p4Z-EB-hlS"/>
         <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="l1d-eL-qTA"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="kyO-dy-beu"/>
-        <segue reference="AeQ-9g-E8b"/>
-        <segue reference="PwX-tX-cQi"/>
         <segue reference="K6t-E6-71o"/>
+        <segue reference="PwX-tX-cQi"/>
+        <segue reference="QhG-wT-13E"/>
     </inferredMetricsTieBreakers>
 </document>
