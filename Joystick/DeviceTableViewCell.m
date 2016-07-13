@@ -150,7 +150,12 @@
                 
                 NSString *deviceImage = [self getImageForDeviceStatus: device];
                 self.imageView.image = [UIImage imageNamed: deviceImage];
-                
+
+                if (![self.tableView.activeDevices containsObject: device])
+                {
+                    [self.tableView.activeDevices addObject: device];
+                }
+
                 if ((NMXRunStatusRunning & queryStatus) || NMXRunStatusRunning & queryStatusKeyFrame)
                 {
                     [self.tableView navigateToMainView];
@@ -158,10 +163,6 @@
                 
                 [self.tableView postDevicesStateChange];
                 
-                if (![self.tableView.activeDevices containsObject: device])
-                {
-                    [self.tableView.activeDevices addObject: device];
-                }
             });
         }
     });

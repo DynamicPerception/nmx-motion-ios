@@ -29,7 +29,14 @@
 NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewController";
 
 
-@interface ReviewStatusViewController : UIViewController <NMXDeviceDelegate, NMXDeviceManagerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate,ELCImagePickerControllerDelegate,UIScrollViewDelegate,UIActionSheetDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate,UIDocumentInteractionControllerDelegate> {
+@interface ReviewStatusViewController : UIViewController <NMXDeviceDelegate, NMXDeviceManagerDelegate,
+                                                          UIImagePickerControllerDelegate,UIActionSheetDelegate,
+                                                          ELCImagePickerControllerDelegate,UIScrollViewDelegate,
+                                                          UIActionSheetDelegate,MFMessageComposeViewControllerDelegate,
+                                                          MFMailComposeViewControllerDelegate,
+                                                          UIDocumentInteractionControllerDelegate,
+                                                          UIPickerViewDelegate, UIPickerViewDataSource>
+{
 
     float playheadInterval;
     float lastX;

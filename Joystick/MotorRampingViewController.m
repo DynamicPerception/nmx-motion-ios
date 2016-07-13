@@ -659,88 +659,93 @@ NSArray static	*frameCountStrings = nil;
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 
-    for (NMXDevice *device in self.appExecutive.deviceList)
-    {
-        JSDeviceSettings *settings = device.settings;
-        [settings synchronize];
-    }
-
-    NSString *unfeasibleDevice = nil;
-
-    if (appExecutive.is3P == NO)
-    {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
         for (NMXDevice *device in self.appExecutive.deviceList)
         {
-            for (int channel = 0; channel < kNumChannels; channel++)
+            JSDeviceSettings *settings = device.settings;
+            [settings synchronize];
+        }
+
+        NSString *unfeasibleDevice = nil;
+        
+        if (appExecutive.is3P == NO)
+        {
+            for (NMXDevice *device in self.appExecutive.deviceList)
             {
-                NSArray *increaseValues, *decreaseValues;
-                unsigned char motor;
-                if (channel == kSlideChannel)
+                for (int channel = 0; channel < kNumChannels; channel++)
                 {
-                    motor = device.sledMotor;
-                    increaseValues = device.settings.slideIncreaseValues;
-                    decreaseValues = device.settings.slideDecreaseValues;
-                }
-                else if (channel == kPanChannel)
-                {
-                    motor = device.panMotor;
-                    increaseValues = device.settings.panIncreaseValues;
-                    decreaseValues = device.settings.panDecreaseValues;
-                }
-                else
-                {
-                    motor = device.tiltMotor;
-                    increaseValues = device.settings.tiltIncreaseValues;
-                    decreaseValues = device.settings.tiltDecreaseValues;
-                }
-                
-                UInt32  durationInMS = [device motorQueryShotsTotalTravelTime: motor] +
-                                       [device motorQueryLeadInShotsOrTime: motor] +
-                                       [device motorQueryLeadOutShotsOrTime: motor];
-                UInt32  leadIn, leadOut, accelInMS, decelInMS;
-                
-                float increaseStart = [[increaseValues firstObject] floatValue];
-                float increaseEnd = [[increaseValues lastObject] floatValue];
-                float decreaseStart = [[decreaseValues firstObject] floatValue];
-                float decreaseEnd = [[decreaseValues lastObject] floatValue];
-                
-                leadIn = durationInMS * increaseStart / 2;
-                accelInMS = durationInMS * (increaseEnd - increaseStart) / 2;
-                leadOut = durationInMS * (1 - decreaseEnd) / 2;
-                decelInMS = durationInMS * (decreaseEnd - decreaseStart) / 2;
-                
-                [device motorSet: motor SetLeadInShotsOrTime: leadIn];
-                [device motorSet: motor SetProgramAccel: accelInMS];
-                [device motorSet: motor SetProgramDecel: decelInMS];
-                [device motorSet: motor SetLeadOutShotsOrTime: leadOut];
-                [device motorSet: motor SetShotsTotalTravelTime: durationInMS - leadIn - leadOut];
-                
-                if (NO == [device motorQueryFeasibility: motor])
-                {
-                    unfeasibleDevice = [appExecutive stringWithHandleForDeviceName: device.name];
-                    break;
+                    NSArray *increaseValues, *decreaseValues;
+                    unsigned char motor;
+                    if (channel == kSlideChannel)
+                    {
+                        motor = device.sledMotor;
+                        increaseValues = device.settings.slideIncreaseValues;
+                        decreaseValues = device.settings.slideDecreaseValues;
+                    }
+                    else if (channel == kPanChannel)
+                    {
+                        motor = device.panMotor;
+                        increaseValues = device.settings.panIncreaseValues;
+                        decreaseValues = device.settings.panDecreaseValues;
+                    }
+                    else
+                    {
+                        motor = device.tiltMotor;
+                        increaseValues = device.settings.tiltIncreaseValues;
+                        decreaseValues = device.settings.tiltDecreaseValues;
+                    }
+                    
+                    UInt32  durationInMS = [device motorQueryShotsTotalTravelTime: motor] +
+                    [device motorQueryLeadInShotsOrTime: motor] +
+                    [device motorQueryLeadOutShotsOrTime: motor];
+                    UInt32  leadIn, leadOut, accelInMS, decelInMS;
+                    
+                    float increaseStart = [[increaseValues firstObject] floatValue];
+                    float increaseEnd = [[increaseValues lastObject] floatValue];
+                    float decreaseStart = [[decreaseValues firstObject] floatValue];
+                    float decreaseEnd = [[decreaseValues lastObject] floatValue];
+                    
+                    leadIn = durationInMS * increaseStart / 2;
+                    accelInMS = durationInMS * (increaseEnd - increaseStart) / 2;
+                    leadOut = durationInMS * (1 - decreaseEnd) / 2;
+                    decelInMS = durationInMS * (decreaseEnd - decreaseStart) / 2;
+                    
+                    [device motorSet: motor SetLeadInShotsOrTime: leadIn];
+                    [device motorSet: motor SetProgramAccel: accelInMS];
+                    [device motorSet: motor SetProgramDecel: decelInMS];
+                    [device motorSet: motor SetLeadOutShotsOrTime: leadOut];
+                    [device motorSet: motor SetShotsTotalTravelTime: durationInMS - leadIn - leadOut];
+                    
+                    if (NO == [device motorQueryFeasibility: motor])
+                    {
+                        unfeasibleDevice = [appExecutive stringWithHandleForDeviceName: device.name];
+                        break;
+                    }
                 }
             }
-        }
-        
-    }
-    
-    [MBProgressHUD hideHUDForView:self.view animated:YES];
             
-    if (unfeasibleDevice)
-    {
-        NSString *message = [NSString stringWithFormat:@"Reduce ramping or lead in/out time for device : %@", unfeasibleDevice];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
-                                                        message: message
-                                                       delegate: self
-                                                      cancelButtonTitle: @"OK"
-                                              otherButtonTitles: nil];
-        [alert show];
-    }
-    else
-    {
-        [self performSegueWithIdentifier: kSegueToReviewStatusViewController sender: self];
-    }
+        }
+    
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+            
+        if (unfeasibleDevice)
+        {
+            NSString *message = [NSString stringWithFormat:@"Reduce ramping or lead in/out time for device : %@", unfeasibleDevice];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
+                                                            message: message
+                                                           delegate: self
+                                                  cancelButtonTitle: @"OK"
+                                                  otherButtonTitles: nil];
+            [alert show];
+        }
+        else
+        {
+            [self performSegueWithIdentifier: kSegueToReviewStatusViewController sender: self];
+        }
+
+    });
+
 }
 
 #pragma mark Randall Updates - Ramp Easing

@@ -3192,6 +3192,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4YD-6S-Sqr">
+                                <rect key="frame" x="12" y="403" width="576" height="216"/>
+                            </pickerView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G4I-5g-edb" userLabel="timerContainer">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="656"/>
                                 <subviews>
@@ -3732,6 +3735,7 @@ Ramping</string>
                             <constraint firstAttribute="centerX" secondItem="Lpe-Fd-BV6" secondAttribute="centerX" constant="-70" id="1Z7-rC-2bi"/>
                             <constraint firstItem="Vhe-B2-yMs" firstAttribute="top" secondItem="IHZ-IE-dZK" secondAttribute="bottom" constant="8" id="1om-Ra-9Dw"/>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="bottom" secondItem="r2O-Mf-iwX" secondAttribute="bottom" constant="2" id="58G-DZ-JP7"/>
+                            <constraint firstItem="4YD-6S-Sqr" firstAttribute="centerX" secondItem="6D1-MS-gEt" secondAttribute="centerX" id="79V-jV-SJf"/>
                             <constraint firstItem="5ya-dE-KyP" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" constant="-8" id="7Fo-JX-jpL"/>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="width" secondItem="6jY-Nd-aMg" secondAttribute="width" id="86n-VK-Urt"/>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="width" secondItem="YMJ-lV-rlE" secondAttribute="width" id="8aS-24-Zdj"/>
@@ -3748,6 +3752,7 @@ Ramping</string>
                             <constraint firstItem="5ya-dE-KyP" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" constant="-8" id="JhG-KH-jXY"/>
                             <constraint firstAttribute="trailingMargin" secondItem="791-DZ-iyX" secondAttribute="trailing" constant="-8" id="K2w-kP-OoA"/>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="bottom" secondItem="Lpe-Fd-BV6" secondAttribute="bottom" id="K7g-uK-ghh"/>
+                            <constraint firstItem="4YD-6S-Sqr" firstAttribute="top" secondItem="IRd-1r-DcP" secondAttribute="bottom" constant="-30" id="KMG-q3-TDb"/>
                             <constraint firstItem="IHZ-IE-dZK" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" constant="-8" id="KYr-S2-2WL"/>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="height" secondItem="r2O-Mf-iwX" secondAttribute="height" id="KlS-gR-BT6"/>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="height" secondItem="he1-U0-9MV" secondAttribute="height" id="MUy-mN-vgh"/>
@@ -3759,6 +3764,7 @@ Ramping</string>
                             <constraint firstAttribute="centerX" secondItem="LxV-gU-AyN" secondAttribute="centerX" constant="-5.5" id="Qka-gF-TTK"/>
                             <constraint firstItem="boS-xK-ld2" firstAttribute="height" secondItem="qdC-Aa-T5l" secondAttribute="height" id="RAg-5m-oho"/>
                             <constraint firstItem="aLg-2q-nGl" firstAttribute="leading" secondItem="6D1-MS-gEt" secondAttribute="leadingMargin" constant="-8" id="RYW-s6-pTY"/>
+                            <constraint firstItem="4YD-6S-Sqr" firstAttribute="width" secondItem="5ya-dE-KyP" secondAttribute="width" id="RtP-Nb-V1R"/>
                             <constraint firstItem="8FC-hv-UmP" firstAttribute="top" secondItem="LxV-gU-AyN" secondAttribute="bottom" constant="74" id="RuU-oR-1a1"/>
                             <constraint firstItem="G4I-5g-edb" firstAttribute="centerX" secondItem="LxV-gU-AyN" secondAttribute="centerX" constant="-5.5" id="SAS-rT-fhX"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Kmr-hb-7bX" secondAttribute="trailing" constant="154" id="SaK-d9-wdq"/>
@@ -3825,6 +3831,7 @@ Ramping</string>
                         <outlet property="confirmPauseProgramButton" destination="he1-U0-9MV" id="jjq-c6-Le8"/>
                         <outlet property="controlBackground" destination="5ya-dE-KyP" id="3F7-0Y-mKB"/>
                         <outlet property="debugTxt" destination="Vhe-B2-yMs" id="7JI-aZ-MrX"/>
+                        <outlet property="deviceSelectionPicker" destination="4YD-6S-Sqr" id="18i-zY-NdG"/>
                         <outlet property="disconnectBtn" destination="eGr-59-xoD" id="XE0-Ow-YZc"/>
                         <outlet property="disconnectStatusLbl" destination="qAY-t2-nKR" id="f1h-lT-JJb"/>
                         <outlet property="disconnectedLabel" destination="mms-w6-hun" id="7nY-ig-Aqx"/>
@@ -5840,18 +5847,18 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="eIy-q4-84e"/>
-        <segue reference="5Fi-kf-KP0"/>
-        <segue reference="6SS-hE-J9g"/>
-        <segue reference="l1d-eL-qTA"/>
-        <segue reference="QDi-9c-Wwb"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="vEA-W0-628"/>
+        <segue reference="B0O-MD-mVD"/>
         <segue reference="HUL-Rp-DYU"/>
-        <segue reference="FO3-rk-Ih3"/>
+        <segue reference="6SS-hE-J9g"/>
+        <segue reference="5Fi-kf-KP0"/>
+        <segue reference="eIy-q4-84e"/>
         <segue reference="k3P-Db-zBC"/>
         <segue reference="Nk1-9G-Dpm"/>
+        <segue reference="hJv-3d-HgP"/>
+        <segue reference="l1d-eL-qTA"/>
+        <segue reference="6tH-tQ-8da"/>
+        <segue reference="kyO-dy-beu"/>
+        <segue reference="AeQ-9g-E8b"/>
         <segue reference="PwX-tX-cQi"/>
         <segue reference="K6t-E6-71o"/>
     </inferredMetricsTieBreakers>

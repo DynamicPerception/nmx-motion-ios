@@ -164,6 +164,9 @@
     //Draw graph
     
     CGContextRef context = UIGraphicsGetCurrentContext();
+
+    self.layer.sublayers = nil;
+    
     CGContextSetStrokeColorWithColor(context, [UIColor blueColor].CGColor);
         
     CGContextSetLineWidth(context, 2.0f);

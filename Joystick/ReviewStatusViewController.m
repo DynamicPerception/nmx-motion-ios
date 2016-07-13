@@ -64,6 +64,7 @@ typedef enum{
 @property (nonatomic, strong)	IBOutlet	JoyButton *			stopProgramButton;
 @property (weak, nonatomic) IBOutlet        JoyButton *         reconnectButton;
 @property (weak, nonatomic) IBOutlet        UILabel *           disconnectedLabel;
+@property (strong, nonatomic)   IBOutlet    UIPickerView *      deviceSelectionPicker;
 
 @property (nonatomic, strong)				NSArray *			stateButtons;
 
@@ -83,6 +84,8 @@ typedef enum{
 
 @property                                   float               previousPercentage;
 @property                                   BOOL                reversing;
+
+@property                                   NMXDevice          *displayedDevice;
 
 @end
 
@@ -249,6 +252,19 @@ typedef enum{
         
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
+    self.deviceSelectionPicker.delegate = self;
+    self.deviceSelectionPicker.dataSource = self;
+    if (self.appExecutive.deviceList.count <= 1 || self.appExecutive.is3P)
+    {
+        self.deviceSelectionPicker.hidden = YES;
+    }
+    else
+    {
+        self.deviceSelectionPicker.transform = CGAffineTransformMakeScale(0.8, 0.8);
+    }
+    
+    self.displayedDevice = self.appExecutive.device;
+    
     screenWidth = self.view.frame.size.width;
     
     lastFrameValue = framesShotValueLabel.text;
@@ -2367,76 +2383,43 @@ typedef enum{
 
 - (void) setupGraphViews {
     
-    //mm TODO -- Implement this based on new motor ramping
-/*
-    
+    NMXDevice *device = self.displayedDevice;
+    JSDeviceSettings *settings = device.settings;
+
     masterFrameCount = [self.appExecutive.frameCountNumber floatValue];
     
-    NSArray *slideIncrease = [self.appExecutive slideIncreaseValues];
-    NSArray *slideDecrease = [self.appExecutive slideDecreaseValues];
-    
-    //    NSLog(@"slideIncrease: %@",slideIncrease);
-    //    NSLog(@"slideDecrease: %@",slideDecrease);
+    NSArray *slideIncrease = [settings slideIncreaseValues];
+    NSArray *slideDecrease = [settings slideDecreaseValues];
     
     float firstSlideIncreasePoint = [[slideIncrease objectAtIndex:0] floatValue];
     float secondSlideIncreasePoint = [[slideIncrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstSlideIncreasePoint: %f",firstSlideIncreasePoint);
-    //    NSLog(@"secondSlideIncreasePoint: %f",secondSlideIncreasePoint);
-    
     float firstSlideDecreasePoint = [[slideDecrease objectAtIndex:0] floatValue];
     float secondSlideDecreasePoint = [[slideDecrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstSlideDecreasePoint: %f",firstSlideDecreasePoint);
-    //    NSLog(@"secondSlideDecreasePoint: %f",secondSlideDecreasePoint);
-    
-    NSArray *panIncrease = [self.appExecutive panIncreaseValues];
-    NSArray *panDecrease = [self.appExecutive panDecreaseValues];
-    
-    //    NSLog(@"panIncrease: %@",panIncrease);
-    //    NSLog(@"panDecrease: %@",panDecrease);
+    NSArray *panIncrease = [settings panIncreaseValues];
+    NSArray *panDecrease = [settings panDecreaseValues];
     
     float firstPanIncreasePoint = [[panIncrease objectAtIndex:0] floatValue];
     float secondPanIncreasePoint = [[panIncrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstPanIncreasePoint: %f",firstPanIncreasePoint);
-    //    NSLog(@"secondPanIncreasePoint: %f",secondPanIncreasePoint);
-    
     float firstPanDecreasePoint = [[panDecrease objectAtIndex:0] floatValue];
     float secondPanDecreasePoint = [[panDecrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstPanDecreasePoint: %f",firstPanDecreasePoint);
-    //    NSLog(@"secondPanDecreasePoint: %f",secondPanDecreasePoint);
-    
-    NSArray *tiltIncrease = [self.appExecutive tiltIncreaseValues];
-    NSArray *tiltDecrease = [self.appExecutive tiltDecreaseValues];
-    
-    //    NSLog(@"tiltIncrease: %@",tiltIncrease);
-    //    NSLog(@"tiltDecrease: %@",tiltDecrease);
+    NSArray *tiltIncrease = [settings tiltIncreaseValues];
+    NSArray *tiltDecrease = [settings tiltDecreaseValues];
     
     float firstTiltIncreasePoint = [[tiltIncrease objectAtIndex:0] floatValue];
     float secondTiltIncreasePoint = [[tiltIncrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstTiltIncreasePoint: %f",firstTiltIncreasePoint);
-    //    NSLog(@"secondTiltIncreasePoint: %f",secondTiltIncreasePoint);
-    
     float firstTiltDecreasePoint = [[tiltDecrease objectAtIndex:0] floatValue];
     float secondTiltDecreasePoint = [[tiltDecrease objectAtIndex:1] floatValue];
-    
-    //    NSLog(@"firstTiltDecreasePoint: %f",firstTiltDecreasePoint);
-    //    NSLog(@"secondTiltDecreasePoint: %f",secondTiltDecreasePoint);
     
     float calcFirstSlideIncreasePoint = firstSlideIncreasePoint/2;
     float calcSecondSlideIncreasePoint = secondSlideIncreasePoint/2;
     
     float calcFirstSlideDecreasePoint = firstSlideDecreasePoint/2 + .5;
     float calcSecondSlideDecreasePoint = secondSlideDecreasePoint/2 + .5;
-    
-    //    NSLog(@"calcFirstSlideIncreasePoint: %f",calcFirstSlideIncreasePoint);
-    //    NSLog(@"calcSecondSlideIncreasePoint: %f",calcSecondSlideIncreasePoint);
-    //
-    //    NSLog(@"calcFirstSlideDecreasePoint: %f",calcFirstSlideDecreasePoint);
-    //    NSLog(@"calcSecondSlideDecreasePoint: %f",calcSecondSlideDecreasePoint);
     
     graphView.frame1 = calcFirstSlideIncreasePoint;
     graphView.frame2 = calcSecondSlideIncreasePoint;
@@ -2483,25 +2466,16 @@ typedef enum{
         tiltGraph.isVideo = YES;
         keepAliveView.hidden = YES;
         
-        //NSString *a = [DurationViewController stringForShortDuration: [self.appExecutive.shotDurationNumber integerValue]];
-        
         NSString *a = [ShortDurationViewController stringForShortDuration: [self.appExecutive.videoLengthNumber integerValue]];
         
         graphView.videoLength = a;
         panGraph.videoLength = a;
         tiltGraph.videoLength = a;
-        
-        //NSLog(@"ran videoLength: %@",a);
     }
     
     graphWidth = graphView.frame.size.width;
     
-    //NSLog(@"graphViewContainer: %f", graphViewContainer.frame.size.width);
-    
-    //NSLog(@"graphWidth: %f", graphWidth);
-    
     screenRatio = (screenWidth - 32)/graphWidth;
-*/ 
 }
 
 #pragma mark - Share
@@ -2941,6 +2915,65 @@ typedef enum{
     v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
     
     [controlBackground addSubview:v];
+}
+
+
+#pragma mark - UIPickerViewDelegate Protocol Methods
+
+
+- (CGFloat) pickerView: (UIPickerView *) pickerView rowHeightForComponent: (NSInteger) component {
+    
+    return 18.0;
+}
+
+- (CGFloat) pickerView: (UIPickerView *) pickerView widthForComponent: (NSInteger) component {
+    
+    return 280.0;
+}
+
+- (NSAttributedString *) pickerView: (UIPickerView *) pickerView attributedTitleForRow: (NSInteger) row forComponent: (NSInteger) component {
+    
+    NSDictionary *	attributes	=  @{ NSForegroundColorAttributeName: [UIColor whiteColor]};
+    NSString *		string		= @"";
+    
+    NSArray<NMXDevice *> *devices = self.appExecutive.deviceList;
+    
+    switch (component)
+    {
+        case 0:
+            string = [self.appExecutive stringWithHandleForDeviceName: devices[row].name];
+            break;
+        default:
+            return nil;
+            break;
+    }
+    
+    return [[NSAttributedString alloc] initWithString: string attributes: attributes];
+}
+
+- (void) pickerView: (UIPickerView *) pickerView didSelectRow: (NSInteger) row inComponent: (NSInteger) component
+{
+    NSArray<NMXDevice *> *devices = self.appExecutive.deviceList;
+    self.displayedDevice = devices[row];
+    
+    [self setupGraphViews];
+    [graphView setNeedsDisplay];
+    [panGraph setNeedsDisplay];
+    [tiltGraph setNeedsDisplay];
+}
+
+
+//------------------------------------------------------------------------------
+
+#pragma mark - UIPickerViewDataSource Protocol Methods
+
+
+- (NSInteger) numberOfComponentsInPickerView: (UIPickerView *) pickerView {
+    return 1;
+}
+
+- (NSInteger) pickerView: (UIPickerView *) pickerView numberOfRowsInComponent: (NSInteger) component {
+    return self.appExecutive.deviceList.count;
 }
 
 @end
