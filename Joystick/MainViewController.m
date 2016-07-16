@@ -42,6 +42,10 @@
 @property (nonatomic, strong)	IBOutlet	JoyButton *					nextButton;
 @property (nonatomic, strong)	IBOutlet	JoyButton *					fireCameraButton;
 @property (strong, nonatomic)   IBOutlet    JoyButton *                 currentDeviceButton;
+@property (strong, nonatomic) IBOutlet UILabel *slideLabel;
+@property (strong, nonatomic) IBOutlet UILabel *panLabel;
+@property (strong, nonatomic) IBOutlet UILabel *tiltLabel;
+@property (strong, nonatomic) IBOutlet UILabel *panTiltLabel;
 
 @property (nonatomic, retain)	IBOutlet	UISlider *					_dollySlider;
 @property (nonatomic, strong)	IBOutlet	UIButton *					settingsButton;
@@ -176,6 +180,17 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     setStartView.alpha = 0;
     setMidView.alpha = 0;
     setStopView.alpha = 0;
+    
+    slideButton.titleLabel.numberOfLines = 1;
+    slideButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    slideButton.titleLabel.lineBreakMode = NSLineBreakByClipping;
+    panButton.titleLabel.numberOfLines = 1;
+    panButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    panButton.titleLabel.lineBreakMode = NSLineBreakByClipping;
+    tiltButton.titleLabel.numberOfLines = 1;
+    tiltButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    tiltButton.titleLabel.lineBreakMode = NSLineBreakByClipping;
+
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName4) userInfo:nil repeats:NO];
     
@@ -662,8 +677,24 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     //    self.currentDeviceButton.hidden = (self.appExecutive.deviceList.count < 2);
     NSString *name = [self.appExecutive stringWithHandleForDeviceName: self.appExecutive.device.name];
     [self.currentDeviceButton setTitle:name forState:UIControlStateNormal];
+
+    [self setMotorNames];
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(enableInteractions) userInfo:nil repeats:NO];
+}
+
+- (void) setMotorNames
+{
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+
+    [slideButton setTitle:settings.channel1Name forState:UIControlStateNormal];
+    [panButton setTitle:settings.channel2Name forState:UIControlStateNormal];
+    [tiltButton setTitle:settings.channel3Name forState:UIControlStateNormal];
+
+    self.slideLabel.text = [NSString stringWithFormat:@"%@ Control", settings.channel1Name];
+    self.panLabel.text = [NSString stringWithFormat:@"%@ Control", settings.channel2Name];
+    self.tiltLabel.text = [NSString stringWithFormat:@"%@ Control", settings.channel3Name];
+    self.panTiltLabel.text = [NSString stringWithFormat:@"%@/%@ Control", settings.channel2Name, settings.channel3Name];
 }
 
 - (void) enableInteractions {

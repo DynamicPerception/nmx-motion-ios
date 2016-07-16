@@ -49,7 +49,7 @@
     
     if (self.channel == kSlideChannel)
     {
-        self.channelLabel.text = @"Slide";
+        self.channelLabel.text = settings.channel1Name;
         self.increaseStart.value = [[settings.slideIncreaseValues firstObject] floatValue];
         self.increaseFinal.value = [[settings.slideIncreaseValues lastObject] floatValue];
         self.decreaseStart.value = [[settings.slideDecreaseValues firstObject] floatValue];
@@ -57,7 +57,7 @@
     }
     else if (self.channel == kPanChannel)
     {
-        self.channelLabel.text = @"Pan";
+        self.channelLabel.text = settings.channel2Name;
         self.increaseStart.value = [[settings.panIncreaseValues firstObject] floatValue];
         self.increaseFinal.value = [[settings.panIncreaseValues lastObject] floatValue];
         self.decreaseStart.value = [[settings.panDecreaseValues firstObject] floatValue];
@@ -65,7 +65,7 @@
     }
     else
     {
-        self.channelLabel.text = @"Tilt";
+        self.channelLabel.text = settings.channel3Name;
         self.increaseStart.value = [[settings.tiltIncreaseValues firstObject] floatValue];
         self.increaseFinal.value = [[settings.tiltIncreaseValues lastObject] floatValue];
         self.decreaseStart.value = [[settings.tiltDecreaseValues firstObject] floatValue];

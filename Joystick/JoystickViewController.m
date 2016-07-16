@@ -8,6 +8,8 @@
 
 #import "JoystickViewController.h"
 #import "JoystickView.h"
+#import "JSDeviceSettings.h"
+#import "AppExecutive.h"
 
 
 //------------------------------------------------------------------------------
@@ -190,8 +192,9 @@
     if (!panTiltLbl)
     {
         panTiltLbl = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 107/2, degreeCircle.frame.size.height + degreeCircle.frame.origin.y + labelOffset, 107, 18)];
-        
-        panTiltLbl.text = @"Pan/Tilt Control";
+
+        JSDeviceSettings *settings = [AppExecutive sharedInstance].device.settings;
+        panTiltLbl.text = [NSString stringWithFormat:@"%@/%@ Control", settings.channel2Name, settings.channel3Name];
         panTiltLbl.textColor = [UIColor whiteColor];
         panTiltLbl.textAlignment = NSTextAlignmentCenter;
         panTiltLbl.font = myFont;

@@ -1430,9 +1430,11 @@
                         <outlet property="mode3PLbl" destination="Tbw-K9-r81" id="auO-aI-RJe"/>
                         <outlet property="nextButton" destination="UIz-jC-Ebt" id="NYA-Js-lad"/>
                         <outlet property="panButton" destination="7j0-g8-Zy2" id="8UD-3o-kz5"/>
+                        <outlet property="panLabel" destination="ONl-88-2GQ" id="IX3-kl-jnC"/>
                         <outlet property="panSlider" destination="OWV-uy-cNu" id="PXu-9z-ulx"/>
                         <outlet property="panSliderBG" destination="WWH-gu-m4b" id="ba7-DZ-Eiw"/>
                         <outlet property="panSliderLbl" destination="ONl-88-2GQ" id="EhP-wE-CFU"/>
+                        <outlet property="panTiltLabel" destination="vsM-NE-ZJD" id="KPc-Wf-Pe2"/>
                         <outlet property="setMid1Btn" destination="oOs-xb-vq9" id="iWL-nr-w9v"/>
                         <outlet property="setMidView" destination="NLB-N4-TDO" id="Yzd-7G-Bzg"/>
                         <outlet property="setStart1Btn" destination="tDc-n4-XpC" id="LwI-2l-qde"/>
@@ -1443,8 +1445,10 @@
                         <outlet property="setStopView" destination="Iju-Ll-N9P" id="w7O-4Q-iEs"/>
                         <outlet property="settingsButton" destination="kbB-RK-Uxj" id="m58-rI-RTV"/>
                         <outlet property="slideButton" destination="b4C-9H-6mv" id="Ls6-hx-Dgv"/>
+                        <outlet property="slideLabel" destination="XRc-sy-GeC" id="C4g-JA-NwD"/>
                         <outlet property="switch2P" destination="oBJ-Z0-iFL" id="o3O-Ns-dif"/>
                         <outlet property="tiltButton" destination="hX2-fQ-qoH" id="1il-T4-dPw"/>
+                        <outlet property="tiltLabel" destination="3zV-sm-Qhr" id="M5w-3I-GY4"/>
                         <outlet property="tiltSlider" destination="Cat-Bh-4PZ" id="hg8-DH-c6F"/>
                         <outlet property="tiltSliderBG" destination="EhM-Vi-6Kh" id="E7R-qv-SPA"/>
                         <outlet property="tiltSliderLbl" destination="3zV-sm-Qhr" id="Bpq-f8-Sn8"/>
@@ -5881,18 +5885,18 @@ Ramping</string>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="uS0-Tr-f5Z"/>
-        <segue reference="5Fi-kf-KP0"/>
-        <segue reference="6SS-hE-J9g"/>
+        <segue reference="gqx-Wd-6xg"/>
+        <segue reference="K6t-E6-71o"/>
+        <segue reference="BxP-51-sJV"/>
+        <segue reference="PwX-tX-cQi"/>
+        <segue reference="aFw-MN-OaY"/>
+        <segue reference="vr9-JF-N1x"/>
+        <segue reference="6tH-tQ-8da"/>
         <segue reference="l1d-eL-qTA"/>
         <segue reference="HUL-Rp-DYU"/>
+        <segue reference="QDi-9c-Wwb"/>
         <segue reference="hJv-3d-HgP"/>
-        <segue reference="B0O-MD-mVD"/>
-        <segue reference="AeQ-9g-E8b"/>
         <segue reference="STE-RU-aG4"/>
         <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="K6t-E6-71o"/>
-        <segue reference="PwX-tX-cQi"/>
-        <segue reference="TNv-a2-D3V"/>
-        <segue reference="QhG-wT-13E"/>
     </inferredMetricsTieBreakers>
 </document>
