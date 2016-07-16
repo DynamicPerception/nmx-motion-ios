@@ -342,8 +342,23 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vGs-MC-Fts" userLabel="Control Background">
                                 <rect key="frame" x="20" y="36" width="560" height="624"/>
                                 <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ex-CZ-5bu">
+                                        <rect key="frame" x="0.0" y="4" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="4qW-gz-ACd"/>
+                                            <constraint firstAttribute="width" constant="30" id="lA7-7A-qIM"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <state key="normal" title="?">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <segue destination="AAN-fp-3bo" kind="presentation" identifier="HelpMotorSettings" id="TNv-a2-D3V"/>
+                                        </connections>
+                                    </button>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sZg-Zp-DKc">
-                                        <rect key="frame" x="154" y="-100" width="260" height="900"/>
+                                        <rect key="frame" x="159" y="0.0" width="260" height="907"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Motor Settings Channel:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FBe-cY-5qG">
                                                 <rect key="frame" x="8" y="8" width="202" height="22"/>
@@ -581,12 +596,12 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="522-5J-itF" userLabel="overallDistanceTxt">
-                                                <rect key="frame" x="134" y="764" width="123" height="30"/>
+                                                <rect key="frame" x="134" y="758" width="123" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation"/>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pbQ-Ft-o5H" userLabel="OverallDistanceBtn">
-                                                <rect key="frame" x="134" y="764" width="123" height="30"/>
+                                                <rect key="frame" x="134" y="756" width="123" height="30"/>
                                                 <state key="normal">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
@@ -594,14 +609,34 @@
                                                     <segue destination="7z0-f4-GY0" kind="presentation" identifier="OverallDistance" id="RB6-99-oKD"/>
                                                 </connections>
                                             </button>
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rdb-0B-WXV" userLabel="customNameTxt">
+                                                <rect key="frame" x="134" y="811" width="123" height="30"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation"/>
+                                            </textField>
+                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s8Z-Vw-jds" userLabel="CustomNameBtn">
+                                                <rect key="frame" x="133" y="811" width="123" height="30"/>
+                                                <state key="normal">
+                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="handleCustomNameButton:" destination="E5a-T0-m15" eventType="touchUpInside" id="ub5-dj-Etj"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Custom Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uXs-9A-H8B">
+                                                <rect key="frame" x="2" y="815" width="125" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="-" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RdI-wM-vjJ">
-                                                <rect key="frame" x="137" y="817" width="120" height="21"/>
+                                                <rect key="frame" x="135" y="844" width="120" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VXq-C8-PxP" customClass="JoyButton">
-                                                <rect key="frame" x="1" y="802" width="259" height="30"/>
+                                                <rect key="frame" x="1" y="864" width="259" height="30"/>
                                                 <state key="normal" title="Sidereal">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
@@ -639,6 +674,15 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="osm-J3-N65" userLabel="CustomNameBtn">
+                                                <rect key="frame" x="15" y="840" width="123" height="30"/>
+                                                <state key="normal">
+                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="handleCustomNameButton:" destination="E5a-T0-m15" eventType="touchUpInside" id="Ced-O2-53y"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="260" id="qOC-sd-FhZ"/>
@@ -650,21 +694,6 @@
                                             </mask>
                                         </variation>
                                     </scrollView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ex-CZ-5bu">
-                                        <rect key="frame" x="0.0" y="4" width="30" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="4qW-gz-ACd"/>
-                                            <constraint firstAttribute="width" constant="30" id="lA7-7A-qIM"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="?">
-                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <segue destination="AAN-fp-3bo" kind="presentation" identifier="HelpMotorSettings" id="TNv-a2-D3V"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
@@ -701,12 +730,15 @@
                         <outlet property="backlashLabel" destination="rXF-Nn-9gt" id="Jfs-2B-xIp"/>
                         <outlet property="contentScroll" destination="sZg-Zp-DKc" id="TI2-fP-UiC"/>
                         <outlet property="controlBackground" destination="vGs-MC-Fts" id="urc-j9-eEZ"/>
+                        <outlet property="customNameButton" destination="s8Z-Vw-jds" id="Lxm-FS-SuX"/>
+                        <outlet property="customNameTxt" destination="rdb-0B-WXV" id="0Hy-dl-AM7"/>
                         <outlet property="dampeningImg" destination="UiL-pd-xB3" id="ph9-yw-zPN"/>
                         <outlet property="dampeningSlider" destination="JDz-sM-klZ" id="X8l-cX-UF6"/>
                         <outlet property="directionLbl" destination="Obm-eC-Cz0" id="S35-Gk-6aH"/>
                         <outlet property="gearRatioLbl" destination="kgu-ZF-ftn" id="gK9-AX-wSN"/>
                         <outlet property="invertDirectionSwitch" destination="2gD-gX-gMO" id="F7a-L5-OKp"/>
                         <outlet property="joystickResponseLbl" destination="OmP-BX-ahQ" id="2Aq-jd-agC"/>
+                        <outlet property="joystickSliderLabel" destination="xQv-DP-fNL" id="nod-Bn-KbT"/>
                         <outlet property="leftBtn" destination="imB-D3-W8f" id="VNl-m2-Nz1"/>
                         <outlet property="leftLbl" destination="Osk-Cs-9ky" id="XGu-mB-Ccf"/>
                         <outlet property="microstepsControl" destination="cpI-Ay-6F2" id="sth-eA-uGk"/>
@@ -5096,7 +5128,7 @@ Ramping</string>
                                 <rect key="frame" x="201" y="521" width="198" height="30"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z3s-x2-k5c" customClass="JoyButton">
-                                        <rect key="frame" x="-201" y="-521" width="62" height="30"/>
+                                        <rect key="frame" x="103" y="0.0" width="62" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="CANCEL">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5107,7 +5139,7 @@ Ramping</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uL0-5i-S9J" customClass="JoyButton">
-                                        <rect key="frame" x="-201" y="-521" width="30" height="30"/>
+                                        <rect key="frame" x="20" y="0.0" width="30" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="OK">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5297,7 +5329,7 @@ Ramping</string>
                                 <rect key="frame" x="201" y="548" width="198" height="30"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Me-eq-qtX" customClass="JoyButton">
-                                        <rect key="frame" x="-201" y="-548" width="62" height="30"/>
+                                        <rect key="frame" x="103" y="0.0" width="62" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="CANCEL">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5308,7 +5340,7 @@ Ramping</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pe1-Xp-O9Z" customClass="JoyButton">
-                                        <rect key="frame" x="-201" y="-548" width="30" height="30"/>
+                                        <rect key="frame" x="20" y="0.0" width="30" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="OK">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5388,7 +5420,7 @@ Ramping</string>
                                 <rect key="frame" x="201" y="548" width="198" height="30"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F2T-dc-XFn" customClass="JoyButton">
-                                        <rect key="frame" x="-201" y="-548" width="62" height="30"/>
+                                        <rect key="frame" x="103" y="0.0" width="62" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="CANCEL">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5399,7 +5431,7 @@ Ramping</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ewN-CM-aZj" customClass="JoyButton">
-                                        <rect key="frame" x="-201" y="-548" width="30" height="30"/>
+                                        <rect key="frame" x="20" y="0.0" width="30" height="30"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="OK">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -5848,19 +5880,19 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="RMu-iv-gcK"/>
+        <segue reference="uS0-Tr-f5Z"/>
         <segue reference="5Fi-kf-KP0"/>
         <segue reference="6SS-hE-J9g"/>
+        <segue reference="l1d-eL-qTA"/>
         <segue reference="HUL-Rp-DYU"/>
-        <segue reference="oNZ-l0-vdW"/>
-        <segue reference="br4-PB-JjF"/>
-        <segue reference="k3P-Db-zBC"/>
-        <segue reference="rGc-Y0-TPg"/>
-        <segue reference="eIy-q4-84e"/>
-        <segue reference="p4Z-EB-hlS"/>
+        <segue reference="hJv-3d-HgP"/>
+        <segue reference="B0O-MD-mVD"/>
+        <segue reference="AeQ-9g-E8b"/>
+        <segue reference="STE-RU-aG4"/>
         <segue reference="Nk1-9G-Dpm"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="PwX-tX-cQi"/>
+        <segue reference="TNv-a2-D3V"/>
         <segue reference="QhG-wT-13E"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -184,6 +184,7 @@
     BOOL isMessageCell = [self.deviceList count] ? NO : YES;
     
     DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceCell" forIndexPath:indexPath];
+    cell.runStatus = NMXRunStatusUnknown;
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
 
@@ -211,7 +212,7 @@
         cell.device = device;
         cell.tableView = self;
 
-        NSString *deviceImage = [cell getImageForDeviceStatus: device];
+        NSString *deviceImage = [cell getImageForDeviceStatus:device];
         cell.imageView.image = [UIImage imageNamed: deviceImage];
         cell.imageView.hidden = NO;
     
@@ -229,10 +230,16 @@
 #if !TARGET_IPHONE_SIMULATOR
 
     AppExecutive *appExecutive = [AppExecutive sharedInstance];
+    int numRunning = 0;
     
     NSArray *cells = [self.tableView visibleCells];
     for (DeviceTableViewCell *cell in cells)
     {
+        if (cell.runStatus & NMXRunStatusRunning)
+        {
+            numRunning++;
+        }
+        
         if (cell.connectSwitch.on)
         {
             NMXDevice *device = cell.device;
@@ -253,10 +260,33 @@
 
     }
     
+    
+    
     appExecutive.deviceList = [NSArray arrayWithArray:self.activeDevices];
     if (appExecutive.deviceList.count>0)
     {
         appExecutive.device = self.activeDevices[0];
+        
+        // At least one device is currently running
+        if (numRunning > 0)
+        {
+            if (numRunning < self.deviceList.count)
+            {
+                //Not all of the listed devices are running
+                // If user approves this situation  GO TO A
+            }
+            
+            // TAG A
+            if (numRunning < appExecutive.deviceList.count)
+            {
+                // Not all of the connected devices are running
+                // => we must stop the program
+            }
+            else
+            {
+                // navigate to run status view
+            }
+        }
     }
     
 #endif

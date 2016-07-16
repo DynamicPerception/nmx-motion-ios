@@ -831,5 +831,64 @@ NSArray *defaultRampingValues() {
     [self setObject: array forKey: kDefaultsSlideDecreaseValues];
 }
 
+- (NSString *)channel1Name
+{
+    NSString *str = [self objectForKey:@"channel1Name"];
+    if (nil == str)
+    {
+        str = @"Slide";
+    }
+    return str;
+}
+
+- (void) setChannel1Name: (NSString *)name
+{
+    if (!name || [name isEqualToString:@""])
+    {
+        name = @"Slide";
+    }
+    [self setObject: name forKey: @"channel1Name"];
+}
+
+- (NSString *)channel2Name
+{
+    NSString *str = [self objectForKey:@"channel2Name"];
+    if (nil == str)
+    {
+        str = @"Pan";
+    }
+    return str;
+}
+
+- (void) setChannel2Name: (NSString *)name
+{
+    if (!name || [name isEqualToString:@""])
+    {
+        name = @"Pan";
+    }
+
+    [self setObject: name forKey: @"channel2Name"];
+}
+
+- (NSString *)channel3Name
+{
+    NSString *str = [self objectForKey:@"channel3Name"];
+    if (nil == str)
+    {
+        str = @"Tilt";
+    }
+    return str;
+}
+
+- (void) setChannel3Name: (NSString *)name
+{
+    if (!name || [name isEqualToString:@""])
+    {
+        name = @"Tilt";
+    }
+
+    [self setObject: name forKey: @"channel3Name"];
+}
+
 
 @end

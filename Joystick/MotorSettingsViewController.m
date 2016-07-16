@@ -29,6 +29,7 @@
 @property (nonatomic, weak)	IBOutlet	UILabel *				backlashLabel;
 @property (nonatomic, weak)	IBOutlet	UIButton *				backlashButton;
 @property (nonatomic, weak)	IBOutlet	JoyButton *				okButton;
+@property (strong, nonatomic) IBOutlet  UILabel *               joystickSliderLabel;
 
 @property JSDeviceSettings *settings;
 
@@ -98,7 +99,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 	// items for IBOutlet objects don't appear until the view is loaded
 
-	self.motorSettingsLabel.text = [NSString stringWithFormat: @"%@ Settings Channel:", self.motorName];
+    [self setMotorName];
 	self.motorNumberLabel.text = [NSString stringWithFormat: @"%ld", (long)self.motorNumber];
     
     [leftBtn addTarget:self action:@selector(enableLeft:) forControlEvents:UIControlEventTouchUpInside];
@@ -163,14 +164,17 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     {
         rigRatioLbl.text = @"Stage 1/0";
         joystickResponseLbl.text = @"Slider Response";
+        self.customNameTxt.text = self.settings.channel1Name;
     }
     else if (self.motorNumber == 2)
     {
         rigRatioLbl.text = @"Stage R";
+        self.customNameTxt.text = self.settings.channel2Name;
     }
     else if (self.motorNumber == 3)
     {
         rigRatioLbl.text = @"Stage R";
+        self.customNameTxt.text = self.settings.channel3Name;
     }
 
     self.directionLbl.text = [DistancePresetViewController labelForDirectionIndex: [self.directionLabelMode intValue]];
@@ -188,10 +192,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     unitsLbl.hidden = YES;
     unitsTxt.borderStyle = UITextBorderStyleNone;
     unitsTxt.textColor = [UIColor whiteColor];
-    
     unitsTxt.backgroundColor = [UIColor clearColor];
-//    unitsTxt.layer.borderWidth = 0.5;
-    
+
+    self.customNameTxt.borderStyle = UITextBorderStyleNone;
+    self.customNameTxt.textColor = [UIColor whiteColor];
+    self.customNameTxt.backgroundColor = [UIColor clearColor];
+
     if([[UIDevice currentDevice]userInterfaceIdiom] == UIUserInterfaceIdiomPad)
     {
         scrollPositionView.hidden = YES;
@@ -295,6 +301,30 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
  
     [super viewDidLoad];
+}
+
+- (void) setMotorName
+{
+    NSString *motorName;
+    switch (self.motorNumber) {
+        case 1:
+            motorName = self.settings.channel1Name;
+            break;
+        case 2:
+            motorName = self.settings.channel2Name;
+            break;
+        case 3:
+            motorName = self.settings.channel3Name;
+            break;
+        default:
+            NSAssert(0, @"Bad motor number");
+            break;
+    }
+    
+    self.motorSettingsLabel.text = [NSString stringWithFormat: @"%@ Settings Channel:", motorName];
+    
+    self.joystickSliderLabel.text = [NSString stringWithFormat: @"%@/%@ Sliders", self.settings.channel2Name, self.settings.channel3Name];
+
 }
 
 - (void) getSavedGearMotorRatios {
@@ -1292,6 +1322,41 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     dampeningTimer = [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(timerName) userInfo:nil repeats:NO];
 }
 
+- (IBAction) handleCustomNameButton: (UIButton *) sender
+{
+    UIAlertView *nameAlertView = [[UIAlertView alloc] initWithTitle: @"Channel Name"
+                                                            message: @"Enter custom channel name"
+                                                           delegate: self
+                                                  cancelButtonTitle: @"Cancel"
+                                                  otherButtonTitles: @"OK", nil];
+    
+    nameAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    //  nameAlertView.delegate = self;
+    
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
+    UITextField *nameTextField = [nameAlertView textFieldAtIndex: 0];
+    //nameTextField.delegate = self;
+    
+    switch (self.motorNumber) {
+        case 1:
+            nameTextField.text = [settings channel1Name];
+            break;
+        case 2:
+            nameTextField.text = [settings channel2Name];
+            break;
+        case 3:
+            nameTextField.text = [settings channel3Name];
+            break;
+        default:
+            NSAssert(0, @"Bad motor number");
+            break;
+    }
+
+    [nameAlertView show];
+}
+
+
 - (void) timerName {
     
     float maxAccel = 30000;
@@ -1836,6 +1901,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
          object:motorDict];
     }
     
+    [self.settings synchronize];
+    
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 
     [NSTimer scheduledTimerWithTimeInterval:0.250 target:self selector:@selector(okButtonTimer) userInfo:nil repeats:NO];
@@ -1929,9 +1996,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void) alertView: (UIAlertView *) alertView clickedButtonAtIndex: (NSInteger) buttonIndex {
     
-    NSString *title = [alertView buttonTitleAtIndex: buttonIndex];
+    NSString *buttonTitle = [alertView buttonTitleAtIndex: buttonIndex];
+    NSString *title = [alertView title];
         
-    if ([title isEqualToString: @"Fix it"])
+    if ([buttonTitle isEqualToString: @"Fix it"])
     {
         BOOL isRotaryBasedMotor = [rigRatioLbl.text containsString:@"Rotary Custom"];
         BOOL isLinearMotor = [rigRatioLbl.text containsString:@"Linear Custom"];
@@ -1971,6 +2039,31 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         [self updateInvertUI];
     }
+    else if ([title isEqualToString: @"Channel Name"])
+    {
+        UITextField *	valueField	= [alertView textFieldAtIndex: 0];
+        NSString *		valueText	= valueField.text;
+
+        if (self.motorNumber == 1)
+        {
+            self.settings.channel1Name = valueText;
+            self.customNameTxt.text = self.settings.channel1Name;
+        }
+        else if (self.motorNumber == 2)
+        {
+            self.settings.channel2Name = valueText;
+            self.customNameTxt.text = self.settings.channel2Name;
+        }
+        else if (self.motorNumber == 3)
+        {
+            self.settings.channel3Name = valueText;
+            self.customNameTxt.text = self.settings.channel3Name;
+        }
+        
+        [self setMotorName];
+        
+    }
+
 }
 
 

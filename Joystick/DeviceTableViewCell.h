@@ -19,6 +19,7 @@
 //@property (strong, nonatomic) IBOutlet UIButton *connectGoButton;
 @property (strong, nonatomic) IBOutlet UISwitch *connectSwitch;
 @property (weak) DeviceSelectionTableViewController *tableView;
+@property int runStatus;
 
 - (void) preDeviceStateChange;
 - (void) postDeviceStateChange;

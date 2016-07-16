@@ -169,6 +169,8 @@
 		3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */; };
 		304ECCFF1C98E1B70094B7B0 /* HSpline.m in Sources */ = {isa = PBXBuildFile; fileRef = 304ECCFE1C98E1B70094B7B0 /* HSpline.m */; };
 		306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */; };
+		3090FC9F1D37031700EBB8F3 /* DeviceStateRunning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */; };
+		3090FCA01D37031700EBB8F3 /* DeviceStateRunning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */; };
 		309AD5FF1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */; };
 		30A73F651CFE48990048315D /* JSActiveDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A73F641CFE48990048315D /* JSActiveDeviceViewController.m */; };
 		30B8EE9F1C45D0A100DCF15C /* DeviceState_Off.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */; };
@@ -417,6 +419,8 @@
 		304ECCFE1C98E1B70094B7B0 /* HSpline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSpline.m; sourceTree = "<group>"; };
 		306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraSettingsTimelineView.h; sourceTree = "<group>"; };
 		306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsTimelineView.m; sourceTree = "<group>"; };
+		3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceStateRunning.png; sourceTree = "<group>"; };
+		3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceStateRunning@2x.png"; sourceTree = "<group>"; };
 		309AD5FD1D08EC5B00F91CB4 /* JSDeviceSettingsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeviceSettingsVC.h; sourceTree = "<group>"; };
 		309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDeviceSettingsVC.m; sourceTree = "<group>"; };
 		30A73F631CFE48990048315D /* JSActiveDeviceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActiveDeviceViewController.h; sourceTree = "<group>"; };
@@ -799,6 +803,8 @@
 				3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */,
 				30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */,
 				30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */,
+				3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */,
+				3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */,
 				3048A1101C40657C00855EB0 /* DeviceState_Warning.png */,
 				3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */,
 				3F9C16681B63D82600D7D51B /* thumbBlue@2x.png */,
@@ -938,7 +944,7 @@
 		2389AC0E19DD938100FB2679 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Dynamic Perception";
 				TargetAttributes = {
 					2389AC1519DD938100FB2679 = {
@@ -972,6 +978,7 @@
 			files = (
 				10AA77601C208053000B7249 /* dampening50.png in Resources */,
 				10AA774E1C207B9F000B7249 /* dampening.png in Resources */,
+				3090FC9F1D37031700EBB8F3 /* DeviceStateRunning.png in Resources */,
 				10CF73551BD194B6004ED48C /* degree_circleTop@2x.png in Resources */,
 				10CF72D11BC6A487004ED48C /* bl1.png in Resources */,
 				30B8EEA01C45D0A100DCF15C /* DeviceState_Off@2x.png in Resources */,
@@ -1009,6 +1016,7 @@
 				3F9C16641B63D4E400D7D51B /* thumb4.png in Resources */,
 				3048A1141C40657C00855EB0 /* DeviceState_Indeterminate.png in Resources */,
 				10AA774D1C207B9F000B7249 /* dampening@2x.png in Resources */,
+				3090FCA01D37031700EBB8F3 /* DeviceStateRunning@2x.png in Resources */,
 				3048A1131C40657C00855EB0 /* DeviceState_Ready@2x.png in Resources */,
 				10D5EBBA1B94CEEC006125E1 /* doneup1.png in Resources */,
 				10D5EBB91B94CEEC006125E1 /* done1.png in Resources */,

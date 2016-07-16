@@ -49,7 +49,6 @@
     bool endGreater;
 }
 
-@property (nonatomic, strong)		NSString *	motorName;
 @property (nonatomic, readwrite)	NSInteger	motorNumber;
 @property (strong, nonatomic) IBOutlet UIButton *leftBtn;
 @property (strong, nonatomic) IBOutlet UIButton *rightBtn;
@@ -75,6 +74,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *dampeningLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *dampeningImg;
 @property (strong, nonatomic) IBOutlet UILabel *directionLbl;
+@property (strong, nonatomic) IBOutlet UIButton *customNameButton;
+@property (strong, nonatomic) IBOutlet UITextField *customNameTxt;
+
+
+
 @property NSNumber *directionLabelMode;
 
 - (IBAction) handleReleaseSensitivitySlider: (UISlider *) sender;

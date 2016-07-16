@@ -68,7 +68,14 @@
     NSString *deviceImage = @"DeviceState_Off.png";
     if (device.fwVersion && NO == device.disconnected)
     {
-        deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+        if (NMXRunStatusRunning & self.runStatus)
+        {
+            deviceImage = @"DeviceStateRunning.png";
+        }
+        else
+        {
+            deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+        }
     }
     
     return deviceImage;
@@ -127,8 +134,9 @@
         int queryStatus = [device mainQueryRunStatus];
         int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
         
-        if (queryStatus == 99 || queryStatusKeyFrame == 99 ||
-            queryStatus == NMXRunStatusUnknown || queryStatusKeyFrame == NMXRunStatusUnknown) {
+        self.runStatus = queryStatus | queryStatusKeyFrame;
+        
+        if (self.runStatus == 99 || self.runStatus == NMXRunStatusUnknown) {
             
             NSLog(@"stop everything");
             
@@ -156,11 +164,6 @@
                     [self.tableView.activeDevices addObject: device];
                 }
 
-                if ((NMXRunStatusRunning & queryStatus) || NMXRunStatusRunning & queryStatusKeyFrame)
-                {
-                    [self.tableView navigateToMainView];
-                }
-                
                 [self.tableView postDevicesStateChange];
                 
             });

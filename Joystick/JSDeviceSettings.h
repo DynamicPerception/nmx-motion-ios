@@ -117,6 +117,11 @@ typedef enum
 @property NSNumber *panDirectionMode;     // CW/CCW, In/Out, etc.
 @property NSNumber *tiltDirectionMode;    // CW/CCW, In/Out, etc.
 
+@property NSString *channel1Name;
+@property NSString *channel2Name;
+@property NSString *channel3Name;
+
+
 // Ramping Settings
 
 @property (nonatomic, strong)		NSArray *			panIncreaseValues;

@@ -1614,7 +1614,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
 		MotorSettingsViewController *msvc = segue.destinationViewController;
 
-		msvc.motorName = @"Slide";
 		msvc.motorNumber = self.appExecutive.device.sledMotor;
         msvc.directionLabelMode = settings.slideDirectionMode;
         
@@ -1625,7 +1624,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 	{
 		MotorSettingsViewController *msvc = segue.destinationViewController;
 
-		msvc.motorName = @"Pan";
 		msvc.motorNumber = self.appExecutive.device.panMotor;
         msvc.directionLabelMode = settings.panDirectionMode;
 
@@ -1636,7 +1634,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 	{
 		MotorSettingsViewController *msvc = segue.destinationViewController;
 
-		msvc.motorName = @"Tilt";
 		msvc.motorNumber = self.appExecutive.device.tiltMotor;
         msvc.directionLabelMode = settings.tiltDirectionMode;
         
