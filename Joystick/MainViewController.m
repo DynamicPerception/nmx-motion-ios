@@ -885,6 +885,10 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     settings.microstep1 = [self.appExecutive.device motorQueryMicrostep2:1];
     settings.microstep2 = [self.appExecutive.device motorQueryMicrostep2:2];
     settings.microstep3 = [self.appExecutive.device motorQueryMicrostep2:3];
+
+    self.setStartButton.selected = NO;
+    self.setStopButton.selected = NO;
+    self.flipButton.selected = NO;
     
     bool pc = [self.appExecutive.device queryPowerCycle];
     
