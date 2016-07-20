@@ -45,7 +45,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *slideLabel;
 @property (strong, nonatomic) IBOutlet UILabel *panLabel;
 @property (strong, nonatomic) IBOutlet UILabel *tiltLabel;
-@property (strong, nonatomic) IBOutlet UILabel *panTiltLabel;
 
 @property (nonatomic, retain)	IBOutlet	UISlider *					_dollySlider;
 @property (nonatomic, strong)	IBOutlet	UIButton *					settingsButton;
@@ -184,12 +183,16 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     slideButton.titleLabel.numberOfLines = 1;
     slideButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     slideButton.titleLabel.lineBreakMode = NSLineBreakByClipping;
+    slideButton.titleLabel.minimumScaleFactor = .5;
     panButton.titleLabel.numberOfLines = 1;
     panButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     panButton.titleLabel.lineBreakMode = NSLineBreakByClipping;
+    panButton.titleLabel.minimumScaleFactor = .5;
+    panButton.contentEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
     tiltButton.titleLabel.numberOfLines = 1;
     tiltButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     tiltButton.titleLabel.lineBreakMode = NSLineBreakByClipping;
+    tiltButton.titleLabel.minimumScaleFactor = .5;
 
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName4) userInfo:nil repeats:NO];
@@ -694,7 +697,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     self.slideLabel.text = [NSString stringWithFormat:@"%@ Control", settings.channel1Name];
     self.panLabel.text = [NSString stringWithFormat:@"%@ Control", settings.channel2Name];
     self.tiltLabel.text = [NSString stringWithFormat:@"%@ Control", settings.channel3Name];
-    self.panTiltLabel.text = [NSString stringWithFormat:@"%@/%@ Control", settings.channel2Name, settings.channel3Name];
 }
 
 - (void) enableInteractions {

@@ -29,7 +29,6 @@
 @property (nonatomic, weak)	IBOutlet	UILabel *				backlashLabel;
 @property (nonatomic, weak)	IBOutlet	UIButton *				backlashButton;
 @property (nonatomic, weak)	IBOutlet	JoyButton *				okButton;
-@property (strong, nonatomic) IBOutlet  UILabel *               joystickSliderLabel;
 
 @property JSDeviceSettings *settings;
 
@@ -322,8 +321,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     
     self.motorSettingsLabel.text = [NSString stringWithFormat: @"%@ Settings Channel:", motorName];
-    
-    self.joystickSliderLabel.text = [NSString stringWithFormat: @"%@/%@ Sliders", self.settings.channel2Name, self.settings.channel3Name];
 
 }
 

@@ -191,16 +191,21 @@
     
     if (!panTiltLbl)
     {
-        panTiltLbl = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 107/2, degreeCircle.frame.size.height + degreeCircle.frame.origin.y + labelOffset, 107, 18)];
+        panTiltLbl = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 200/2, degreeCircle.frame.size.height + degreeCircle.frame.origin.y + labelOffset, 200, 18)];
 
-        JSDeviceSettings *settings = [AppExecutive sharedInstance].device.settings;
-        panTiltLbl.text = [NSString stringWithFormat:@"%@/%@ Control", settings.channel2Name, settings.channel3Name];
         panTiltLbl.textColor = [UIColor whiteColor];
         panTiltLbl.textAlignment = NSTextAlignmentCenter;
         panTiltLbl.font = myFont;
+        panTiltLbl.numberOfLines = 1;
+        panTiltLbl.adjustsFontSizeToFitWidth = YES;
+        panTiltLbl.lineBreakMode = NSLineBreakByClipping;
+        panTiltLbl.minimumScaleFactor = .5;
         
         [self.view addSubview: panTiltLbl];
     }
+    
+    JSDeviceSettings *settings = [AppExecutive sharedInstance].device.settings;
+    panTiltLbl.text = [NSString stringWithFormat:@"%@/%@ Control", settings.channel2Name, settings.channel3Name];
     
     halfX = (int)self.view.frame.size.width/2;
     halfY = (int)self.view.frame.size.height/2;
