@@ -451,16 +451,24 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) disconnect
 {
     [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
-    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self forKey:@"device"];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil userInfo:userInfo];
 }
 
 // Handle notification that the device was disconnected
-- (void) deviceDisconnect: (id) object {
+- (void) deviceDisconnect: (NSNotification *) notification {
 
-    DDLogDebug(@"Device disconnected NMXDevice");
+    NMXDevice *device = [[notification userInfo] valueForKey:@"device"];
     
-    self.disconnected = true;
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    if (device == self)
+    {
+        DDLogDebug(@"Device disconnected NMXDevice = %@", self.myPeripheral.name);
+    
+        self.disconnected = true;
+        [[NSNotificationCenter defaultCenter] removeObserver: self];
+    }
 }
 
 #pragma mark - Buffer

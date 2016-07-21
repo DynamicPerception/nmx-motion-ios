@@ -11,7 +11,7 @@
 
 @class DeviceSelectionTableViewController;
 
-@interface DeviceTableViewCell : UITableViewCell <NMXDeviceDelegate, UIAlertViewDelegate>
+@interface DeviceTableViewCell : UITableViewCell <NMXDeviceDelegate, UIAlertViewDelegate, NMXDeviceManagerDelegate>
 
 @property (strong, nonatomic) IBOutlet UIButton *settingsButton;
 @property (strong, nonatomic) NMXDevice *device;

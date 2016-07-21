@@ -39,13 +39,21 @@
     }
     else
     {
-        [self.device disconnect];
-        self.settingsButton.enabled = NO;
-        self.settingsButton.hidden = YES;
-        self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
-        [self.tableView.activeDevices removeObject: self.device];
+        [self disconnect];
     }
 
+}
+
+- (void) disconnect
+{
+    AppExecutive *ae = [AppExecutive sharedInstance];
+    ae.deviceManager.delegate = self;
+    
+    [self.device disconnect];
+    self.settingsButton.enabled = NO;
+    self.settingsButton.hidden = YES;
+    self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
+    [self.tableView.activeDevices removeObject: self.device];
 }
 
 - (void) connectionTimeout
@@ -123,6 +131,50 @@
     [self.activityIndicator startAnimating];
 }
 
+- (BOOL) confirmOkForMultiController: (NMXDevice *)device
+{
+    if (self.tableView.activeDevices.count == 0) return YES;
+    
+    NSString *msg = nil;
+    
+    if (device.fwVersion < 68)
+    {
+        msg = @"The firmware on the selected device must be upgraded to "
+               "v. 0.68 or newer to use in a multi-contoller environment."
+               "\nDisconnecting.";
+    }
+    else
+    {
+        for (NMXDevice *activeDevice in self.tableView.activeDevices)
+        {
+            if (activeDevice.fwVersion < 68)
+            {
+                msg = [NSString stringWithFormat:@"Device %@ must be upgraded to "
+                                                  "v. 0.68 or newer to use a multi-contoller environment."
+                                                  "\nDisconnecting.", [[AppExecutive sharedInstance] stringWithHandleForDeviceName: activeDevice.name] ];
+                break;
+            }
+        }
+    }
+    
+    if (msg)
+    {
+        [self.connectSwitch setOn:NO animated:YES];
+        [self disconnect];
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Error"
+                                                        message: msg
+                                                       delegate: nil
+                                              cancelButtonTitle: @"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        return NO;
+
+    }
+    
+    return YES;
+}
+
 - (void) didConnect: (NMXDevice *) device
 {
     // Initialize the device state and query firmware
@@ -159,7 +211,8 @@
                 NSString *deviceImage = [self getImageForDeviceStatus: device];
                 self.imageView.image = [UIImage imageNamed: deviceImage];
 
-                if (![self.tableView.activeDevices containsObject: device])
+                if ([self confirmOkForMultiController: device] &&
+                    ![self.tableView.activeDevices containsObject: device])
                 {
                     [self.tableView.activeDevices addObject: device];
                 }
@@ -184,5 +237,12 @@
     self.connectSwitch.enabled = YES;
 }
 
+#pragma mark NMXDeviceManagerDelegate
+
+- (void) didDisconnectDevice: (CBPeripheral *) peripheral {
+    
+    // Eat this, we disconnected the device ourself
+
+}
 
 @end
