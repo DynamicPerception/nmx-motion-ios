@@ -432,39 +432,16 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) showVoltageTimer {
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    float newBase = settings.voltageHigh - settings.voltageLow;
+    float voltagePercent = [self.appExecutive calculateVoltage: NO];
     
-    //NSLog(@"newBase: %.02f",newBase);
+    float offset = 1 - (batteryIcon.frame.size.height * voltagePercent) - .5;
     
-    float newVoltage = settings.voltage - settings.voltageLow;
-    
-    //NSLog(@"newVoltage: %.02f",newVoltage);
-    
-    if (newBase <= 0) newBase = 1;
-    
-    float per4 = newVoltage/newBase;
-    
-    //NSLog(@"per4: %.02f",per4);
-    
-    if (per4 > 1)
-    {
-        per4 = 1;
-    }
-    
-    if (per4 < 0)
-    {
-        per4 = 0;
-    }
-        
-    float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
-    
-    if (per4 > 0)
+    if (voltagePercent > 0)
     {
         UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
                                                              batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
                                                              batteryIcon.frame.size.width * .47,
-                                                             batteryIcon.frame.size.height * per4)];
+                                                             batteryIcon.frame.size.height * voltagePercent)];
         
         v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
     

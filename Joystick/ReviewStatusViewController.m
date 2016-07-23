@@ -2876,30 +2876,14 @@ typedef enum{
 
 - (void) showVoltageTimer {
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    float voltagePercent = [self.appExecutive calculateVoltage: NO];
     
-    float newBase = settings.voltageHigh - settings.voltageLow;
-    
-    float newVoltage = settings.voltage - settings.voltageLow;
-    
-    float per4 = newVoltage/newBase;
-    
-    if (per4 > 1)
-    {
-        per4 = 1;
-    }
-    
-    if (per4 < 0)
-    {
-        per4 = 0;
-    }
-    
-    float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
+    float offset = 1 - (batteryIcon.frame.size.height * voltagePercent) - .5;
     
     UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
                                                          batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
                                                          batteryIcon.frame.size.width * .47,
-                                                         batteryIcon.frame.size.height * per4)];
+                                                         batteryIcon.frame.size.height * voltagePercent)];
     
 //    [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 7,
 //                                                         batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),

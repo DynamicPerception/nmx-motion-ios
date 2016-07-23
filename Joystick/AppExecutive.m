@@ -463,6 +463,7 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
     }
 }
 
+
 //mm search "self.defaults"  -- some of these things need to get moved to device settings
 - (NSNumber *) sensitivityNumber {
     
@@ -662,6 +663,62 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 }
 
 #pragma mark device control
+
+// if forCurrentDevice, calculate the voltage only for the current active device in the UI. Otherwise,
+// return the lowest voltage for all devices
+- (float) calculateVoltage: (BOOL) forCurrentDevice
+{
+    float percent = 1.f;
+    
+    NSArray<NMXDevice *> *deviceList;
+    if (forCurrentDevice)
+    {
+        deviceList = [NSArray arrayWithObjects: self.device, nil];
+    }
+    else
+    {
+        deviceList = self.deviceList;
+    }
+    
+    for (NMXDevice *device in deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
+        
+#if TARGET_IPHONE_SIMULATOR
+    
+        settings.voltage = 12.1;
+        settings.voltageLow = 10.5;
+        settings.voltageHigh = 12.5;
+    
+#else
+    
+        settings.voltage = [device mainQueryVoltage];
+    
+#endif
+    
+        float newBase = settings.voltageHigh - settings.voltageLow;
+        if (newBase <= 0) newBase = 1;
+    
+        float newVoltage = settings.voltage - settings.voltageLow;
+    
+        float per4 = newVoltage/newBase;
+    
+        if (per4 > 1)
+        {
+            per4 = 1;
+        }
+    
+        if (per4 < 0)
+        {
+            per4 = 0;
+        }
+        
+        percent = MIN(percent, per4);
+    }
+    
+    return percent;
+}
+
 
 - (void) stopProgram
 {

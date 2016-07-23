@@ -1006,49 +1006,17 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 }
 
 - (void) showVoltage {
+
+    float voltagePercent = [self.appExecutive calculateVoltage: YES];
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    #if TARGET_IPHONE_SIMULATOR
-        
-        settings.voltage = 12.1;
-        settings.voltageLow = 10.5;
-        settings.voltageHigh = 12.5;
-        
-    #else
-        
-        settings.voltage = [self.appExecutive.device mainQueryVoltage];
-        
-    #endif
-    
-    float newBase = settings.voltageHigh - settings.voltageLow;
-    if (newBase == 0) newBase = 1;
-    
-    //NSLog(@"newBase: %.02f",newBase);
-    
-    float newVoltage = settings.voltage - settings.voltageLow;
-    
-    //NSLog(@"newVoltage: %.02f",newVoltage);
-    
-    float per4 = newVoltage/newBase;
-    
-    //NSLog(@"per4: %.02f",per4);
-    
-    if (per4 > 1)
-    {
-        per4 = 1;
-    }
-    
-    if (per4 < 0)
-    {
-        per4 = 0;
-    }
-    
-    float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
+    float offset = 1 - (batteryIcon.frame.size.height * voltagePercent) - .5;
+
+    [batteryView removeFromSuperview];
     
     batteryView = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
                                                          batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
                                                          batteryIcon.frame.size.width * .47,
-                                                         batteryIcon.frame.size.height * per4)];
+                                                         batteryIcon.frame.size.height * voltagePercent)];
     
     batteryView.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
     
@@ -1062,31 +1030,15 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 - (void) handleUpdateBatteryViewNotification:(NSNotification *)pNotification {
     
     [batteryView removeFromSuperview];
-        
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    float newBase = settings.voltageHigh - settings.voltageLow;
+
+    float voltagePercent = [self.appExecutive calculateVoltage: YES];
     
-    NSLog(@"newBase: %.02f",newBase);
-    
-    float newVoltage = settings.voltage - settings.voltageLow;
-    
-    NSLog(@"newVoltage: %.02f",newVoltage);
-    
-    float per4 = newVoltage/newBase;
-    
-    NSLog(@"per4: %.02f",per4);
-    
-    if (per4 > 1)
-    {
-        per4 = 1;
-    }
-    
-    float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
-    
+    float offset = 1 - (batteryIcon.frame.size.height * voltagePercent) - .5;
+
     batteryView = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 7,
                                                            batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
                                                            batteryIcon.frame.size.width * .5,
-                                                           batteryIcon.frame.size.height * per4)];
+                                                           batteryIcon.frame.size.height * voltagePercent)];
     
     batteryView.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
     

@@ -84,10 +84,6 @@
 - (BOOL) validFocusNumber: (NSNumber *) number;
 - (BOOL) validTriggerNumber: (NSNumber *) number;
 
-#pragma mark device control
-
-- (void) stopProgram;
-
 #pragma mark program delay methods
 
 - (void) setProgramDelayTime: (NSTimeInterval) delay;
@@ -99,6 +95,8 @@
 
 #pragma mark batch device comm
 
+- (void) stopProgram;
+- (float) calculateVoltage: (BOOL) forCurrentDevice;
 - (BOOL) queryMotorFeasibility;
 - (void) setProgamSettings: (NMXProgramMode) programMode
               pingPongMode: (BOOL)pingPong
