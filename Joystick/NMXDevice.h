@@ -99,6 +99,7 @@ typedef enum : unsigned char {
 - (void) mainSetStartHere;
 - (void) mainSetStopHere;
 - (void) mainSetFPS: (NMXFPS) fps;
+- (void) mainSetControllerCount: (UInt8) controllerCount;
 - (void) mainFlipStartStop;
 
 - (UInt16) mainQueryFirmwareVersion;
@@ -110,6 +111,7 @@ typedef enum : unsigned char {
 - (NMXProgramMode) mainQueryProgramMode;
 - (bool) mainQueryPingPongMode;
 - (NMXFPS) mainQueryFPS;
+- (UInt32) mainQueryControllerCount;
 - (void) motorEnable: (int) motorNumber;
 - (void) motorSet: (int) motorNumber SleepMode: (int) sleepMode;
 - (void) motorSet: (int) motorNumber InvertDirection: (bool) invertDirection;

@@ -40,6 +40,7 @@ typedef enum : unsigned char {
     NMXCommandMainSetStartHere = 26,
     NMXCommandMainSetStopHere = 27,
     NMXCommandMainSetFPS = 28,
+    NMXCommandMainSetControllerCount = 33,
     NMXCommandMainSetAppMode = 51,
     NMXCommandMainFlipStartStopPoints = 29,
     NMXCommandMainQueryFirmwareVersion = 100,
@@ -53,9 +54,11 @@ typedef enum : unsigned char {
     NMXCommandMainQueryProgramPercentComplete = 123,
     NMXCommandMainQueryTotalRunTime = 125,
     NMXCommandMainQueryFPS = 127,
+    NMXCommandMainQueryControllerCount = 134,
     NMXCommandMainQueryRunStatus = 140,    // introduced in firmware v. 0.51
     
 } NMXCommandMain;
+
 
 
 typedef enum : unsigned char {
@@ -1018,6 +1021,15 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     [self sendCommand: newData WithDesc: @"Set FPS" WaitForResponse: true WithTimeout: 0.2];
 }
 
+- (void) mainSetControllerCount: (UInt8) controllerCount {
+    
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainSetControllerCount dataLength: 1];
+    newDataBytes[10] = controllerCount;
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
+    [self sendCommand: newData WithDesc: @"Set Controller Count" WaitForResponse: true WithTimeout: 0.2];
+}
+
 - (void) mainFlipStartStop {
     
     unsigned char newDataBytes[16];
@@ -1312,6 +1324,30 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     return fps;
 }
+
+- (UInt32) mainQueryControllerCount {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 68])
+    {
+        // This should only be called when we are running a program.  Pre V. 68 we know we are only running on 1 device
+        return 1;
+    }
+    
+    UInt32 controllerCount = 0;
+    unsigned char   newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryControllerCount dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"Query Controller Count" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        controllerCount = [[self extractReturnedNumber] UInt8Value];
+    }
+    
+    return controllerCount;
+}
+
 
 - (UInt32) mainQueryStartHere {
     

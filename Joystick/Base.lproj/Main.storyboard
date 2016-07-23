@@ -2195,6 +2195,7 @@
                         <segue destination="D7L-gv-cQ4" kind="presentation" identifier="SegueForFrameCountInput" id="p4Z-EB-hlS"/>
                         <segue destination="g8C-ge-zKv" kind="presentation" identifier="SegueForIntervalInput" id="k3P-Db-zBC"/>
                         <segue destination="6fp-yf-kUD" kind="show" identifier="SegueToMotorRampingViewController" id="6SS-hE-J9g"/>
+                        <segue destination="y9W-Aj-dgc" kind="presentation" identifier="SegueForFrameRateInput" id="jGR-te-OJj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SqE-kl-OVB" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -4501,7 +4502,7 @@ Ramping</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jfe-Nw-VgV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4980" y="1772"/>
+            <point key="canvasLocation" x="5046" y="855"/>
         </scene>
         <!--Exposure View Controller-->
         <scene sceneID="Hwh-il-USe">
@@ -5864,7 +5865,7 @@ Ramping</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ihk-RO-rgk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4980" y="1772"/>
+            <point key="canvasLocation" x="4942" y="1761"/>
         </scene>
     </scenes>
     <resources>
@@ -5875,19 +5876,19 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="uS0-Tr-f5Z"/>
+        <segue reference="k3P-Db-zBC"/>
         <segue reference="gqx-Wd-6xg"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="IfY-aS-7xa"/>
-        <segue reference="7H3-V6-M3H"/>
         <segue reference="PwX-tX-cQi"/>
-        <segue reference="aFw-MN-OaY"/>
-        <segue reference="TNv-a2-D3V"/>
+        <segue reference="br4-PB-JjF"/>
+        <segue reference="0Dk-WM-mJ4"/>
+        <segue reference="RMu-iv-gcK"/>
+        <segue reference="p4Z-EB-hlS"/>
+        <segue reference="eIy-q4-84e"/>
+        <segue reference="rGc-Y0-TPg"/>
+        <segue reference="6SS-hE-J9g"/>
         <segue reference="6tH-tQ-8da"/>
-        <segue reference="l1d-eL-qTA"/>
-        <segue reference="QDi-9c-Wwb"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="STE-RU-aG4"/>
         <segue reference="Nk1-9G-Dpm"/>
     </inferredMetricsTieBreakers>
 </document>

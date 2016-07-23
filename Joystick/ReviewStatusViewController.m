@@ -600,9 +600,12 @@ typedef enum{
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
 
+        NSUInteger deviceCount = self.appExecutive.deviceList.count;
+        
         for (NMXDevice *device in self.appExecutive.deviceList)
         {
             [device takeUpBacklashKeyFrameProgram];
+            [device mainSetControllerCount: (int)deviceCount];
         }
         for (NMXDevice *device in self.appExecutive.deviceList)
         {
@@ -615,6 +618,22 @@ typedef enum{
     });
 }
 
+- (void) start2PProgram
+{
+    NSUInteger deviceCount = self.appExecutive.deviceList.count;
+    
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device mainSetControllerCount: (int)deviceCount];
+    }
+
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device mainStartPlannedMove];
+    }
+
+}
+
 - (void) doStartMove {
     
     if (appExecutive.is3P == YES)
@@ -625,10 +644,7 @@ typedef enum{
     }
     else
     {
-        for (NMXDevice *device in self.appExecutive.deviceList)
-        {
-            [device mainStartPlannedMove];
-        }
+        [self start2PProgram];
     }
     
     if(self.programMode != NMXProgramModeVideo)
@@ -678,10 +694,7 @@ typedef enum{
     }
     else
     {
-        for (NMXDevice *device in self.appExecutive.deviceList)
-        {
-            [device mainStartPlannedMove];
-        }
+        [self start2PProgram];
     }
     
     [self transitionToState: ControllerStatePauseProgram];
@@ -1330,10 +1343,7 @@ typedef enum{
     }
     else
     {
-        for (NMXDevice *device in self.appExecutive.deviceList)
-        {
-            [device mainStartPlannedMove];
-        }
+        [self start2PProgram];
     }
     
     [self showKeepAliveView];
@@ -1431,10 +1441,7 @@ typedef enum{
     }
     else
     {
-        for (NMXDevice *device in self.appExecutive.deviceList)
-        {
-            [device mainStartPlannedMove];
-        }
+        [self start2PProgram];
     }
 }
 
@@ -1449,24 +1456,7 @@ typedef enum{
 
 	[self transitionToState: ControllerStateMotorRampingOrSendMotors];
 
-    for (NMXDevice *device in self.appExecutive.deviceList)
-    {
-        
-        if (appExecutive.is3P == YES)
-        {
-            [device stopKeyFrameProgram];
-        }
-        else
-        {
-            [[AppExecutive sharedInstance].device mainStopPlannedMove];
-            
-            [self.appExecutive.device keepAlive:0];
-            if (self.appExecutive.device.fwVersion >= 52)
-            {
-                [self.appExecutive.device mainSetPingPongMode: NO];
-            }
-        }
-    }
+    [self.appExecutive stopProgram];
     
     keepAliveView.hidden = YES;
     

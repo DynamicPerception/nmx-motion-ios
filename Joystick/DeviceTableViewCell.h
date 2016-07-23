@@ -20,9 +20,12 @@
 @property (strong, nonatomic) IBOutlet UISwitch *connectSwitch;
 @property (weak) DeviceSelectionTableViewController *tableView;
 @property int runStatus;
+@property int numRunning;
 
+- (void) connect;
 - (void) preDeviceStateChange;
 - (void) postDeviceStateChange;
 - (NSString *)getImageForDeviceStatus: (NMXDevice *)device;
+- (void) determineRunStatus: (NMXDevice *)device;
 
 @end

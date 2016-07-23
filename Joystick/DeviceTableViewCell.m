@@ -175,6 +175,14 @@
     return YES;
 }
 
+- (void) determineRunStatus: (NMXDevice *)device
+{
+    int queryStatus = [device mainQueryRunStatus];
+    int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
+    
+    self.runStatus = queryStatus | queryStatusKeyFrame;
+}
+
 - (void) didConnect: (NMXDevice *) device
 {
     // Initialize the device state and query firmware
@@ -183,10 +191,12 @@
     
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        int queryStatus = [device mainQueryRunStatus];
-        int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
-        
-        self.runStatus = queryStatus | queryStatusKeyFrame;
+        [self determineRunStatus: device];
+
+        if (self.runStatus & NMXRunStatusKeyframe)
+        {
+            [AppExecutive sharedInstance].is3P = YES;
+        }
         
         if (self.runStatus == 99 || self.runStatus == NMXRunStatusUnknown) {
             
@@ -211,6 +221,11 @@
                 NSString *deviceImage = [self getImageForDeviceStatus: device];
                 self.imageView.image = [UIImage imageNamed: deviceImage];
 
+                if (NMXRunStatusRunning & self.runStatus)
+                {
+                    self.numRunning = [device mainQueryControllerCount];
+                }
+                
                 if ([self confirmOkForMultiController: device] &&
                     ![self.tableView.activeDevices containsObject: device])
                 {

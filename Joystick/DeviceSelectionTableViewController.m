@@ -18,8 +18,12 @@
 @property (nonatomic, strong)	IBOutlet UITableView* tableView;
 @property (strong, nonatomic) IBOutlet UIButton *goButton;
 @property BOOL confirmingFirmware;
+@property BOOL confirmingStopPrograms;
+@property BOOL confirmingConnectMissing;
 @property BOOL oldFirmwareConfirmed;
 @property BOOL multiDeviceConfirmed;
+@property int  numMissing;
+@property int  numReportedRunning;
 
 @property NSArray *             deviceList;
 @end
@@ -80,6 +84,9 @@
     self.oldFirmwareConfirmed = NO;
     self.confirmingFirmware = NO;
     self.multiDeviceConfirmed = NO;
+    self.confirmingStopPrograms = NO;
+    self.confirmingConnectMissing = NO;
+
     self.activeDevices = [NSMutableArray new];
 
 }
@@ -101,7 +108,7 @@
      }
 }
 
-- (void) postDevicesStateChange;
+- (void) postDevicesStateChange
 {
     NSArray *cells = [self.tableView visibleCells];
     BOOL oneConnected = NO;
@@ -119,6 +126,18 @@
     {
         self.goButton.hidden = NO;
     }
+    
+    if (self.confirmingConnectMissing)
+    {
+        self.numMissing--;
+        if (self.numMissing <= 0)
+        {
+            self.confirmingConnectMissing = NO;
+            self.numMissing = 0;
+            [self navigateToMainView];
+        }
+    }
+
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -212,6 +231,11 @@
         cell.device = device;
         cell.tableView = self;
 
+        if (cell.device.disconnected == NO)
+        {
+            [cell determineRunStatus: device];
+        }
+        
         NSString *deviceImage = [cell getImageForDeviceStatus:device];
         cell.imageView.image = [UIImage imageNamed: deviceImage];
         cell.imageView.hidden = NO;
@@ -229,19 +253,25 @@
 
 #if !TARGET_IPHONE_SIMULATOR
 
-    AppExecutive *appExecutive = [AppExecutive sharedInstance];
     int numRunning = 0;
+    int numInList = 0;
+    int numConnected = 0;
+    self.numReportedRunning = 0;
     
     NSArray *cells = [self.tableView visibleCells];
     for (DeviceTableViewCell *cell in cells)
     {
-        if (cell.runStatus & NMXRunStatusRunning)
-        {
-            numRunning++;
-        }
+        numInList++;
         
         if (cell.connectSwitch.on)
         {
+            if (cell.runStatus & NMXRunStatusRunning)
+            {
+                numRunning++;
+                self.numReportedRunning = MAX(self.numReportedRunning, cell.numRunning);
+            }
+
+            numConnected++;
             NMXDevice *device = cell.device;
 
             if (0 == device.fwVersion)
@@ -260,38 +290,76 @@
 
     }
     
+    BOOL okToProceed = YES;
+    NSString *title = @"";
+    NSString *msg = @"";
+    NSString *altButton = @"";
     
-    
-    appExecutive.deviceList = [NSArray arrayWithArray:self.activeDevices];
-    if (appExecutive.deviceList.count>0)
+    if (self.numReportedRunning > 0)
     {
-        appExecutive.device = self.activeDevices[0];
-        
-        // At least one device is currently running
-        if (numRunning > 0)
+        if (self.numReportedRunning != numConnected)
         {
-            if (numRunning < self.deviceList.count)
-            {
-                //Not all of the listed devices are running
-                // If user approves this situation  GO TO A
-            }
+            okToProceed = NO;
             
-            // TAG A
-            if (numRunning < appExecutive.deviceList.count)
+            // We don't see all of the devices that should be running
+            if (self.numReportedRunning > numInList)
             {
-                // Not all of the connected devices are running
-                // => we must stop the program
+                title = @"Device not available";
+                msg = @"Not all running devices are visible.\nDo you wish to stop the running program?";
+                altButton = @"Stop Program";
+                self.confirmingStopPrograms = YES;
             }
+            else if (self.numReportedRunning < numConnected)
+            {
+                title = @"Error";
+                msg = @"You have connected to more devices than are running a program.\nDo you wish to stop the running program?";
+                altButton = @"Stop Program";
+                self.confirmingStopPrograms = YES;
+            }
+            // We aren't connected to all of the devices that should be running
             else
             {
-                // navigate to run status view
+                title = @"Error";
+                msg = @"Not all running devices are connected.\nDo you wish to connect to them now?";
+                altButton = @"Connect";
+                self.confirmingConnectMissing = YES;
+                self.numMissing = self.numReportedRunning-numConnected;
             }
+            
         }
+        else if (self.numReportedRunning != numRunning)
+        {
+            title = @"Error";
+            msg = @"Device run states do not match.\nDo you wish to stop any running programs now?";
+            altButton = @"Stop Programs";
+            okToProceed = NO;
+            self.confirmingStopPrograms = YES;
+        }
+    }
+    
+    if (NO == okToProceed)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: title
+                                                        message: msg
+                                                       delegate: self
+                                              cancelButtonTitle: @"Cancel"
+                                              otherButtonTitles: altButton, nil];
+        [alert show];
+        return;
     }
     
 #endif
 
-    if (NO == self.oldFirmwareConfirmed && ![updatesAvailFor isEqualToString: @""])
+    if (NO == ready)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Device not ready"
+                                                        message: @"The device is being initialized, please wait."
+                                                       delegate: self
+                                              cancelButtonTitle: @"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+    }
+    else if (NO == self.oldFirmwareConfirmed && ![updatesAvailFor isEqualToString: @""])
     {
         NSString *updatesString = [NSString stringWithFormat:@"New firmware is available for NMX device(s) %@. Please update the NMX firmware asap.  If you continue some features will be disabled.",
                                    updatesAvailFor];
@@ -304,15 +372,6 @@
 
         [alert show];
     }
-    else if (NO == ready)
-    {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Device not ready"
-                                                        message: @"The device is being initialized, please wait."
-                                                       delegate: self
-                                              cancelButtonTitle: @"OK"
-                                              otherButtonTitles: nil];
-        [alert show];
-    }
     else
     {
         [self performSegueWithIdentifier:@"showMainView" sender:self];
@@ -322,22 +381,53 @@
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
+    AppExecutive *ae = [AppExecutive sharedInstance];
+    
     if(buttonIndex != 0)
     {
         if (self.confirmingFirmware)
         {
             self.oldFirmwareConfirmed = YES;
+            self.confirmingFirmware = NO;
+            
+            [self navigateToMainView];
+
+        }
+        else if (self.confirmingStopPrograms)
+        {
+            ae.deviceList = [NSArray arrayWithArray:self.activeDevices];
+            if (ae.deviceList.count>0)
+            {
+                [ae setActiveDevice: ae.deviceList[0]];
+            }
+
+            [ae stopProgram];
+            [self.tableView reloadData];
+            
+            self.confirmingStopPrograms = NO;
+            [self navigateToMainView];
+        }
+        else if (self.confirmingConnectMissing)
+        {
+            int numToConnect = self.numMissing;
+            NSArray *cells = [self.tableView visibleCells];
+            for (DeviceTableViewCell *cell in cells)
+            {
+                if ([self.activeDevices containsObject: cell.device] == NO)
+                {
+                    [cell connect];
+                    numToConnect--;
+                }
+                if (numToConnect == 0) break;
+            }
+            self.numMissing = MAX(0, self.numMissing-numToConnect);   // numMissing is now the number that we attempted to connect
         }
 
-        self.confirmingFirmware = NO;
-
-        [self navigateToMainView];
     }
-    else
-    {
-        self.confirmingFirmware = NO;
 
-    }
+    self.confirmingFirmware = NO;
+    self.confirmingStopPrograms = NO;
+
 }
 
 - (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
@@ -354,10 +444,15 @@
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    if ([[segue identifier] isEqualToString:@"showMainView"] || [[segue identifier] isEqualToString: @"simulatorShowMainView"] ||
-        [[segue identifier] isEqualToString:@"showSettingsView"])
+    if ([[segue identifier] isEqualToString:@"showMainView"])
     {
-            //NSLog(@"device name: %@",appExecutive.device.name);
+        AppExecutive *ae = [AppExecutive sharedInstance];
+        
+        ae.deviceList = [NSArray arrayWithArray:self.activeDevices];
+        if (ae.deviceList.count>0)
+        {
+            [ae setActiveDevice: ae.deviceList[0]];
+        }
     }
     else if ([[segue identifier] isEqualToString:@"helpDeviceManagement"])
     {

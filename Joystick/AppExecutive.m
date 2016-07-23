@@ -547,7 +547,6 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 
 #pragma mark - Class Management
 
-
 + (void) initialize {
 
 	sharedInstance = [[AppExecutive alloc] init];
@@ -661,6 +660,32 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 
     return deviceName;
 }
+
+#pragma mark device control
+
+- (void) stopProgram
+{
+    for (NMXDevice *device in self.deviceList)
+    {
+        if (self.is3P == YES)
+        {
+            [device stopKeyFrameProgram];
+        }
+        else
+        {
+            [device mainStopPlannedMove];
+            
+            [device keepAlive:0];
+            if (device.fwVersion >= 52)
+            {
+                [device mainSetPingPongMode: NO];
+            }
+        }
+    }
+
+}
+
+#pragma mark device delay
 
 - (void) setProgramDelayTime: (NSTimeInterval) delay
 {
