@@ -225,6 +225,10 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     self.currentDeviceButton.titleLabel.numberOfLines = 1;
     self.currentDeviceButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     self.currentDeviceButton.titleLabel.lineBreakMode = NSLineBreakByClipping;
+    if (appExecutive.deviceList.count <2)
+    {
+        self.currentDeviceButton.hidden = YES;
+    }
 
 }
 

@@ -345,7 +345,8 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController
 {
-    return [self.appExecutive connectedDeviceList].count;
+    NSUInteger count = [self.appExecutive connectedDeviceList].count;
+    return count > 1 ? count : 0;
 }
 
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
