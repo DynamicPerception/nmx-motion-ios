@@ -73,9 +73,6 @@ NSInteger		static	defaultFrameCount	= 300;				// number of frames in shot
 NSInteger		static	defaultVideoLength	= 1000 * 10;		// 10 seconds in milliseconds
 NSInteger		static	defaultFrameRate	= 24;				// frames per second
 
-BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
-CGFloat			static defaultSensitivity	= 100.0;	// 100% joystick sensitivity
-
 NSString		static 	*kDefaultsExposure		= @"kDefaultsExposure";
 NSString		static 	*kDefaultsBuffer		= @"kDefaultsBuffer";
 NSString		static 	*kDefaultsShotDuration	= @"kDefaultsShotDuration";
@@ -90,9 +87,6 @@ NSString		static 	*kDefaultsFocus			= @"kDefaultsFocus";
 NSString		static 	*kDefaultsInterval		= @"kDefaultsInterval";
 
 NSString		static 	*kDefaultsDeviceHandles	= @"kDefaultsDeviceHandles";
-
-NSString		static 	*kDefaultsLockAxisState	= @"kDefaultsLockAxisState";
-NSString		static 	*kDefaultsSensitivity	= @"kDefaultsSensitivity";
 
 NSString        static *kDefaultsProgramDelayTime         = @"programDelayTimer";
 NSString        static *kDefaultsProgramDelayTimeSetAt    = @"programDelayTimerSetAtTime";
@@ -118,11 +112,6 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 @synthesize focusNumber;
 @synthesize intervalNumber;
 
-// Device Settings
-
-@synthesize lockAxisNumber;
-@synthesize sensitivityNumber;
-
 #pragma mark Private Property Synthesis
 
 @synthesize defaults;
@@ -137,6 +126,7 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 - (void) setIs3P:(BOOL)is3P
 {
     [self.userDefaults setObject: [NSNumber numberWithInt: is3P ?1:0 ] forKey: @"is3P"];
+    [self.userDefaults synchronize];
 }
 
 - (BOOL) is3P
@@ -438,60 +428,6 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
     }
 }
 
-- (NSNumber *) lockAxisNumber {
-    
-    if (lockAxisNumber == nil)
-    {
-        lockAxisNumber = [self.defaults numberForKey: kDefaultsLockAxisState];
-        
-        if (lockAxisNumber == nil)
-        {
-            lockAxisNumber = [NSNumber numberWithBool: defaultLockAxisState];
-            [self.defaults setObject: lockAxisNumber forKey: kDefaultsLockAxisState];
-        }
-    }
-    
-    return lockAxisNumber;
-}
-
-- (void) setLockAxisNumber: (NSNumber *) number {
-    
-    if (FALSE == [number isEqualToNumber: self.lockAxisNumber])
-    {
-        lockAxisNumber = number;
-        [self saveDeviceValue: lockAxisNumber forKey: kDefaultsLockAxisState];
-    }
-}
-
-
-//mm search "self.defaults"  -- some of these things need to get moved to device settings
-- (NSNumber *) sensitivityNumber {
-    
-    if (sensitivityNumber == nil)
-    {
-        sensitivityNumber = [self.defaults numberForKey: kDefaultsSensitivity];
-        
-        if (sensitivityNumber == nil)
-        {
-            sensitivityNumber = [NSNumber numberWithFloat: defaultSensitivity];
-            [self.defaults setObject: sensitivityNumber forKey: kDefaultsSensitivity];
-        }
-    }
-    
-    return sensitivityNumber;
-}
-
-- (void) setSensitivityNumber: (NSNumber *) number {
-    
-    if (FALSE == [number isEqualToNumber: self.sensitivityNumber])
-    {
-        sensitivityNumber = number;
-        [self saveDeviceValue: sensitivityNumber forKey: kDefaultsSensitivity];
-    }
-}
-
-
-
 //------------------------------------------------------------------------------
 
 #pragma mark - Defaults
@@ -592,8 +528,6 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 
     // set device specific defaults to nil to force re-read for the new device
     defaults = nil;
-    lockAxisNumber = nil;
-    sensitivityNumber = nil;
     
 }
 
@@ -976,12 +910,8 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
 
 - (void) restoreDefaults {
     
-    //mm double check that these go here --- some likely go in the device settings
-    
-    NSLog(@"restoreDefaults");
-    
     //defaults
-    
+
     exposureNumber = [NSNumber numberWithInteger: defaultExposureTime];
     [self.userDefaults setObject: exposureNumber forKey: kDefaultsExposure];
 
@@ -1011,13 +941,6 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
     
     frameRateNumber = [NSNumber numberWithInteger: defaultFrameRate];
     [self.userDefaults setObject: frameRateNumber forKey: kDefaultsFrameRate];
-    
-    lockAxisNumber = [NSNumber numberWithBool: defaultLockAxisState];
-    [self.defaults setObject: lockAxisNumber forKey: kDefaultsLockAxisState];
-    
-
-    sensitivityNumber = [NSNumber numberWithFloat: defaultSensitivity];
-    [self.defaults setObject: sensitivityNumber forKey: kDefaultsSensitivity];
     
     for (NMXDevice *device in self.deviceList)
     {

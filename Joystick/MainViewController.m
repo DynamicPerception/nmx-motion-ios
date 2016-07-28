@@ -121,13 +121,11 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 }
 
 - (BOOL) lockAxisState {
-
-	return [self.appExecutive.lockAxisNumber boolValue];
+	return self.appExecutive.device.settings.lockAxis;
 }
 
 - (CGFloat) sensitivity {
-
-	return [self.appExecutive.sensitivityNumber floatValue];
+    return self.appExecutive.device.settings.sensitivity;
 }
 
 @synthesize dominantAxisSwitch;
@@ -632,7 +630,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 	//self.lockAxisIcon.hidden = self.lockAxisState == FALSE;
     
-    dominantAxisSwitch.on = [self.appExecutive.lockAxisNumber boolValue];
+    dominantAxisSwitch.on = [self lockAxisState];
     
     if (dominantAxisSwitch.on)
     {
@@ -2139,7 +2137,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     DDLogDebug(@"Dominant Axis Switch: %@", value);
     
-    self.appExecutive.lockAxisNumber = [NSNumber numberWithBool: sender.on];
+    self.appExecutive.device.settings.lockAxis = [NSNumber numberWithBool: sender.on];
     
     if (sender.on)
     {

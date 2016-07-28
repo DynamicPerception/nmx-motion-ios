@@ -35,12 +35,6 @@
 @property (nonatomic, strong)		NSNumber *			intervalNumber;
 
 
-// Device Settings
-
-@property (nonatomic, strong)		NSNumber *			lockAxisNumber;
-@property (nonatomic, strong)		NSNumber *			sensitivityNumber;
-
-
 // device
 
 @property (strong, atomic)          NMXDevice *           device;

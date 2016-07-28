@@ -30,7 +30,8 @@ NSString		static *kDefaultsSlideDecreaseValues	= @"kDefaultsSlideDecreaseValues"
 
 CGFloat			static defaultRampingStart	= 0.25;
 CGFloat			static defaultRampingFinal	= 0.75;
-
+CGFloat			static defaultSensitivity	= 100.0;	// 100% joystick sensitivity
+BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
 
 - (JSDeviceSettings *)initWithDevice:(NSString *)device
 {
@@ -155,6 +156,8 @@ CGFloat			static defaultRampingFinal	= 0.75;
     [self setObject: defaultRampingValues() forKey: kDefaultsSlideIncreaseValues];
     [self setObject: defaultRampingValues() forKey: kDefaultsSlideDecreaseValues];
 
+    [self setSensitivity:defaultSensitivity];
+    [self setLockAxis:defaultLockAxisState];
 }
 
 
@@ -174,6 +177,25 @@ CGFloat			static defaultRampingFinal	= 0.75;
 {
     [self setObject: [NSNumber numberWithInt:useJoystick?1:2] forKey: @"useJoystick"];
 }
+
+- (BOOL) lockAxis
+{
+    NSNumber *num = (NSNumber *)[self.settings objectForKey:@"kDefaultsLockAxisState"];
+    if (num)
+    {
+        return [num intValue]==1? YES : NO;
+    }
+
+    [self setLockAxis:defaultLockAxisState];
+    
+    return defaultLockAxisState;
+}
+
+- (void) setLockAxis:(BOOL)lockAxis
+{
+    [self setObject: [NSNumber numberWithInt:lockAxis?1:2] forKey: @"kDefaultsLockAxisState"];
+}
+
 
 - (void) setStart3PSlideDistance:(float)start3PSlideDistance
 {
@@ -651,6 +673,24 @@ CGFloat			static defaultRampingFinal	= 0.75;
 {
     float val = [self floatForKey: @"tiltMotorCustomValue"];
     return val;
+}
+
+- (float)sensitivity
+{
+    NSNumber *num = (NSNumber *)[self.settings objectForKey:@"kDefaultsSensitivity"];
+    if (num)
+    {
+        return [num floatValue];
+    }
+
+    [self setSensitivity:defaultSensitivity];
+    return defaultSensitivity;
+    
+}
+
+- (void)setSensitivity:(float)sensitivity
+{
+    [self setObject: [NSNumber numberWithFloat: sensitivity] forKey: @"kDefaultsSensitivity"];
 }
 
 - (void) setSlideDirection:(NSString *)str

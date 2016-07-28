@@ -209,7 +209,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         [toggleJoystickSwitch setOn:YES];
     }
     
-    sensitivityRatio = [self.appExecutive.sensitivityNumber floatValue]/100;
+    sensitivityRatio = [self.settings sensitivity]/100;
     
     //NSLog(@"sensitivityRatio: %f",sensitivityRatio);
     
@@ -1098,7 +1098,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     self.invertDirectionSwitch.on = [device motorQueryInvertDirection: (int)self.motorNumber];
     self.disableSwitch.on = [device motorQueryDisabled: (int) self.motorNumber];
     
-    sensitivitySlider.value	= [self.appExecutive.sensitivityNumber floatValue];
+    sensitivitySlider.value	= [device.settings sensitivity];
     sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", self.sensitivitySlider.value];
     
     switch (microstepSetting)
@@ -1391,9 +1391,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     DDLogDebug(@"Sensitivity Slider: %g", sender.value);
     
     self.sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", sender.value];
-    self.appExecutive.sensitivityNumber = [NSNumber numberWithFloat: sender.value];
     
-    sensitivityRatio = [self.appExecutive.sensitivityNumber floatValue]/100;
+    self.appExecutive.device.settings.sensitivity = sender.value;
+    
+    sensitivityRatio = self.appExecutive.device.settings.sensitivity/100;
     
     NSLog(@"sensitivityRatio: %f",sensitivityRatio);
 }
@@ -1408,7 +1409,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     DDLogDebug(@"Release Sensitivity Slider: %g", sender.value);
     
     self.sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", sender.value];
-    self.appExecutive.sensitivityNumber = [NSNumber numberWithFloat: sender.value];
+    self.appExecutive.device.settings.sensitivity = sender.value;
 }
 
 - (IBAction) goToPresets:(id)sender {

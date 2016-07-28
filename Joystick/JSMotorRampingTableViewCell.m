@@ -104,8 +104,6 @@
     [self.decreaseFinal addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
 
     UIImage *i = [self.mrvc imageWithImage:[UIImage imageNamed:@"thumb3.png"] scaledToSize:CGSizeMake(30.0, 30.0)];
-    //UIImage *b = [self.mrvc imageWithImage:[UIImage imageNamed:@"thumbBlue.png"] scaledToSize:CGSizeMake(30.0, 30.0)];
-    //mm can I use the selected state to automatically set the blue thumb????
     [self.increaseStart setThumbImage:i forState:UIControlStateNormal];
     [self.increaseStart setThumbImage:i forState:UIControlStateHighlighted];
     [self.increaseStart setThumbImage:i forState:UIControlStateSelected];

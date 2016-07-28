@@ -89,6 +89,7 @@ typedef enum
 @property float end3PTiltDistance;
 
 @property BOOL useJoystick;
+@property BOOL lockAxis;
 
 @property int start2pSet;
 @property int end2pSet;
@@ -108,6 +109,8 @@ typedef enum
 @property float slideMotorCustomValue;
 @property float panMotorCustomValue;
 @property float tiltMotorCustomValue;
+
+@property float sensitivity;
 
 @property NSString *slideDirection;
 @property NSString *panDirection;

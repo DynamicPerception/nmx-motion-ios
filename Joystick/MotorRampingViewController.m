@@ -413,18 +413,6 @@ NSArray static	*frameCountStrings = nil;
 }
 
 
-- (float) xPositionFromSliderValue:(UISlider *)aSlider {   //mm delete?
-    
-    float sliderRange2 = aSlider.frame.size.width - aSlider.currentThumbImage.size.width;
-    float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
-    
-    float sliderValueToPixels = (((aSlider.value - aSlider.minimumValue)/(aSlider.maximumValue - aSlider.minimumValue)) * sliderRange2) + sliderOrigin;
-    
-    sliderValueToPixels = sliderValueToPixels - (aSlider.currentThumbImage.size.width/2);
-    
-    return sliderValueToPixels;
-}
-
 - (void) showVoltage {
     
     [NSTimer scheduledTimerWithTimeInterval:.500 target:self selector:@selector(showVoltageTimer) userInfo:nil repeats:NO];
