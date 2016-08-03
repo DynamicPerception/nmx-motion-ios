@@ -185,6 +185,13 @@ typedef enum: unsigned char {
 
 
 @interface  NMXDevice()
+{
+    NMXMovingDirection moving[4];
+    bool invertDirection[4];
+    bool disabled[4];
+    bool waitForResponse;
+}
+
 @property (atomic, strong) CBCentralManager *myCBCentralManager;
 @property (atomic, strong) CBPeripheral *myPeripheral;
 @property (atomic, strong) NSMutableArray *myServices;
@@ -205,10 +212,6 @@ typedef enum: unsigned char {
 
 @implementation NMXDevice
 
-NMXMovingDirection moving[4];
-bool invertDirection[4];
-bool disabled[4];
-bool waitForResponse;
 
 @synthesize inBackground;
 
@@ -521,7 +524,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
-    //NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);
+    //NSLog(@"Device %@ Sending command %@   waiting = %d   command: %@", self.name, desc, inWaitForResponse, commandData);
     
     if (true == self.disconnected)
     {

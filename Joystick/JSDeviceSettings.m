@@ -378,6 +378,66 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     return [self floatForKey: @"scaledEnd3PTiltDistance"];
 }
 
+- (void) setStartPoint1:(int)startPoint
+{
+    [self setObject: [NSNumber numberWithInt:startPoint] forKey: @"startPoint1"];
+}
+
+- (int) startPoint1
+{
+    return (int)[self integerForKey:@"startPoint1"];
+}
+
+- (void) setEndPoint1:(int)endPoint
+{
+    [self setObject: [NSNumber numberWithInt:endPoint] forKey: @"endPoint1"];
+}
+
+- (int) endPoint1
+{
+    return (int)[self integerForKey:@"endPoint1"];
+}
+
+- (void) setStartPoint2:(int)startPoint
+{
+    [self setObject: [NSNumber numberWithInt:startPoint] forKey: @"startPoint2"];
+}
+
+- (int) startPoint2
+{
+    return (int)[self integerForKey:@"startPoint2"];
+}
+
+- (void) setEndPoint2:(int)endPoint
+{
+    [self setObject: [NSNumber numberWithInt:endPoint] forKey: @"endPoint2"];
+}
+
+- (int) endPoint2
+{
+    return (int)[self integerForKey:@"endPoint2"];
+}
+
+- (void) setStartPoint3:(int)startPoint
+{
+    [self setObject: [NSNumber numberWithInt:startPoint] forKey: @"startPoint3"];
+}
+
+- (int) startPoint3
+{
+    return (int)[self integerForKey:@"startPoint3"];
+}
+
+- (void) setEndPoint3:(int)endPoint
+{
+    [self setObject: [NSNumber numberWithInt:endPoint] forKey: @"endPoint3"];
+}
+
+- (int) endPoint3
+{
+    return (int)[self integerForKey:@"endPoint3"];
+}
+
 - (void) setStart2pSet:(int)start2pSet
 {
     [self setObject: [NSNumber numberWithInt:start2pSet] forKey: @"start2pSet"];

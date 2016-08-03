@@ -241,6 +241,11 @@
     
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    self.textLabel.font = [self.textLabel.font fontWithSize:18];
+}
 
 - (void) preDeviceStateChange
 {

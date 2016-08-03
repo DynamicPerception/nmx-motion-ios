@@ -56,14 +56,6 @@ typedef enum
 @property float slide3PVal2;
 @property float slide3PVal3;
 
-@property int pan3PVal1;
-@property int pan3PVal2;
-@property int pan3PVal3;
-
-@property int tilt3PVal1;
-@property int tilt3PVal2;
-@property int tilt3PVal3;
-
 @property float start3PSlideDistance;
 @property float mid3PSlideDistance;
 @property float end3PSlideDistance;

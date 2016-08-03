@@ -59,15 +59,6 @@
     
     AppDelegate *appDelegate;
     
-    int startTotals;
-    int midTotals;
-    int endTotals;
-    
-    int startEndTotal;
-    
-    int end2pTotals;
-    int start2pTotals;
-    
     UIView *batteryView;
     
     bool debugDistance;

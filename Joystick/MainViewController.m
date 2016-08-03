@@ -530,17 +530,17 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
             image3P.image = [UIImage imageNamed:@"2p.png"];
             self.flipButton.selected = NO;
             
-            if (start2pTotals != 0 || settings.start2pSet == 1)
+            if (settings.start2pSet == 1)
             {
                 self.setStartButton.selected = YES;
             }
             
-            if (end2pTotals != 0 || settings.end2pSet == 1)
+            if (settings.end2pSet == 1)
             {
                 self.setStopButton.selected = YES;
             }
             
-            if (start2pTotals != 0 && end2pTotals != 0) {
+            if (settings.start2pSet == 1 && settings.end2pSet == 1) {
                 
                 [UIView animateWithDuration:.4 animations:^{
                     
@@ -720,13 +720,99 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     return newImage;
 }
 
-- (void) viewDidAppear: (BOOL) animated {
-    
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    
+- (void)determineKeyframeButtonStates
+{
     self.setStartButton.selected = NO;
     self.setStopButton.selected = NO;
     self.flipButton.selected = NO;
+    
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
+    bool pc = [self queryDevicePowerCycle];
+    
+    if (pc == 0)
+    {
+        if (self.appExecutive.is3P == YES) {
+            
+            if (settings.start3PSet == 2)
+            {
+                self.setStartButton.selected = YES;
+            }
+            
+            if (settings.end3PSet == 2)
+            {
+                self.setStopButton.selected = YES;
+            }
+            
+            if (settings.mid3PSet == 2)
+            {
+                self.flipButton.selected = YES;
+            }
+        }
+        else
+        {
+            if(settings.start2pSet == 1)
+            {
+                self.setStartButton.selected = YES;
+            }
+            
+            if(settings.end2pSet == 1)
+            {
+                self.setStopButton.selected = YES;
+            }
+        }
+    }
+    else
+    {
+        //NSLog(@"reset values");
+        
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            JSDeviceSettings *settings = device.settings;
+            
+            settings.start3PSlideDistance = 0.f;
+            settings.start3PPanDistance = 0.f;
+            settings.start3PTiltDistance = 0.f;
+            
+            settings.mid3PSlideDistance = 0.f;
+            settings.mid3PPanDistance = 0.f;
+            settings.mid3PTiltDistance = 0.f;
+            
+            settings.end3PSlideDistance = 0.f;
+            settings.end3PPanDistance = 0.f;
+            settings.end3PTiltDistance = 0.f;
+            
+            settings.mid3PSet = 0.f;
+            settings.start3PSet = 0.f;
+            settings.end3PSet = 0.f;
+            
+            settings.slide3PVal1 = 0.f;
+            settings.slide3PVal2 = 0.f;
+            settings.slide3PVal3 = 0.f;
+            
+            settings.scaledStart3PSlideDistance = 0.f;
+            settings.scaledStart3PPanDistance = 0.f;
+            settings.scaledStart3PTiltDistance = 0.f;
+            
+            settings.scaledMid3PSlideDistance = 0.f;
+            settings.scaledMid3PPanDistance = 0.f;
+            settings.scaledMid3PTiltDistance = 0.f;
+            
+            settings.scaledEnd3PSlideDistance = 0.f;
+            settings.scaledEnd3PPanDistance = 0.f;
+            settings.scaledEnd3PTiltDistance = 0.f;
+            
+            settings.start2pSet = 0;
+            settings.end2pSet = 0;
+            
+            [settings synchronize];
+        }
+    }
+}
+
+- (void) viewDidAppear: (BOOL) animated {
+    
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     
     if (settings.useJoystick == NO)
     {
@@ -751,47 +837,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         tiltSliderLbl.hidden = YES;
     }
 
-    startEndTotal =
-        settings.startPoint1 + settings.endPoint1 +
-        settings.startPoint2 + settings.endPoint2 +
-        settings.startPoint3 + settings.endPoint3;
-    
-    startTotals = settings.start3PSlideDistance + settings.start3PPanDistance + settings.start3PTiltDistance;
-    midTotals = settings.mid3PSlideDistance + settings.mid3PPanDistance + settings.mid3PTiltDistance;
-    endTotals = settings.end3PSlideDistance +  settings.end3PPanDistance + settings.end3PTiltDistance;
-    
-    if (self.appExecutive.is3P == NO)
-    {
-        NSLog(@"startEndTotal: %i",startEndTotal);
-        
-        if (start2pTotals != 0 || settings.start2pSet == 1) {
-            
-            self.setStartButton.selected = YES;
-        }
-        
-        if (end2pTotals != 0 || settings.end2pSet == 1) {
-            
-            self.setStopButton.selected = YES;
-        }
-        
-    }
-    else if (self.appExecutive.is3P == YES)
-    {
-        if (startTotals != 0 )
-        {
-            self.setStartButton.selected = YES;
-        }
-        
-        if (midTotals != 0 )
-        {
-            self.flipButton.selected = YES;
-        }
-        
-        if (endTotals != 0 )
-        {
-            self.setStopButton.selected = YES;
-        }
-    }
+    [self determineKeyframeButtonStates];
     
 	[super viewDidAppear: animated];
     
@@ -810,11 +856,14 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
         self.showingModalScreen = false;
     }
-    
+
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device mainSetAppMode: true];
+        [device mainSetJoystickMode: false];
+    }
+
     NMXDevice *device = self.appExecutive.device;
-    
-    [device mainSetAppMode: true];
-    [device mainSetJoystickMode: false];
     
     int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
     int queryStatus = [device mainQueryRunStatus];
@@ -832,16 +881,19 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     }
     else
     {
-        inverted1 = [device motorQueryInvertDirection: 1];
-        inverted2 = [device motorQueryInvertDirection: 2];
-        inverted3 = [device motorQueryInvertDirection: 3];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            inverted1 = [device motorQueryInvertDirection: 1];
+            inverted2 = [device motorQueryInvertDirection: 2];
+            inverted3 = [device motorQueryInvertDirection: 3];
+            
+            [device motorEnable: device.sledMotor];
+            [device motorEnable: device.panMotor];
+            [device motorEnable: device.tiltMotor];
         
-        [device motorEnable: device.sledMotor];
-        [device motorEnable: device.panMotor];
-        [device motorEnable: device.tiltMotor];
-        
-        [self setupMicrosteps];
-        [self enterJoystickMode];
+            [self setupMicrosteps];
+            [self enterJoystickMode];
+        }
     }
     
     if ((NMXRunStatusRunning & queryStatus) == 0)
@@ -859,129 +911,48 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     [self enterJoystickMode];
 }
 
+- (BOOL) queryDevicePowerCycle
+{
+    BOOL cycle = NO;
+    
+    for(NMXDevice *device in self.appExecutive.deviceList)
+    {
+        // It is important that we query each device so that the cycle gets reset properly.
+        if ([device queryPowerCycle])
+        {
+            cycle = YES;
+        }
+    }
+
+    return cycle;
+}
+
 - (void) startStopQueryTimer {
     
     [self exitJoystickMode];
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    
-    settings.startPoint1 = [self.appExecutive.device queryProgramStartPoint:1];
-    settings.endPoint1 = [self.appExecutive.device queryProgramEndPoint:1];
-    
-    settings.startPoint2 = [self.appExecutive.device queryProgramStartPoint:2];
-    settings.endPoint2 = [self.appExecutive.device queryProgramEndPoint:2];
-    
-    settings.startPoint3 = [self.appExecutive.device queryProgramStartPoint:3];
-    settings.endPoint3 = [self.appExecutive.device queryProgramEndPoint:3];
-    
-    
-    start2pTotals = settings.startPoint1 + settings.startPoint2 + settings.startPoint3;
-    end2pTotals = settings.endPoint1 + settings.endPoint2 + settings.endPoint3;
-    
-    startEndTotal =
-    settings.startPoint1 + settings.endPoint1 +
-    settings.startPoint2 + settings.endPoint2 +
-    settings.startPoint3 + settings.endPoint3;
-    
-    // initialize microstep based on the device's last settings
-    settings.microstep1 = [self.appExecutive.device motorQueryMicrostep2:1];
-    settings.microstep2 = [self.appExecutive.device motorQueryMicrostep2:2];
-    settings.microstep3 = [self.appExecutive.device motorQueryMicrostep2:3];
-
-    self.setStartButton.selected = NO;
-    self.setStopButton.selected = NO;
-    self.flipButton.selected = NO;
-    
-    bool pc = [self.appExecutive.device queryPowerCycle];
-    
-    if (pc == 0)
+    for (NMXDevice *device in self.appExecutive.deviceList)
     {
-        if (self.appExecutive.is3P == YES) {
-            
-            if (settings.start3PSet == 2)
-            {
-                self.setStartButton.selected = YES;
-            }
-            
-            if (settings.end3PSet == 2)
-            {
-                self.setStopButton.selected = YES;
-            }
-            
-            if (settings.mid3PSet == 2)
-            {
-                self.flipButton.selected = YES;
-            }
-        }
+        JSDeviceSettings *settings = device.settings;
+    
+        settings.startPoint1 = [device queryProgramStartPoint:1];
+        settings.endPoint1 = [device queryProgramEndPoint:1];
         
-        startTotals = settings.start3PSlideDistance + settings.start3PPanDistance + settings.start3PTiltDistance;
-        midTotals = settings.mid3PSlideDistance + settings.mid3PPanDistance + settings.mid3PTiltDistance;
-        endTotals = settings.end3PSlideDistance + settings.end3PPanDistance + settings.end3PTiltDistance;
+        settings.startPoint2 = [device queryProgramStartPoint:2];
+        settings.endPoint2 = [device queryProgramEndPoint:2];
         
-        if (appExecutive.is3P == NO)
-        {
-            if(start2pTotals != 0 || settings.start2pSet == 1)
-            {
-                self.setStartButton.selected = YES;
-            }
-            
-            if(end2pTotals != 0 || settings.end2pSet == 1)
-            {
-                self.setStopButton.selected = YES;
-            }
-        }
-        else
-        {
-            if (settings.mid3PSet == 2)
-            {
-                self.flipButton.selected = YES;
-            }
-        }
-    }
-    else
-    {
-        //NSLog(@"reset values");
+        settings.startPoint3 = [device queryProgramStartPoint:3];
+        settings.endPoint3 = [device queryProgramEndPoint:3];
         
-        settings.start3PSlideDistance = 0.f;
-        settings.start3PPanDistance = 0.f;
-        settings.start3PTiltDistance = 0.f;
-        
-        settings.mid3PSlideDistance = 0.f;
-        settings.mid3PPanDistance = 0.f;
-        settings.mid3PTiltDistance = 0.f;
-        
-        settings.end3PSlideDistance = 0.f;
-        settings.end3PPanDistance = 0.f;
-        settings.end3PTiltDistance = 0.f;
-        
-        settings.mid3PSet = 0.f;
-        settings.start3PSet = 0.f;
-        settings.end3PSet = 0.f;
+        // initialize microstep based on the device's last settings
+        settings.microstep1 = [device motorQueryMicrostep2:1];
+        settings.microstep2 = [device motorQueryMicrostep2:2];
+        settings.microstep3 = [device motorQueryMicrostep2:3];
 
-        settings.slide3PVal1 = 0.f;
-        settings.slide3PVal2 = 0.f;
-        settings.slide3PVal3 = 0.f;
-
-        settings.scaledStart3PSlideDistance = 0.f;
-        settings.scaledStart3PPanDistance = 0.f;
-        settings.scaledStart3PTiltDistance = 0.f;
-        
-        settings.scaledMid3PSlideDistance = 0.f;
-        settings.scaledMid3PPanDistance = 0.f;
-        settings.scaledMid3PTiltDistance = 0.f;
-        
-        settings.scaledEnd3PSlideDistance = 0.f;
-        settings.scaledEnd3PPanDistance = 0.f;
-        settings.scaledEnd3PTiltDistance = 0.f;
-
-        settings.start2pSet = 0;
-        settings.end2pSet = 0;
-        
         [settings synchronize];
     }
-    
-    [settings synchronize];
-    
+
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
     if (appExecutive.is3P == NO && (settings.start2pSet == 1 && settings.end2pSet == 1))
     {
         [UIView animateWithDuration:.4 animations:^{
@@ -1484,13 +1455,14 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (void) setupMicrosteps {
 
-    NMXDevice *device = self.appExecutive.device;
-
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
     
-    [device motorSet: device.sledMotor Microstep: settings.microstep1];
-    [device motorSet: device.panMotor Microstep: settings.microstep2];
-    [device motorSet: device.tiltMotor Microstep: settings.microstep3];
+        [device motorSet: device.sledMotor Microstep: settings.microstep1];
+        [device motorSet: device.panMotor Microstep: settings.microstep2];
+        [device motorSet: device.tiltMotor Microstep: settings.microstep3];
+    }
 }
 
 - (void) enterJoystickMode {
@@ -1499,8 +1471,11 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
     if (false == self.joystickModeActive)
     {
-        [self.appExecutive.device mainSetJoystickMode: true];
-        [self.appExecutive.device mainSetJoystickWatchdog: true];
+        for(NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainSetJoystickMode: true];
+            [device mainSetJoystickWatchdog: true];
+        }
         
         self.joystickModeActive = true;
     }
@@ -1512,7 +1487,10 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
     if (self.joystickModeActive)
     {
-        [self.appExecutive.device mainSetJoystickMode: false];
+        for(NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainSetJoystickMode: false];
+        }
         self.joystickModeActive = false;
     }
 }
@@ -1657,44 +1635,48 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     self.setStartButton.selected = YES;
     
-    [self exitJoystickMode];
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
-    int pos1 = [self.appExecutive.device motorQueryCurrentPosition:1];
-    int pos2 = [self.appExecutive.device motorQueryCurrentPosition:2];
-    int pos3 = [self.appExecutive.device motorQueryCurrentPosition:3];
+    dispatch_async(dispatch_get_main_queue(), ^{
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+        [self exitJoystickMode];
     
-    settings.start3PSlideDistance = pos1;
-    settings.start3PPanDistance = pos2;
-    settings.start3PTiltDistance = pos3;
-    
-    [self convertUnits:1];
-    
-    settings.start3PSet = 2;
-    
-    startTotals = settings.start3PSlideDistance + settings.start3PPanDistance + settings.start3PTiltDistance;
-    
-    if (self.appExecutive.is3P == NO)
-    {
-        [self.appExecutive.device mainSetStartHere];
+        for(NMXDevice *device in self.appExecutive.deviceList)
+        {
+            int pos1 = [device motorQueryCurrentPosition:1];
+            int pos2 = [device motorQueryCurrentPosition:2];
+            int pos3 = [device motorQueryCurrentPosition:3];
+            
+            JSDeviceSettings *settings = device.settings;
+            
+            settings.start3PSlideDistance = pos1;
+            settings.start3PPanDistance = pos2;
+            settings.start3PTiltDistance = pos3;
+            
+            [self convertUnits:1 forDevice:device];
+            
+            settings.start3PSet = 2;
+            
+            if (self.appExecutive.is3P == NO)
+            {
+                [device mainSetStartHere];
+                
+                settings.start2pSet = 1;
+                
+                int pos4 = [device queryProgramStartPoint:1];
+                int pos5 = [device queryProgramStartPoint:2];
+                int pos6 = [device queryProgramStartPoint:3];
+                
+                settings.startPoint1 = pos4;
+                settings.startPoint2 = pos5;
+                settings.startPoint3 = pos6;
+                
+                [settings synchronize];
+            }
+        }
         
-        settings.start2pSet = 1;
-        
-        int pos4 = [self.appExecutive.device queryProgramStartPoint:1];
-        int pos5 = [self.appExecutive.device queryProgramStartPoint:2];
-        int pos6 = [self.appExecutive.device queryProgramStartPoint:3];
-        
-        settings.startPoint1 = pos4;
-        
-        settings.startPoint2 = pos5;
-        
-        settings.startPoint3 = pos6;
-        
-        start2pTotals = settings.startPoint1 + settings.startPoint2 + settings.startPoint3;
-        end2pTotals = settings.endPoint1 + settings.endPoint2 + settings.endPoint3;
-        
-        if ((start2pTotals != 0 && end2pTotals != 0) || (settings.start2pSet == 1 && settings.end2pSet == 1))
+        JSDeviceSettings *settings = self.appExecutive.device.settings;
+        if (settings.start2pSet == 1 && settings.end2pSet == 1)
         {
             [UIView animateWithDuration:.4 animations:^{
                 
@@ -1702,29 +1684,26 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
                 distancePanLbl.alpha = 1;
                 distanceTiltLbl.alpha = 1;
                 
-            } completion:^(BOOL finished) {
-                
-                
-            }];
+            } completion: nil];
         }
-    }
-    
-    [self enterJoystickMode];
-    
-    if (self.setStopButton.selected == YES)
-    {
-        [self updateLabels];
-    }
-    
-    [settings synchronize];
-    
+        
+        [self enterJoystickMode];
+
+        if (self.setStopButton.selected == YES)
+        {
+            [self updateLabels];
+        }
+
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+
+    });
+
     [UIView animateWithDuration:.4 animations:^{
         
         setStartView.alpha = 0;
         
-    } completion:^(BOOL finished) {
-        
-    }];
+    } completion:nil ];
+    
 }
 
 - (IBAction) goToStartPoint1:(id)sender {
@@ -1735,17 +1714,20 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     self.sendMotorsTimer = self.sendMotorsTimer;
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
     
-    if (self.appExecutive.is3P == YES)
-    {
-        [self.appExecutive.device motorSet:1 SetMotorPosition: settings.start3PSlideDistance];
-        [self.appExecutive.device motorSet:2 SetMotorPosition: settings.start3PPanDistance];
-        [self.appExecutive.device motorSet:3 SetMotorPosition: settings.start3PTiltDistance];
-    }
-    else
-    {
-        [self.appExecutive.device mainSendMotorsToStart];
+        if (self.appExecutive.is3P == YES)
+        {
+            [device motorSet:1 SetMotorPosition: settings.start3PSlideDistance];
+            [device motorSet:2 SetMotorPosition: settings.start3PPanDistance];
+            [device motorSet:3 SetMotorPosition: settings.start3PTiltDistance];
+        }
+        else
+        {
+            [device mainSendMotorsToStart];
+        }
     }
     
     [UIView animateWithDuration:.4 animations:^{
@@ -1755,8 +1737,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     } completion:^(BOOL finished) {
         
     }];
-    
-    //[self enterJoystickMode];
     
 }
 
@@ -1776,35 +1756,44 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     if (self.appExecutive.is3P == YES)
     {
-        [self exitJoystickMode];
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         
-        flipButton.selected = YES;
-        
-        JSDeviceSettings *settings = self.appExecutive.device.settings;
-        
-        settings.mid3PSlideDistance = [self.appExecutive.device motorQueryCurrentPosition:1];
-        settings.mid3PPanDistance = [self.appExecutive.device motorQueryCurrentPosition:2];
-        settings.mid3PTiltDistance = [self.appExecutive.device motorQueryCurrentPosition:3];
-        
-        [self convertUnits:2];
-        
-        settings.mid3PSet = 2;
-        
-        midTotals = settings.mid3PSlideDistance + settings.mid3PPanDistance + settings.mid3PTiltDistance;
-        
-        [UIView animateWithDuration:.4 animations:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            setMidView.alpha = 0;
+            [self exitJoystickMode];
             
-        } completion:^(BOOL finished) {
+            flipButton.selected = YES;
             
-        }];
-        
-        [settings synchronize];
-        
-        [self enterJoystickMode];
+            for (NMXDevice *device in self.appExecutive.deviceList)
+            {
+                JSDeviceSettings *settings = device.settings;
+                
+                settings.mid3PSlideDistance = [device motorQueryCurrentPosition:1];
+                settings.mid3PPanDistance = [device motorQueryCurrentPosition:2];
+                settings.mid3PTiltDistance = [device motorQueryCurrentPosition:3];
+                
+                [self convertUnits:2 forDevice:device];
+                
+                settings.mid3PSet = 2;
+                
+                [UIView animateWithDuration:.4 animations:^{
+                    
+                    setMidView.alpha = 0;
+                    
+                } completion: nil ];
+                
+                [settings synchronize];
+            }
+            
+            [self enterJoystickMode];
+            
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            
+        });
+
     }
 }
+
 
 - (IBAction) goToMidPoint1:(id)sender {
     
@@ -1816,11 +1805,14 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
     if (self.appExecutive.is3P == YES)
     {
-        JSDeviceSettings *settings = self.appExecutive.device.settings;
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            JSDeviceSettings *settings = device.settings;
 
-        [self.appExecutive.device motorSet:1 SetMotorPosition: settings.mid3PSlideDistance];
-        [self.appExecutive.device motorSet:2 SetMotorPosition: settings.mid3PPanDistance];
-        [self.appExecutive.device motorSet:3 SetMotorPosition: settings.mid3PTiltDistance];
+            [device motorSet:1 SetMotorPosition: settings.mid3PSlideDistance];
+            [device motorSet:2 SetMotorPosition: settings.mid3PPanDistance];
+            [device motorSet:3 SetMotorPosition: settings.mid3PTiltDistance];
+        }
     }
     
     [UIView animateWithDuration:.4 animations:^{
@@ -1853,74 +1845,83 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     self.setStopButton.selected = YES;
     
-    [self exitJoystickMode];
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
-    int pos1 = [self.appExecutive.device motorQueryCurrentPosition:1];
-    int pos2 = [self.appExecutive.device motorQueryCurrentPosition:2];
-    int pos3 = [self.appExecutive.device motorQueryCurrentPosition:3];
-    
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    
-    settings.end3PSlideDistance = pos1;
-    settings.end3PPanDistance = pos2;
-    settings.end3PTiltDistance = pos3;
-    
-    [self convertUnits:3];
-    
-    settings.end3PSet = 2;
-    
-    endTotals = settings.end3PSlideDistance + settings.end3PPanDistance + settings.end3PTiltDistance;
-    
-    if (self.appExecutive.is3P == NO)
-    {
-        [self.appExecutive.device mainSetStopHere];
-        
-        settings.end2pSet = 1;
-        
-        int pos4 = [self.appExecutive.device queryProgramEndPoint:1];
-        int pos5 = [self.appExecutive.device queryProgramEndPoint:2];
-        int pos6 = [self.appExecutive.device queryProgramEndPoint:3];
-        
-        settings.endPoint1 = pos4;
-        settings.endPoint2 = pos5;
-        settings.endPoint3 = pos6;
-        
-        start2pTotals = settings.startPoint1 + settings.startPoint2 + settings.startPoint3;
-        end2pTotals = settings.endPoint1 + settings.endPoint2 + settings.endPoint3;
-        
-        if ((start2pTotals != 0 && end2pTotals != 0) || (settings.start2pSet == 1 && settings.end2pSet == 1))
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+        [self exitJoystickMode];
+
+        for (NMXDevice *device in self.appExecutive.deviceList)
         {
-            [UIView animateWithDuration:.4 animations:^{
+            JSDeviceSettings *settings = device.settings;
+            
+            int pos1 = [device motorQueryCurrentPosition:1];
+            int pos2 = [device motorQueryCurrentPosition:2];
+            int pos3 = [device motorQueryCurrentPosition:3];
+            
+            settings.end3PSlideDistance = pos1;
+            settings.end3PPanDistance = pos2;
+            settings.end3PTiltDistance = pos3;
+            
+            settings.end3PSet = 2;
+            
+            [self convertUnits:3 forDevice:device];
+            
+            if (self.appExecutive.is3P == NO)
+            {
+                [device mainSetStopHere];
                 
-                distanceSlideLbl.alpha = 1;
-                distancePanLbl.alpha = 1;
-                distanceTiltLbl.alpha = 1;
+                settings.end2pSet = 1;
                 
-            } completion:^(BOOL finished) {
+                int pos4 = [device queryProgramEndPoint:1];
+                int pos5 = [device queryProgramEndPoint:2];
+                int pos6 = [device queryProgramEndPoint:3];
                 
+                settings.endPoint1 = pos4;
+                settings.endPoint2 = pos5;
+                settings.endPoint3 = pos6;
+            }
+        }
+        
+        if (self.appExecutive.is3P == NO)
+        {
+            JSDeviceSettings *settings = self.appExecutive.device.settings;
+            if (settings.start2pSet == 1 && settings.end2pSet == 1)
+            {
                 [UIView animateWithDuration:.4 animations:^{
+                    
+                    distanceSlideLbl.alpha = 1;
+                    distancePanLbl.alpha = 1;
+                    distanceTiltLbl.alpha = 1;
                     
                 } completion:^(BOOL finished) {
                     
+                    [UIView animateWithDuration:.4 animations:^{
+                        
+                    } completion:^(BOOL finished) {
+                        
+                    }];
                 }];
-            }];
+            }
         }
-    }
-    
-    if (self.setStartButton.selected == YES)
-    {
-        [self updateLabels];
-    }
+
+        if (self.setStartButton.selected == YES)
+        {
+            [self updateLabels];
+        }
+
+        [self enterJoystickMode];
+
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+
+    });
     
     [UIView animateWithDuration:.4 animations:^{
         
         setStopView.alpha = 0;
         
-    } completion:^(BOOL finished) {
-        
-    }];
+    } completion: nil ];
     
-    [self enterJoystickMode];
 }
 
 - (IBAction) goToStopPoint1:(id)sender {
@@ -1931,19 +1932,22 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     self.sendMotorsTimer = self.sendMotorsTimer;
 
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
     
-    if (self.appExecutive.is3P == YES)
-    {
-        [self.appExecutive.device motorSet:1 SetMotorPosition: settings.end3PSlideDistance];
-        [self.appExecutive.device motorSet:2 SetMotorPosition: settings.end3PPanDistance];
-        [self.appExecutive.device motorSet:3 SetMotorPosition: settings.end3PTiltDistance];
-    }
-    else
-    {
-        [self.appExecutive.device motorSendToEndPoint:1];
-        [self.appExecutive.device motorSendToEndPoint:2];
-        [self.appExecutive.device motorSendToEndPoint:3];
+        if (self.appExecutive.is3P == YES)
+        {
+            [device motorSet:1 SetMotorPosition: settings.end3PSlideDistance];
+            [device motorSet:2 SetMotorPosition: settings.end3PPanDistance];
+            [device motorSet:3 SetMotorPosition: settings.end3PTiltDistance];
+        }
+        else
+        {
+            [device motorSendToEndPoint:1];
+            [device motorSendToEndPoint:2];
+            [device motorSendToEndPoint:3];
+        }
     }
 
     [UIView animateWithDuration:.4 animations:^{
@@ -2137,7 +2141,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     
     DDLogDebug(@"Dominant Axis Switch: %@", value);
     
-    self.appExecutive.device.settings.lockAxis = [NSNumber numberWithBool: sender.on];
+    self.appExecutive.device.settings.lockAxis = [NSNumber numberWithBool: sender.on]?YES:NO;
     
     if (sender.on)
     {
@@ -2393,17 +2397,18 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 }
 
 
-- (void) convertUnits : (int)pointIndex {
+- (void) convertUnits : (int)pointIndex forDevice:(NMXDevice *)device
+{
     
     int convertVal[3];
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    JSDeviceSettings *settings = device.settings;
     
     for(int i = 0; i < 3; i++) {
         
         // The raw value from the controller is queried here
         
-        convertVal[i] = [self.appExecutive.device motorQueryCurrentPosition:i+1];
+        convertVal[i] = [device motorQueryCurrentPosition:i+1];
         
         // Get this motor's microsteps
         
@@ -2455,124 +2460,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         settings.scaledEnd3PPanDistance = (float)convertVal[1];
         settings.scaledEnd3PTiltDistance = (float)convertVal[2];
     }
-}
-
-- (void) convertUnits3 : (int)pointIndex {
-    
-    int convertVal[3];
-    
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    
-    for (int i = 0; i < 3; i++) {
-        
-        // The raw value from the controller is queried here
-        
-        if (pointIndex == 1) {
-            
-            convertVal[i] = [[ar1 objectAtIndex:i] floatValue];
-        }
-        else if (pointIndex == 2) {
-            
-            convertVal[i] = [[ar2 objectAtIndex:i] floatValue];
-        }
-        else if (pointIndex == 3) {
-            
-            convertVal[i] = [[ar3 objectAtIndex:i] floatValue];
-        }
-        
-        // Get this motor's microsteps
-        
-        int thisMicros = 0;
-        
-        switch(i)
-        {
-            case 0:
-                
-                thisMicros = settings.microstep1;
-                break;
-                
-            case 1:
-                
-                thisMicros = settings.microstep2;
-                break;
-                
-            case 2:
-                
-                thisMicros = settings.microstep3;
-                break;
-        }
-        
-        NSLog(@"%i *= (16 / %i)",convertVal[i],thisMicros);
-        
-        /* Converted raw steps to constant 16th steps. Resulting conversion factors:
-         *  current microsteps == 4, conversion factor == 4,
-         *  current microsteps == 8, conversion factor == 2,
-         *  current microsteps == 16, conversion factor == 1,
-         */
-        
-        convertVal[i] *= (16 / thisMicros);
-        
-        //NSLog(@"convertVal[i] %i",convertVal[i]);
-    }
-    
-    if (pointIndex == 1) {
-        settings.scaledStart3PSlideDistance = (float)convertVal[0];
-        settings.scaledStart3PPanDistance = (float)convertVal[1];
-        settings.scaledStart3PTiltDistance = (float)convertVal[2];
-    }
-    else if (pointIndex == 2) {
-        settings.scaledMid3PSlideDistance = (float)convertVal[0];
-        settings.scaledMid3PPanDistance = (float)convertVal[1];
-        settings.scaledMid3PTiltDistance = (float)convertVal[2];
-    }
-    else if (pointIndex == 3) {
-        settings.scaledEnd3PSlideDistance = (float)convertVal[0];
-        settings.scaledEnd3PPanDistance = (float)convertVal[1];
-        settings.scaledEnd3PTiltDistance = (float)convertVal[2];
-    }
-}
-
-- (float) convertUnits2 : (int)pointIndex : (float)convertVal {
-    
-    // The raw value from the controller is queried here
-
-    // Get this motor's microsteps
-    
-    int thisMicros = 0;
-    
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    
-    switch(pointIndex)
-    {
-        case 1:
-            
-            thisMicros = settings.microstep1;
-            break;
-            
-        case 2:
-            
-            thisMicros = settings.microstep2;
-            break;
-            
-        case 3:
-            
-            thisMicros = settings.microstep3;
-            break;
-    }
-    
-    NSLog(@"%f *= (16 / %i)",convertVal,thisMicros);
-    
-    /* Converted raw steps to constant 16th steps. Resulting conversion factors:
-     *  current microsteps == 4, conversion factor == 4,
-     *  current microsteps == 8, conversion factor == 2,
-     *  current microsteps == 16, conversion factor == 1,
-     */
-    
-    convertVal *= (16 / thisMicros);
-    
-    NSLog(@"convertVal: %f",convertVal);
-    
-    return convertVal;
 }
 
 - (IBAction) handleNextButton: (UIButton *) sender {
@@ -2584,6 +2471,12 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 	//DDLogDebug(@"Next Button");
     
     UIAlertView *alertView;
+
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
+        [settings synchronize];
+    }
     
     JSDeviceSettings *settings = self.appExecutive.device.settings;
     [settings synchronize];
@@ -2643,8 +2536,13 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 
         [self exitJoystickMode];
-        [self.appExecutive.device cameraSetEnable: true];
-        [self.appExecutive.device cameraExposeNow];
+        
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device cameraSetEnable: true];
+            [device cameraExposeNow];
+        }
+        
         [self enterJoystickMode];
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -2698,14 +2596,21 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (void) handleSendMotorsTimer: (NSTimer *) sender {
     
-    bool moving;
+    BOOL moving = NO;
     
-    moving = [self.appExecutive.device motorQueryRunning: self.appExecutive.device.sledMotor];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        if (!moving)
+            moving = [device motorQueryRunning: device.sledMotor];
     
-    if (!moving)
-        moving = [self.appExecutive.device motorQueryRunning: self.appExecutive.device.panMotor];
-    if (!moving)
-        moving = [self.appExecutive.device motorQueryRunning: self.appExecutive.device.tiltMotor];
+        if (!moving)
+            moving = [device motorQueryRunning: device.panMotor];
+        
+        if (!moving)
+            moving = [device motorQueryRunning: device.tiltMotor];
+        
+        if (moving) break;
+    }
     
     if (!moving)
     {
