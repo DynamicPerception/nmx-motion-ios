@@ -800,7 +800,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i4a-6J-o4Z" customClass="JoyButton">
-                                <rect key="frame" x="90.5" y="544" width="195" height="27"/>
+                                <rect key="frame" x="90" y="544" width="195" height="27"/>
                                 <color key="backgroundColor" red="0.27450980390000002" green="0.27450980390000002" blue="0.27450980390000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="27" id="ANA-lQ-hE1"/>
@@ -814,7 +814,6 @@
                                 </state>
                                 <connections>
                                     <action selector="deviceSelectionButtonSelected:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5vn-3R-KVN"/>
-                                    <segue destination="G3p-ez-6Fd" kind="presentation" identifier="SegueToActiveDeviceViewController" id="zN3-wF-yCE"/>
                                 </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="slot.png" translatesAutoresizingMaskIntoConstraints="NO" id="P0T-aJ-e7a">
@@ -974,7 +973,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="64T-37-rG3" userLabel="Fire Camera" customClass="JoyButton">
-                                <rect key="frame" x="16" y="629" width="167.5" height="30"/>
+                                <rect key="frame" x="16" y="629" width="168" height="30"/>
                                 <color key="backgroundColor" red="0.27450980392156865" green="0.27450980392156865" blue="0.27450980392156865" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="zzK-V4-oYW"/>
@@ -1057,7 +1056,7 @@
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pan Control" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ONl-88-2GQ">
-                                <rect key="frame" x="112.5" y="234" width="150" height="16"/>
+                                <rect key="frame" x="112" y="234" width="150" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="150" id="UzH-cX-njM"/>
                                 </constraints>
@@ -1280,6 +1279,30 @@
                                     <action selector="handleFlipButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oq2-08-QjC"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fgL-5Y-5YU">
+                                <rect key="frame" x="85" y="386" width="205" height="150"/>
+                                <subviews>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="vbV-GL-NRt">
+                                        <rect key="frame" x="5" y="5" width="195" height="140"/>
+                                        <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="sectionIndexColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="sectionIndexBackgroundColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="sectionIndexTrackingBackgroundColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <outlet property="dataSource" destination="BYZ-38-t0r" id="jhw-Lu-sL2"/>
+                                            <outlet property="delegate" destination="BYZ-38-t0r" id="lc6-hE-rcU"/>
+                                        </connections>
+                                    </tableView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="vbV-GL-NRt" firstAttribute="centerX" secondItem="fgL-5Y-5YU" secondAttribute="centerX" id="0c1-C7-uI9"/>
+                                    <constraint firstItem="vbV-GL-NRt" firstAttribute="height" secondItem="fgL-5Y-5YU" secondAttribute="height" constant="-10" id="BV5-J0-iCt"/>
+                                    <constraint firstItem="vbV-GL-NRt" firstAttribute="centerY" secondItem="fgL-5Y-5YU" secondAttribute="centerY" id="UDO-A8-3Qy"/>
+                                    <constraint firstItem="vbV-GL-NRt" firstAttribute="width" secondItem="fgL-5Y-5YU" secondAttribute="width" constant="-10" id="uKV-0J-K8E"/>
+                                    <constraint firstAttribute="height" constant="150" id="vRf-rD-Z7J"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.098039215686274508" green="0.19215686274509802" blue="0.41960784313725491" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -1316,6 +1339,7 @@
                             <constraint firstItem="pXZ-LH-vRb" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="12" id="JOg-7K-Ad0"/>
                             <constraint firstItem="oBJ-Z0-iFL" firstAttribute="top" secondItem="P0T-aJ-e7a" secondAttribute="bottom" constant="8" id="JUi-EV-eBw"/>
                             <constraint firstItem="i4a-6J-o4Z" firstAttribute="bottom" secondItem="P0N-lC-htH" secondAttribute="bottom" constant="-3" id="LGi-wF-hkP"/>
+                            <constraint firstItem="fgL-5Y-5YU" firstAttribute="centerX" secondItem="i4a-6J-o4Z" secondAttribute="centerX" id="MmO-nQ-wfE"/>
                             <constraint firstItem="P0T-aJ-e7a" firstAttribute="leading" secondItem="WWH-gu-m4b" secondAttribute="leading" id="NuJ-WG-NAF"/>
                             <constraint firstItem="Iju-Ll-N9P" firstAttribute="centerX" secondItem="8qv-5f-nmc" secondAttribute="centerX" id="OQR-dD-hJ7"/>
                             <constraint firstItem="fJl-y4-uVf" firstAttribute="centerX" secondItem="TIY-tP-oyl" secondAttribute="centerX" id="Pnh-jq-qai"/>
@@ -1331,6 +1355,7 @@
                             <constraint firstItem="7j0-g8-Zy2" firstAttribute="baseline" secondItem="hX2-fQ-qoH" secondAttribute="baseline" id="WMv-Eh-HZa"/>
                             <constraint firstItem="WWH-gu-m4b" firstAttribute="leading" secondItem="EhM-Vi-6Kh" secondAttribute="leading" id="Wdy-dO-Miv"/>
                             <constraint firstItem="EhM-Vi-6Kh" firstAttribute="trailing" secondItem="Cat-Bh-4PZ" secondAttribute="trailing" id="X8C-3u-TTJ"/>
+                            <constraint firstItem="fgL-5Y-5YU" firstAttribute="width" secondItem="i4a-6J-o4Z" secondAttribute="width" constant="10" id="Xy9-wM-mbF"/>
                             <constraint firstItem="WWH-gu-m4b" firstAttribute="height" secondItem="EhM-Vi-6Kh" secondAttribute="height" id="Y87-hX-k3q"/>
                             <constraint firstItem="TIY-tP-oyl" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Ytr-oH-DYl"/>
                             <constraint firstItem="8qv-5f-nmc" firstAttribute="baseline" secondItem="TIY-tP-oyl" secondAttribute="baseline" id="aac-ZX-2ii"/>
@@ -1342,6 +1367,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="P0N-lC-htH" secondAttribute="trailing" constant="-9" id="g6Z-pn-322"/>
                             <constraint firstItem="3zV-sm-Qhr" firstAttribute="top" secondItem="EhM-Vi-6Kh" secondAttribute="bottom" constant="5" id="g8N-gi-83D"/>
                             <constraint firstItem="Iju-Ll-N9P" firstAttribute="width" secondItem="8qv-5f-nmc" secondAttribute="width" id="gvy-wU-ZhD"/>
+                            <constraint firstItem="i4a-6J-o4Z" firstAttribute="top" secondItem="fgL-5Y-5YU" secondAttribute="bottom" constant="8" id="h4X-hS-fZB"/>
                             <constraint firstItem="Tbw-K9-r81" firstAttribute="top" secondItem="oBJ-Z0-iFL" secondAttribute="bottom" constant="2" id="h8k-Vu-iIq"/>
                             <constraint firstItem="kbB-RK-Uxj" firstAttribute="bottom" secondItem="P0N-lC-htH" secondAttribute="bottom" constant="-14" id="hge-2d-qqp"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="64T-37-rG3" secondAttribute="bottom" constant="8" id="htp-AH-jbb"/>
@@ -1409,6 +1435,8 @@
                         <outlet property="currentDeviceButton" destination="i4a-6J-o4Z" id="aRi-Oy-16c"/>
                         <outlet property="currentDeviceButtonBottomConstraint" destination="LGi-wF-hkP" id="wCG-sP-xyn"/>
                         <outlet property="currentDeviceButtonHeightConstraint" destination="ANA-lQ-hE1" id="uHQ-nt-kXA"/>
+                        <outlet property="deviceSelectionTableView" destination="vbV-GL-NRt" id="Z07-Re-a0c"/>
+                        <outlet property="deviceSelectionView" destination="fgL-5Y-5YU" id="U8Q-ug-z5k"/>
                         <outlet property="distancePanLbl" destination="315-we-jdz" id="oBT-Ku-Jih"/>
                         <outlet property="distanceSlideLbl" destination="Isb-ME-82D" id="Cks-Kf-Zdg"/>
                         <outlet property="distanceTiltLbl" destination="bdz-Vl-zQZ" id="Gyf-xC-zZJ"/>
@@ -5876,19 +5904,19 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="rGc-Y0-TPg"/>
-        <segue reference="gqx-Wd-6xg"/>
-        <segue reference="K6t-E6-71o"/>
-        <segue reference="IfY-aS-7xa"/>
-        <segue reference="aFw-MN-OaY"/>
-        <segue reference="BxP-51-sJV"/>
-        <segue reference="vr9-JF-N1x"/>
-        <segue reference="PwX-tX-cQi"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="k3P-Db-zBC"/>
         <segue reference="0Dk-WM-mJ4"/>
+        <segue reference="gqx-Wd-6xg"/>
+        <segue reference="RFH-OB-Gp4"/>
+        <segue reference="IfY-aS-7xa"/>
+        <segue reference="PwX-tX-cQi"/>
+        <segue reference="BxP-51-sJV"/>
+        <segue reference="aFw-MN-OaY"/>
+        <segue reference="vr9-JF-N1x"/>
+        <segue reference="6tH-tQ-8da"/>
         <segue reference="eIy-q4-84e"/>
+        <segue reference="k3P-Db-zBC"/>
         <segue reference="p4Z-EB-hlS"/>
+        <segue reference="rGc-Y0-TPg"/>
         <segue reference="Nk1-9G-Dpm"/>
     </inferredMetricsTieBreakers>
 </document>

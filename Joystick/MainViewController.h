@@ -14,7 +14,8 @@
 #import "JoystickSlider.h"
 #import "HelpViewController.h"
 
-@interface MainViewController : UIViewController <JoystickOutput> {
+@interface MainViewController : UIViewController <JoystickOutput, UITableViewDelegate,
+                                                  UITableViewDataSource> {
 
     bool animated1;
     

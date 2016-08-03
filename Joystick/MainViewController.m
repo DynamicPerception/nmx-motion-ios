@@ -61,6 +61,8 @@
 @property (assign)                          bool                        joystickModeActive;
 @property (assign)                          bool                        showingModalScreen;
 @property (weak, nonatomic)     IBOutlet    UIImageView *image3P;
+@property (strong, nonatomic) IBOutlet UIView *deviceSelectionView;
+@property (strong, nonatomic) IBOutlet UITableView *deviceSelectionTableView;
 
 @end
 
@@ -174,6 +176,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     distancePanLbl.alpha = 0;
     distanceTiltLbl.alpha = 0;
     
+    self.deviceSelectionView.alpha = 0;
     setStartView.alpha = 0;
     setMidView.alpha = 0;
     setStopView.alpha = 0;
@@ -343,10 +346,9 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         setStartView.alpha = 0;
         setMidView.alpha = 0;
         setStopView.alpha = 0;
+        self.deviceSelectionView.alpha = 0;
         
-    } completion:^(BOOL finished) {
-        
-    }];
+    } completion: nil ];
 }
 
 - (void) timerName4 {
@@ -679,13 +681,20 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     panButton.userInteractionEnabled = NO;
     tiltButton.userInteractionEnabled = NO;
     
+    [self initViewData];
+    
+    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(enableInteractions) userInfo:nil repeats:NO];
+}
+
+- (void) initViewData
+{
     //    self.currentDeviceButton.hidden = (self.appExecutive.deviceList.count < 2);
     NSString *name = [self.appExecutive stringWithHandleForDeviceName: self.appExecutive.device.name];
     [self.currentDeviceButton setTitle:name forState:UIControlStateNormal];
-
+    
     [self setMotorNames];
     
-    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(enableInteractions) userInfo:nil repeats:NO];
+    [self.deviceSelectionTableView reloadData];
 }
 
 - (void) setMotorNames
@@ -974,6 +983,8 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     [self showVoltage];
     [self updateLabels];
     [self enterJoystickMode];
+    
+    [self initViewData];
     
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
@@ -1543,6 +1554,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
+    //mm FIXME - remove active device view and segues
     if ([identifier isEqualToString: SegueToActiveDeviceViewController])
     {
         if (self.appExecutive.deviceList.count <= 1)
@@ -1611,6 +1623,7 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     }
     else if ([segue.identifier isEqualToString: SegueToActiveDeviceViewController])
     {
+        //mm fixme remove this view and segue
         JSActiveDeviceViewController *advc = segue.destinationViewController;
         advc.mainVC = self;
     }
@@ -2394,6 +2407,14 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 - (IBAction)deviceSelectionButtonSelected:(id)sender {
     [self exitJoystickMode];
     self.showingModalScreen = true;
+    
+    [UIView animateWithDuration:.4 animations:^{
+        
+        self.deviceSelectionView.alpha = 1;
+        
+    } completion: nil ];
+
+
 }
 
 
@@ -2636,5 +2657,94 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
     [self initViewForDevice];
 }
 
+#pragma mark device selection table view
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.appExecutive.deviceList.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *simpleTableIdentifier = @"SimpleTableCell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+        cell.contentView.backgroundColor = self.currentDeviceButton.backgroundColor;
+        cell.textLabel.font = self.currentDeviceButton.titleLabel.font;
+        cell.textLabel.textColor = [UIColor whiteColor];
+    }
+    
+    NSArray<NMXDevice *> *devices = self.appExecutive.deviceList;
+    NSString *name = [self.appExecutive stringWithHandleForDeviceName: devices[indexPath.row].name];
+    cell.textLabel.text = name;
+
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.appExecutive.device == self.appExecutive.deviceList[indexPath.row])
+    {
+        for (NSInteger j = 0; j < [tableView numberOfSections]; ++j)
+        {
+            for (NSInteger i = 0; i < [tableView numberOfRowsInSection:j]; ++i)
+            {
+                UITableViewCell *otherCell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+                [otherCell setSelected:NO animated:NO];
+            }
+        }
+        
+        [cell setSelected:YES animated:NO];
+        cell.textLabel.textColor = [UIColor blackColor];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView cellForRowAtIndexPath:indexPath].textLabel.textColor = [UIColor whiteColor];
+}
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NMXDevice *newDev = self.appExecutive.deviceList[indexPath.row];
+
+    UITableViewCell *selCel = [tableView cellForRowAtIndexPath:indexPath];
+    selCel.textLabel.textColor = [UIColor blackColor];
+
+    if (self.appExecutive.device != newDev)
+    {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        
+        for (NSInteger j = 0; j < [tableView numberOfSections]; ++j)
+        {
+            for (NSInteger i = 0; i < [tableView numberOfRowsInSection:j]; ++i)
+            {
+                UITableViewCell *otherCell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+                if (selCel != otherCell) [otherCell setSelected:NO animated:NO];
+            }
+        }
+        
+        [selCel setSelected:YES animated:NO];
+
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+        
+            [self.appExecutive setActiveDevice: newDev];
+            [self viewDidAppear:NO];
+
+            //mm            [self initViewData];
+
+        });
+    }
+ 
+    [UIView animateWithDuration:.4 animations:^{
+        
+        self.deviceSelectionView.alpha = 0;
+        
+    } completion: nil];
+}
 
 @end
