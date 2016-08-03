@@ -15,7 +15,6 @@
 #import "AppDelegate.h"
 #import "JoyButton.h"
 #import "MBProgressHUD.h"
-#import "JSActiveDeviceViewController.h"
 
 
 //------------------------------------------------------------------------------
@@ -80,7 +79,6 @@ NSString static	*SegueToPanMotorSettingsViewController		= @"SegueToPanMotorSetti
 NSString static	*SegueToTiltMotorSettingsViewController		= @"SegueToTiltMotorSettingsViewController";
 NSString static	*SegueToSetupViewController					= @"SegueToSetupViewController";
 NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController";
-NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDeviceViewController";
 
 
 #pragma mark Public Property Synthesis
@@ -1554,15 +1552,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
 
 - (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
-    //mm FIXME - remove active device view and segues
-    if ([identifier isEqualToString: SegueToActiveDeviceViewController])
-    {
-        if (self.appExecutive.deviceList.count <= 1)
-        {
-            return NO;
-        }
-    }
-    
     return YES;
 }
 
@@ -1620,12 +1609,6 @@ NSString static *SegueToActiveDeviceViewController          = @"SegueToActiveDev
         
         [self exitJoystickMode];
         self.showingModalScreen = true;
-    }
-    else if ([segue.identifier isEqualToString: SegueToActiveDeviceViewController])
-    {
-        //mm fixme remove this view and segue
-        JSActiveDeviceViewController *advc = segue.destinationViewController;
-        advc.mainVC = self;
     }
     else if ([segue.identifier isEqualToString: @"HelpJoystick"])
     {

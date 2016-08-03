@@ -5817,84 +5817,6 @@ Ramping</string>
             </objects>
             <point key="canvasLocation" x="2285" y="1761"/>
         </scene>
-        <!--Active Device View Controller-->
-        <scene sceneID="a0E-BV-qx8">
-            <objects>
-                <viewController id="G3p-ez-6Fd" customClass="JSActiveDeviceViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Q81-gr-yBF"/>
-                        <viewControllerLayoutGuide type="bottom" id="uHA-qt-scu"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="BEB-Uc-db1">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n7V-Mz-dem" userLabel="Control Background">
-                                <rect key="frame" x="20" y="226" width="560" height="290"/>
-                                <color key="backgroundColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Active Device" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D6h-7p-ozS">
-                                <rect key="frame" x="20" y="234" width="560" height="21"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select the device control" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B1k-Ld-Sl5" userLabel="Message">
-                                <rect key="frame" x="20" y="263" width="560" height="21"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZkM-EZ-hcR">
-                                <rect key="frame" x="20" y="292" width="560" height="216"/>
-                            </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uPm-ah-02A" customClass="JoyButton">
-                                <rect key="frame" x="275" y="548" width="50" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="bCu-Bw-kUo"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="OK">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="handleOkButton:" destination="G3p-ez-6Fd" eventType="touchUpInside" id="qSP-cJ-sIn"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
-                        <constraints>
-                            <constraint firstItem="n7V-Mz-dem" firstAttribute="bottom" secondItem="ZkM-EZ-hcR" secondAttribute="bottom" constant="8" id="5uy-l6-cRC"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="ZkM-EZ-hcR" secondAttribute="trailing" id="7Ft-EE-q4A"/>
-                            <constraint firstItem="uPm-ah-02A" firstAttribute="top" secondItem="ZkM-EZ-hcR" secondAttribute="bottom" constant="40" id="9o6-6C-ohK"/>
-                            <constraint firstItem="ZkM-EZ-hcR" firstAttribute="leading" secondItem="BEB-Uc-db1" secondAttribute="leadingMargin" id="LHg-sA-n5K"/>
-                            <constraint firstItem="B1k-Ld-Sl5" firstAttribute="leading" secondItem="BEB-Uc-db1" secondAttribute="leadingMargin" id="M8f-bU-MW0"/>
-                            <constraint firstAttribute="centerX" secondItem="ZkM-EZ-hcR" secondAttribute="centerX" id="MMV-Aq-GnO"/>
-                            <constraint firstItem="ZkM-EZ-hcR" firstAttribute="top" secondItem="B1k-Ld-Sl5" secondAttribute="bottom" constant="8" id="TQn-3n-3wp"/>
-                            <constraint firstAttribute="centerY" secondItem="ZkM-EZ-hcR" secondAttribute="centerY" id="V4P-xq-8YU"/>
-                            <constraint firstAttribute="centerX" secondItem="uPm-ah-02A" secondAttribute="centerX" id="WhN-gd-MDH"/>
-                            <constraint firstItem="D6h-7p-ozS" firstAttribute="leading" secondItem="BEB-Uc-db1" secondAttribute="leadingMargin" id="dom-IB-KkW"/>
-                            <constraint firstItem="n7V-Mz-dem" firstAttribute="trailing" secondItem="BEB-Uc-db1" secondAttribute="trailingMargin" id="hUu-kq-chT"/>
-                            <constraint firstItem="B1k-Ld-Sl5" firstAttribute="trailing" secondItem="BEB-Uc-db1" secondAttribute="trailingMargin" id="ijt-4W-vRO"/>
-                            <constraint firstItem="B1k-Ld-Sl5" firstAttribute="top" secondItem="D6h-7p-ozS" secondAttribute="bottom" constant="8" id="jeQ-ym-qWP"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="D6h-7p-ozS" secondAttribute="trailing" id="nSu-86-Xzd"/>
-                            <constraint firstItem="D6h-7p-ozS" firstAttribute="top" secondItem="n7V-Mz-dem" secondAttribute="top" constant="8" id="t9g-FO-sfw"/>
-                            <constraint firstItem="n7V-Mz-dem" firstAttribute="leading" secondItem="BEB-Uc-db1" secondAttribute="leadingMargin" id="wnL-i4-GN2"/>
-                        </constraints>
-                    </view>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="600" height="800"/>
-                    <connections>
-                        <outlet property="controlBackground" destination="n7V-Mz-dem" id="2AZ-H0-Gea"/>
-                        <outlet property="okButton" destination="uPm-ah-02A" id="GRr-Vy-h3w"/>
-                        <outlet property="picker" destination="ZkM-EZ-hcR" id="bcO-DS-a6V"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ihk-RO-rgk" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4942" y="1761"/>
-        </scene>
     </scenes>
     <resources>
         <image name="Lock_Icon.png" width="24" height="23"/>
@@ -5908,15 +5830,15 @@ Ramping</string>
         <segue reference="gqx-Wd-6xg"/>
         <segue reference="RFH-OB-Gp4"/>
         <segue reference="IfY-aS-7xa"/>
-        <segue reference="PwX-tX-cQi"/>
-        <segue reference="BxP-51-sJV"/>
-        <segue reference="aFw-MN-OaY"/>
-        <segue reference="vr9-JF-N1x"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="eIy-q4-84e"/>
-        <segue reference="k3P-Db-zBC"/>
+        <segue reference="GYc-Sg-Iuf"/>
+        <segue reference="br4-PB-JjF"/>
         <segue reference="p4Z-EB-hlS"/>
+        <segue reference="6SS-hE-J9g"/>
         <segue reference="rGc-Y0-TPg"/>
+        <segue reference="RMu-iv-gcK"/>
+        <segue reference="6tH-tQ-8da"/>
         <segue reference="Nk1-9G-Dpm"/>
+        <segue reference="uS0-Tr-f5Z"/>
+        <segue reference="STE-RU-aG4"/>
     </inferredMetricsTieBreakers>
 </document>

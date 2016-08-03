@@ -172,7 +172,6 @@
 		3090FC9F1D37031700EBB8F3 /* DeviceStateRunning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */; };
 		3090FCA01D37031700EBB8F3 /* DeviceStateRunning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */; };
 		309AD5FF1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */; };
-		30A73F651CFE48990048315D /* JSActiveDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A73F641CFE48990048315D /* JSActiveDeviceViewController.m */; };
 		30B8EE9F1C45D0A100DCF15C /* DeviceState_Off.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */; };
 		30B8EEA01C45D0A100DCF15C /* DeviceState_Off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */; };
 		30B8EEA31C48924800DCF15C /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B8EEA21C48924800DCF15C /* DeviceTableViewCell.m */; };
@@ -423,8 +422,6 @@
 		3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceStateRunning@2x.png"; sourceTree = "<group>"; };
 		309AD5FD1D08EC5B00F91CB4 /* JSDeviceSettingsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeviceSettingsVC.h; sourceTree = "<group>"; };
 		309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDeviceSettingsVC.m; sourceTree = "<group>"; };
-		30A73F631CFE48990048315D /* JSActiveDeviceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActiveDeviceViewController.h; sourceTree = "<group>"; };
-		30A73F641CFE48990048315D /* JSActiveDeviceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSActiveDeviceViewController.m; sourceTree = "<group>"; };
 		30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Off.png; sourceTree = "<group>"; };
 		30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Off@2x.png"; sourceTree = "<group>"; };
 		30B8EEA11C48924800DCF15C /* DeviceTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceTableViewCell.h; sourceTree = "<group>"; };
@@ -883,8 +880,6 @@
 				10CF73731BD7DCF8004ED48C /* SiderealViewController.m */,
 				101F9B811C1740A9006DCFAA /* OverallDistanceViewController.h */,
 				101F9B821C1740A9006DCFAA /* OverallDistanceViewController.m */,
-				30A73F631CFE48990048315D /* JSActiveDeviceViewController.h */,
-				30A73F641CFE48990048315D /* JSActiveDeviceViewController.m */,
 				309AD5FD1D08EC5B00F91CB4 /* JSDeviceSettingsVC.h */,
 				309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */,
 			);
@@ -1202,7 +1197,6 @@
 				2361D8731A49E7F9003FED88 /* SetSecondsViewController.m in Sources */,
 				23A74FC41AD3129400FAD99E /* BacklashViewController.m in Sources */,
 				23C72C761A1FC20400DF1002 /* MotorSettingsViewController.m in Sources */,
-				30A73F651CFE48990048315D /* JSActiveDeviceViewController.m in Sources */,
 				10F9DE321BEBC0C20059A727 /* ELCAssetTablePicker.m in Sources */,
 				2389AC1C19DD938100FB2679 /* main.m in Sources */,
 				1008389F1B8E0FC6003823E0 /* PresetManagerViewController.m in Sources */,
