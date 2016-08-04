@@ -254,14 +254,8 @@ typedef enum{
 
     self.deviceSelectionPicker.delegate = self;
     self.deviceSelectionPicker.dataSource = self;
-    if (self.appExecutive.deviceList.count <= 1 || self.appExecutive.is3P)
-    {
-        self.deviceSelectionPicker.hidden = YES;
-    }
-    else
-    {
-        self.deviceSelectionPicker.transform = CGAffineTransformMakeScale(0.8, 0.8);
-    }
+    self.deviceSelectionPicker.transform = CGAffineTransformMakeScale(0.8, 0.8);
+    [self setDevicePickerVisible: YES];
     
     self.displayedDevice = self.appExecutive.device;
     
@@ -318,6 +312,18 @@ typedef enum{
     }
     
 	[super viewDidLoad];
+}
+
+- (void) setDevicePickerVisible: (BOOL)visible
+{
+    if (self.appExecutive.deviceList.count <= 1 || self.appExecutive.is3P)
+    {
+        self.deviceSelectionPicker.hidden = YES;
+    }
+    else
+    {
+        self.deviceSelectionPicker.hidden = !visible;
+    }
 }
 
 - (void) setupIcons {
@@ -388,6 +394,7 @@ typedef enum{
         startTimerBtn.hidden = YES;
         timerContainer.hidden = NO;
         pauseProgramButton.hidden = YES;
+        [self setDevicePickerVisible: NO];
     }
 }
 
@@ -428,6 +435,7 @@ typedef enum{
 - (void) reconnectDelay
 {
     timerContainer.hidden = NO;
+    [self setDevicePickerVisible: NO];
     
     if (self.appExecutive.is3P == NO)
     {
@@ -519,6 +527,7 @@ typedef enum{
         [countdownTimer invalidate];
         
         timerContainer.hidden = YES;
+        [self setDevicePickerVisible: YES];
         cancelBtn.hidden = YES;
         goBtn.hidden = YES;
         pauseProgramButton.hidden = NO;
@@ -752,6 +761,7 @@ typedef enum{
 
     [self.view bringSubviewToFront:timerContainer];
     timerContainer.hidden = YES;
+    [self setDevicePickerVisible: YES];
     
     queryFPS = [self.appExecutive.device mainQueryFPS];
     
@@ -1296,6 +1306,7 @@ typedef enum{
     startTimerBtn.hidden = NO;
 
     timerContainer.hidden = YES;
+    [self setDevicePickerVisible: YES];
 }
 
 - (IBAction) bypassTimer: (JoyButton *) sender {
@@ -1306,6 +1317,7 @@ typedef enum{
     [countdownTimer invalidate];
     
     timerContainer.hidden = YES;
+    [self setDevicePickerVisible: YES];
     
     if (appExecutive.is3P == YES)
     {
@@ -1828,6 +1840,7 @@ typedef enum{
     else if (runStatus & NMXRunStatusRunning)
     {
         timerContainer.hidden = YES;
+        [self setDevicePickerVisible: YES];
         
         //NSLog(@"NMXKeyFrameRunStatusRunning");
         
@@ -2075,7 +2088,8 @@ typedef enum{
     else if (runStatus & NMXRunStatusRunning) {
         
         timerContainer.hidden = YES;
-            
+        [self setDevicePickerVisible: YES];
+        
         //NSLog(@"NMXRunStatusRunning");
         
         int devicePercentComplete = [device mainQueryProgramPercentComplete];

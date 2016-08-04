@@ -1652,23 +1652,22 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             [self convertUnits:1 forDevice:device];
             
             settings.start3PSet = 2;
+
+            // 2P settings
+            [device mainSetStartHere];
+                
+            settings.start2pSet = 1;
             
-            if (self.appExecutive.is3P == NO)
-            {
-                [device mainSetStartHere];
-                
-                settings.start2pSet = 1;
-                
-                int pos4 = [device queryProgramStartPoint:1];
-                int pos5 = [device queryProgramStartPoint:2];
-                int pos6 = [device queryProgramStartPoint:3];
-                
-                settings.startPoint1 = pos4;
-                settings.startPoint2 = pos5;
-                settings.startPoint3 = pos6;
-                
-                [settings synchronize];
-            }
+            int pos4 = [device queryProgramStartPoint:1];
+            int pos5 = [device queryProgramStartPoint:2];
+            int pos6 = [device queryProgramStartPoint:3];
+            
+            settings.startPoint1 = pos4;
+            settings.startPoint2 = pos5;
+            settings.startPoint3 = pos6;
+            // end 2P
+            
+            [settings synchronize];
         }
         
         JSDeviceSettings *settings = self.appExecutive.device.settings;
@@ -1862,21 +1861,22 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             settings.end3PSet = 2;
             
             [self convertUnits:3 forDevice:device];
+
+            // 2P settings
+            [device mainSetStopHere];
             
-            if (self.appExecutive.is3P == NO)
-            {
-                [device mainSetStopHere];
-                
-                settings.end2pSet = 1;
-                
-                int pos4 = [device queryProgramEndPoint:1];
-                int pos5 = [device queryProgramEndPoint:2];
-                int pos6 = [device queryProgramEndPoint:3];
-                
-                settings.endPoint1 = pos4;
-                settings.endPoint2 = pos5;
-                settings.endPoint3 = pos6;
-            }
+            settings.end2pSet = 1;
+            
+            int pos4 = [device queryProgramEndPoint:1];
+            int pos5 = [device queryProgramEndPoint:2];
+            int pos6 = [device queryProgramEndPoint:3];
+            
+            settings.endPoint1 = pos4;
+            settings.endPoint2 = pos5;
+            settings.endPoint3 = pos6;
+            
+            [settings synchronize];
+            // end 2P
         }
         
         if (self.appExecutive.is3P == NO)
@@ -2483,7 +2483,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     
     JSDeviceSettings *settings = self.appExecutive.device.settings;
-    [settings synchronize];
     
     if (appExecutive.is3P)
     {
@@ -2717,8 +2716,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         
             [self.appExecutive setActiveDevice: newDev];
             [self viewDidAppear:NO];
-
-            //mm            [self initViewData];
 
         });
     }

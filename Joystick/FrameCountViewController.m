@@ -210,9 +210,14 @@ NSArray static	*frameCountStrings = nil;
     
     if (self.appExecutive.is3P && !isRampingScreen)
     {
-        settings.slide3PVal1 = [self.appExecutive.frameCountNumber floatValue] * per1;
-        settings.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue] * per2;
-        settings.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue] * per3;
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            JSDeviceSettings *devSettings = device.settings;
+
+            devSettings.slide3PVal1 = [self.appExecutive.frameCountNumber floatValue] * per1;
+            devSettings.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue] * per2;
+            devSettings.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue] * per3;
+        }
     }
 	
     [self dismissViewControllerAnimated: YES completion: ^{

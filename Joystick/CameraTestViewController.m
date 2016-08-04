@@ -147,7 +147,10 @@
     [self.cameraTimelineView stopPlayheadAnimation];
     
 	DDLogDebug(@"Stop Camera Test Button");
-    [[AppExecutive sharedInstance].device cameraSetTestMode: false];
+    for (NMXDevice *device in [AppExecutive sharedInstance].deviceList)
+    {
+        [device cameraSetTestMode: false];
+    }
 
 	[self dismissViewControllerAnimated: YES completion: nil];
 }

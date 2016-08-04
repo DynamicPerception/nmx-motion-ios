@@ -257,9 +257,14 @@ NSArray static	*frameCountStrings = nil;
     slide3PSlider2.value = self.settings.slide3PVal2;
     slide3PSlider3.value = self.settings.slide3PVal3;
     
-    self.settings.slide3PVal1 = slide3PSlider1.value;
-    self.settings.slide3PVal2 = slide3PSlider2.value;
-    self.settings.slide3PVal3 = slide3PSlider3.value;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *devSettings = device.settings;
+
+        devSettings.slide3PVal1 = slide3PSlider1.value;
+        devSettings.slide3PVal2 = slide3PSlider2.value;
+        devSettings.slide3PVal3 = slide3PSlider3.value;
+    }
     
     if (self.programMode == NMXProgramModeVideo)
     {
@@ -719,7 +724,11 @@ NSArray static	*frameCountStrings = nil;
     
     UISlider *s = sender;
     
-    self.settings.slide3PVal1 = s.value;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *devSettings = device.settings;
+        devSettings.slide3PVal1 = s.value;
+    }
     
     self.currentSelectedFrameValue = self.settings.slide3PVal1;
     
@@ -861,12 +870,13 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) updateSlide3PVal1: (UISlider *) slider {
     
-//    if (slider.value > appExecutive.slide3PVal1)
-//        appExecutive.slide3PVal1 = slider.value;
-    
     sliderValue = slider.value;
     
-    self.settings.slide3PVal1 = sliderValue;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *devSettings = device.settings;
+        devSettings.slide3PVal1 = sliderValue;
+    }
     
     NSLog(@"upsl3p1 appExecutive.slide3PVal1: %f",self.settings.slide3PVal1);
     
@@ -1147,7 +1157,11 @@ NSArray static	*frameCountStrings = nil;
         
         slide3PSlider1.value = self.currentSelectedFrameValue;
         
-        self.settings.slide3PVal1 = sliderValue;
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            JSDeviceSettings *devSettings = device.settings;
+            devSettings.slide3PVal1 = sliderValue;
+        }
         
         [self updateSlide3PVal1:slide3PSlider1];
     }

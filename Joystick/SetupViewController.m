@@ -368,30 +368,35 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 }
 
 - (void) popMinSeconds {
+
+    float max = -FLT_MAX;
     
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
     
-    int microstepSetting1 = settings.microstep1 * 200;
-    int microstepSetting2 = settings.microstep2 * 200;
-    int microstepSetting3 = settings.microstep3 * 200;
-    
-    int start1 = settings.startPoint1;
-    int end1 = settings.endPoint1;
-    int distance1 = start1 - end1;
-    
-    int start2 = settings.startPoint2;
-    int end2 = settings.endPoint2;
-    int distance2 = start2 - end2;
-    
-    int start3 = settings.startPoint3;
-    int end3 = settings.endPoint3;
-    int distance3 = start3 - end3;
-    
-    int con1 = abs([self convert:distance1:microstepSetting1]);
-    int con2 = abs([self convert:distance2:microstepSetting2]);
-    int con3 = abs([self convert:distance3:microstepSetting3]);
-    
-    float max = MAX(MAX(con1, con2), con3);
+        int microstepSetting1 = settings.microstep1 * 200;
+        int microstepSetting2 = settings.microstep2 * 200;
+        int microstepSetting3 = settings.microstep3 * 200;
+        
+        int start1 = settings.startPoint1;
+        int end1 = settings.endPoint1;
+        int distance1 = start1 - end1;
+        
+        int start2 = settings.startPoint2;
+        int end2 = settings.endPoint2;
+        int distance2 = start2 - end2;
+        
+        int start3 = settings.startPoint3;
+        int end3 = settings.endPoint3;
+        int distance3 = start3 - end3;
+        
+        int con1 = abs([self convert:distance1:microstepSetting1]);
+        int con2 = abs([self convert:distance2:microstepSetting2]);
+        int con3 = abs([self convert:distance3:microstepSetting3]);
+        
+        max = MAX(max, MAX(MAX(con1, con2), con3));
+    }
     
     float minSeconds = max/3300;
     
@@ -723,8 +728,11 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) checkProgramAndHandleNext {
 
-    JSDeviceSettings *settings = self.appExecutive.device.settings;
-    [settings synchronize];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
+        [settings synchronize];
+    }
     
     if (appExecutive.is3P == NO) {
 

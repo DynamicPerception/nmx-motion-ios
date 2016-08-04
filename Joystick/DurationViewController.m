@@ -292,11 +292,14 @@ NSArray static	*secondsStrings = nil;
     
     if (self.appExecutive.is3P)
     {
-        JSDeviceSettings *settings = self.appExecutive.device.settings;
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            JSDeviceSettings *settings = device.settings;
 
-        settings.slide3PVal1 = [self.appExecutive.frameCountNumber floatValue] * per1;
-        settings.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue] * per2;
-        settings.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue] * per3;
+            settings.slide3PVal1 = [self.appExecutive.frameCountNumber floatValue] * per1;
+            settings.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue] * per2;
+            settings.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue] * per3;
+        }
     }
 
 	[self dismissViewControllerAnimated: YES completion: nil];
