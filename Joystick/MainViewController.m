@@ -1518,19 +1518,12 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     [self enterJoystickMode];
 }
 
-- (void) deviceDisconnect: (id) object {
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    //NMXDevice *device = notification.object;
     
     if (!disconnected) {
         
-    NSLog(@"deviceDisconnect popview notification mvc: %@",object);
-    
-    //[appDelegate.nav popToRootViewControllerAnimated: true];
-        
-//    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//        
-//        [self.navigationController popToRootViewControllerAnimated: true];
-//    });
-
         disconnected = YES;
 
         //mm If connected to multiple - don't go back... see if we can reconnect
@@ -1890,14 +1883,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
                     distancePanLbl.alpha = 1;
                     distanceTiltLbl.alpha = 1;
                     
-                } completion:^(BOOL finished) {
-                    
-                    [UIView animateWithDuration:.4 animations:^{
-                        
-                    } completion:^(BOOL finished) {
-                        
-                    }];
-                }];
+                } completion: nil ];
             }
         }
 

@@ -113,6 +113,7 @@
     [alert show];
 
     [self.connectSwitch setOn:NO animated:YES];
+    [self.tableView postDevicesStateChange];
 
 }
 
@@ -259,7 +260,7 @@
 
 #pragma mark NMXDeviceManagerDelegate
 
-- (void) didDisconnectDevice: (CBPeripheral *) peripheral {
+- (void) didDisconnectDevice: (NMXDevice *) device {
     
     // Eat this, we disconnected the device ourself
 

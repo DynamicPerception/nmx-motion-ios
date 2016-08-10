@@ -342,7 +342,9 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 	[self.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
 }
 
-- (void) deviceDisconnect: (id) object {
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    //NMXDevice *device = notification.object;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"showNotificationHost" object:self.restorationIdentifier];
     

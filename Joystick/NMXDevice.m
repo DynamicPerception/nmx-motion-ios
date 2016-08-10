@@ -456,18 +456,17 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) disconnect
 {
+    self.disconnected = true;
     [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
-    
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self forKey:@"device"];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self userInfo:nil];
 }
 
 // Handle notification that the device was disconnected
-- (void) deviceDisconnect: (NSNotification *) notification {
-
-    NMXDevice *device = [[notification userInfo] valueForKey:@"device"];
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    NMXDevice *device = notification.object;
     
+    //mm TEST THIS!
     if (device == self)
     {
         DDLogDebug(@"Device disconnected NMXDevice = %@", self.myPeripheral.name);
@@ -528,7 +527,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     if (true == self.disconnected)
     {
-        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
         return;
     }
     
@@ -657,7 +656,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
                         
                         // Send the user back to the connection screen...
                         
-                        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
                     }
                     
                     break;
@@ -679,17 +678,9 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             {
                 DDLogError(@"Bad response %@, last command was %@", self.myNotifyData, self.myLastCommand);
                 
-                //            dispatch_async(dispatch_get_main_queue(), ^{
-                //
-                //                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
-                //            });
-                
-                
-                
-                
                 dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
                 });
                 
                 
@@ -722,7 +713,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
         });
     }
     
@@ -745,32 +736,10 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     NMXValueType valueType;
     NSNumber * returnedNumber;
     
-//    NSLog(@"sizeof(valueType): %lu",sizeof(valueType));
-//    NSLog(@"valueType: %c",&valueType);
-    
     if (self.myNotifyData.length != 0) {
         
         memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
 
-        //NSLog(@"Read from device value type %d", valueType);
-        
-        //    @try {
-        //
-        //        memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
-        //    }
-        //    @catch (NSException * e) {
-        //
-        //        NSLog(@"memcpy Exception: %@", e);
-        //
-        //        dispatch_async(dispatch_get_main_queue(), ^(void) {
-        //
-        //            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"Peripheral disconnected Randall memcpy"];
-        //        });
-        //
-        //    }
-        
-        
-        
         switch (valueType)
         {
             case NMXValueTypeByte:

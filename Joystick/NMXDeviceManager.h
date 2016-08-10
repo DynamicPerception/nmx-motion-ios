@@ -15,7 +15,7 @@
 @optional
 
 - (void) didDiscoverDevice: (NMXDevice *) device;
-- (void) didDisconnectDevice: (CBPeripheral *) device;
+- (void) didDisconnectDevice: (NMXDevice *) device;
 
 @end
 

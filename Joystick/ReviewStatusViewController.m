@@ -1486,14 +1486,6 @@ typedef enum{
         }
     }
     
-    //mm this looks wrong!   should only do this on didConnect
-    [self.disconnectedTimer invalidate];
-    self.disconnectedTimer = nil;
-    
-    if (self.appExecutive.is3P == YES)
-    {
-        [self startKeyframeTimer];
-    }
 }
 
 - (void) didConnect: (NMXDevice *) device1 {
@@ -1508,13 +1500,21 @@ typedef enum{
     [device1 mainSetJoystickMode: false];
     
     [self showKeepAliveView];
+
+    if (self.appExecutive.is3P == YES)
+    {
+        [self startKeyframeTimer];
+    }
     
     [self setupAfterConnection];
 }
 
-- (void) didDisconnectDevice: (CBPeripheral *) peripheral {
+- (void) didDisconnectDevice: (NMXDevice *) device {
     
     DDLogDebug(@"Did Disconnect Device");
+
+    NMXDevice *newDevice = [self findConnectedDevice];
+    if (newDevice) return;
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
 
@@ -1549,9 +1549,10 @@ typedef enum{
     });
 }
 
-- (void) deviceDisconnect: (id) object
+- (void) deviceDisconnect: (NSNotification *) notification
 {
-    [self didDisconnectDevice: nil];
+    NMXDevice *device = notification.object;
+    [self didDisconnectDevice: device];
 }
 
 
@@ -1638,8 +1639,6 @@ typedef enum{
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"showNotificationHost"
      object:self.restorationIdentifier];
-    
-    //[[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         
@@ -1785,15 +1784,42 @@ typedef enum{
     [self.disconnectedTimer invalidate];
     self.disconnectedTimer = nil;
     
+    [self.statusTimer invalidate];
+    self.statusTimer = nil;
+    
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         
-        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];
+        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self.appExecutive.device];
     });
+}
+
+- (NMXDevice *)findConnectedDevice
+{
+    NMXDevice *device = nil;
+    for (NMXDevice *aDevice in self.appExecutive.deviceList)
+    {
+        if (aDevice.disconnected == NO)
+        {
+            device = aDevice;
+            [self.appExecutive setActiveDevice:device];
+        }
+    }
+    
+    return device;
 }
 
 - (void) handleKeyFrameStatusTimer: (NSTimer *) sender {
     
     NMXDevice *device = self.appExecutive.device;
+    if (device.disconnected)
+    {
+        device = [self findConnectedDevice];
+    }
+    if (nil == device)
+    {
+        [self killStatusTimerOnDisconnect];
+        return;
+    }
     
     NMXRunStatus runStatus = [device queryKeyFrameProgramRunState];
     
@@ -2003,6 +2029,16 @@ typedef enum{
 - (void) handleStatusTimer: (NSTimer *) sender {
     
     NMXDevice *device = self.appExecutive.device;
+    if (device.disconnected)
+    {
+        device = [self findConnectedDevice];
+    }
+    if (nil == device)
+    {
+        [self killStatusTimerOnDisconnect];
+        return;
+    }
+    
     NMXRunStatus runStatus = [device mainQueryRunStatus];
     
     if (runStatus & NMXRunStatusPaused) {
@@ -2197,19 +2233,8 @@ typedef enum{
     }
     else if (runStatus == NMXRunStatusUnknown) {
         NSLog(@"something else: %i",runStatus);
-            
-        [self.statusTimer invalidate];
-        self.statusTimer = nil;
         
-        keyframeTimer = nil;
-        
-        [self.disconnectedTimer invalidate];
-        self.disconnectedTimer = nil;
-        
-        dispatch_async(dispatch_get_main_queue(), ^(void) {
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];
-        });
+        [self killStatusTimerOnDisconnect];
         
     }
     else {

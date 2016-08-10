@@ -186,8 +186,9 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-- (void) deviceDisconnect: (id) object {    
-    
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    //NMXDevice *device = notification.object;
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self dismissViewControllerAnimated: YES completion: nil];
     });

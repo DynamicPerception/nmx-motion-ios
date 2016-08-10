@@ -69,17 +69,8 @@
     }
 }
 
-- (void) centralManager: (CBCentralManager *) central
-  didDiscoverPeripheral: (CBPeripheral *) peripheral
-      advertisementData: (NSDictionary *) advertisementData
-                   RSSI: (NSNumber *) RSSI {
-
-    //DDLogDebug(@"Discovered %@", peripheral.name);
-    
-    NMXDevice * newDevice = [[NMXDevice alloc] initWithPeripheral: peripheral andCentralManager: self.myCBCentralManager];
-    
-    //randall update 1 - check if device already added to list
-    
+- (void)addToList: (NMXDevice *)newDevice
+{
     bool alreadyAdded = false;
     
     for (NMXDevice *device in self.myDevices)
@@ -94,8 +85,19 @@
     {
         [self.myDevices addObject: newDevice];
     }
+}
+
+
+- (void) centralManager: (CBCentralManager *) central
+  didDiscoverPeripheral: (CBPeripheral *) peripheral
+      advertisementData: (NSDictionary *) advertisementData
+                   RSSI: (NSNumber *) RSSI {
+
+    //DDLogDebug(@"Discovered %@", peripheral.name);
     
-    //randall update 1 end
+    NMXDevice * newDevice = [[NMXDevice alloc] initWithPeripheral: peripheral andCentralManager: self.myCBCentralManager];
+
+    [self addToList: newDevice];
     
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDiscoverDevice:)]))
         [self.delegate didDiscoverDevice: newDevice];
@@ -109,6 +111,9 @@
     if (peripheral.delegate)
     {
         NMXDevice *peripheralDelegate = (NMXDevice *)peripheral.delegate;
+        
+        [self addToList: peripheralDelegate];
+        
         if ([peripheralDelegate respondsToSelector:@selector(peripheralWasConnected:)])
         {
             [peripheralDelegate peripheralWasConnected: peripheral];
@@ -123,18 +128,21 @@
     //DDLogDebug(@"centralManager Peripheral disconnected");
     
     NSArray *deviceArray = [NSArray arrayWithArray:self.myDevices];
+    NMXDevice *disconnectedDevice = nil;
     
     for (NMXDevice *device in deviceArray)
     {
         if ([device.name isEqualToString: peripheral.name])
         {
+            disconnectedDevice = device;
+            [disconnectedDevice disconnect];
             [self.myDevices removeObject: device];
         }
     }
 
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDisconnectDevice:)]))
     {
-        [self.delegate didDisconnectDevice: peripheral];
+        [self.delegate didDisconnectDevice: disconnectedDevice];
     }
     else
     {
@@ -142,7 +150,7 @@
             
             if (!disconnected) {
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"central didDisconnectPeripheral"];
+                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: disconnectedDevice];
                 
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
                                                                 message: @"All settings saved on NMX - Tap Connect to reconnect"
