@@ -18,15 +18,13 @@
 
 @interface BacklashViewController ()
 
-// TODO: These arrays are identical; do we need separate arrays for the columns?
-
-@property (nonatomic, strong)				NSArray *		digitsHundreds;
-@property (nonatomic, strong)				NSArray *		digitsTens;
-@property (nonatomic, strong)				NSArray *		digitsOnes;
+@property (nonatomic, strong)				NSArray *		mostSigDigit;
+@property (nonatomic, strong)				NSArray *		leastSigDigit;
 
 @property (nonatomic, strong)	IBOutlet	UIView *		controlBackground;
 @property (nonatomic, strong)	IBOutlet	UIPickerView *	picker;
 @property (nonatomic, strong)	IBOutlet	JoyButton *		okButton;
+@property (strong, nonatomic) IBOutlet UILabel *titleLabel;
 
 @end
 
@@ -41,26 +39,11 @@
 #pragma mark Public Propery Synthesis
 
 @synthesize delegate;
-@synthesize backlash;
 
 
 #pragma mark Private Propery Synthesis
 
 @synthesize picker;
-
-
-#pragma mark Public Propery Methods
-
-
-- (NSInteger) backlash {
-
-	return backlash;
-}
-
-- (void) setBacklash: (NSInteger) value {
-
-	backlash = value;
-}
 
 
 #pragma mark Private Propery Methods
@@ -70,6 +53,19 @@
 
 #pragma mark - Object Management
 
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    self = [super initWithCoder:decoder];
+
+    if (self)
+    {
+        self.maxValue = 999;
+        self.minValue = 0;
+        self.digits = 3;
+    }
+    
+    return self;
+}
 
 - (void) viewDidLoad {
 
@@ -79,13 +75,17 @@
 	self.picker.dataSource = self;
 
 	[self setupDigitArrays];
+    
+    
 }
 
-- (void) viewDidAppear: (BOOL) animated {
+- (void) viewWillAppear: (BOOL) animated {
 
-	[super viewDidAppear: animated];
+	[super viewWillAppear: animated];
 
-	[self setPickerValue: self.backlash animated: NO];
+	[self setPickerValue: self.value animated: NO];
+    
+    self.titleLabel.text = self.titleString;
 }
 
 - (void) didReceiveMemoryWarning {
@@ -95,16 +95,17 @@
 
 - (void) setupDigitArrays {
 
-	self.digitsHundreds		= [self digitArray];
-	self.digitsTens			= [self digitArray];
-	self.digitsOnes			= [self digitArray];
+    int max = self.maxValue / pow(10, (self.digits - 1));
+    
+    self.leastSigDigit	= [self digitArrayWithMax: 9];
+    self.mostSigDigit	= [self digitArrayWithMax: max];
 }
 
-- (NSArray *) digitArray {
-
+- (NSArray *) digitArrayWithMax: (int) max
+{
 	NSMutableArray *digits = [NSMutableArray array];
 
-	for (NSInteger index = 0; index <= 9; index++)
+	for (NSInteger index = 0; index <= max; index++)
 		[digits addObject: [NSString stringWithFormat: @"%ld", (long) index]];
 
 	return [NSArray arrayWithArray: digits];
@@ -118,23 +119,24 @@
 
 - (NSInteger) getPickerValue {
 
-	NSInteger	hundreds	= [self.picker selectedRowInComponent: 0];
-	NSInteger	tens		= [self.picker selectedRowInComponent: 1];
-	NSInteger	ones		= [self.picker selectedRowInComponent: 2];
-	NSInteger	value		= (hundreds * 100) + (tens * 10) + ones;
+    int value = 0;
+    for (int i = self.digits-1; i >= 0; i--)
+    {
+        value += pow(10, i) *  [self.picker selectedRowInComponent: self.digits-i-1];
+    }
 
-	return value;
+    return value;
 }
 
 - (void) setPickerValue: (NSInteger) value animated: (BOOL) animated {
 
-	NSInteger	hundreds	= (value / 100) % 10;
-	NSInteger	tens		= (value / 10) % 10;
-	NSInteger	ones		= value % 10;
+    for (int i = self.digits-1; i >= 0; i--)
+    {
+        int row =  (value / (int)pow(10, i)) % 10;
+        [self.picker selectRow: row inComponent: self.digits-i-1 animated: animated];
 
-	[self.picker selectRow: hundreds    inComponent: 0 animated: animated];
-	[self.picker selectRow: tens        inComponent: 1 animated: animated];
-	[self.picker selectRow: ones        inComponent: 2 animated: animated];
+    }
+
 }
 
 
@@ -144,8 +146,6 @@
 
 
 - (IBAction) handleOkButton: (id) sender {
-
-	DDLogDebug(@"Dismiss Backlash Picker Button");
 
 	[self dismissViewControllerAnimated: YES completion: nil];
 }
@@ -171,35 +171,22 @@
 	NSDictionary *	attributes	= @{ NSForegroundColorAttributeName: [UIColor whiteColor]};
 	NSString *		string		= nil;
 
-	switch (component)
-	{
-		case 0:
-			string = [self.digitsHundreds objectAtIndex: row];
-			break;
+    string = [self.leastSigDigit objectAtIndex: row];
 
-		case 1:
-			string = [self.digitsTens objectAtIndex: row];
-			break;
-
-		case 2:
-			string = [self.digitsOnes objectAtIndex: row];
-			break;
-
-		default:
-			return nil;
-			break;
-	}
-
+    
 	return [[NSAttributedString alloc] initWithString: string attributes: attributes];
 }
 
 - (void) pickerView: (UIPickerView *) pickerView didSelectRow: (NSInteger) row inComponent: (NSInteger) component {
 
-	self.backlash = [self getPickerValue];
+	self.value = [self getPickerValue];
+    
+    self.value = MAX(self.minValue, self.value);
+    self.value = MIN(self.maxValue, self.value);
+    
+    [self.delegate updateIntValue: self.value];
 
-	[self.delegate updateBacklash: self.backlash];
-
-	DDLogDebug(@"Current value: %ld", (long)self.backlash);
+	DDLogDebug(@"Current value: %ld", (long)self.value);
 }
 
 
@@ -210,26 +197,20 @@
 
 - (NSInteger) numberOfComponentsInPickerView: (UIPickerView *) pickerView {
 
-	return 3;
+	return self.digits;
 }
 
 - (NSInteger) pickerView: (UIPickerView *) pickerView numberOfRowsInComponent: (NSInteger) component {
 
-	switch (component)
-	{
-		case 0:
-			return self.digitsHundreds.count;
+    if (self.digits - component < self.digits)
+    {
+        return self.leastSigDigit.count;
+    }
+    else
+    {
+        return self.mostSigDigit.count;
+    }
 
-		case 1:
-			return self.digitsTens.count;
-
-		case 2:
-			return self.digitsOnes.count;
-
-		default: break;
-	}
-
-	return 10;
 }
 
 

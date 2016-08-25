@@ -67,6 +67,7 @@ typedef enum : unsigned char {
     NMXCommandMotorEnable = 3,
     NMXCommandMotorSetBacklash = 5,
     NMXCommandMotorSetMicroStep = 6,
+    NMXCommandMotorSetMaxStepRate = 7,
     NMXCommandMotorSetContinuousSpeed = 13,
     NMXCommandMotorSetContinuousAccelDecelRate = 14, //Dampening
     NMXCommandMotorMoveSimple = 15,
@@ -86,6 +87,7 @@ typedef enum : unsigned char {
     NMXCommandMotorPosition = 31,
     NMXCommandMotorQueryBacklash = 101,
     NMXCommandMotorMicrostepValue = 102,
+    NMXCommandMotorQueryMaxStepRate = 104,
     NMXCommandMotorQueryCurrentPosition = 106,
     NMXCommandMotorQueryRunning = 107,
     NMXCommandMotorQueryContinuousAccelDecel = 109,
@@ -436,6 +438,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) peripheralWasConnected: (CBPeripheral *) peripheral
 {
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(deviceDisconnect:)
+                                                 name: kDeviceDisconnectedNotification
+                                               object: nil];
+
     NSLog(@"Delegate .... peripheral Was connected");
     
     [self abortConnectionRetry];
@@ -447,16 +454,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     DDLogDebug(@"state = %d", (int)self.myCBCentralManager.state);
     self.myPeripheral.delegate = self;
     [self.myCBCentralManager connectPeripheral: self.myPeripheral options: nil];
-
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(deviceDisconnect:)
-                                                 name: kDeviceDisconnectedNotification
-                                               object: nil];
 }
 
 - (void) disconnect
 {
-    self.disconnected = true;
+    self.disconnected = YES;
     [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
     [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self userInfo:nil];
 }
@@ -466,12 +468,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 {
     NMXDevice *device = notification.object;
     
-    //mm TEST THIS!
     if (device == self)
     {
         DDLogDebug(@"Device disconnected NMXDevice = %@", self.myPeripheral.name);
     
-        self.disconnected = true;
+        self.disconnected = YES;
         [[NSNotificationCenter defaultCenter] removeObserver: self];
     }
 }
@@ -1431,13 +1432,31 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) motorSet: (int) motorNumber SetBacklash: (UInt16) backlash {
     
     unsigned char newDataBytes[16];
-    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandCameraSetFocusTime dataLength: 2];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorSetBacklash dataLength: 2];
     unsigned char * backlashPtr = (unsigned char *)&backlash;
     newDataBytes[10] = backlashPtr[1];
     newDataBytes[11] = backlashPtr[0];
     
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 12];
     NSString *  descString = [NSString stringWithFormat: @"Set Backlash %d", (unsigned int)backlash];
+    [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
+}
+
+- (void) motorSet: (int) motorNumber SetMaxStepRate:(UInt16)maxStepRate
+{
+    if (_fwVersion < 70)
+    {
+        return;
+    }
+    
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorSetMaxStepRate dataLength: 2];
+    unsigned char * maxStepRatePtr = (unsigned char *)&maxStepRate;
+    newDataBytes[10] = maxStepRatePtr[1];
+    newDataBytes[11] = maxStepRatePtr[0];
+    
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 12];
+    NSString *  descString = [NSString stringWithFormat: @"Set Max Step Rate %d", (unsigned int)maxStepRate];
     [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
 }
 
@@ -1741,6 +1760,29 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     return backlash;
 }
+
+- (UInt16) motorQueryMaxStepRate:(int)motorNumber
+{
+    if (_fwVersion < 70)
+    {
+        return 4000;
+    }
+    
+    UInt16    maxSpeed = 0;
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorQueryMaxStepRate dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"QueryMaxStepRate" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        maxSpeed = [[self extractReturnedNumber] UInt16Value];
+    }
+    
+    return maxSpeed;
+}
+
 
 - (int) motorQueryCurrentPosition: (int) motorNumber {
     

@@ -144,6 +144,8 @@
     
 	[super viewWillAppear: animated];
 
+    self.activeDevices = [NSMutableArray new];
+    
     [[AppExecutive sharedInstance].deviceManager setDelegate: self];
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameScan) userInfo:nil repeats:NO];

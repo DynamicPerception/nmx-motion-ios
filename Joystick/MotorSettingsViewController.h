@@ -16,7 +16,7 @@
 #import "HelpViewController.h"
 #import "OverallDistanceViewController.h"
 
-@interface MotorSettingsViewController : UIViewController <BacklashDelegate, UITextFieldDelegate,UIScrollViewDelegate, UIAlertViewDelegate> {
+@interface MotorSettingsViewController : UIViewController <IntValueDelegate, UITextFieldDelegate,UIScrollViewDelegate, UIAlertViewDelegate> {
 
     BOOL leftEnabled;
     BOOL rightEnabled;
@@ -76,6 +76,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *directionLbl;
 @property (strong, nonatomic) IBOutlet UIButton *customNameButton;
 @property (strong, nonatomic) IBOutlet UITextField *customNameTxt;
+@property (strong, nonatomic) IBOutlet UILabel *maxRateLbl;
 
 
 

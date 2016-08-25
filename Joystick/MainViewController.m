@@ -15,6 +15,7 @@
 #import "AppDelegate.h"
 #import "JoyButton.h"
 #import "MBProgressHUD.h"
+#import "JSDisconnectedDeviceVC.h"
 
 
 //------------------------------------------------------------------------------
@@ -272,6 +273,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             slideRig = @"Linear Custom";
             slideLinearCustom = d;
         }
+        else if (a == 4)
+        {
+            slideRig = @"Sapphire (60:1)";
+        }
     }
     
     if(b)
@@ -289,6 +294,11 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             panRig = @"Linear Custom";
             panLinearCustom = e;
         }
+        else if (b == 4)
+        {
+            panRig = @"Sapphire (60:1)";
+        }
+        
     }
     
     if(c)
@@ -306,8 +316,63 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             tiltRig = @"Linear Custom";
             tiltLinearCustom = f;
         }
+        else if (c == 4)
+        {
+            tiltRig = @"Sapphire (60:1)";
+        }
     }
     
+    switch (settings.slideGear) {
+        case 1:
+            slideGear = 27.8512;  // 27:1
+            break;
+        case 2:
+            slideGear = 19.2032;  // 19:1
+            break;
+        case 3:
+            slideGear = 5.1818;  // 5:1
+            break;
+        case 4:
+            slideGear = 60;  // 60:1
+            break;
+        default:
+            break;
+    }
+
+    switch (settings.panGear) {
+        case 1:
+            panGear = 27.8512;  // 27:1
+            break;
+        case 2:
+            panGear = 19.2032;  // 19:1
+            break;
+        case 3:
+            panGear = 5.1818;  // 5:1
+            break;
+        case 4:
+            panGear = 60;  // 60:1
+            break;
+        default:
+            break;
+    }
+
+    switch (settings.tiltGear) {
+        case 1:
+            tiltGear = 27.8512;  // 27:1
+            break;
+        case 2:
+            tiltGear = 19.2032;  // 19:1
+            break;
+        case 3:
+            tiltGear = 5.1818;  // 5:1
+            break;
+        case 4:
+            tiltGear = 60;  // 60:1
+            break;
+        default:
+            break;
+    }
+
     slideDirection = settings.slideDirection;
     panDirection = settings.panDirection;
     tiltDirection = settings.tiltDirection;
@@ -812,6 +877,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             settings.start2pSet = 0;
             settings.end2pSet = 0;
             
+            settings.maxStepRateSlide = 4000;
+            settings.maxStepRateTilt = 4000;
+            settings.maxStepRatePan = 4000;
+            
             [settings synchronize];
         }
     }
@@ -898,6 +967,11 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             [device motorEnable: device.panMotor];
             [device motorEnable: device.tiltMotor];
         
+            JSDeviceSettings *settings = device.settings;
+            [device motorSet:1 SetMaxStepRate: settings.maxStepRateSlide];
+            [device motorSet:2 SetMaxStepRate: settings.maxStepRatePan];
+            [device motorSet:3 SetMaxStepRate: settings.maxStepRateTilt];
+            
             [self setupMicrosteps];
             [self enterJoystickMode];
         }
@@ -1175,7 +1249,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         direction = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
     }
 
-    if([slideRig containsString:@"Stage R"] || [slideRig containsString:@"Rotary Custom"])
+    if([slideRig containsString:@"Stage R"] ||
+       [slideRig containsString:@"Sapphire"] ||
+       [slideRig containsString:@"Rotary Custom"])
     {
         displayString = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
         
@@ -1204,7 +1280,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         direction = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
     }
 
-    if([panRig containsString:@"Stage R"] || [panRig containsString:@"Rotary Custom"])
+    if([panRig containsString:@"Stage R"] ||
+       [panRig containsString:@"Sapphire"] ||
+       [panRig containsString:@"Rotary Custom"])
     {
         displayString = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
         
@@ -1234,7 +1312,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         direction = [DistancePresetViewController rightDirectionLabelForIndex: directionMode];
     }
     
-    if([tiltRig containsString:@"Stage R"] || [tiltRig containsString:@"Rotary Custom"])
+    if([tiltRig containsString:@"Stage R"] ||
+       [tiltRig containsString:@"Sapphire"] ||
+       [tiltRig containsString:@"Rotary Custom"])
     {
         displayString = [NSString stringWithFormat:@"%.02f Deg %@", 0.0, direction];
         
@@ -1330,6 +1410,20 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         
         //NSLog(@"degrees: %f motor: %i",degrees,motor);
     }
+    else if ([rigRatioLbl containsString:@"Sapphire"])
+    {
+        rigRatio = 1.;
+        degrees = (distance/microsteps) * reciprocal * rigRatio * 360;
+        calculatedValue = degrees;
+        
+        if (debugDistance) {
+            
+            NSLog(@"calculatedValue degrees: %f",calculatedValue);
+            
+        }
+        
+        
+    }
     else
     {
         //rigRatio = .2988;
@@ -1411,7 +1505,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     NSString *displayString;
     
-    if([rigRatioLbl containsString:@"Stage R"] || [rigRatioLbl containsString:@"Rotary Custom"])
+    if([rigRatioLbl containsString:@"Stage R"] ||
+       [rigRatioLbl containsString:@"Sapphire"] ||
+       [rigRatioLbl containsString:@"Rotary Custom"])
     {
         float directionDist = degrees;
         
@@ -1521,7 +1617,19 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 - (void) deviceDisconnect: (NSNotification *) notification
 {
     //NMXDevice *device = notification.object;
-    
+
+#if 0  //mm FIXME : THIS IS THE NEW TECHNIQUE,  removing to add the sapphire device feature -- add it back
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+        
+        [self performSegueWithIdentifier: @"DeviceDisconnectedSeque" sender: self];
+
+        //        JSDisconnectedDeviceVC *disconnectedVC = [JSDisconnectedDeviceVC new];
+        //[self presentViewController:disconnectedVC animated:YES completion: nil];
+
+    });
+
+#else
     if (!disconnected) {
         
         disconnected = YES;
@@ -1533,6 +1641,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         });
      
     }
+#endif
 
 //    [[NSNotificationCenter defaultCenter]
 //     postNotificationName:@"showNotificationHost"
@@ -2510,6 +2619,15 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
 
     [self exitJoystickMode];
+    
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
+        [device motorSet:1 SetMaxStepRate: settings.maxStepRateSlide];
+        [device motorSet:2 SetMaxStepRate: settings.maxStepRatePan];
+        [device motorSet:3 SetMaxStepRate: settings.maxStepRateTilt];
+    }
+
     
     [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
 }

@@ -117,10 +117,12 @@ typedef enum : unsigned char {
 - (void) motorSet: (int) motorNumber InvertDirection: (bool) invertDirection;
 - (void) motorSet: (int) motorNumber Disabled: (bool) inDisabled;
 - (void) motorSet: (int) motorNumber SetBacklash: (UInt16) backlash;
+- (void) motorSet: (int) motorNumber SetMaxStepRate: (UInt16) maxStepRate;
 - (void) motorSet: (int) motorNumber Microstep: (unsigned char) microstep;
 - (void) motorSet: (int) motorNumber ContinuousSpeed: (float) speed;
 - (void) motorMove: (int) motorNumber Direction: (unsigned char) direction Steps: (UInt32) steps;
 - (UInt16) motorQueryBacklash: (int) motorNumber;
+- (UInt16) motorQueryMaxStepRate: (int) motorNumber;
 - (void) takeUpBacklashKeyFrameProgram;
 - (int) motorQueryCurrentPosition: (int) motorNumber;
 - (bool) motorQueryRunning: (int) motorNumber;

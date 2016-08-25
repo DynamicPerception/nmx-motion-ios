@@ -13,13 +13,6 @@
 #import "LinearRotaryViewController.h"
 
 
-
-@protocol DistancePresetDelegate
-
-- (void) updateBacklash: (NSInteger) value;
-
-@end
-
 @interface DistancePresetViewController : UIViewController  <UIPickerViewDelegate, UIPickerViewDataSource> {
     
     AppDelegate *appDelegate;
@@ -29,7 +22,6 @@
     int selectedRow;
 }
 
-@property (nonatomic, assign)		id <DistancePresetDelegate>	delegate;
 @property (nonatomic, readwrite)	NSInteger				backlash;
 @property (nonatomic, strong)		NSMutableArray *presetList;
 @property (nonatomic, strong)		NSMutableArray *presetStringList;

@@ -9,17 +9,20 @@
 #import <UIKit/UIKit.h>
 
 
-@protocol BacklashDelegate
+@protocol IntValueDelegate
 
-- (void) updateBacklash: (NSInteger) value;
+- (void) updateIntValue: (NSInteger) value;
 
 @end
 
 
 @interface BacklashViewController : UIViewController  <UIPickerViewDelegate, UIPickerViewDataSource>
 
-@property (nonatomic, assign)		id <BacklashDelegate>	delegate;
-@property (nonatomic, readwrite)	NSInteger				backlash;
-
+@property (nonatomic, assign)		id <IntValueDelegate>	delegate;
+@property (nonatomic, readwrite)	NSInteger				value;
+@property int maxValue;
+@property int minValue;
+@property int digits;
+@property NSString *titleString;
 
 @end

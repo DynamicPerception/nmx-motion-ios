@@ -149,9 +149,12 @@
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             
             if (!disconnected) {
-                
+
+                disconnected = YES;
+
                 [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: disconnectedDevice];
-                
+                //mm
+/*
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
                                                                 message: @"All settings saved on NMX - Tap Connect to reconnect"
                                                                delegate: self
@@ -159,8 +162,7 @@
                                                       otherButtonTitles: nil];
                 
                 [alert show];
-                
-                disconnected = YES;
+*/
             }
                         
             

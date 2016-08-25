@@ -113,7 +113,6 @@
     [alert show];
 
     [self.connectSwitch setOn:NO animated:YES];
-    [self.tableView postDevicesStateChange];
 
 }
 

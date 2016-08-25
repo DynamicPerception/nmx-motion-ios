@@ -168,6 +168,7 @@
 		3048A1161C40657C00855EB0 /* DeviceState_Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1101C40657C00855EB0 /* DeviceState_Warning.png */; };
 		3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */; };
 		304ECCFF1C98E1B70094B7B0 /* HSpline.m in Sources */ = {isa = PBXBuildFile; fileRef = 304ECCFE1C98E1B70094B7B0 /* HSpline.m */; };
+		3052909A1D5BB19700A887CA /* JSDisconnectedDeviceVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 305290991D5BB19700A887CA /* JSDisconnectedDeviceVC.m */; };
 		306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */; };
 		3090FC9F1D37031700EBB8F3 /* DeviceStateRunning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */; };
 		3090FCA01D37031700EBB8F3 /* DeviceStateRunning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */; };
@@ -416,6 +417,8 @@
 		3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Warning@2x.png"; sourceTree = "<group>"; };
 		304ECCFD1C98E1B70094B7B0 /* HSpline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSpline.h; sourceTree = "<group>"; };
 		304ECCFE1C98E1B70094B7B0 /* HSpline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSpline.m; sourceTree = "<group>"; };
+		305290981D5BB19700A887CA /* JSDisconnectedDeviceVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDisconnectedDeviceVC.h; sourceTree = "<group>"; };
+		305290991D5BB19700A887CA /* JSDisconnectedDeviceVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDisconnectedDeviceVC.m; sourceTree = "<group>"; };
 		306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraSettingsTimelineView.h; sourceTree = "<group>"; };
 		306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsTimelineView.m; sourceTree = "<group>"; };
 		3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceStateRunning.png; sourceTree = "<group>"; };
@@ -882,6 +885,8 @@
 				101F9B821C1740A9006DCFAA /* OverallDistanceViewController.m */,
 				309AD5FD1D08EC5B00F91CB4 /* JSDeviceSettingsVC.h */,
 				309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */,
+				305290981D5BB19700A887CA /* JSDisconnectedDeviceVC.h */,
+				305290991D5BB19700A887CA /* JSDisconnectedDeviceVC.m */,
 			);
 			name = SettingsViews;
 			sourceTree = "<group>";
@@ -1144,6 +1149,7 @@
 			files = (
 				2389AC2219DD938100FB2679 /* MainViewController.m in Sources */,
 				5DAEBE5719F60D6F000AC7AA /* NMXDevice.m in Sources */,
+				3052909A1D5BB19700A887CA /* JSDisconnectedDeviceVC.m in Sources */,
 				2389AC1F19DD938100FB2679 /* AppDelegate.m in Sources */,
 				301A1BFA1CED22FA00A26D14 /* JSDeviceSettings.m in Sources */,
 				100838A21B8F88C6003823E0 /* DistancePresetViewController.m in Sources */,
