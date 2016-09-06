@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="azr-As-jZz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="azr-As-jZz">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -5978,20 +5978,20 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="GYc-Sg-Iuf"/>
+        <segue reference="pdw-ZU-Ib5"/>
         <segue reference="K6t-E6-71o"/>
-        <segue reference="7H3-V6-M3H"/>
-        <segue reference="IfY-aS-7xa"/>
-        <segue reference="AeQ-9g-E8b"/>
-        <segue reference="TNv-a2-D3V"/>
-        <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="5Fi-kf-KP0"/>
-        <segue reference="6SS-hE-J9g"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="9fZ-b8-Ek5"/>
-        <segue reference="l1d-eL-qTA"/>
-        <segue reference="6tH-tQ-8da"/>
+        <segue reference="gqx-Wd-6xg"/>
+        <segue reference="Ahp-71-cqD"/>
+        <segue reference="BxP-51-sJV"/>
+        <segue reference="aFw-MN-OaY"/>
+        <segue reference="vr9-JF-N1x"/>
         <segue reference="uS0-Tr-f5Z"/>
+        <segue reference="Nk1-9G-Dpm"/>
         <segue reference="STE-RU-aG4"/>
+        <segue reference="6tH-tQ-8da"/>
+        <segue reference="QDi-9c-Wwb"/>
+        <segue reference="HUL-Rp-DYU"/>
+        <segue reference="hJv-3d-HgP"/>
+        <segue reference="l1d-eL-qTA"/>
     </inferredMetricsTieBreakers>
 </document>

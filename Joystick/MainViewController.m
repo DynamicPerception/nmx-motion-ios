@@ -1631,7 +1631,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 {
     //NMXDevice *device = notification.object;
 
-#if 0  //mm FIXME : THIS IS THE NEW TECHNIQUE,  removing to add the sapphire device feature -- add it back
+#if 1
     dispatch_async(dispatch_get_main_queue(), ^{
 
         
