@@ -57,6 +57,7 @@
 
 @property (nonatomic, strong)               NSTimer *                   controlsTimer;
 @property (nonatomic, strong)               NSTimer *                   joystickTimer;
+@property (nonatomic, strong)               NSTimer *                   joystickModeTimer;
 
 @property (assign)                          bool                        joystickModeActive;
 @property (assign)                          bool                        showingModalScreen;
@@ -924,19 +925,11 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 		[self performSegueWithIdentifier: SegueToSetupViewController sender: self];
 	}
     
-    if (self.showingModalScreen)
-    {
-        [self enterJoystickMode];
-        
-        [NSTimer scheduledTimerWithTimeInterval:0.100 target:self selector:@selector(doubleEnterJoystickTimer) userInfo:nil repeats:NO];
-        
-        self.showingModalScreen = false;
-    }
+    self.showingModalScreen = false;
 
     for (NMXDevice *device in self.appExecutive.deviceList)
     {
         [device mainSetAppMode: true];
-        [device mainSetJoystickMode: false];
     }
 
     NMXDevice *device = self.appExecutive.device;
@@ -973,7 +966,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             [device motorSet:3 SetMaxStepRate: settings.maxStepRateTilt];
             
             [self setupMicrosteps];
-            [self enterJoystickMode];
         }
     }
     
@@ -985,11 +977,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
     }
-}
-
-- (void) doubleEnterJoystickTimer{
-    
-    [self enterJoystickMode];
 }
 
 - (BOOL) queryDevicePowerCycle
@@ -1572,8 +1559,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) enterJoystickMode {
     
-    //NSLog(@"enterJoystickMode");
-
     if (false == self.joystickModeActive)
     {
         for(NMXDevice *device in self.appExecutive.deviceList)
@@ -1581,15 +1566,36 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             [device mainSetJoystickMode: true];
             [device mainSetJoystickWatchdog: true];
         }
+
+        //NSLog(@"enterJoystickMode");
         
         self.joystickModeActive = true;
+        
+        self.joystickModeTimer = [NSTimer scheduledTimerWithTimeInterval: 4.0
+                                                                  target: self
+                                                                selector: @selector(exitJoystickMode)
+                                                                userInfo: nil
+                                                                 repeats: NO];
+
+    }
+    else
+    {
+        if (self.joystickModeTimer)
+        {
+            //NSLog(@"Reschedule JOYSTICK Timer");
+            [self.joystickModeTimer invalidate];
+            self.joystickModeTimer = [NSTimer scheduledTimerWithTimeInterval: 4.0
+                                                                      target: self
+                                                                    selector: @selector(exitJoystickMode)
+                                                                    userInfo: nil
+                                                                     repeats: NO];
+
+        }
     }
 }
 
 - (void) exitJoystickMode {
     
-    //NSLog(@"exitJoystickMode");
-
     if (self.joystickModeActive)
     {
         for(NMXDevice *device in self.appExecutive.deviceList)
@@ -1597,7 +1603,14 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             [device mainSetJoystickMode: false];
         }
         self.joystickModeActive = false;
+        
+        //NSLog(@"exitJoystickMode");
+
     }
+    
+    [self.joystickModeTimer invalidate];
+    self.joystickModeTimer = nil;
+
 }
 
 - (void) handleEnteredBackground: (NSNotification *) notification {
@@ -2138,6 +2151,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) moveJoystick: (NSTimer*) theTimer {
     
+    [self enterJoystickMode];
+    
     if ((self.appExecutive.joystick.x == 0) && (self.appExecutive.joystick.y == 0))
     {
         //joystick reset
@@ -2267,8 +2282,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 	DDLogDebug(@"Tilt Button");
 }
 
+
 - (void) moveSled: (NSTimer*) theTimer {
     
+    [self enterJoystickMode];
     //NSLog(@"self.appExecutive.device.sledMotor: %i",self.appExecutive.device.sledMotor);
 
     if (self._dollySlider.value == 1)
@@ -2294,6 +2311,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) moveSled2: (NSTimer*) theTimer {
     
+    [self enterJoystickMode];
     //NSLog(@"self.appExecutive.device.sledMotor: %i",self.appExecutive.device.panMotor);
     
     if (self.panSlider.value == 1)
@@ -2321,6 +2339,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) moveSled3: (NSTimer*) theTimer {
     
+    [self enterJoystickMode];
     //NSLog(@"self.appExecutive.device.sledMotor: %i",self.appExecutive.device.panMotor);
     
     if (self.tiltSlider.value == 1)

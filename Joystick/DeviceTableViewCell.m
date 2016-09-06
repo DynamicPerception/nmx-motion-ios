@@ -193,11 +193,6 @@
         
         [self determineRunStatus: device];
 
-        if (self.runStatus & NMXRunStatusKeyframe)
-        {
-            [AppExecutive sharedInstance].is3P = YES;
-        }
-        
         if (self.runStatus == 99 || self.runStatus == NMXRunStatusUnknown) {
             
             NSLog(@"stop everything");

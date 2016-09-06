@@ -116,8 +116,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     upperLimit = 4999;
     lowerLimit = -4999;
     
-    //[NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(jsTimer) userInfo:nil repeats:NO];
-    
     defaultColor = [UIColor colorWithRed:55.0/255 green:55.0/255 blue:55.0/255 alpha:1];
     
     //NMXDevice * device = [AppExecutive sharedInstance].device;
@@ -1158,15 +1156,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [appExecutive.device motorSet:(int)self.motorNumber ProgramStopPoint:newPos];
 }
 
-- (void) jsTimer {
-	
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"enterJSMode"
-     object:nil];
-    
-    joystickmode = YES;
-}
-
 - (void) viewWillAppear:(BOOL)animated {
     
     //NSLog(@"R viewWillAppear");
@@ -1575,6 +1564,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         joystickmode = YES;
     }
+    else
+    {
+        joystickmode = NO;
+    }
     
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber ContinuousSpeed:0];
     lastContinuousValue = 0;
@@ -1642,6 +1635,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         joystickmode = YES;
     }
+    else
+    {
+        joystickmode = NO;
+    }
+    
     
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber ContinuousSpeed:0];
     
