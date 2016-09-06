@@ -117,7 +117,7 @@
         [presetList addObject:dict4];
 
         NSDictionary *dict5 = [[NSDictionary alloc] initWithObjectsAndKeys:
-                               @"Sapphire (60:1)", @"val1", nil];
+                               @"Sapphire (1:1)", @"val1", nil];
         
         [presetList addObject:dict5];
     }

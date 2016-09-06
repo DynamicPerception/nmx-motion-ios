@@ -536,41 +536,20 @@
                                                     <action selector="handleBacklashButton:" destination="E5a-T0-m15" eventType="touchUpInside" id="aRh-bQ-Gnd"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Motor Gear Ratio" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="99h-6o-wyR">
-                                                <rect key="frame" x="1" y="599" width="133" height="21"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="27:1" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kgu-ZF-ftn">
-                                                <rect key="frame" x="177" y="597" width="80" height="25"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="0" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fWI-R2-2LA" userLabel="Gear Ratio Button">
-                                                <rect key="frame" x="177" y="597" width="80" height="25"/>
-                                                <state key="normal">
-                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="goToPresets:" destination="E5a-T0-m15" eventType="touchUpInside" id="mYE-zZ-UaB"/>
-                                                </connections>
-                                            </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Rig Ratio" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QPB-3x-rMU">
-                                                <rect key="frame" x="0.0" y="653" width="125" height="21"/>
+                                                <rect key="frame" x="1" y="605" width="125" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Linear Custom" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tBZ-9g-1sk">
-                                                <rect key="frame" x="87" y="651" width="170" height="25"/>
+                                                <rect key="frame" x="88" y="603" width="170" height="25"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="1" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vLJ-Vb-Kqu" userLabel="Rig Ratio Button">
-                                                <rect key="frame" x="137" y="651" width="120" height="25"/>
+                                                <rect key="frame" x="138" y="603" width="120" height="25"/>
                                                 <state key="normal">
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
@@ -702,6 +681,27 @@
                                                 </state>
                                                 <connections>
                                                     <action selector="handleMaxRateButton:" destination="E5a-T0-m15" eventType="touchUpInside" id="huU-UZ-VYJ"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Motor Gear Ratio" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="99h-6o-wyR">
+                                                <rect key="frame" x="2" y="656" width="133" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="27:1" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kgu-ZF-ftn">
+                                                <rect key="frame" x="178" y="654" width="80" height="25"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="0" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fWI-R2-2LA" userLabel="Gear Ratio Button">
+                                                <rect key="frame" x="178" y="654" width="80" height="25"/>
+                                                <state key="normal">
+                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="goToPresets:" destination="E5a-T0-m15" eventType="touchUpInside" id="mYE-zZ-UaB"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -5978,20 +5978,20 @@ Ramping</string>
         <image name="slot.png" width="502" height="99"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="uS0-Tr-f5Z"/>
-        <segue reference="5Fi-kf-KP0"/>
-        <segue reference="6SS-hE-J9g"/>
-        <segue reference="9fZ-b8-Ek5"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="l1d-eL-qTA"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="STE-RU-aG4"/>
-        <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="IfY-aS-7xa"/>
+        <segue reference="GYc-Sg-Iuf"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="7H3-V6-M3H"/>
+        <segue reference="IfY-aS-7xa"/>
         <segue reference="AeQ-9g-E8b"/>
-        <segue reference="pdw-ZU-Ib5"/>
         <segue reference="TNv-a2-D3V"/>
+        <segue reference="Nk1-9G-Dpm"/>
+        <segue reference="5Fi-kf-KP0"/>
+        <segue reference="6SS-hE-J9g"/>
+        <segue reference="hJv-3d-HgP"/>
+        <segue reference="9fZ-b8-Ek5"/>
+        <segue reference="l1d-eL-qTA"/>
+        <segue reference="6tH-tQ-8da"/>
+        <segue reference="uS0-Tr-f5Z"/>
+        <segue reference="STE-RU-aG4"/>
     </inferredMetricsTieBreakers>
 </document>

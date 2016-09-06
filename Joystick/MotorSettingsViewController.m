@@ -367,7 +367,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             else if (self.settings.slideMotor == 4)
             {
-                rigRatioLbl.text = @"Sapphire (60:1)";
+                rigRatioLbl.text = @"Sapphire (1:1)";
             }
             
             //NSLog(@"self.appExecutive.slideMotor: %i",self.appExecutive.slideMotor);
@@ -412,7 +412,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             else if (self.settings.panMotor == 4)
             {
-                rigRatioLbl.text = @"Sapphire (60:1)";
+                rigRatioLbl.text = @"Sapphire (1:1)";
             }
             
         }
@@ -456,7 +456,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             }
             else if (self.settings.tiltMotor == 4)
             {
-                rigRatioLbl.text = @"Sapphire (60:1)";
+                rigRatioLbl.text = @"Sapphire (1:1)";
             }
         }
     }
@@ -826,7 +826,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             {
                 gearRatioLbl.text = @"60:1";
                 self.settings.tiltGear = 4;
-                self.maxStepRate = 3000;
+                self.maxStepRate = 2500;
                 self.maxRateLbl.text = [NSString stringWithFormat: @"%ld", (long)self.maxStepRate];
                 self.settings.tiltMotor = 4;
             }

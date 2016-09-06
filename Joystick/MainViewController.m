@@ -275,7 +275,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         }
         else if (a == 4)
         {
-            slideRig = @"Sapphire (60:1)";
+            slideRig = @"Sapphire (1:1)";
         }
     }
     
@@ -296,7 +296,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         }
         else if (b == 4)
         {
-            panRig = @"Sapphire (60:1)";
+            panRig = @"Sapphire (1:1)";
         }
         
     }
@@ -318,7 +318,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         }
         else if (c == 4)
         {
-            tiltRig = @"Sapphire (60:1)";
+            tiltRig = @"Sapphire (1:1)";
         }
     }
     
