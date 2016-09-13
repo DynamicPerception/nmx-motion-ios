@@ -7,7 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NMXDeviceManager.h"
 
-@interface JSDisconnectedDeviceVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
+
+@protocol JSDisconnectedDeviceDelegate <NSObject>
+
+- (void) abortReconnect;
+- (void) willAbortReconnect;
+
+@end
+
+
+@interface JSDisconnectedDeviceVC : UIViewController <UITableViewDataSource, UITableViewDelegate,
+                                                      NMXDeviceManagerDelegate, NMXDeviceDelegate, UIAlertViewDelegate>
+
+- (void) reloadDeviceList;
+
+@property id<JSDisconnectedDeviceDelegate> delegate;
 
 @end

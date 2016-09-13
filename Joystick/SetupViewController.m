@@ -74,6 +74,9 @@
 @property (strong, nonatomic) IBOutlet UIView *bufferColorBarView;
 @property (strong, nonatomic) IBOutlet UIView *intervalColorBarView;
 
+@property JSDisconnectedDeviceVC *disconnectedDeviceVC;
+@property BOOL abort;
+@property BOOL disconnected;
 
 @end
 
@@ -97,6 +100,7 @@ NSString	static	*kSegueForFrameRateInput			= @"SegueForFrameRateInput";
 NSString	static	*kSegueForTestCameraModalView		= @"SegueForTestCameraModalView";
 NSString	static	*kSegueForAboutView					= @"SegueForAboutView";
 NSString    static  *kSequeForCameraSettingsView        = @"SegueToCameraSettingsViewController";
+NSString    static	*SegueToDisconnectedDeviceViewController = @"DeviceDisconnectedSequeFromSetup";
 
 NSString	static	*kShotDurationName		= @"kShotDurationName";
 NSString	static	*kVideoLengthName		= @"kVideoLengthName";
@@ -344,14 +348,25 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) deviceDisconnect: (NSNotification *) notification
 {
-    //NMXDevice *device = notification.object;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"showNotificationHost" object:self.restorationIdentifier];
-    
-    NSLog(@"deviceDisconnect setupview");
+    NSLog(@"MainView got device disconnect   MODAL VIEW = %p", self.presentedViewController);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController popToRootViewControllerAnimated: true];
+        
+        if (!self.disconnected)
+        {
+            self.disconnected = YES;
+            
+            if (self.disconnectedDeviceVC)
+            {
+                [self.disconnectedDeviceVC reloadDeviceList];
+            }
+            else
+            {
+                [self performSegueWithIdentifier: SegueToDisconnectedDeviceViewController sender: self];
+            }
+            
+        }
+        
     });
 }
 
@@ -474,6 +489,8 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     
 	[super viewDidAppear: animated];
     isVisible = YES;
+    self.disconnectedDeviceVC = nil;
+    self.disconnected = NO;
 
 	[self handleRecordModeControl: self.recordModeControl];
 
@@ -577,6 +594,12 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         
         [msvc setScreenInd:3];
     }
+    else if ([segue.identifier isEqualToString:SegueToDisconnectedDeviceViewController])
+    {
+        self.disconnectedDeviceVC = segue.destinationViewController;
+        self.disconnectedDeviceVC.delegate = self;
+    }
+
 }
 
 - (IBAction) unwindFromMotorRampingViewController: (UIStoryboardSegue *) segue {
@@ -1084,6 +1107,19 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 - (void) didReceiveMemoryWarning {
     
     [super didReceiveMemoryWarning];
+}
+
+#pragma mark JSDisconnectedDeviceDelegate
+
+- (void) willAbortReconnect
+{
+    self.abort= YES;
+}
+
+- (void) abortReconnect
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [self.navigationController popToRootViewControllerAnimated: true];
 }
 
 @end

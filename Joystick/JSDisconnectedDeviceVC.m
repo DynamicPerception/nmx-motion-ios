@@ -35,10 +35,99 @@
     
     [self.reconnectOrAbort setTitle:@"Abort" forState: UIControlStateNormal];
     
+    [AppExecutive sharedInstance].deviceManager.delegate = self;
+    [[AppExecutive sharedInstance].deviceManager startScanning];
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(deviceDisconnect:)
+                                                 name: kDeviceDisconnectedNotification
+                                               object: nil];
+
+    
 }
 
-- (IBAction)reconnectOrAbort:(id)sender {
+- (void) viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+
+    [AppExecutive sharedInstance].deviceManager.delegate = nil;
+    [[AppExecutive sharedInstance].deviceManager stopScanning];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
 }
+
+- (IBAction)reconnectOrAbort:(id)sender
+{
+    if (self.delegate)
+    {
+        [self.delegate willAbortReconnect];
+    }
+
+    [self dismissViewControllerAnimated:YES completion:^(void) {
+        if (self.delegate)
+        {
+            [self.delegate abortReconnect];
+        }
+        
+    }];
+
+}
+
+- (void)dismissView
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void) reloadDeviceList
+{
+    [self.tableView reloadData];
+    [self.tableView setNeedsDisplay];
+}
+
+#pragma mark NMXDeviceManagerDelegate and NMXDeviceDelegate methods
+
+- (void) didDiscoverDevice: (NMXDevice *) device
+{
+    
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        
+        [self.tableView reloadData];
+        [self.tableView setNeedsDisplay];
+
+        if (device.disconnected)
+        {
+            device.delegate = self;
+            device.serviceDiscoveryRetryCount = 3;  // Retry connection 3 times
+            [device connect];
+        }
+        
+    });
+}
+
+- (void) reconnectFailed:(NMXDevice *)device
+{
+    NSString *err = [NSString stringWithFormat: @"Failed to re-establish a connection to %@.  Please reset controller", device.name];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Connection Error"
+                                                    message: err
+                                                   delegate: nil
+                                          cancelButtonTitle: @"OK"
+                                          otherButtonTitles: nil];
+    [alert show];
+
+}
+
+- (void) didConnect: (NMXDevice *) device
+{
+    [self reloadDeviceList];
+}
+
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    NSLog(@"JSDisconnectedDeviceVC got device disconnect   MODAL VIEW = %p", self.presentedViewController);
+    [self reloadDeviceList];
+}
+
 
 #pragma mark - Table view data source
 
@@ -62,6 +151,11 @@
             [self.deviceList addObject:device];
             count++;
         }
+    }
+    
+    if (count == 0)
+    {
+        [self dismissView];
     }
     
     return count;
@@ -107,7 +201,21 @@
     }
     
     return cell;
+    
 }
+
+#pragma mark - UIAlertViewDelegate Methods
+
+- (void) alertView: (UIAlertView *) alertView clickedButtonAtIndex: (NSInteger) buttonIndex {
+    
+    NSString *	title	= [alertView buttonTitleAtIndex: buttonIndex];
+    
+    if ([title isEqualToString: @"OK"])
+    {
+        [self reconnectOrAbort: nil];
+    }
+}
+
 
 
 @end

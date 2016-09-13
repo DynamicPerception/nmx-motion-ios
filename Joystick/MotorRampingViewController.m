@@ -41,6 +41,9 @@
 
 @property JSDeviceSettings *settings;
 
+@property JSDisconnectedDeviceVC *disconnectedDeviceVC;
+@property BOOL abort;
+@property BOOL disconnected;
 
 @end
 
@@ -59,8 +62,7 @@ NSArray static	*frameCountStrings = nil;
 
 #pragma mark Static Variables
 
-//NSString	static	*SegueToReviewStatus
-
+NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedSeque2";
 
 #pragma mark Private Property Synthesis
 
@@ -179,6 +181,14 @@ NSArray static	*frameCountStrings = nil;
      name:@"chooseVideoFrame" object:nil];
     
     [super viewDidLoad];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    self.disconnectedDeviceVC = nil;
+    self.disconnected = NO;
 }
 
 - (void) timerName {
@@ -451,14 +461,27 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) deviceDisconnect: (NSNotification *) notification
 {
-    //NMXDevice *device = notification.object;
+    NSLog(@"MotorRampingVC got device disconnect   MODAL VIEW = %p", self.presentedViewController);
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"showNotificationHost" object:self.restorationIdentifier];
-    
-    NSLog(@"deviceDisconnect motor ramping");
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController popToRootViewControllerAnimated: true];
+        
+        if (!self.disconnected)
+        {
+            self.disconnected = YES;
+            
+            if (self.disconnectedDeviceVC)
+            {
+                [self.disconnectedDeviceVC reloadDeviceList];
+            }
+            else
+            {
+                [self performSegueWithIdentifier: SegueToDisconnectedDeviceViewController sender: self];
+            }
+            
+        }
+        
     });
+    
 }
 
 - (void) didReceiveMemoryWarning {
@@ -598,6 +621,12 @@ NSArray static	*frameCountStrings = nil;
         
         [msvc setScreenInd:4];
     }
+    else if ([segue.identifier isEqualToString:SegueToDisconnectedDeviceViewController])
+    {
+        self.disconnectedDeviceVC = segue.destinationViewController;
+        self.disconnectedDeviceVC.delegate = self;
+    }
+
 }
 
 - (IBAction) unwindFromReviewStatusViewController: (UIStoryboardSegue *) segue {
@@ -626,9 +655,6 @@ NSArray static	*frameCountStrings = nil;
 
 - (IBAction) handleNextButton: (UIButton *) sender {
 
-    //mm Test that unfeasibleDevice works --- I removed a bunch of threading stuff that seem uneccessary
-    //mm Test 3P mode works, I removed some code that was using the 2p sliders in 3p mode.  Not sure why that was there.
-    
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1468,6 +1494,19 @@ NSArray static	*frameCountStrings = nil;
 {
     NSString *name = [self.appExecutive stringWithHandleForDeviceName: self.appExecutive.deviceList[section].name];
     return name;
+}
+
+#pragma mark JSDisconnectedDeviceDelegate
+
+- (void) willAbortReconnect
+{
+    self.abort= YES;
+}
+
+- (void) abortReconnect
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [self.navigationController popToRootViewControllerAnimated: true];
 }
 
 @end

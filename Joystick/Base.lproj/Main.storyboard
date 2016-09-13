@@ -1495,12 +1495,12 @@
                         <outlet property="tiltSliderLbl" destination="3zV-sm-Qhr" id="Bpq-f8-Sn8"/>
                         <segue destination="6fp-yf-kUD" kind="show" id="aFw-MN-OaY"/>
                         <segue destination="7dG-qm-POv" kind="show" identifier="SegueToSetupViewController" id="gqx-Wd-6xg"/>
-                        <segue destination="8zA-NB-PKw" kind="show" identifier="DeviceDisconnectedSeque" id="Ahp-71-cqD"/>
+                        <segue destination="8zA-NB-PKw" kind="presentation" identifier="DeviceDisconnectedSeque" id="Ahp-71-cqD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1143.5" y="-417.5"/>
+            <point key="canvasLocation" x="-1362.5" y="-507.5"/>
         </scene>
         <!--Setup View Controller-->
         <scene sceneID="no9-sP-JiY">
@@ -2247,6 +2247,7 @@
                         <segue destination="g8C-ge-zKv" kind="presentation" identifier="SegueForIntervalInput" id="k3P-Db-zBC"/>
                         <segue destination="6fp-yf-kUD" kind="show" identifier="SegueToMotorRampingViewController" id="6SS-hE-J9g"/>
                         <segue destination="y9W-Aj-dgc" kind="presentation" identifier="SegueForFrameRateInput" id="jGR-te-OJj"/>
+                        <segue destination="8zA-NB-PKw" kind="presentation" identifier="DeviceDisconnectedSequeFromSetup" id="yC0-29-fql"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SqE-kl-OVB" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3253,7 +3254,7 @@
                         <segue destination="cFu-K3-tEi" kind="presentation" identifier="VideoMotorRamp" id="QDi-9c-Wwb"/>
                         <segue destination="pu1-lv-rSd" kind="presentation" identifier="ContinuousMotorRamp" id="l1d-eL-qTA"/>
                         <segue destination="7dG-qm-POv" kind="show" id="5Fi-kf-KP0"/>
-                        <segue destination="8zA-NB-PKw" kind="show" identifier="DeviceDisconnectedSeque2" id="9fZ-b8-Ek5"/>
+                        <segue destination="8zA-NB-PKw" kind="presentation" identifier="DeviceDisconnectedSeque2" id="9fZ-b8-Ek5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GkH-Cg-WfF" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3945,6 +3946,7 @@ Ramping</string>
                         <outlet property="videoTimeRemainingValueLabel" destination="uEd-DS-hhg" id="JOh-Hc-Aae"/>
                         <outlet property="videoTitle" destination="rpz-ez-h00" id="WN1-Bt-7Qz"/>
                         <outlet property="videoView" destination="bDh-qJ-T1Q" id="0xv-TK-kqQ"/>
+                        <segue destination="8zA-NB-PKw" kind="presentation" identifier="DeviceDisconnectedSequeFromReviewStatus" id="5RX-ep-OTg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cA5-Ze-dHR" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -5858,7 +5860,7 @@ Ramping</string>
                                 <rect key="frame" x="20" y="0.0" width="560" height="800"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="PYF-Qy-4ge">
-                                        <rect key="frame" x="5" y="274" width="550" height="439"/>
+                                        <rect key="frame" x="5" y="274" width="550" height="411"/>
                                         <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <prototypes>
@@ -5905,21 +5907,32 @@ Ramping</string>
                                             </mask>
                                         </variation>
                                     </label>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Oy-l5-eNp">
-                                        <rect key="frame" x="216" y="735" width="129" height="45"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Oy-l5-eNp">
+                                        <rect key="frame" x="247" y="735" width="67" height="45"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="27"/>
-                                        <state key="normal" title="Reconnect">
+                                        <state key="normal" title="Abort">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="goAction:" destination="8zA-NB-PKw" eventType="touchUpInside" id="8yE-8d-cv0"/>
                                             <action selector="reconnectOrAbort:" destination="8zA-NB-PKw" eventType="touchUpInside" id="Quh-QD-reL"/>
                                         </connections>
                                     </button>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="xd2-WQ-N2i">
+                                        <rect key="frame" x="315" y="702" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reconnecting..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ce3-3c-4sr">
+                                        <rect key="frame" x="170" y="702" width="120" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.098039215690000001" green="0.19215686269999999" blue="0.41960784309999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstItem="0Oy-l5-eNp" firstAttribute="top" secondItem="PYF-Qy-4ge" secondAttribute="bottom" constant="22" id="C65-SC-f0f"/>
+                                    <constraint firstItem="Ce3-3c-4sr" firstAttribute="centerY" secondItem="xd2-WQ-N2i" secondAttribute="centerY" id="1bO-BX-waE"/>
+                                    <constraint firstItem="xd2-WQ-N2i" firstAttribute="leading" secondItem="Ce3-3c-4sr" secondAttribute="trailing" constant="25" id="8Qe-0b-g8Y"/>
+                                    <constraint firstItem="0Oy-l5-eNp" firstAttribute="top" secondItem="PYF-Qy-4ge" secondAttribute="bottom" constant="50" id="C65-SC-f0f"/>
+                                    <constraint firstItem="xd2-WQ-N2i" firstAttribute="top" secondItem="PYF-Qy-4ge" secondAttribute="bottom" constant="17" id="J7v-OL-QW7"/>
                                     <constraint firstItem="0Oy-l5-eNp" firstAttribute="centerX" secondItem="GVT-5p-2qB" secondAttribute="centerX" id="MYh-AC-Dcf"/>
                                     <constraint firstAttribute="trailing" secondItem="PYF-Qy-4ge" secondAttribute="trailing" constant="5" id="WjY-qg-pNL"/>
                                     <constraint firstItem="PYF-Qy-4ge" firstAttribute="top" secondItem="PC9-W0-UYG" secondAttribute="bottom" constant="20" id="ae7-ZZ-7Tm"/>
@@ -5927,6 +5940,7 @@ Ramping</string>
                                     <constraint firstItem="PC9-W0-UYG" firstAttribute="centerX" secondItem="GVT-5p-2qB" secondAttribute="centerX" constant="-1.5" id="n0N-OE-fdv"/>
                                     <constraint firstItem="PYF-Qy-4ge" firstAttribute="centerX" secondItem="GVT-5p-2qB" secondAttribute="centerX" id="t97-7u-FkD"/>
                                     <constraint firstAttribute="bottom" secondItem="0Oy-l5-eNp" secondAttribute="bottom" constant="20" id="xky-QE-He8"/>
+                                    <constraint firstItem="Ce3-3c-4sr" firstAttribute="centerX" secondItem="GVT-5p-2qB" secondAttribute="centerX" constant="-50" id="yiH-9Y-qqn"/>
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Device Disconnected" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ksD-dN-fH2" userLabel="Program Setup">
@@ -5981,17 +5995,17 @@ Ramping</string>
         <segue reference="pdw-ZU-Ib5"/>
         <segue reference="K6t-E6-71o"/>
         <segue reference="gqx-Wd-6xg"/>
-        <segue reference="Ahp-71-cqD"/>
-        <segue reference="BxP-51-sJV"/>
-        <segue reference="aFw-MN-OaY"/>
-        <segue reference="vr9-JF-N1x"/>
-        <segue reference="uS0-Tr-f5Z"/>
+        <segue reference="p4Z-EB-hlS"/>
+        <segue reference="6SS-hE-J9g"/>
+        <segue reference="eIy-q4-84e"/>
+        <segue reference="oNZ-l0-vdW"/>
+        <segue reference="yC0-29-fql"/>
+        <segue reference="RMu-iv-gcK"/>
+        <segue reference="k3P-Db-zBC"/>
+        <segue reference="rGc-Y0-TPg"/>
+        <segue reference="br4-PB-JjF"/>
         <segue reference="Nk1-9G-Dpm"/>
-        <segue reference="STE-RU-aG4"/>
-        <segue reference="6tH-tQ-8da"/>
-        <segue reference="QDi-9c-Wwb"/>
         <segue reference="HUL-Rp-DYU"/>
-        <segue reference="hJv-3d-HgP"/>
-        <segue reference="l1d-eL-qTA"/>
+        <segue reference="6tH-tQ-8da"/>
     </inferredMetricsTieBreakers>
 </document>

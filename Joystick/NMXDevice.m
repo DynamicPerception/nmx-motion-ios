@@ -302,6 +302,7 @@ typedef enum: unsigned char {
 didDiscoverCharacteristicsForService: (CBService *) service
               error: (NSError *) error {
 
+    NSLog(@"Did discover characteristic ");
     for (CBCharacteristic *characteristic in service.characteristics)
     {
         //DDLogDebug(@"Discovered characteristic %@ of service %@", characteristic, service);
@@ -312,6 +313,7 @@ didDiscoverCharacteristicsForService: (CBService *) service
         }
         if ([characteristic.UUID isEqual: [CBUUID UUIDWithString:@"BF45E40A-DE2A-4BC8-BBA0-E5D6065F1B4B"]])
         {
+            NSLog(@"NMXDevice %p did discover and UUID match   Delegate = %p", self, self.delegate);
             self.myOutputCharacteristic = characteristic;
             if (self.delegate)
             {
@@ -412,6 +414,13 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         DDLogDebug(@"Cannot connect to device, bailing out");
         [self abortConnectionRetry];
+        
+        if ((self.delegate) && ([self.delegate respondsToSelector:@selector(reconnectFailed:)]))
+        {
+            [self.delegate reconnectFailed: self];
+        }
+
+        
         return;
     }
     else if (NO == self.disconnected)
@@ -459,6 +468,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) disconnect
 {
     self.disconnected = YES;
+    NSLog(@"NMXDevice disconnected sending notification");
     [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
     [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self userInfo:nil];
 }
@@ -528,6 +538,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     if (true == self.disconnected)
     {
+        NSLog(@"NMXDevice %p cannot send command, device is not connected", self);
         [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
         return;
     }

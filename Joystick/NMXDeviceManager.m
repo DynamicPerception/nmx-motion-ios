@@ -69,22 +69,19 @@
     }
 }
 
-- (void)addToList: (NMXDevice *)newDevice
+- (NMXDevice *)addToList: (NMXDevice *)newDevice
 {
-    bool alreadyAdded = false;
-    
     for (NMXDevice *device in self.myDevices)
     {
         if ([device.name isEqualToString:newDevice.name])
         {
-            alreadyAdded = true;
+            return device;
         }
     }
     
-    if(!alreadyAdded)
-    {
-        [self.myDevices addObject: newDevice];
-    }
+    [self.myDevices addObject: newDevice];
+    
+    return newDevice;
 }
 
 
@@ -97,7 +94,7 @@
     
     NMXDevice * newDevice = [[NMXDevice alloc] initWithPeripheral: peripheral andCentralManager: self.myCBCentralManager];
 
-    [self addToList: newDevice];
+    newDevice = [self addToList: newDevice];
     
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDiscoverDevice:)]))
         [self.delegate didDiscoverDevice: newDevice];
@@ -112,7 +109,7 @@
     {
         NMXDevice *peripheralDelegate = (NMXDevice *)peripheral.delegate;
         
-        [self addToList: peripheralDelegate];
+        peripheralDelegate = [self addToList: peripheralDelegate];
         
         if ([peripheralDelegate respondsToSelector:@selector(peripheralWasConnected:)])
         {
@@ -136,7 +133,6 @@
         {
             disconnectedDevice = device;
             [disconnectedDevice disconnect];
-            [self.myDevices removeObject: device];
         }
     }
 
@@ -153,16 +149,6 @@
                 disconnected = YES;
 
                 [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: disconnectedDevice];
-                //mm
-/*
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
-                                                                message: @"All settings saved on NMX - Tap Connect to reconnect"
-                                                               delegate: self
-                                                      cancelButtonTitle: @"OK"
-                                                      otherButtonTitles: nil];
-                
-                [alert show];
-*/
             }
                         
             

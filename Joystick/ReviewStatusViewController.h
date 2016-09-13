@@ -25,6 +25,7 @@
 #import "DeviceSettingsViewController.h"
 #import "HelpViewController.h"
 #import "MBProgressHUD.h"
+#import "JSDisconnectedDeviceVC.h"
 
 NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewController";
 
@@ -35,7 +36,8 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
                                                           UIActionSheetDelegate,MFMessageComposeViewControllerDelegate,
                                                           MFMailComposeViewControllerDelegate,
                                                           UIDocumentInteractionControllerDelegate,
-                                                          UIPickerViewDelegate, UIPickerViewDataSource>
+                                                          UIPickerViewDelegate, UIPickerViewDataSource,
+                                                          JSDisconnectedDeviceDelegate>
 {
 
     float playheadInterval;

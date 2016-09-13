@@ -13,9 +13,10 @@
 #import "AppDelegate.h"
 #import "JoystickSlider.h"
 #import "HelpViewController.h"
+#import "JSDisconnectedDeviceVC.h"
 
 @interface MainViewController : UIViewController <JoystickOutput, UITableViewDelegate,
-                                                  UITableViewDataSource> {
+                                                  UITableViewDataSource, JSDisconnectedDeviceDelegate> {
 
     bool animated1;
     

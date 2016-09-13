@@ -72,6 +72,9 @@ typedef enum : unsigned char {
 
 - (void) didConnect: (NMXDevice *) device;
 
+@optional
+
+- (void) reconnectFailed: (NMXDevice *) device;
 
 @end
 

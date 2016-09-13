@@ -14,12 +14,14 @@
 #import "NMXDeviceManager.h"
 #import "SetupViewController.h"
 #import "HelpViewController.h"
+#import "JSDisconnectedDeviceVC.h"
 
 @class JSMotorRampingTableViewCell;
 
 NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewController";
 
-@interface MotorRampingViewController : UIViewController <UITextFieldDelegate, MotorRampingDelegate, UIPickerViewDataSource, UIPickerViewDelegate> {
+@interface MotorRampingViewController : UIViewController <UITextFieldDelegate, MotorRampingDelegate, UIPickerViewDataSource,
+                                                          UIPickerViewDelegate, JSDisconnectedDeviceDelegate> {
 
     //id myDelegate;
     

@@ -15,7 +15,6 @@
 #import "AppDelegate.h"
 #import "JoyButton.h"
 #import "MBProgressHUD.h"
-#import "JSDisconnectedDeviceVC.h"
 
 
 //------------------------------------------------------------------------------
@@ -64,6 +63,8 @@
 @property (weak, nonatomic)     IBOutlet    UIImageView *image3P;
 @property (strong, nonatomic) IBOutlet UIView *deviceSelectionView;
 @property (strong, nonatomic) IBOutlet UITableView *deviceSelectionTableView;
+@property JSDisconnectedDeviceVC *disconnectedDeviceVC;
+@property BOOL abort;
 
 @end
 
@@ -80,6 +81,7 @@ NSString static	*SegueToSlideMotorSettingsViewController	= @"SegueToSlideMotorSe
 NSString static	*SegueToPanMotorSettingsViewController		= @"SegueToPanMotorSettingsViewController";
 NSString static	*SegueToTiltMotorSettingsViewController		= @"SegueToTiltMotorSettingsViewController";
 NSString static	*SegueToSetupViewController					= @"SegueToSetupViewController";
+NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedSeque";
 NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController";
 
 
@@ -889,7 +891,13 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) viewDidAppear: (BOOL) animated {
     
+    if (self.abort) return;
+    
+    [self exitJoystickMode];
+    
     JSDeviceSettings *settings = self.appExecutive.device.settings;
+    disconnected = NO;
+    self.disconnectedDeviceVC = nil;
     
     if (settings.useJoystick == NO)
     {
@@ -977,6 +985,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
     }
+    
+    [self enterJoystickMode];
 }
 
 - (BOOL) queryDevicePowerCycle
@@ -1571,7 +1581,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         
         self.joystickModeActive = true;
         
-        self.joystickModeTimer = [NSTimer scheduledTimerWithTimeInterval: 4.0
+        self.joystickModeTimer = [NSTimer scheduledTimerWithTimeInterval: 2.0
                                                                   target: self
                                                                 selector: @selector(exitJoystickMode)
                                                                 userInfo: nil
@@ -1584,7 +1594,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         {
             //NSLog(@"Reschedule JOYSTICK Timer");
             [self.joystickModeTimer invalidate];
-            self.joystickModeTimer = [NSTimer scheduledTimerWithTimeInterval: 4.0
+            self.joystickModeTimer = [NSTimer scheduledTimerWithTimeInterval: 2.0
                                                                       target: self
                                                                     selector: @selector(exitJoystickMode)
                                                                     userInfo: nil
@@ -1629,36 +1639,27 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) deviceDisconnect: (NSNotification *) notification
 {
-    //NMXDevice *device = notification.object;
+    NSLog(@"MainView got device disconnect   MODAL VIEW = %p", self.presentedViewController);
 
-#if 1
     dispatch_async(dispatch_get_main_queue(), ^{
 
+        if (!disconnected)
+        {
+            disconnected = YES;
         
-        [self performSegueWithIdentifier: @"DeviceDisconnectedSeque" sender: self];
-
-        //        JSDisconnectedDeviceVC *disconnectedVC = [JSDisconnectedDeviceVC new];
-        //[self presentViewController:disconnectedVC animated:YES completion: nil];
+            if (self.disconnectedDeviceVC)
+            {
+                [self.disconnectedDeviceVC reloadDeviceList];
+            }
+            else
+            {
+                [self performSegueWithIdentifier: SegueToDisconnectedDeviceViewController sender: self];
+            }
+            
+        }
 
     });
 
-#else
-    if (!disconnected) {
-        
-        disconnected = YES;
-
-        //mm If connected to multiple - don't go back... see if we can reconnect
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.navigationController popToRootViewControllerAnimated: true];
-        });
-     
-    }
-#endif
-
-//    [[NSNotificationCenter defaultCenter]
-//     postNotificationName:@"showNotificationHost"
-//     object:self.restorationIdentifier];
 }
 
 //------------------------------------------------------------------------------
@@ -1735,6 +1736,11 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         
         [self exitJoystickMode];
         self.showingModalScreen = true;
+    }
+    else if ([segue.identifier isEqualToString:SegueToDisconnectedDeviceViewController])
+    {
+        self.disconnectedDeviceVC = segue.destinationViewController;
+        self.disconnectedDeviceVC.delegate = self;
     }
 }
 
@@ -2848,6 +2854,19 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         self.deviceSelectionView.alpha = 0;
         
     } completion: nil];
+}
+
+#pragma mark JSDisconnectedDeviceDelegate
+
+- (void) willAbortReconnect
+{
+    self.abort= YES;
+}
+
+- (void) abortReconnect
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [self.navigationController popToRootViewControllerAnimated: true];
 }
 
 @end

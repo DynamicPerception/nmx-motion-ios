@@ -87,8 +87,11 @@ typedef enum{
 
 @property                                   NMXDevice          *displayedDevice;
 
+@property JSDisconnectedDeviceVC *disconnectedDeviceVC;
+
 @end
 
+NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedSequeFromReviewStatus";
 
 //------------------------------------------------------------------------------
 
@@ -538,54 +541,6 @@ typedef enum{
     }
 }
 
-//count up timer
-
-- (void) countUpTimerFired:(id)sender {
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        NSDate *currentDate = [NSDate date];
-        NSTimeInterval timeInterval = [currentDate timeIntervalSinceDate:startDate];
-        NSDate *timerDate = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        //[dateFormatter setDateFormat:@"HH:mm:ss.SSS"];
-        //[dateFormatter setDateFormat:@"mm:ss.SSS"];
-        [dateFormatter setDateFormat:@"HH:mm:ss"];
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0.0]];
-        NSString *timeString = [dateFormatter stringFromDate:timerDate];
-        timerLbl.text = timeString;
-    });
-}
-
-- (void) manageCountupTimer {
-    
-    if(!running)
-    {
-        startDate = [NSDate date];
-        
-        running = TRUE;
-        
-        //[sender setTitle:@"Stop" forState:UIControlStateNormal];
-        
-        if (stopTimer == nil)
-        {
-            stopTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/10.0
-                                                         target:self
-                                                       selector:@selector(countUpTimerFired:)
-                                                       userInfo:nil
-                                                        repeats:YES];
-        }
-    }
-    else
-    {
-        running = FALSE;
-        
-        //[sender setTitle:@"Start" forState:UIControlStateNormal];
-        
-        [stopTimer invalidate];
-        stopTimer = nil;
-    }
-}
 
 - (IBAction) resetPressed:(id)sender{
     
@@ -1168,7 +1123,10 @@ typedef enum{
     [self.disconnectedTimer invalidate];
     self.disconnectedTimer = nil;
 
-    [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
+    if (!self.disconnectedDeviceVC)
+    {
+        [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
+    }
     
     [super viewWillDisappear: animated];
 
@@ -1247,6 +1205,11 @@ typedef enum{
         
         [msvc setScreenInd:5];
     }
+    else if ([segue.identifier isEqualToString:SegueToDisconnectedDeviceViewController])
+    {
+        self.disconnectedDeviceVC = segue.destinationViewController;
+        self.disconnectedDeviceVC.delegate = self;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -1254,6 +1217,13 @@ typedef enum{
 #pragma mark - IBAction Methods
 
 - (IBAction)mangeAtProgramEndSelection:(id)sender {
+    
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        NSNumber *mode = [appExecutive.userDefaults objectForKey: @"keepAlive"];
+        self.atProgramEndControl.selectedSegmentIndex = [mode intValue];
+        return;
+    }
     
     NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
     
@@ -1273,6 +1243,11 @@ typedef enum{
 
 - (IBAction) cancelTimer: (JoyButton *) sender {
 
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
+    
     cancelBtn.hidden = YES;
     goBtn.hidden = YES;
     
@@ -1300,8 +1275,6 @@ typedef enum{
     
     [countdownTimer invalidate];
     
-    //[self manageCountupTimer];
-    
     [self transitionToMotorRampingOrStartProgramState];
     startTimerBtn.hidden = NO;
 
@@ -1310,6 +1283,11 @@ typedef enum{
 }
 
 - (IBAction) bypassTimer: (JoyButton *) sender {
+
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
 
     cancelBtn.hidden = YES;
     goBtn.hidden = YES;
@@ -1370,6 +1348,11 @@ typedef enum{
 
 - (IBAction) handleSendMotorsToStartButton: (JoyButton *) sender {
     
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
+
 	//DDLogDebug(@"Send Motors To Start Button");
     originalCountdownTime = 0;
     
@@ -1393,6 +1376,11 @@ typedef enum{
 
 - (IBAction) handleStartProgramButton: (JoyButton *) sender {
     
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
+
 	DDLogDebug(@"Start Program Button");
     originalCountdownTime = 0;
 
@@ -1413,6 +1401,11 @@ typedef enum{
 
 - (IBAction) handleConfirmPauseProgramButton: (JoyButton *) sender {
 
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
+    
 	DDLogDebug(@"Confirm Pause Program Button");
     
     self.confirmPauseTimer = nil;
@@ -1442,6 +1435,11 @@ typedef enum{
 - (IBAction) handleResumeProgramButton: (JoyButton *) sender {
 
 	DDLogDebug(@"Resume Program Button");
+    
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
 
 	[self transitionToState: ControllerStatePauseProgram];
     
@@ -1460,6 +1458,11 @@ typedef enum{
 - (IBAction) handleStopProgramButton: (JoyButton *) sender {
     
 	DDLogDebug(@"Stop Program Button");
+
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
     
     [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
     
@@ -1547,6 +1550,34 @@ typedef enum{
                                                                      repeats: YES];
         }
     });
+}
+
+- (BOOL) checkDeviceConnectionBeforeAction
+{
+    NMXDevice *disconnectedDevice = nil;
+    for (NMXDevice *aDevice in self.appExecutive.deviceList)
+    {
+        if (aDevice.disconnected == YES)
+        {
+            disconnectedDevice = aDevice;
+        }
+    }
+    
+    if (disconnectedDevice)
+    {
+        if (self.disconnectedDeviceVC)
+        {
+            [self.disconnectedDeviceVC reloadDeviceList];
+        }
+        else
+        {
+            [self performSegueWithIdentifier: SegueToDisconnectedDeviceViewController sender: self];
+        }
+        
+        return NO;
+    }
+    
+    return YES;
 }
 
 - (void) deviceDisconnect: (NSNotification *) notification
@@ -2029,6 +2060,9 @@ typedef enum{
 - (void) handleStatusTimer: (NSTimer *) sender {
     
     NMXDevice *device = self.appExecutive.device;
+    
+    NSLog(@"Status timer from %@", device.name);
+    
     if (device.disconnected)
     {
         device = [self findConnectedDevice];
@@ -2992,5 +3026,17 @@ typedef enum{
 - (NSInteger) pickerView: (UIPickerView *) pickerView numberOfRowsInComponent: (NSInteger) component {
     return self.appExecutive.deviceList.count;
 }
+
+#pragma mark JSDisconnectedDeviceDelegate
+
+- (void) willAbortReconnect
+{
+}
+
+- (void) abortReconnect
+{
+    self.disconnectedDeviceVC = nil;
+}
+
 
 @end
