@@ -221,26 +221,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     self.bufferColorBarView.backgroundColor = [CameraSettingsTimelineView bufferColor];
     self.intervalColorBarView.backgroundColor = [CameraSettingsTimelineView intervalColor];
     
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationLoadPreset:)
-     name:@"loadPreset" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationSavePreset:)
-     name:@"savePreset" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationRestoreDefaults:)
-     name:@"restoreDefaults" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationRemoveSubviews:)
-     name:@"removeSubviews" object:nil];
-    
     if (self.appExecutive.isVideo == YES) {
         
         NSLog(@"isVideo");
@@ -313,6 +293,25 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 - (void) viewWillAppear: (BOOL) animated {
 
 	[super viewWillAppear: animated];
+    
+    // remove observers to prevent double add
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationLoadPreset:)
+                                                 name:@"loadPreset" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationSavePreset:)
+                                                 name:@"savePreset" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationRestoreDefaults:)
+                                                 name:@"restoreDefaults" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationRemoveSubviews:)
+                                                 name:@"removeSubviews" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(deviceDisconnect:)

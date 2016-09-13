@@ -980,13 +980,13 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     if ((NMXRunStatusRunning & queryStatus) == 0)
     {
         [NSTimer scheduledTimerWithTimeInterval:0.10 target:self selector:@selector(startStopQueryTimer) userInfo:nil repeats:NO];
+        [self enterJoystickMode];
     }
     else
     {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
     }
     
-    [self enterJoystickMode];
 }
 
 - (BOOL) queryDevicePowerCycle
