@@ -29,7 +29,8 @@
     
     NSString *reasonString = @"At least one device unexpectedly disconnected.  "
     "You are possibly out of range of communication.  "
-    "You may wait until the device is detected or select Abort to return to the start screen.";
+    "You may wait until the device is detected or select Abort to return to the start screen.\n\n"
+    "All settings have been saved on the NMX Controller.";
     
     self.disconnectedReason.text = reasonString;
     

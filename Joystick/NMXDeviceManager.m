@@ -18,6 +18,7 @@
 @interface NMXDeviceManager()
 @property (atomic, strong) CBCentralManager* myCBCentralManager;
 @property (atomic, strong) NSMutableArray * myDevices;
+@property (atomic, strong) NSMutableArray * myDisconnectedDevices;
 @property (assign)	BOOL			scanRequested;
 @property (assign)	BOOL			scanInProcess;
 @end
@@ -36,6 +37,7 @@
     if (self)
     {
         self.myDevices = [NSMutableArray arrayWithCapacity: 3];
+        self.myDisconnectedDevices = [NSMutableArray arrayWithCapacity: 3];
         
         self.myCBCentralManager = [[CBCentralManager alloc] initWithDelegate: self queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) options: nil];
         self.scanRequested = false;
@@ -79,9 +81,22 @@
         }
     }
     
-    [self.myDevices addObject: newDevice];
+    NMXDevice *aDevice = newDevice;
+    BOOL found = NO;
+    for (NMXDevice *device in self.myDisconnectedDevices)
+    {
+        if ([device.name isEqualToString:newDevice.name])
+        {
+            found = YES;
+            aDevice = device;
+            break;
+        }
+    }
+    if (found) [self.myDisconnectedDevices removeObject:aDevice];
     
-    return newDevice;
+    [self.myDevices addObject: aDevice];
+    
+    return aDevice;
 }
 
 
@@ -133,6 +148,8 @@
         {
             disconnectedDevice = device;
             [disconnectedDevice disconnect];
+            [self.myDevices removeObject: device];
+            [self.myDisconnectedDevices addObject: device];
         }
     }
 
