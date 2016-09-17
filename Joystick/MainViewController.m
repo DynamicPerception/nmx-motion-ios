@@ -880,10 +880,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             settings.start2pSet = 0;
             settings.end2pSet = 0;
             
-            settings.maxStepRateSlide = 4000;
-            settings.maxStepRateTilt = 4000;
-            settings.maxStepRatePan = 4000;
-            
             [settings synchronize];
         }
     }
@@ -972,7 +968,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             [device motorSet:1 SetMaxStepRate: settings.maxStepRateSlide];
             [device motorSet:2 SetMaxStepRate: settings.maxStepRatePan];
             [device motorSet:3 SetMaxStepRate: settings.maxStepRateTilt];
-            
+
             [self setupMicrosteps];
         }
     }
