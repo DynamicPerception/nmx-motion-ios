@@ -24,8 +24,9 @@
 @property BOOL multiDeviceConfirmed;
 @property int  numMissing;
 @property int  numReportedRunning;
+@property BOOL showMessageCell;
 
-@property NSArray *             deviceList;
+@property NSArray *deviceList;
 @end
 
 
@@ -91,25 +92,15 @@
 
 }
 
-
 - (void) handleNotificationNotificationHost:(NSNotification *)pNotification {
 	
     notificationLbl.text = pNotification.object;
 }
 
-- (void) preDevicesStateChange;
+- (void) setGoButtonVisibility
 {
-    [AppExecutive sharedInstance].deviceManager.delegate = self;
-
-    NSArray *cells = [self.tableView visibleCells];
-    for (DeviceTableViewCell *cell in cells)
-    {
-        [cell preDeviceStateChange];
-     }
-}
-
-- (void) postDevicesStateChange
-{
+    self.goButton.hidden = YES;
+    
     NSArray *cells = [self.tableView visibleCells];
     BOOL oneConnected = NO;
     for (DeviceTableViewCell *cell in cells)
@@ -126,6 +117,22 @@
     {
         self.goButton.hidden = NO;
     }
+}
+
+- (void) preDevicesStateChange;
+{
+    [AppExecutive sharedInstance].deviceManager.delegate = self;
+
+    NSArray *cells = [self.tableView visibleCells];
+    for (DeviceTableViewCell *cell in cells)
+    {
+        [cell preDeviceStateChange];
+     }
+}
+
+- (void) postDevicesStateChange
+{
+    [self setGoButtonVisibility];
     
     if (self.confirmingConnectMissing)
     {
@@ -150,12 +157,21 @@
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameScan) userInfo:nil repeats:NO];
     
+    self.goButton.hidden = YES;
+
     [self.tableView reloadData];
     [self.tableView setNeedsDisplay];
 
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(deviceDisconnect:)
+                                                 name: kDeviceDisconnectedNotification
+                                               object: nil];
+
+    
     // Hide separator lines between rows
     // [self.tableView setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
 }
+
 
 - (void)timerNameScan {
 	
@@ -168,6 +184,9 @@
 	
     [[AppExecutive sharedInstance].deviceManager stopScanning];
     [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+
 }
 
 #pragma mark - Table view data source
@@ -181,12 +200,17 @@
 
     // Return the number of rows in the section.
     
+    self.showMessageCell = NO;
+    
     //NSLog(@"device list");
-    
     self.deviceList = [[AppExecutive sharedInstance].deviceManager deviceList];
-    NSInteger count = [self.deviceList count];
+    NSInteger count = self.deviceList.count;
     
-    if (0 == count) return 1;
+    if (0 == count)
+    {
+        self.showMessageCell = YES;
+        return 1;
+    }
     
     return count;
 }
@@ -197,12 +221,13 @@
         
         [self.tableView reloadData];
         [self.tableView setNeedsDisplay];
+        
     });
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    BOOL isMessageCell = [self.deviceList count] ? NO : YES;
+    BOOL isMessageCell = self.showMessageCell;
     
     DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceCell" forIndexPath:indexPath];
     cell.runStatus = NMXRunStatusUnknown;
@@ -471,5 +496,25 @@
 - (IBAction)goAction:(id)sender {
     [self navigateToMainView];
 }
+
+- (void) refreshDeviceList
+{
+    [self.tableView reloadData];
+    [self.tableView setNeedsDisplay];
+    
+    [self setGoButtonVisibility];
+}
+
+// Handle disconnect notification
+
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+        [self refreshDeviceList];
+
+    });
+}
+
 
 @end

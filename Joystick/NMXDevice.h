@@ -80,6 +80,8 @@ typedef enum : unsigned char {
 
 @interface NMXDevice : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
+@property (atomic, strong) CBPeripheral *myPeripheral;
+
 - (id) initWithPeripheral: (CBPeripheral *) peripheral andCentralManager: (CBCentralManager *) centralManager;
 - (void) connect;
 - (void) disconnect;

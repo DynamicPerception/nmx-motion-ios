@@ -49,11 +49,16 @@
     AppExecutive *ae = [AppExecutive sharedInstance];
     ae.deviceManager.delegate = self;
     
+    [self.tableView preDevicesStateChange];
+    
     [self.device disconnect];
     self.settingsButton.enabled = NO;
     self.settingsButton.hidden = YES;
     self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
     [self.tableView.activeDevices removeObject: self.device];
+    
+    [self.tableView postDevicesStateChange];
+
 }
 
 - (void) connectionTimeout
@@ -91,6 +96,8 @@
 
 - (void) handleConnectionError
 {
+    [self.device disconnect];
+    
     [self.connectionTimer invalidate];
     self.connectionTimer = nil;
 
@@ -113,6 +120,7 @@
     [alert show];
 
     [self.connectSwitch setOn:NO animated:YES];
+    [self.tableView postDevicesStateChange];
 
 }
 
@@ -256,7 +264,7 @@
 
 - (void) didDisconnectDevice: (NMXDevice *) device {
     
-    // Eat this, we disconnected the device ourself
+    self.connectSwitch.on = NO;
 
 }
 

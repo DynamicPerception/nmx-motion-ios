@@ -19,6 +19,7 @@
 - (void) navigateToMainView;
 - (void) preDevicesStateChange;
 - (void) postDevicesStateChange;
+- (void) refreshDeviceList;
 
 @end
 

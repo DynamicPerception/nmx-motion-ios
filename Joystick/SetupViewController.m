@@ -347,7 +347,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) deviceDisconnect: (NSNotification *) notification
 {
-    NSLog(@"MainView got device disconnect   MODAL VIEW = %p", self.presentedViewController);
+    NSLog(@"Setup got device disconnect   MODAL VIEW = %p", self.presentedViewController);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         

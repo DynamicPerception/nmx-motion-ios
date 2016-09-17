@@ -93,14 +93,17 @@
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         
-        [self.tableView reloadData];
-        [self.tableView setNeedsDisplay];
-
-        if (device.disconnected)
+        if ([[AppExecutive sharedInstance].deviceList containsObject: device])
         {
-            device.delegate = self;
-            device.serviceDiscoveryRetryCount = 3;  // Retry connection 3 times
-            [device connect];
+            [self.tableView reloadData];
+            [self.tableView setNeedsDisplay];
+
+            if (device.disconnected)
+            {
+                device.delegate = self;
+                device.serviceDiscoveryRetryCount = 3;  // Retry connection 3 times
+                [device connect];
+            }
         }
         
     });

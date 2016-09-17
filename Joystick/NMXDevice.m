@@ -195,7 +195,6 @@ typedef enum: unsigned char {
 }
 
 @property (atomic, strong) CBCentralManager *myCBCentralManager;
-@property (atomic, strong) CBPeripheral *myPeripheral;
 @property (atomic, strong) NSMutableArray *myServices;
 @property (atomic, strong) CBCharacteristic *myOutputCharacteristic;
 @property (atomic, strong) NSMutableData *myNotifyBuffer;
@@ -689,9 +688,10 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             if (1 != error)
             {
                 DDLogError(@"Bad response %@, last command was %@", self.myNotifyData, self.myLastCommand);
-                
+
                 dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     
+                    [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
                     [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
                 });
                 
