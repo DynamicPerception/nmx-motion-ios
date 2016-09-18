@@ -239,7 +239,6 @@
         cell.settingsButton.hidden = YES;
         cell.imageView.hidden = YES;
         cell.textLabel.text = @"No Devices Found";
-        //        cell.connectGoButton.hidden = YES;
         cell.connectSwitch.hidden = YES;
     }
     else
@@ -253,7 +252,7 @@
             //[cell.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
             cell.connectSwitch.on = NO;
         }
-        //        cell.connectGoButton.hidden = NO;
+
         cell.connectSwitch.hidden = NO;
         cell.device = device;
         cell.tableView = self;

@@ -2249,7 +2249,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     DDLogDebug(@"Dominant Axis Switch: %@", value);
     
-    self.appExecutive.device.settings.lockAxis = [NSNumber numberWithBool: sender.on]?YES:NO;
+    self.appExecutive.device.settings.lockAxis = sender.on;
     
     if (sender.on)
     {

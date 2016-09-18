@@ -395,6 +395,8 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
         [self showVoltage];
     }
     
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(deviceDisconnect:)
                                                  name: kDeviceDisconnectedNotification
@@ -456,7 +458,7 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
     
     [super viewWillDisappear: animated];
     
-    //[[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 - (void) deviceDisconnect: (NSNotification *) notification

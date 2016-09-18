@@ -277,21 +277,6 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
     
     [goBtn addTarget:self action:@selector(bypassTimer:) forControlEvents:UIControlEventTouchUpInside];
     
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-	 selector:@selector(handleShotDurationNotification:)
-	 name:@"chooseReviewShotDuration" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-	 addObserver:self
-	 selector:@selector(handleAddKeyframeDebug:)
-	 name:@"debugKeyframePosition" object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(deviceDisconnect:)
-                                                 name: kDeviceDisconnectedNotification
-                                               object: nil];
-    
     timerContainer.hidden = YES;
     startTimerBtn.hidden = YES;
     keepAliveView.hidden = YES;
@@ -691,6 +676,20 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
 - (void) viewWillAppear: (BOOL) animated {
     
 	[super viewWillAppear: animated];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleShotDurationNotification:)
+                                                 name:@"chooseReviewShotDuration" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleAddKeyframeDebug:)
+                                                 name:@"debugKeyframePosition" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(deviceDisconnect:)
+                                                 name: kDeviceDisconnectedNotification
+                                               object: nil];
+    
 	[self.view sendSubviewToBack: self.controlBackground];
 
     [self.reconnectButton setHidden: true];
@@ -1130,6 +1129,7 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
     
     [super viewWillDisappear: animated];
 
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 - (void) dealloc
