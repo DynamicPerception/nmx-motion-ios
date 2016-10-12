@@ -35,7 +35,7 @@
     
     if (self)
     {
-        self.myDevices = [NSMutableArray arrayWithCapacity: 3];
+        [self resetDeviceList];
         
         self.myCBCentralManager = [[CBCentralManager alloc] initWithDelegate: self queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) options: nil];
         self.scanRequested = false;
@@ -193,6 +193,11 @@
 - (void) notInReview {
     
     inReview = NO;
+}
+
+- (void) resetDeviceList
+{
+    self.myDevices = [NSMutableArray arrayWithCapacity: 3];
 }
 
 - (NSArray *) deviceList {

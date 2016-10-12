@@ -1507,6 +1507,7 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
 
 - (void) abortReconnect
 {
+    [self.appExecutive removeAllDevices];
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [self.navigationController popToRootViewControllerAnimated: true];
 }

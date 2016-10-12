@@ -531,6 +531,13 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
     
 }
 
+- (void) removeAllDevices
+{
+    self.deviceList = nil;
+    self.device = nil;
+    [self.deviceManager resetDeviceList];
+}
+
 //------------------------------------------------------------------------------
 
 #pragma mark - Persistence

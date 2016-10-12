@@ -25,6 +25,7 @@
 
 - (void) startScanning;
 - (void) stopScanning;
+- (void) resetDeviceList;
 - (NSArray *) deviceList;
 
 - (void) isInReview;

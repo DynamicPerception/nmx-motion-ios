@@ -2847,6 +2847,7 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 
 - (void) abortReconnect
 {
+    [self.appExecutive removeAllDevices];
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [self.navigationController popToRootViewControllerAnimated: true];
 }
