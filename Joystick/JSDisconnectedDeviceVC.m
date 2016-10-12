@@ -27,10 +27,10 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-    NSString *reasonString = @"At least one device unexpectedly disconnected.  "
-    "You are possibly out of range of communication.  "
-    "You may wait until the device is detected or select Abort to return to the start screen.\n\n"
-    "All settings have been saved on the NMX Controller.";
+    NSString *reasonString = @"Shot setup progress saved successfully to NMX.\n\n"
+    "App has detected a loss in communication (possibly due to distance or "
+    "interference) and will attempt to reconnect automatically.  Please wait or "
+    "select Abort to return to the controller connection screen and manually reconnect to the controller.";
     
     self.disconnectedReason.text = reasonString;
     

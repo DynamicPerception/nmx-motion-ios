@@ -143,16 +143,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     overallDistanceTxt.delegate = self;
     
-    [[NSNotificationCenter defaultCenter]
-	 addObserver:self
-	 selector:@selector(handleNotificationDistancePreset:)
-	 name:@"loadDistancePreset" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-	 addObserver:self
-	 selector:@selector(handleNotificationUpdateOverallDistance:)
-	 name:@"updateOverallDistance" object:nil];
-    
     [contentScroll setContentSize:CGSizeMake(contentScroll.frame.size.width, siderealBtn.frame.origin.y + siderealBtn.frame.size.height + 10)];
     
     //Can't find keyplane that supports type 4 for keyboard iPhone-Portrait-NumberPad
@@ -182,11 +172,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [self getSavedGearMotorRatios];
     
     contentScroll.delegate = self;
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationRotaryPreset:)
-     name:@"linearRotaryPreset" object:nil];
     
     unitsLbl.hidden = YES;
     unitsTxt.borderStyle = UITextBorderStyleNone;
@@ -1177,7 +1162,20 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 	[self.view sendSubviewToBack: self.controlBackground];
 
 	self.backlashLabel.text = [NSString stringWithFormat: @"%ld", (long)self.backlash];
-    self.maxRateLbl.text = [NSString stringWithFormat: @"%ld", (long)self.maxStepRate];
+    
+    if (device && device.fwVersion >= 72)
+    {
+        self.maxRateInfoLabel.hidden = NO;
+        self.maxRateButton.hidden = NO;
+        self.maxRateLbl.hidden = NO;
+        self.maxRateLbl.text = [NSString stringWithFormat: @"%ld", (long)self.maxStepRate];
+    }
+    else
+    {
+        self.maxRateInfoLabel.hidden = YES;
+        self.maxRateButton.hidden = YES;
+        self.maxRateLbl.hidden = YES;
+    }
 
     //self.powerSaveSwitch.on = [device motorQuerySleep: (int)self.motorNumber];
     self.invertDirectionSwitch.on = [device motorQueryInvertDirection: (int)self.motorNumber];
@@ -1207,14 +1205,17 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
                                                  name: kDeviceDisconnectedNotification
                                                object: nil];
     
-    //NSLog(@"viewwillappear microstepSetting: %i",microstepSetting);
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationRotaryPreset:)
+                                                 name:@"linearRotaryPreset" object:nil];
     
-    //move to viewdidload 12-8-15
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationDistancePreset:)
+                                                 name:@"loadDistancePreset" object:nil];
     
-//    [self getDistance];
-//    [self updateInvertUI];
-//    
-//    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationUpdateOverallDistance:)
+                                                 name:@"updateOverallDistance" object:nil];
 }
 
 - (void) timerNameQuerySleep {
@@ -1235,7 +1236,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     [super viewWillDisappear: animated];
     
-    //[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 - (void) deviceDisconnect: (NSNotification *) notification
@@ -1283,11 +1283,19 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
         if (selectedSetting == 2)
         {
+            int maxVal = 5000;
+            NSString *titleString = @"Set Max Step Rate\nAllowable Range: 500-5000";
+            if ([rigRatioLbl.text containsString:@"Sapphire"])
+            {
+                titleString = @"Set Max Step Rate\nAllowable Range: 500-3000";
+                maxVal = 3000;
+            }
+            
             blvc.value = self.maxStepRate;
             blvc.digits = 4;
-            blvc.maxValue = 4000;
-            blvc.minValue = 1000;
-            blvc.titleString = @"Set Max Step Rate\nAllowable Range: 3000-4000";
+            blvc.maxValue = maxVal;
+            blvc.minValue = 500;
+            blvc.titleString = titleString;
         }
         else
         {
@@ -2052,18 +2060,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void) okButtonTimer {
     
-    NMXDevice *device = [AppExecutive sharedInstance].device;
-    switch (self.motorNumber) {
-        case 1:
-            device.settings.maxStepRateSlide = (int)self.maxStepRate;
-            break;
-        case 2:
-            device.settings.maxStepRatePan = (int)self.maxStepRate;
-            break;
-        default:
-            device.settings.maxStepRateTilt = (int)self.maxStepRate;
-            break;
-    }
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber SetBacklash: self.backlash];
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber SetMaxStepRate: self.maxStepRate];
     

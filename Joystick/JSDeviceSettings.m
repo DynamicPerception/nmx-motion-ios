@@ -717,57 +717,6 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     
 }
 
-- (void) setMaxStepRateSlide:(int)maxStepRate
-{
-    [self setObject: [NSNumber numberWithInt:maxStepRate] forKey: @"maxStepRateSlide"];
-}
-
-- (int)maxStepRateSlide
-{
-    int val = [self integerForKey:@"maxStepRateSlide"];
-    if (0 == val)
-    {
-        val = 4000;
-        [self setMaxStepRateSlide:val];
-    }
-
-    return  val;
-}
-
-- (void) setMaxStepRateTilt:(int)maxStepRate
-{
-    [self setObject: [NSNumber numberWithInt:maxStepRate] forKey: @"maxStepRateTilt"];
-}
-
-- (int)maxStepRateTilt
-{
-    int val = [self integerForKey:@"maxStepRateTilt"];
-    if (0 == val)
-    {
-        val = 4000;
-        [self setMaxStepRateTilt:val];
-    }
-    
-    return  val;
-}
-
-- (void) setMaxStepRatePan:(int)maxStepRate
-{
-    [self setObject: [NSNumber numberWithInt:maxStepRate] forKey: @"maxStepRatePan"];
-}
-
-- (int)maxStepRatePan
-{
-    int val = [self integerForKey:@"maxStepRatePan"];
-    if (0 == val)
-    {
-        val = 4000;
-        [self setMaxStepRatePan:val];
-    }
-    
-    return  val;
-}
-
 - (void) setSlideMotorCustomValue :(float)value
 {
     [self setObject: [NSNumber numberWithFloat: value] forKey: @"slideMotorCustomValue"];

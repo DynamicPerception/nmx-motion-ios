@@ -157,7 +157,7 @@
     
     [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameScan) userInfo:nil repeats:NO];
     
-    self.goButton.hidden = YES;
+    [self setGoButtonVisibility];
 
     [self.tableView reloadData];
     [self.tableView setNeedsDisplay];

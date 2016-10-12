@@ -98,10 +98,6 @@ typedef enum
 @property int tiltGear;
 @property int tiltMotor;
 
-@property int maxStepRateSlide;
-@property int maxStepRatePan;
-@property int maxStepRateTilt;
-
 @property float slideMotorCustomValue;
 @property float panMotorCustomValue;
 @property float tiltMotorCustomValue;

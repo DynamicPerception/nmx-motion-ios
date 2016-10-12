@@ -964,11 +964,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             [device motorEnable: device.panMotor];
             [device motorEnable: device.tiltMotor];
         
-            JSDeviceSettings *settings = device.settings;
-            [device motorSet:1 SetMaxStepRate: settings.maxStepRateSlide];
-            [device motorSet:2 SetMaxStepRate: settings.maxStepRatePan];
-            [device motorSet:3 SetMaxStepRate: settings.maxStepRateTilt];
-
             [self setupMicrosteps];
         }
     }
@@ -2640,15 +2635,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
 
     [self exitJoystickMode];
-    
-    for (NMXDevice *device in self.appExecutive.deviceList)
-    {
-        JSDeviceSettings *settings = device.settings;
-        [device motorSet:1 SetMaxStepRate: settings.maxStepRateSlide];
-        [device motorSet:2 SetMaxStepRate: settings.maxStepRatePan];
-        [device motorSet:3 SetMaxStepRate: settings.maxStepRateTilt];
-    }
-
     
     [self performSegueWithIdentifier: SegueToSetupViewController sender: self];
 }

@@ -22,7 +22,7 @@
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
 #define kDefaultsDeviceAddress         @"DeviceAddress"
 
-#define kCurrentSupportedFirmwareVersion 64
+#define kCurrentSupportedFirmwareVersion 72
 
 
 typedef enum : unsigned char {
@@ -1455,7 +1455,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) motorSet: (int) motorNumber SetMaxStepRate:(UInt16)maxStepRate
 {
-    if (_fwVersion < 70)
+    if (_fwVersion < 72)
     {
         return;
     }
@@ -1774,7 +1774,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (UInt16) motorQueryMaxStepRate:(int)motorNumber
 {
-    if (_fwVersion < 70)
+    if (_fwVersion < 72)
     {
         return 4000;
     }

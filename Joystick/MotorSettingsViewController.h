@@ -77,6 +77,8 @@
 @property (strong, nonatomic) IBOutlet UIButton *customNameButton;
 @property (strong, nonatomic) IBOutlet UITextField *customNameTxt;
 @property (strong, nonatomic) IBOutlet UILabel *maxRateLbl;
+@property (strong, nonatomic) IBOutlet UILabel *maxRateInfoLabel;
+@property (strong, nonatomic) IBOutlet UIButton *maxRateButton;
 
 
 

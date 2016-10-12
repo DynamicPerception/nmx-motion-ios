@@ -116,10 +116,14 @@
         
         [presetList addObject:dict4];
 
-        NSDictionary *dict5 = [[NSDictionary alloc] initWithObjectsAndKeys:
-                               @"Sapphire (1:1)", @"val1", nil];
+        NMXDevice *device = [AppExecutive sharedInstance].device;
+        if (device && device.fwVersion >= 72)
+        {
+            NSDictionary *dict5 = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                   @"Sapphire (1:1)", @"val1", nil];
         
-        [presetList addObject:dict5];
+            [presetList addObject:dict5];
+        }
     }
     else if (setting == 2)  // Direction label
     {
