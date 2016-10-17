@@ -21,7 +21,7 @@
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 
-@synthesize isHome,appBlue,nav,window;
+@synthesize appBlue,nav,window;
 
 @synthesize internetActive,internetReachableFoo,hostActive,hostReachableFoo;
 
@@ -31,9 +31,10 @@
 
 - (BOOL) application: (UIApplication *) application didFinishLaunchingWithOptions: (NSDictionary *) launchOptions {
 
-	// Override point for customization after application launch.
-    
-    [TestFairy begin:@"ec963cd05b830146b2cf9039a57ee8bf80b07863"];
+#ifdef NDEBUG
+    //only want this for test builds
+    //[TestFairy begin:@"55f4e43d6fb82a6f2f7643f9b18803b63dbf6201"];
+#endif
 
 	[[UIApplication sharedApplication] setStatusBarStyle: UIStatusBarStyleLightContent];
 
@@ -197,7 +198,10 @@
 
 - (void) applicationDidEnterBackground: (UIApplication *) application {
 
-    [AppExecutive sharedInstance].device.inBackground = YES;
+    for (NMXDevice *device in [AppExecutive sharedInstance].deviceList)
+    {
+        device.inBackground = YES;
+    }
     
     NSLog(@"in background");
     
@@ -215,7 +219,10 @@
 
 	// Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
-    [AppExecutive sharedInstance].device.inBackground = NO;
+    for (NMXDevice *device in [AppExecutive sharedInstance].deviceList)
+    {
+        device.inBackground = NO;
+    }
     
     //NSLog(@"not in background");
 }

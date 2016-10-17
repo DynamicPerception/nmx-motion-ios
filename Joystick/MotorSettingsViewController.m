@@ -30,10 +30,16 @@
 @property (nonatomic, weak)	IBOutlet	UIButton *				backlashButton;
 @property (nonatomic, weak)	IBOutlet	JoyButton *				okButton;
 
+@property JSDeviceSettings *settings;
+
 // TODO: the value of this probably comes from and goes to the device, temporarily set to arbitrary value
 // may not need to be a property in the future.
 
-@property (nonatomic, readwrite)			NSInteger				backlash;
+@property (nonatomic, readwrite) NSInteger backlash;
+@property (nonatomic, readwrite) NSInteger maxStepRate;
+@property float dampening1;
+@property float dampening2;
+@property float dampening3;
 
 @end
 
@@ -61,24 +67,27 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void) viewDidLoad {
     
+    self.settings = self.appExecutive.device.settings;
+
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     self.backlash = [self.appExecutive.device motorQueryBacklash: (int) self.motorNumber];
+    self.maxStepRate = [self.appExecutive.device motorQueryMaxStepRate: (int) self.motorNumber];
     
     start = [self.appExecutive.device queryProgramStartPoint:(int)self.motorNumber];
     end = [self.appExecutive.device queryProgramEndPoint:(int)self.motorNumber];
     
     switch (self.motorNumber) {
         case 1:
-            microstepSetting = self.appExecutive.microstep1;
+            microstepSetting = self.settings.microstep1;
             break;
         case 2:
-            microstepSetting = self.appExecutive.microstep2;
+            microstepSetting = self.settings.microstep2;
             break;
         case 3:
-            microstepSetting = self.appExecutive.microstep3;
+            microstepSetting = self.settings.microstep3;
             break;
         default:
             NSAssert(0, @"Bad motor number");
@@ -91,7 +100,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 	// items for IBOutlet objects don't appear until the view is loaded
 
-	self.motorSettingsLabel.text = [NSString stringWithFormat: @"%@ Settings Channel:", self.motorName];
+    [self setMotorName];
 	self.motorNumberLabel.text = [NSString stringWithFormat: @"%ld", (long)self.motorNumber];
     
     [leftBtn addTarget:self action:@selector(enableLeft:) forControlEvents:UIControlEventTouchUpInside];
@@ -106,8 +115,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     continuousInterval = 100;
     upperLimit = 4999;
     lowerLimit = -4999;
-    
-    //[NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(jsTimer) userInfo:nil repeats:NO];
     
     defaultColor = [UIColor colorWithRed:55.0/255 green:55.0/255 blue:55.0/255 alpha:1];
     
@@ -130,20 +137,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     leftLbl.text = @"";
     rightLbl.text = @"";
     self.directionLbl.text = @"-";
+    self.maxRateLbl.text = @"-";
     
     gearRatio = 0;
     
     overallDistanceTxt.delegate = self;
-    
-    [[NSNotificationCenter defaultCenter]
-	 addObserver:self
-	 selector:@selector(handleNotificationDistancePreset:)
-	 name:@"loadDistancePreset" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-	 addObserver:self
-	 selector:@selector(handleNotificationUpdateOverallDistance:)
-	 name:@"updateOverallDistance" object:nil];
     
     [contentScroll setContentSize:CGSizeMake(contentScroll.frame.size.width, siderealBtn.frame.origin.y + siderealBtn.frame.size.height + 10)];
     
@@ -151,19 +149,21 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     gearRatioLbl.text = @"19:1";
     
-
     if (self.motorNumber == 1)
     {
         rigRatioLbl.text = @"Stage 1/0";
         joystickResponseLbl.text = @"Slider Response";
+        self.customNameTxt.text = self.settings.channel1Name;
     }
     else if (self.motorNumber == 2)
     {
         rigRatioLbl.text = @"Stage R";
+        self.customNameTxt.text = self.settings.channel2Name;
     }
     else if (self.motorNumber == 3)
     {
         rigRatioLbl.text = @"Stage R";
+        self.customNameTxt.text = self.settings.channel3Name;
     }
 
     self.directionLbl.text = [DistancePresetViewController labelForDirectionIndex: [self.directionLabelMode intValue]];
@@ -173,18 +173,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     contentScroll.delegate = self;
     
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationRotaryPreset:)
-     name:@"linearRotaryPreset" object:nil];
-    
     unitsLbl.hidden = YES;
     unitsTxt.borderStyle = UITextBorderStyleNone;
     unitsTxt.textColor = [UIColor whiteColor];
-    
     unitsTxt.backgroundColor = [UIColor clearColor];
-//    unitsTxt.layer.borderWidth = 0.5;
-    
+
+    self.customNameTxt.borderStyle = UITextBorderStyleNone;
+    self.customNameTxt.textColor = [UIColor whiteColor];
+    self.customNameTxt.backgroundColor = [UIColor clearColor];
+
     if([[UIDevice currentDevice]userInterfaceIdiom] == UIUserInterfaceIdiomPad)
     {
         scrollPositionView.hidden = YES;
@@ -192,35 +189,23 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     okButton.userInteractionEnabled = NO;
     
-    if (self.appExecutive.useJoystick == NO)
+    if (self.settings.useJoystick == NO)
     {
         [toggleJoystickSwitch setOn:YES];
     }
     
-    sensitivityRatio = [self.appExecutive.sensitivityNumber floatValue]/100;
+    sensitivityRatio = [self.settings sensitivity]/100;
     
     //NSLog(@"sensitivityRatio: %f",sensitivityRatio);
-    
-    if (self.appExecutive.is3P == YES) {
-       
-        if (self.motorNumber == 1) {
-            
-            NSLog(@"start3PSlideDistance: %f",self.appExecutive.start3PSlideDistance);
-            NSLog(@"mid3PSlideDistance: %f",self.appExecutive.mid3PSlideDistance);
-            NSLog(@"end3PSlideDistance: %f",self.appExecutive.end3PSlideDistance);
-        }
-        if (self.motorNumber == 2) {
-        
-            NSLog(@"start3PPanDistance: %f",self.appExecutive.start3PPanDistance);
-            NSLog(@"mid3PPanDistance: %f",self.appExecutive.mid3PPanDistance);
-            NSLog(@"end3PPanDistance: %f",self.appExecutive.end3PPanDistance);
-        }
-    }
     
     float maxAccel = 30000;
     
     float a;
     float b;
+    
+    self.dampening1 = [self.appExecutive.device motorQueryContinuousAccelDecel: 1]/100;
+    self.dampening2 = [self.appExecutive.device motorQueryContinuousAccelDecel: 2]/100;
+    self.dampening3 = [self.appExecutive.device motorQueryContinuousAccelDecel: 3]/100;
     
     if ((int)self.motorNumber == 1)
     {
@@ -228,9 +213,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         //16192/maxAcel = x * x
         //.53 = x * x
         
-        //NSLog(@"appExecutive.dampening1: %f",appExecutive.dampening1);
-        
-        a = appExecutive.dampening1/maxAccel;
+        a = self.dampening1/maxAccel;
     }
     else if ((int)self.motorNumber == 2)
     {
@@ -238,7 +221,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 //        
 //        dampeningSlider.value = self.appExecutive.dampening2;
         
-        a = appExecutive.dampening2/maxAccel;
+        a = self.dampening2/maxAccel;
     }
     else  if ((int)self.motorNumber == 3)
     {
@@ -246,7 +229,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 //        
 //        dampeningSlider.value = self.appExecutive.dampening3;
 
-        a = appExecutive.dampening3/maxAccel;
+        a = self.dampening3/maxAccel;
     }
     
     b = sqrtf(a);
@@ -304,53 +287,70 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [super viewDidLoad];
 }
 
+- (void) setMotorName
+{
+    NSString *motorName;
+    switch (self.motorNumber) {
+        case 1:
+            motorName = self.settings.channel1Name;
+            break;
+        case 2:
+            motorName = self.settings.channel2Name;
+            break;
+        case 3:
+            motorName = self.settings.channel3Name;
+            break;
+        default:
+            NSAssert(0, @"Bad motor number");
+            break;
+    }
+    
+    self.motorSettingsLabel.text = [NSString stringWithFormat: @"%@ Settings Channel:", motorName];
+
+}
+
 - (void) getSavedGearMotorRatios {
 
     if (self.motorNumber == 1)
     {
-        NSLog(@"self.motorNumber: %i",(int)self.motorNumber);
-        NSLog(@"self.appExecutive.defaults slideGear: %i",(int)[self.appExecutive.defaults integerForKey:@"slideGear"]);
-        NSLog(@"self.appExecutive.defaults slideMotor: %i",(int)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
-        
-        if ([self.appExecutive.defaults integerForKey:@"slideGear"])
+        if (self.settings.slideGear)
         {
-            NSLog(@"slide setting");
-            
-            self.appExecutive.slideGear = (int)[self.appExecutive.defaults integerForKey:@"slideGear"];
-            
-            NSLog(@"get slideGear: %i",self.appExecutive.slideGear);
-            
-            if (self.appExecutive.slideGear == 1)
+            if (self.settings.slideGear == 1)
             {
                 gearRatioLbl.text = @"27:1";
             }
-            else if (self.appExecutive.slideGear == 2)
+            else if (self.settings.slideGear == 2)
             {
                 gearRatioLbl.text = @"19:1";
             }
-            else if (self.appExecutive.slideGear == 3)
+            else if (self.settings.slideGear == 3)
             {
                 gearRatioLbl.text = @"5:1";
             }
+            else if (self.settings.slideGear == 4)
+            {
+                gearRatioLbl.text = @"60:1";
+            }
         }
         
-        if ([self.appExecutive.defaults integerForKey:@"slideMotor"])
+        if (self.settings.slideMotor)
         {
-            self.appExecutive.slideMotor = (int)[self.appExecutive.defaults integerForKey:@"slideMotor"];
-            
-            if (self.appExecutive.slideMotor == 1)
+            if (self.settings.slideMotor == 1)
             {
                 rigRatioLbl.text = @"Stage R";
             }
-            else if (self.appExecutive.slideMotor == 2)
+            else if (self.settings.slideMotor == 2)
             {
                 rigRatioLbl.text = @"Stage 1/0";
             }
-            else if (self.appExecutive.slideMotor == 3)
+            else if (self.settings.slideMotor == 3)
             {
-                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"]];
-                
-                customLinearParam = [self.appExecutive.defaults floatForKey:@"slideMotorCustomValue"];
+                customLinearParam = self.settings.slideMotorCustomValue;
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f", customLinearParam];
+            }
+            else if (self.settings.slideMotor == 4)
+            {
+                rigRatioLbl.text = @"Sapphire (1:1)";
             }
             
             //NSLog(@"self.appExecutive.slideMotor: %i",self.appExecutive.slideMotor);
@@ -358,81 +358,88 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     else if (self.motorNumber == 2)
     {
-        if ([self.appExecutive.defaults integerForKey:@"panGear"])
+        if (self.settings.panGear)
         {
-            self.appExecutive.panGear = (int)[self.appExecutive.defaults integerForKey:@"panGear"];
-            
-            if (self.appExecutive.panGear == 1)
+            if (self.settings.panGear == 1)
             {
                 gearRatioLbl.text = @"27:1";
             }
-            else if (self.appExecutive.panGear == 2)
+            else if (self.settings.panGear == 2)
             {
                 gearRatioLbl.text = @"19:1";
             }
-            else if (self.appExecutive.panGear == 3)
+            else if (self.settings.panGear == 3)
             {
                 gearRatioLbl.text = @"5:1";
             }
+            else if (self.settings.panGear == 4)
+            {
+                gearRatioLbl.text = @"60:1";
+            }
         }
         
-        if ([self.appExecutive.defaults integerForKey:@"panMotor"])
+        if (self.settings.panMotor)
         {
-            self.appExecutive.panMotor = (int)[self.appExecutive.defaults integerForKey:@"panMotor"];
-            
-            if (self.appExecutive.panMotor == 1)
+            if (self.settings.panMotor == 1)
             {
                 rigRatioLbl.text = @"Stage R";
             }
-            else if (self.appExecutive.panMotor == 2)
+            else if (self.settings.panMotor == 2)
             {
                 rigRatioLbl.text = @"Stage 1/0";
             }
-            else if (self.appExecutive.panMotor == 3)
+            else if (self.settings.panMotor == 3)
             {
-                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"panMotorCustomValue"]];
-                
-                customLinearParam = [self.appExecutive.defaults floatForKey:@"panMotorCustomValue"];
+                customLinearParam = self.settings.panMotorCustomValue;
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",customLinearParam];
             }
+            else if (self.settings.panMotor == 4)
+            {
+                rigRatioLbl.text = @"Sapphire (1:1)";
+            }
+            
         }
     }
     else if (self.motorNumber == 3)
     {
-        if ([self.appExecutive.defaults integerForKey:@"tiltGear"])
+        if (self.settings.tiltGear)
         {
-            self.appExecutive.tiltGear = (int)[self.appExecutive.defaults integerForKey:@"tiltGear"];
-            
-            if (self.appExecutive.tiltGear == 1)
+            if (self.settings.tiltGear == 1)
             {
                 gearRatioLbl.text = @"27:1";
             }
-            else if (self.appExecutive.tiltGear == 2)
+            else if (self.settings.tiltGear == 2)
             {
                 gearRatioLbl.text = @"19:1";
             }
-            else if (self.appExecutive.tiltGear == 3)
+            else if (self.settings.tiltGear == 3)
             {
                 gearRatioLbl.text = @"5:1";
             }
+            else if (self.settings.tiltGear == 4)
+            {
+                gearRatioLbl.text = @"60:1";
+            }
         }
         
-        if ([self.appExecutive.defaults integerForKey:@"tiltMotor"])
+        if (self.settings.tiltMotor)
         {
-            self.appExecutive.tiltMotor = (int)[self.appExecutive.defaults integerForKey:@"tiltMotor"];
-            
-            if (self.appExecutive.tiltMotor == 1)
+            if (self.settings.tiltMotor == 1)
             {
                 rigRatioLbl.text = @"Stage R";
             }
-            else if (self.appExecutive.tiltMotor == 2)
+            else if (self.settings.tiltMotor == 2)
             {
                 rigRatioLbl.text = @"Stage 1/0";
             }
-            else if (self.appExecutive.tiltMotor == 3)
+            else if (self.settings.tiltMotor == 3)
             {
-                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",[self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"]];
-                
-                customLinearParam = [self.appExecutive.defaults floatForKey:@"tiltMotorCustomValue"];
+                customLinearParam = self.settings.tiltMotorCustomValue;
+                rigRatioLbl.text = [NSString stringWithFormat:@"Linear Custom %.02f",customLinearParam];
+            }
+            else if (self.settings.tiltMotor == 4)
+            {
+                rigRatioLbl.text = @"Sapphire (1:1)";
             }
         }
     }
@@ -549,37 +556,21 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     {
         customLinearParam = [[preset objectForKey:@"val1"] floatValue];
         
-        NSLog(@"customLinearParam: %.02f",customLinearParam);
-        
         if (self.motorNumber == 1)
         {
-            self.appExecutive.slideMotor = 3;
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.slideMotor] forKey: @"slideMotor"];
-            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"slideMotorCustomValue"];
-            
-            NSLog(@"set slideMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
+            self.settings.slideMotor = 3;
+            self.settings.slideMotorCustomValue = customLinearParam;
         }
         else if (self.motorNumber == 2)
         {
-            self.appExecutive.panMotor = 3;
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.panMotor] forKey: @"panMotor"];
-            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"panMotorCustomValue"];
-            
-            NSLog(@"set panMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"panMotor"]);
+            self.settings.panMotor = 3;
+            self.settings.panMotorCustomValue = customLinearParam;
         }
         else if (self.motorNumber == 3)
         {
-            self.appExecutive.tiltMotor = 3;
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.tiltMotor] forKey: @"tiltMotor"];
-            [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:customLinearParam] forKey: @"tiltMotorCustomValue"];
-            
-            NSLog(@"set tiltMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltMotor"]);
+            self.settings.tiltMotor = 3;
+            self.settings.tiltMotorCustomValue = customLinearParam;
         }
-        
-        [self.appExecutive.defaults synchronize];
     }
     
     [self getDistance];
@@ -596,7 +587,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     NSLog(@"newFloat: %f",newFloat);
     
-    if (([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"]))
+    if (([rigRatioLbl.text containsString:@"Stage R"] ||
+         [rigRatioLbl.text containsString:@"Sapphire"] ||
+         [rigRatioLbl.text containsString:@"Rotary Custom"]))
     {
         // && distance != 0
         
@@ -665,64 +658,61 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         {
             if ([preset isEqualToString:@"27:1"])
             {
-                self.appExecutive.slideGear = 1;
+                self.settings.slideGear = 1;
             }
             else if ([preset isEqualToString:@"19:1"])
             {
-                self.appExecutive.slideGear = 2;
+                self.settings.slideGear = 2;
             }
             else if ([preset isEqualToString:@"5:1"])
             {
-                self.appExecutive.slideGear = 3;
+                self.settings.slideGear = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.slideGear] forKey: @"slideGear"];
-            [self.appExecutive.defaults synchronize];
-            
-            NSLog(@"set slideGear: %li",(long)[self.appExecutive.defaults integerForKey:@"slideGear"]);
+            else if ([preset isEqualToString:@"60:1"])
+            {
+                self.settings.slideGear = 4;
+            }
         }
         else if (self.motorNumber == 2)
         {
             if ([preset isEqualToString:@"27:1"])
             {
-                self.appExecutive.panGear = 1;
+                self.settings.panGear = 1;
             }
             else if ([preset isEqualToString:@"19:1"])
             {
-                self.appExecutive.panGear = 2;
+                self.settings.panGear = 2;
             }
             else if ([preset isEqualToString:@"5:1"])
             {
-                self.appExecutive.panGear = 3;
+                self.settings.panGear = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.panGear] forKey: @"panGear"];
-            [self.appExecutive.defaults synchronize];
-            
-            NSLog(@"set panGear: %li",(long)[self.appExecutive.defaults integerForKey:@"panGear"]);
+            else if ([preset isEqualToString:@"60:1"])
+            {
+                self.settings.panGear = 4;
+            }
         }
         else if (self.motorNumber == 3)
         {
             if ([preset isEqualToString:@"27:1"])
             {
-                self.appExecutive.tiltGear = 1;
+                self.settings.tiltGear = 1;
             }
             else if ([preset isEqualToString:@"19:1"])
             {
-                self.appExecutive.tiltGear = 2;
+                self.settings.tiltGear = 2;
             }
             else if ([preset isEqualToString:@"5:1"])
             {
-                self.appExecutive.tiltGear = 3;
+                self.settings.tiltGear = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.tiltGear] forKey: @"tiltGear"];
-            [self.appExecutive.defaults synchronize];
-            
-            NSLog(@"set tiltGear: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltGear"]);
+            else if ([preset isEqualToString:@"60:1"])
+            {
+                self.settings.tiltGear = 4;
+            }
         }
     }
-    if (selectedSetting == 2)  // Direction label changed
+    else if (selectedSetting == 2)  // Direction label changed
     {
         self.directionLbl.text = preset;
         
@@ -732,22 +722,22 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
         [self confirmRigAndDirectionLablesAreCompatible];
         
-        NSString *defaultsKey;
         if (self.motorNumber == 1)
         {
-            defaultsKey = @"slideDirectionMode";
+            self.settings.slideDirectionMode = self.directionLabelMode;
         }
         else if (self.motorNumber == 2)
         {
-            defaultsKey = @"panDirectionMode";
+            self.settings.panDirectionMode = self.directionLabelMode;
         }
         else if (self.motorNumber == 3)
         {
-            defaultsKey = @"tiltDirectionMode";
+            self.settings.tiltDirectionMode = self.directionLabelMode;
         }
-        
-        [appExecutive.defaults setObject:self.directionLabelMode forKey:defaultsKey];
-        [self.appExecutive.defaults synchronize];
+    }
+    else if (selectedSetting == 3)  // Max rate changed
+    {
+        //Handled elsewhere
     }
     else
     {
@@ -759,62 +749,71 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         {
             if ([preset isEqualToString:@"Stage R"])
             {
-                self.appExecutive.slideMotor = 1;
+                self.settings.slideMotor = 1;
             }
             else if ([preset isEqualToString:@"Stage 1/0"])
             {
-                self.appExecutive.slideMotor = 2;
+                self.settings.slideMotor = 2;
             }
             else if ([preset containsString:@"Linear Custom"])
             {
-                self.appExecutive.slideMotor = 3;
+                self.settings.slideMotor = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.slideMotor] forKey: @"slideMotor"];
-            
-            NSLog(@"set slideMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"slideMotor"]);
+            else if ([preset containsString:@"Sapphire"])
+            {
+                gearRatioLbl.text = @"60:1";
+                self.settings.slideGear = 4;
+                self.maxStepRate = 3000;
+                self.maxRateLbl.text = [NSString stringWithFormat: @"%ld", (long)self.maxStepRate];
+                self.settings.slideMotor = 4;
+            }
         }
         else if (self.motorNumber == 2)
         {
             if ([preset isEqualToString:@"Stage R"])
             {
-                self.appExecutive.panMotor = 1;
+                self.settings.panMotor = 1;
             }
             else if ([preset isEqualToString:@"Stage 1/0"])
             {
-                self.appExecutive.panMotor = 2;
+                self.settings.panMotor = 2;
             }
             else if ([preset isEqualToString:@"Linear Custom"])
             {
-                self.appExecutive.panMotor = 3;
+                self.settings.panMotor = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.panMotor] forKey: @"panMotor"];
-            
-            NSLog(@"set panMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"panMotor"]);
+            else if ([preset containsString:@"Sapphire"])
+            {
+                gearRatioLbl.text = @"60:1";
+                self.settings.panGear = 4;
+                self.maxStepRate = 3000;
+                self.maxRateLbl.text = [NSString stringWithFormat: @"%ld", (long)self.maxStepRate];
+                self.settings.panMotor = 4;
+            }
         }
         else if (self.motorNumber == 3)
         {
             if ([preset isEqualToString:@"Stage R"])
             {
-                self.appExecutive.tiltMotor = 1;
+                self.settings.tiltMotor = 1;
             }
             else if ([preset isEqualToString:@"Stage 1/0"])
             {
-                self.appExecutive.tiltMotor = 2;
+                self.settings.tiltMotor = 2;
             }
             else if ([preset isEqualToString:@"Linear Custom"])
             {
-                self.appExecutive.tiltMotor = 3;
+                self.settings.tiltMotor = 3;
             }
-            
-            [self.appExecutive.defaults setObject: [NSNumber numberWithInt:self.appExecutive.tiltMotor] forKey: @"tiltMotor"];
-            
-            
-            NSLog(@"set tiltMotor: %li",(long)[self.appExecutive.defaults integerForKey:@"tiltMotor"]);
+            else if ([preset containsString:@"Sapphire"])
+            {
+                gearRatioLbl.text = @"60:1";
+                self.settings.tiltGear = 4;
+                self.maxStepRate = 2500;
+                self.maxRateLbl.text = [NSString stringWithFormat: @"%ld", (long)self.maxStepRate];
+                self.settings.tiltMotor = 4;
+            }
         }
-        
-        [self.appExecutive.defaults synchronize];
     }
     
     [self getDistance];
@@ -865,6 +864,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         //gearRatio = 5;
         gearRatio = 5.1818;
     }
+    else if ([gearRatioLbl.text isEqualToString:@"60:1"])
+    {
+        //gearRatio = 60;
+        gearRatio = 60;
+    }
     
     reciprocal = a/gearRatio;
     
@@ -899,6 +903,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         calculatedValue = degrees;
         
         //NSLog(@"degrees: %f",degrees);
+    }
+    else if ([rigRatioLbl.text containsString:@"Sapphire"] && distance != 0)
+    {
+        rigRatio = 1.;
+        degrees = (distance/microsteps) * reciprocal * rigRatio * 360;
+        calculatedValue = degrees;
     }
     else
     {
@@ -1003,6 +1013,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     {
         gearRatio = 5;
     }
+    else if ([gearRatioLbl.text isEqualToString:@"60:1"])
+    {
+        gearRatio = 60;
+    }
     
     reciprocal = a/gearRatio;
     
@@ -1027,6 +1041,17 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         int distanceInt = abs((int)a2);
         
+        overallDistanceTxt.text = [NSString stringWithFormat:@"%i",distanceInt];
+    }
+    else if ([rigRatioLbl.text containsString:@"Sapphire"] && distance != 0 )
+    {
+        rigRatio = 1.;
+        
+        float a4 = reciprocal * rigRatio * 360;
+        float a1 = value / a4;
+        a2 = a1 * microsteps;
+        NSLog(@"new distance: %f",a2);
+        int distanceInt = abs((int)a2);
         overallDistanceTxt.text = [NSString stringWithFormat:@"%i",distanceInt];
     }
     else
@@ -1102,27 +1127,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if (self.motorNumber == 1)
     {
-        self.appExecutive.endPoint1 = end;
+        self.settings.endPoint1 = end;
     }
     else if (self.motorNumber == 2)
     {
-        self.appExecutive.endPoint2 = end;
+        self.settings.endPoint2 = end;
     }
     else if (self.motorNumber == 3)
     {
-        self.appExecutive.endPoint3 = end;
+        self.settings.endPoint3 = end;
     }
     
     [appExecutive.device motorSet:(int)self.motorNumber ProgramStopPoint:newPos];
-}
-
-- (void) jsTimer {
-	
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"enterJSMode"
-     object:nil];
-    
-    joystickmode = YES;
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -1146,12 +1162,26 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 	[self.view sendSubviewToBack: self.controlBackground];
 
 	self.backlashLabel.text = [NSString stringWithFormat: @"%ld", (long)self.backlash];
+    
+    if (device && device.fwVersion >= 72)
+    {
+        self.maxRateInfoLabel.hidden = NO;
+        self.maxRateButton.hidden = NO;
+        self.maxRateLbl.hidden = NO;
+        self.maxRateLbl.text = [NSString stringWithFormat: @"%ld", (long)self.maxStepRate];
+    }
+    else
+    {
+        self.maxRateInfoLabel.hidden = YES;
+        self.maxRateButton.hidden = YES;
+        self.maxRateLbl.hidden = YES;
+    }
 
     //self.powerSaveSwitch.on = [device motorQuerySleep: (int)self.motorNumber];
     self.invertDirectionSwitch.on = [device motorQueryInvertDirection: (int)self.motorNumber];
     self.disableSwitch.on = [device motorQueryDisabled: (int) self.motorNumber];
     
-    sensitivitySlider.value	= [self.appExecutive.sensitivityNumber floatValue];
+    sensitivitySlider.value	= [device.settings sensitivity];
     sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", self.sensitivitySlider.value];
     
     switch (microstepSetting)
@@ -1175,14 +1205,17 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
                                                  name: kDeviceDisconnectedNotification
                                                object: nil];
     
-    //NSLog(@"viewwillappear microstepSetting: %i",microstepSetting);
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationRotaryPreset:)
+                                                 name:@"linearRotaryPreset" object:nil];
     
-    //move to viewdidload 12-8-15
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationDistancePreset:)
+                                                 name:@"loadDistancePreset" object:nil];
     
-//    [self getDistance];
-//    [self updateInvertUI];
-//    
-//    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerNameQuerySleep) userInfo:nil repeats:NO];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationUpdateOverallDistance:)
+                                                 name:@"updateOverallDistance" object:nil];
 }
 
 - (void) timerNameQuerySleep {
@@ -1203,10 +1236,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     [super viewWillDisappear: animated];
     
-    //[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-- (void) deviceDisconnect: (id) object {
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    //NMXDevice *device = notification.object;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self dismissViewControllerAnimated: YES completion: nil];
@@ -1247,8 +1281,31 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
 		BacklashViewController *blvc = segue.destinationViewController;
 
+        if (selectedSetting == 2)
+        {
+            int maxVal = 5000;
+            NSString *titleString = @"Set Max Step Rate\nAllowable Range: 500-5000";
+            if ([rigRatioLbl.text containsString:@"Sapphire"])
+            {
+                titleString = @"Set Max Step Rate\nAllowable Range: 500-3000";
+                maxVal = 3000;
+            }
+            
+            blvc.value = self.maxStepRate;
+            blvc.digits = 4;
+            blvc.maxValue = maxVal;
+            blvc.minValue = 500;
+            blvc.titleString = titleString;
+        }
+        else
+        {
+            blvc.value = self.backlash;
+            blvc.digits = 3;
+            blvc.maxValue = 999;
+            blvc.minValue = 0;
+            blvc.titleString = @"Set Backlash\nTypical Range: 000-200";
+        }
 		blvc.delegate = self;
-		blvc.backlash = self.backlash;
 	}
     else if ([segue.identifier isEqualToString: @"goToPresets"])
     {
@@ -1262,6 +1319,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         else if (selectedSetting == 2)
         {
             [secView setCurrentSettingString: self.directionLbl.text];
+        }
+        else if (selectedSetting == 3)
+        {
+            [secView setCurrentSettingString: self.maxRateLbl.text];
         }
         else
         {
@@ -1291,7 +1352,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         OverallDistanceViewController *msvc = segue.destinationViewController;
         
-        if (([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
+        if (([rigRatioLbl.text containsString:@"Stage R"] ||
+             [rigRatioLbl.text containsString:@"Sapphire"] ||
+             [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
         {
             [msvc setDistance:degrees];
             [msvc setSubLabelTxt:@"Set degrees"];
@@ -1306,13 +1369,19 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 //------------------------------------------------------------------------------
 
-#pragma mark - BacklashDelegate Methods
+#pragma mark - IntValueDelegate Methods
 
-- (void) updateBacklash: (NSInteger) value {
-    
-	DDLogDebug(@"Backlash Value: %ld", (long)value);
+- (void) updateIntValue: (NSInteger) value {
 
-	self.backlash = value;
+    if (selectedSetting == 2)
+    {
+        self.maxStepRate = value;
+    }
+    else
+    {
+        DDLogDebug(@"Backlash Value: %ld", (long)value);
+        self.backlash = value;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -1372,6 +1441,41 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     dampeningTimer = [NSTimer scheduledTimerWithTimeInterval:1.000 target:self selector:@selector(timerName) userInfo:nil repeats:NO];
 }
 
+- (IBAction) handleCustomNameButton: (UIButton *) sender
+{
+    UIAlertView *nameAlertView = [[UIAlertView alloc] initWithTitle: @"Channel Name"
+                                                            message: @"Enter custom channel name"
+                                                           delegate: self
+                                                  cancelButtonTitle: @"Cancel"
+                                                  otherButtonTitles: @"OK", nil];
+    
+    nameAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    //  nameAlertView.delegate = self;
+    
+    JSDeviceSettings *settings = self.appExecutive.device.settings;
+    
+    UITextField *nameTextField = [nameAlertView textFieldAtIndex: 0];
+    //nameTextField.delegate = self;
+    
+    switch (self.motorNumber) {
+        case 1:
+            nameTextField.text = [settings channel1Name];
+            break;
+        case 2:
+            nameTextField.text = [settings channel2Name];
+            break;
+        case 3:
+            nameTextField.text = [settings channel3Name];
+            break;
+        default:
+            NSAssert(0, @"Bad motor number");
+            break;
+    }
+
+    [nameAlertView show];
+}
+
+
 - (void) timerName {
     
     float maxAccel = 30000;
@@ -1390,15 +1494,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if ((int)self.motorNumber == 1)
     {
-        self.appExecutive.dampening1 = conv;
+        self.dampening1 = conv;
     }
     else if ((int)self.motorNumber == 2)
     {
-        self.appExecutive.dampening2 = conv;
+        self.dampening2 = conv;
     }
     else
     {
-        self.appExecutive.dampening3 = conv;
+        self.dampening3 = conv;
     }
 	
     [self.appExecutive.device motorSet: (int)self.motorNumber ContinuousSpeedAccelDecel: conv];
@@ -1409,9 +1513,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     DDLogDebug(@"Sensitivity Slider: %g", sender.value);
     
     self.sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", sender.value];
-    self.appExecutive.sensitivityNumber = [NSNumber numberWithFloat: sender.value];
     
-    sensitivityRatio = [self.appExecutive.sensitivityNumber floatValue]/100;
+    self.appExecutive.device.settings.sensitivity = sender.value;
+    
+    sensitivityRatio = self.appExecutive.device.settings.sensitivity/100;
     
     NSLog(@"sensitivityRatio: %f",sensitivityRatio);
 }
@@ -1426,7 +1531,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     DDLogDebug(@"Release Sensitivity Slider: %g", sender.value);
     
     self.sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", sender.value];
-    self.appExecutive.sensitivityNumber = [NSNumber numberWithFloat: sender.value];
+    self.appExecutive.device.settings.sensitivity = sender.value;
 }
 
 - (IBAction) goToPresets:(id)sender {
@@ -1446,18 +1551,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if (sw.isOn)
     {
-        self.appExecutive.useJoystick = NO;
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:2] forKey: @"useJoystick"];
+        self.settings.useJoystick = NO;
     }
     else
     {
-        self.appExecutive.useJoystick = YES;
-        [self.appExecutive.defaults setObject: [NSNumber numberWithInt:1] forKey: @"useJoystick"];
+        self.settings.useJoystick = YES;
     }
-    
-    [self.appExecutive.defaults synchronize];
-    
-    NSLog(@"self.appExecutive.useJoystick: %i",self.appExecutive.useJoystick);
 }
 
 - (IBAction) enableLeft: (id) sender {
@@ -1472,6 +1571,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
          object:nil];
         
         joystickmode = YES;
+    }
+    else
+    {
+        joystickmode = NO;
     }
     
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber ContinuousSpeed:0];
@@ -1540,6 +1643,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         
         joystickmode = YES;
     }
+    else
+    {
+        joystickmode = NO;
+    }
+    
     
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber ContinuousSpeed:0];
     
@@ -1655,15 +1763,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             
             if ((int)self.motorNumber == 1)
             {
-                self.appExecutive.microstep1 = 4;
+                self.settings.microstep1 = 4;
             }
             else if ((int)self.motorNumber == 2)
             {
-                self.appExecutive.microstep2 = 4;
+                self.settings.microstep2 = 4;
             }
             else
             {
-                self.appExecutive.microstep3 = 4;
+                self.settings.microstep3 = 4;
             }
             
             break;
@@ -1675,15 +1783,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             
             if ((int)self.motorNumber == 1)
             {
-                self.appExecutive.microstep1 = 8;
+                self.settings.microstep1 = 8;
             }
             else if ((int)self.motorNumber == 2)
             {
-                self.appExecutive.microstep2 = 8;
+                self.settings.microstep2 = 8;
             }
             else
             {
-                self.appExecutive.microstep3 = 8;
+                self.settings.microstep3 = 8;
             }
             
             break;
@@ -1695,15 +1803,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             
             if ((int)self.motorNumber == 1)
             {
-                self.appExecutive.microstep1 = 16;
+                self.settings.microstep1 = 16;
             }
             else if ((int)self.motorNumber == 2)
             {
-                self.appExecutive.microstep2 = 16;
+                self.settings.microstep2 = 16;
             }
             else
             {
-                self.appExecutive.microstep3 = 16;
+                self.settings.microstep3 = 16;
             }
             
             break;
@@ -1733,18 +1841,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if ((int)self.motorNumber == 1)
     {
-        self.appExecutive.endPoint1 = end;
-        self.appExecutive.startPoint1 = start;
+        self.settings.endPoint1 = end;
+        self.settings.startPoint1 = start;
     }
     else if ((int)self.motorNumber == 2)
     {
-        self.appExecutive.endPoint2 = end;
-        self.appExecutive.startPoint2 = start;
+        self.settings.endPoint2 = end;
+        self.settings.startPoint2 = start;
     }
     else
     {
-        self.appExecutive.endPoint3 = end;
-        self.appExecutive.startPoint3 = start;
+        self.settings.endPoint3 = end;
+        self.settings.startPoint3 = start;
     }
     
     [self getDistance];
@@ -1789,7 +1897,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         direction = rightLbl.text;
     }
 
-    if([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"])
+    if([rigRatioLbl.text containsString:@"Stage R"] ||
+       [rigRatioLbl.text containsString:@"Sapphire"] ||
+       [rigRatioLbl.text containsString:@"Rotary Custom"])
     {
         
         unitsLbl.text = [NSString stringWithFormat:@"%.02f Deg %@", degrees, direction];
@@ -1809,15 +1919,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     if ((int)self.motorNumber == 1)
     {
-        [self.appExecutive.defaults setObject: direction forKey: @"slideDirection"];
+        self.settings.slideDirection = direction;
     }
     else if ((int)self.motorNumber == 2)
     {
-        [self.appExecutive.defaults setObject: direction forKey: @"panDirection"];
+        self.settings.panDirection = direction;
     }
     else if ((int)self.motorNumber == 3)
     {
-        [self.appExecutive.defaults setObject: direction forKey: @"tiltDirection"];
+        self.settings.tiltDirection = direction;
     }
     
 }
@@ -1871,10 +1981,29 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
 	// bring up 4 digit spinner
 
+    selectedSetting = 1;
 	DDLogDebug(@"Backlash Button");
 
 	[self performSegueWithIdentifier: SegueToBacklashViewController sender: self];
 }
+
+- (IBAction) handleMaxRateButton: (UIButton *)sender {
+    
+    if (joystickmode)
+    {
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:@"exitJSMode"
+         object:nil];
+        
+        joystickmode = NO;
+    }
+    
+    // bring up 4 digit spinner
+    selectedSetting = 2;
+    
+    [self performSegueWithIdentifier: SegueToBacklashViewController sender: self];
+}
+
 
 - (IBAction) handleOkButton:(id)sender {
     
@@ -1922,6 +2051,8 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
          object:motorDict];
     }
     
+    [self.settings synchronize];
+    
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 
     [NSTimer scheduledTimerWithTimeInterval:0.250 target:self selector:@selector(okButtonTimer) userInfo:nil repeats:NO];
@@ -1930,6 +2061,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 - (void) okButtonTimer {
     
     [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber SetBacklash: self.backlash];
+    [[AppExecutive sharedInstance].device motorSet: (int)self.motorNumber SetMaxStepRate: self.maxStepRate];
     
     [self dismissViewControllerAnimated: YES completion: nil];
 }
@@ -1970,7 +2102,9 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         {
             NSLog(@"value to recalculate: %f",calculatedValue);
             
-            if (([rigRatioLbl.text containsString:@"Stage R"] || [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
+            if (([rigRatioLbl.text containsString:@"Stage R"] ||
+                 [rigRatioLbl.text containsString:@"Sapphire"] ||
+                 [rigRatioLbl.text containsString:@"Rotary Custom"]) && distance != 0)
             {
                 degrees = [textField.text floatValue];
                 
@@ -2015,9 +2149,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void) alertView: (UIAlertView *) alertView clickedButtonAtIndex: (NSInteger) buttonIndex {
     
-    NSString *title = [alertView buttonTitleAtIndex: buttonIndex];
+    NSString *buttonTitle = [alertView buttonTitleAtIndex: buttonIndex];
+    NSString *title = [alertView title];
         
-    if ([title isEqualToString: @"Fix it"])
+    if ([buttonTitle isEqualToString: @"Fix it"])
     {
         BOOL isRotaryBasedMotor = [rigRatioLbl.text containsString:@"Rotary Custom"];
         BOOL isLinearMotor = [rigRatioLbl.text containsString:@"Linear Custom"];
@@ -2042,25 +2177,46 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         self.directionLabelMode = [NSNumber numberWithInt: newLabelIdx];
         self.directionLbl.text = [DistancePresetViewController labelForDirectionIndex: [self.directionLabelMode intValue]];
         
-        NSString *defaultsKey;
         if (self.motorNumber == 1)
         {
-            defaultsKey = @"slideDirectionMode";
+            self.settings.slideDirectionMode = self.directionLabelMode;
         }
         else if (self.motorNumber == 2)
         {
-            defaultsKey = @"panDirectionMode";
+            self.settings.panDirectionMode = self.directionLabelMode;
         }
         else if (self.motorNumber == 3)
         {
-            defaultsKey = @"tiltDirectionMode";
+            self.settings.tiltDirectionMode = self.directionLabelMode;
         }
-        
-        [appExecutive.defaults setObject:self.directionLabelMode forKey:defaultsKey];
-        [self.appExecutive.defaults synchronize];
         
         [self updateInvertUI];
     }
+    else if ([title isEqualToString: @"Channel Name"])
+    {
+        UITextField *	valueField	= [alertView textFieldAtIndex: 0];
+        NSString *		valueText	= valueField.text;
+
+        if (self.motorNumber == 1)
+        {
+            self.settings.channel1Name = valueText;
+            self.customNameTxt.text = self.settings.channel1Name;
+        }
+        else if (self.motorNumber == 2)
+        {
+            self.settings.channel2Name = valueText;
+            self.customNameTxt.text = self.settings.channel2Name;
+        }
+        else if (self.motorNumber == 3)
+        {
+            self.settings.channel3Name = valueText;
+            self.customNameTxt.text = self.settings.channel3Name;
+        }
+        
+        [self setMotorName];
+        
+    }
+
 }
 
 

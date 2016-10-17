@@ -13,8 +13,10 @@
 #import "AppDelegate.h"
 #import "JoystickSlider.h"
 #import "HelpViewController.h"
+#import "JSDisconnectedDeviceVC.h"
 
-@interface MainViewController : UIViewController <JoystickOutput> {
+@interface MainViewController : UIViewController <JoystickOutput, UITableViewDelegate,
+                                                  UITableViewDataSource, JSDisconnectedDeviceDelegate> {
 
     bool animated1;
     
@@ -59,21 +61,10 @@
     
     AppDelegate *appDelegate;
     
-    int startTotals;
-    int midTotals;
-    int endTotals;
-    
-    int startEndTotal;
-    
-    int end2pTotals;
-    int start2pTotals;
-    
     UIView *batteryView;
     
     bool debugDistance;
     bool disconnected;
-    int start2pSet;
-    int end2pSet;
 }
 
 @property (weak, nonatomic)	IBOutlet UISwitch *dominantAxisSwitch;
@@ -132,9 +123,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *cancelStopBtn;
 @property (weak, nonatomic) IBOutlet UIView *controlBackground;
 
-@property NSNumber *slideDirectionMode;   // CW/CCW, In/Out, etc.
-@property NSNumber *panDirectionMode;     // CW/CCW, In/Out, etc.
-@property NSNumber *tiltDirectionMode;    // CW/CCW, In/Out, etc.
+@property (nonatomic, strong)				NSTimer *			sendMotorsTimer;
 
 - (IBAction) setStartPoint1:(id)sender;
 - (IBAction) goToStartPoint1:(id)sender;
@@ -152,6 +141,6 @@
 - (IBAction) handleDominantAxisSwitch: (UISwitch *) sender;
 - (IBAction) manage2P:(id)sender;
 
-@property (nonatomic, strong)				NSTimer *			sendMotorsTimer;
+- (void) activeDeviceChanged;
 
 @end

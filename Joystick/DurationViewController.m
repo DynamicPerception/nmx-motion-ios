@@ -175,13 +175,11 @@ NSArray static	*secondsStrings = nil;
     
     if (self.appExecutive.is3P)
     {
-        per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-        per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
-        per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
-        
-        NSLog(@"dv per1: %.02f",per1);
-        NSLog(@"dv per2: %.02f",per2);
-        NSLog(@"dv per3: %.02f",per3);
+        JSDeviceSettings *settings = self.appExecutive.device.settings;
+
+        per1 = (float)settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+        per2 = (float)settings.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
+        per3 = (float)settings.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
     }
 
 	if (self.userInfo)
@@ -229,7 +227,9 @@ NSArray static	*secondsStrings = nil;
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-- (void) deviceDisconnect: (id) object {
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    //NMXDevice *device = notification.object;
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self dismissViewControllerAnimated: YES completion: nil];
     });
@@ -294,18 +294,14 @@ NSArray static	*secondsStrings = nil;
     
     if (self.appExecutive.is3P)
     {
-        self.appExecutive.slide3PVal1 = [self.appExecutive.frameCountNumber floatValue] * per1;
-        self.appExecutive.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue] * per2;
-        self.appExecutive.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue] * per3;
-        
-        NSLog(@"dv new 1: %.02f",appExecutive.slide3PVal1);
-        NSLog(@"dv new 2: %.02f",appExecutive.slide3PVal2);
-        NSLog(@"dv new 3: %.02f",appExecutive.slide3PVal3);
-        
-        [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-        [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-        [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-        [appExecutive.defaults synchronize];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            JSDeviceSettings *settings = device.settings;
+
+            settings.slide3PVal1 = [self.appExecutive.frameCountNumber floatValue] * per1;
+            settings.slide3PVal2 = [self.appExecutive.frameCountNumber floatValue] * per2;
+            settings.slide3PVal3 = [self.appExecutive.frameCountNumber floatValue] * per3;
+        }
     }
 
 	[self dismissViewControllerAnimated: YES completion: nil];

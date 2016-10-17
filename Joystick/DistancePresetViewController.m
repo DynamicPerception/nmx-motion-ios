@@ -1,5 +1,4 @@
 //
-//  BacklashViewController.m
 //  Joystick
 //
 //  Created by Mark Zykin on 4/6/15.
@@ -38,11 +37,6 @@
 @implementation DistancePresetViewController
 
 
-#pragma mark Public Propery Synthesis
-
-@synthesize delegate;
-@synthesize backlash;
-
 
 #pragma mark Private Propery Synthesis
 
@@ -50,18 +44,6 @@
 
 @synthesize presetList, presetStringList, setting, currentSettingString,currentCustomVal;
 
-
-#pragma mark Public Propery Methods
-
-- (NSInteger) backlash {
-
-    return backlash;
-}
-
-- (void) setBacklash: (NSInteger) value {
-
-    backlash = value;
-}
 
 #pragma mark Private Propery Methods
 
@@ -94,6 +76,11 @@
     
     if (setting == 0) //Gear
     {
+        NSDictionary *dict4 = [[NSDictionary alloc] initWithObjectsAndKeys:
+                               @"60:1", @"val1", nil];
+        
+        [presetList addObject:dict4];
+
         NSDictionary *dict1 = [[NSDictionary alloc] initWithObjectsAndKeys:
                                @"27:1", @"val1", nil];
         
@@ -110,6 +97,7 @@
                                @"5:1", @"val1", nil];
         
         [presetList addObject:dict3];
+        
     }
     else if (setting == 1) //Rig
     {
@@ -127,11 +115,15 @@
                                @"Linear Custom", @"val1", nil];
         
         [presetList addObject:dict4];
-//
-//        NSDictionary *dict5 = [[NSDictionary alloc] initWithObjectsAndKeys:
-//                               @"Rotary Custom", @"val1", nil];
-//        
-//        [presetList addObject:dict5];
+
+        NMXDevice *device = [AppExecutive sharedInstance].device;
+        if (device && device.fwVersion >= 72)
+        {
+            NSDictionary *dict5 = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                   @"Sapphire (1:1)", @"val1", nil];
+        
+            [presetList addObject:dict5];
+        }
     }
     else if (setting == 2)  // Direction label
     {
@@ -151,24 +143,52 @@
 
         }
     }
-    
-    
-    if (setting == 0)
+    else if (setting == 3)  // Max Motor Speed
     {
-        if ([currentSettingString isEqualToString:@"27:1"])
+        NSDictionary *dict1 = [[NSDictionary alloc] initWithObjectsAndKeys:
+                               @"3000", @"val1", nil];
+        
+        [presetList addObject:dict1];
+        
+        NSDictionary *dict2 = [[NSDictionary alloc] initWithObjectsAndKeys:
+                               @"4000", @"val1", nil];
+        
+        [presetList addObject:dict2];
+        
+        if ([currentSettingString isEqualToString:@"3000"])
         {
             [picker selectRow:0 inComponent:0 animated:NO];
             selectedRow = 0;
         }
-        else if ([currentSettingString isEqualToString:@"19:1"])
+        else
         {
             [picker selectRow:1 inComponent:0 animated:NO];
             selectedRow = 1;
         }
-        else
+    }
+    
+    
+    if (setting == 0)
+    {
+        if ([currentSettingString isEqualToString:@"60:1"])
+        {
+            [picker selectRow:0 inComponent:0 animated:NO];
+            selectedRow = 0;
+        }
+        else if ([currentSettingString isEqualToString:@"27:1"])
+        {
+            [picker selectRow:1 inComponent:0 animated:NO];
+            selectedRow = 1;
+        }
+        else if ([currentSettingString isEqualToString:@"19:1"])
         {
             [picker selectRow:2 inComponent:0 animated:NO];
             selectedRow = 2;
+        }
+        else
+        {
+            [picker selectRow:3 inComponent:0 animated:NO];
+            selectedRow = 3;
         }
     }
     else if (setting == 1)
@@ -182,6 +202,11 @@
         {
             [picker selectRow:1 inComponent:0 animated:NO];
             selectedRow = 1;
+        }
+        else if ([currentSettingString containsString:@"Sapphire"])
+        {
+            [picker selectRow:3 inComponent:0 animated:NO];
+            selectedRow = 3;
         }
         else
         {
@@ -261,7 +286,7 @@
 
 - (IBAction) handleOkButton: (id) sender {
     
-    if (setting == 0 || setting == 2)
+    if (setting == 0 || setting == 2 || setting == 3)
     {
         [[NSNotificationCenter defaultCenter]
          postNotificationName:@"loadDistancePreset"
@@ -274,11 +299,6 @@
         if (selectedRow == 2)
         {
            heading = @"Linear Custom";
-            [self performSegueWithIdentifier:@"LinearRotarySegue" sender:self];
-        }
-        else if (selectedRow == 3)
-        {
-            heading = @"Rotary Custom";
             [self performSegueWithIdentifier:@"LinearRotarySegue" sender:self];
         }
         else

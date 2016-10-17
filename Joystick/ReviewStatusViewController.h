@@ -25,11 +25,20 @@
 #import "DeviceSettingsViewController.h"
 #import "HelpViewController.h"
 #import "MBProgressHUD.h"
+#import "JSDisconnectedDeviceVC.h"
 
 NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewController";
 
 
-@interface ReviewStatusViewController : UIViewController <NMXDeviceDelegate, NMXDeviceManagerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate,ELCImagePickerControllerDelegate,UIScrollViewDelegate,UIActionSheetDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate,UIDocumentInteractionControllerDelegate> {
+@interface ReviewStatusViewController : UIViewController <NMXDeviceDelegate, NMXDeviceManagerDelegate,
+                                                          UIImagePickerControllerDelegate,UIActionSheetDelegate,
+                                                          ELCImagePickerControllerDelegate,UIScrollViewDelegate,
+                                                          UIActionSheetDelegate,MFMessageComposeViewControllerDelegate,
+                                                          MFMailComposeViewControllerDelegate,
+                                                          UIDocumentInteractionControllerDelegate,
+                                                          UIPickerViewDelegate, UIPickerViewDataSource,
+                                                          JSDisconnectedDeviceDelegate>
+{
 
     float playheadInterval;
     float lastX;
@@ -49,8 +58,6 @@ NSString static	*kSegueToReviewStatusViewController	= @"SegueToReviewStatusViewC
 //    int hours;
 //    int minutes;
 //    int seconds;
-    
-    NMXDevice * device;
     
     float masterFrameCount;
     float graphWidth;

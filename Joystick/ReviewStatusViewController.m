@@ -64,6 +64,7 @@ typedef enum{
 @property (nonatomic, strong)	IBOutlet	JoyButton *			stopProgramButton;
 @property (weak, nonatomic) IBOutlet        JoyButton *         reconnectButton;
 @property (weak, nonatomic) IBOutlet        UILabel *           disconnectedLabel;
+@property (strong, nonatomic)   IBOutlet    UIPickerView *      deviceSelectionPicker;
 
 @property (nonatomic, strong)				NSArray *			stateButtons;
 
@@ -84,8 +85,13 @@ typedef enum{
 @property                                   float               previousPercentage;
 @property                                   BOOL                reversing;
 
+@property                                   NMXDevice          *displayedDevice;
+
+@property JSDisconnectedDeviceVC *disconnectedDeviceVC;
+
 @end
 
+NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedSequeFromReviewStatus";
 
 //------------------------------------------------------------------------------
 
@@ -249,7 +255,12 @@ typedef enum{
         
     appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
-    device = [AppExecutive sharedInstance].device;
+    self.deviceSelectionPicker.delegate = self;
+    self.deviceSelectionPicker.dataSource = self;
+    self.deviceSelectionPicker.transform = CGAffineTransformMakeScale(0.8, 0.8);
+    [self setDevicePickerVisible: YES];
+    
+    self.displayedDevice = self.appExecutive.device;
     
     screenWidth = self.view.frame.size.width;
     
@@ -266,21 +277,6 @@ typedef enum{
     
     [goBtn addTarget:self action:@selector(bypassTimer:) forControlEvents:UIControlEventTouchUpInside];
     
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-	 selector:@selector(handleShotDurationNotification:)
-	 name:@"chooseReviewShotDuration" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-	 addObserver:self
-	 selector:@selector(handleAddKeyframeDebug:)
-	 name:@"debugKeyframePosition" object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(deviceDisconnect:)
-                                                 name: kDeviceDisconnectedNotification
-                                               object: nil];
-    
     timerContainer.hidden = YES;
     startTimerBtn.hidden = YES;
     keepAliveView.hidden = YES;
@@ -294,16 +290,28 @@ typedef enum{
 
     [self setupIcons];
 
-    if (device.fwVersion < 52)
+    if (self.appExecutive.device.fwVersion < 52)
     {
         [self.atProgramEndControl removeSegmentAtIndex:AtProgramEndPingPong animated:NO];
     }
-    else if ([device mainQueryPingPongMode])
+    else if ([self.appExecutive.device mainQueryPingPongMode])
     {
         [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndPingPong];
     }
     
 	[super viewDidLoad];
+}
+
+- (void) setDevicePickerVisible: (BOOL)visible
+{
+    if (self.appExecutive.deviceList.count <= 1 || self.appExecutive.is3P)
+    {
+        self.deviceSelectionPicker.hidden = YES;
+    }
+    else
+    {
+        self.deviceSelectionPicker.hidden = !visible;
+    }
 }
 
 - (void) setupIcons {
@@ -374,6 +382,7 @@ typedef enum{
         startTimerBtn.hidden = YES;
         timerContainer.hidden = NO;
         pauseProgramButton.hidden = YES;
+        [self setDevicePickerVisible: NO];
     }
 }
 
@@ -401,7 +410,10 @@ typedef enum{
     
     [self setControlVisibilityForDelayState:YES];
     
-    [device setDelayProgramStartTimer:countdownTime];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device setDelayProgramStartTimer:countdownTime];
+    }
     
     [self manageCountdownTimer];
     
@@ -411,16 +423,17 @@ typedef enum{
 - (void) reconnectDelay
 {
     timerContainer.hidden = NO;
+    [self setDevicePickerVisible: NO];
     
     if (self.appExecutive.is3P == NO)
     {
-        self.totalRunTime = [device mainQueryTotalRunTime];
-        self.lastRunTime = [device mainQueryRunTime];
+        self.totalRunTime = [self.appExecutive.device mainQueryTotalRunTime];
+        self.lastRunTime = [self.appExecutive.device mainQueryRunTime];
     }
     else
     {
-        self.lastRunTime = [device queryKeyFrameProgramCurrentTime];
-        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+        self.lastRunTime = [self.appExecutive.device queryKeyFrameProgramCurrentTime];
+        self.totalRunTime = [self.appExecutive.device queryKeyFrameProgramMaxTime];
     }
     
     self.timeOfLastRunTime = time(nil);
@@ -502,6 +515,7 @@ typedef enum{
         [countdownTimer invalidate];
         
         timerContainer.hidden = YES;
+        [self setDevicePickerVisible: YES];
         cancelBtn.hidden = YES;
         goBtn.hidden = YES;
         pauseProgramButton.hidden = NO;
@@ -512,54 +526,6 @@ typedef enum{
     }
 }
 
-//count up timer
-
-- (void) countUpTimerFired:(id)sender {
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        NSDate *currentDate = [NSDate date];
-        NSTimeInterval timeInterval = [currentDate timeIntervalSinceDate:startDate];
-        NSDate *timerDate = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        //[dateFormatter setDateFormat:@"HH:mm:ss.SSS"];
-        //[dateFormatter setDateFormat:@"mm:ss.SSS"];
-        [dateFormatter setDateFormat:@"HH:mm:ss"];
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0.0]];
-        NSString *timeString = [dateFormatter stringFromDate:timerDate];
-        timerLbl.text = timeString;
-    });
-}
-
-- (void) manageCountupTimer {
-    
-    if(!running)
-    {
-        startDate = [NSDate date];
-        
-        running = TRUE;
-        
-        //[sender setTitle:@"Stop" forState:UIControlStateNormal];
-        
-        if (stopTimer == nil)
-        {
-            stopTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/10.0
-                                                         target:self
-                                                       selector:@selector(countUpTimerFired:)
-                                                       userInfo:nil
-                                                        repeats:YES];
-        }
-    }
-    else
-    {
-        running = FALSE;
-        
-        //[sender setTitle:@"Start" forState:UIControlStateNormal];
-        
-        [stopTimer invalidate];
-        stopTimer = nil;
-    }
-}
 
 - (IBAction) resetPressed:(id)sender{
     
@@ -583,14 +549,38 @@ typedef enum{
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
 
-        [[AppExecutive sharedInstance].device takeUpBacklashKeyFrameProgram];
-        [[AppExecutive sharedInstance].device startKeyFrameProgram];
-
+        NSUInteger deviceCount = self.appExecutive.deviceList.count;
+        
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device takeUpBacklashKeyFrameProgram];
+            [device mainSetControllerCount: (int)deviceCount];
+        }
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device startKeyFrameProgram];
+        }
         [self startKeyframeTimer];
     
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         
     });
+}
+
+- (void) start2PProgram
+{
+    NSUInteger deviceCount = self.appExecutive.deviceList.count;
+    
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device mainSetControllerCount: (int)deviceCount];
+    }
+
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device mainStartPlannedMove];
+    }
+
 }
 
 - (void) doStartMove {
@@ -603,7 +593,7 @@ typedef enum{
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+        [self start2PProgram];
     }
     
     if(self.programMode != NMXProgramModeVideo)
@@ -617,17 +607,17 @@ typedef enum{
     
     if (self.appExecutive.is3P == NO)
     {
-        self.totalRunTime = [device mainQueryTotalRunTime];
+        self.totalRunTime = [self.appExecutive.device mainQueryTotalRunTime];
         self.statusTimer = self.statusTimer;
     }
     else
     {
-        self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+        self.totalRunTime = [self.appExecutive.device queryKeyFrameProgramMaxTime];
     }
     
     if (self.programMode != NMXProgramModeVideo)
     {
-        self.timePerFrame = self.totalRunTime / [device cameraQueryMaxShots];
+        self.timePerFrame = self.totalRunTime / [self.appExecutive.device cameraQueryMaxShots];
     }
 }
 
@@ -653,7 +643,7 @@ typedef enum{
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+        [self start2PProgram];
     }
     
     [self transitionToState: ControllerStatePauseProgram];
@@ -686,6 +676,20 @@ typedef enum{
 - (void) viewWillAppear: (BOOL) animated {
     
 	[super viewWillAppear: animated];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleShotDurationNotification:)
+                                                 name:@"chooseReviewShotDuration" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleAddKeyframeDebug:)
+                                                 name:@"debugKeyframePosition" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(deviceDisconnect:)
+                                                 name: kDeviceDisconnectedNotification
+                                               object: nil];
+    
 	[self.view sendSubviewToBack: self.controlBackground];
 
     [self.reconnectButton setHidden: true];
@@ -702,22 +706,18 @@ typedef enum{
     
     if (appExecutive.is3P == YES)
     {
-        runStatus = [device queryKeyFrameProgramRunState];
+        runStatus = [self.appExecutive.device queryKeyFrameProgramRunState];
     }
     else
     {
-        runStatus = [device mainQueryRunStatus];
+        runStatus = [self.appExecutive.device mainQueryRunStatus];
     }
 
-    
-    //NSLog(@"viewWillAppear status: %i", runStatus);
-    //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
-    //NSLog(@"viewWillAppear savedSecondsLeft: %i", savedSecondsLeft);
-    
     [self.view bringSubviewToFront:timerContainer];
     timerContainer.hidden = YES;
+    [self setDevicePickerVisible: YES];
     
-    queryFPS = [device mainQueryFPS];
+    queryFPS = [self.appExecutive.device mainQueryFPS];
     
     switch (queryFPS)
     {
@@ -815,7 +815,7 @@ typedef enum{
                 [self transitionToPauseProgramState];
             }
 
-            self.totalRunTime = [device queryKeyFrameProgramMaxTime];
+            self.totalRunTime = [self.appExecutive.device queryKeyFrameProgramMaxTime];
             
             [self startKeyframeTimer];
         }
@@ -832,7 +832,10 @@ typedef enum{
         if (!(runStatus & NMXRunStatusRunning) &&
             !(runStatus & NMXRunStatusPaused) && !camClosed)
         {
-            [self initKeyFrameValues];
+            for (NMXDevice *device in self.appExecutive.deviceList)
+            {
+                [self initKeyFrameValues: device];
+            }
         }
     }
     else
@@ -854,7 +857,7 @@ typedef enum{
     [self showVoltage];
 }
 
-- (void) initKeyFrameValues {
+- (void) initKeyFrameValues: (NMXDevice *)device {
     
     //for shoot move, absicssa is multiple of 1000
 
@@ -880,8 +883,8 @@ typedef enum{
     //slide motor
     
     
-    [appExecutive.device setCurrentKeyFrameAxis:0];
-    [appExecutive.device setKeyFrameCount:3];
+    [device setCurrentKeyFrameAxis:0];
+    [device setKeyFrameCount:3];
     
 //    int sd = [self.appExecutive.shotDurationNumber intValue];
 //        
@@ -889,16 +892,18 @@ typedef enum{
     
     if (self.programMode == NMXProgramModeVideo)
     {
-        [appExecutive.device setKeyFrameVideoTime:[self.appExecutive.videoLengthNumber intValue]];
+        [device setKeyFrameVideoTime:[self.appExecutive.videoLengthNumber intValue]];
     }
     
-    float val1 = (float)((int)(self.appExecutive.slide3PVal1 - 1));
-    float val2 = (float)((int)(self.appExecutive.slide3PVal2 - 1));
-    float val3 = (float)((int)(self.appExecutive.slide3PVal3 - 1));
+    JSDeviceSettings *settings = device.settings;
     
-    float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-    float per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
-    float per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
+    float val1 = (float)((int)(settings.slide3PVal1 - 1));
+    float val2 = (float)((int)(settings.slide3PVal2 - 1));
+    float val3 = (float)((int)(settings.slide3PVal3 - 1));
+    
+    float per1 = (float)settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+    float per2 = (float)settings.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
+    float per3 = (float)settings.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
     
     if (self.programMode == NMXProgramModeVideo)
     {
@@ -908,18 +913,16 @@ typedef enum{
     }
     else if (self.appExecutive.isContinuous == YES)
     {
-        //NSLog(@"isContinuous");
-        
-        val1 = (float)((int)(self.appExecutive.slide3PVal1 * [self.appExecutive.intervalNumber intValue]));
-        val2 = (float)((int)(self.appExecutive.slide3PVal2 * [self.appExecutive.intervalNumber intValue]));
-        val3 = (float)((int)(self.appExecutive.slide3PVal3 * [self.appExecutive.intervalNumber intValue]));
+        val1 = (float)((int)(settings.slide3PVal1 * [self.appExecutive.intervalNumber intValue]));
+        val2 = (float)((int)(settings.slide3PVal2 * [self.appExecutive.intervalNumber intValue]));
+        val3 = (float)((int)(settings.slide3PVal3 * [self.appExecutive.intervalNumber intValue]));
     }
     
-    float conversionFactor = (float)appExecutive.microstep1 / 16;
+    float conversionFactor = (float)settings.microstep1 / 16;
     
-    float startSlideOut = self.appExecutive.scaledStart3PSlideDistance * conversionFactor;
-    float midSlideOut = self.appExecutive.scaledMid3PSlideDistance * conversionFactor;
-    float endSlideOut = self.appExecutive.scaledEnd3PSlideDistance * conversionFactor;
+    float startSlideOut = settings.scaledStart3PSlideDistance * conversionFactor;
+    float midSlideOut = settings.scaledMid3PSlideDistance * conversionFactor;
+    float endSlideOut = settings.scaledEnd3PSlideDistance * conversionFactor;
 
     kfm = keyframeArray[0];
     kfm.time = val1;
@@ -934,47 +937,35 @@ typedef enum{
     kfm.position = endSlideOut;
     kfm.velocity = 0;
     
-    [appExecutive.device setKeyFrameAbscissa:val1];
-    [appExecutive.device setKeyFrameAbscissa:val2];
-    [appExecutive.device setKeyFrameAbscissa:val3];
+    [device setKeyFrameAbscissa:val1];
+    [device setKeyFrameAbscissa:val2];
+    [device setKeyFrameAbscissa:val3];
     [hs optimizePointVelForAxis:keyframeArray];
 
-    NSLog(@"Slider Motor keyframes");
-    NSLog(@"val1: %f   position : %g",(float)val1, startSlideOut);
-    NSLog(@"val2: %f   position : %g",(float)val2, midSlideOut);
-    NSLog(@"val3: %f   position : %g",(float)val3, endSlideOut);
+    [device setKeyFramePosition:startSlideOut];
+    [device setKeyFramePosition:midSlideOut];
+    [device setKeyFramePosition:endSlideOut];
     
-    NSLog(@"appExecutive.microstep1: %f",(float)appExecutive.microstep1);
-
+    [device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:keyframeArray[1].velocity];
+    [device setKeyFrameVelocity:(float)0];
     
-    [appExecutive.device setKeyFramePosition:startSlideOut];
-    [appExecutive.device setKeyFramePosition:midSlideOut];
-    [appExecutive.device setKeyFramePosition:endSlideOut];
-    
-    [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
-    
-    NSLog(@"mid slide Velocity: %g",keyframeArray[1].velocity);
-    
-    [appExecutive.device endKeyFrameTransmission];
+    [device endKeyFrameTransmission];
     
     //pan motor
     
-    [appExecutive.device setCurrentKeyFrameAxis:1];
-    [appExecutive.device setKeyFrameCount:3];
+    [device setCurrentKeyFrameAxis:1];
+    [device setKeyFrameCount:3];
     
-    [appExecutive.device setKeyFrameAbscissa:val1]; //15
-    [appExecutive.device setKeyFrameAbscissa:val2]; //100
-    [appExecutive.device setKeyFrameAbscissa:val3]; //250
+    [device setKeyFrameAbscissa:val1]; //15
+    [device setKeyFrameAbscissa:val2]; //100
+    [device setKeyFrameAbscissa:val3]; //250
     
-    NSLog(@"appExecutive.microstep2: %f",(float)appExecutive.microstep2);
+    float conversionFactor2 = (float)settings.microstep2 / 16;
     
-    float conversionFactor2 = (float)appExecutive.microstep2 / 16;
-    
-    float startPanOut = self.appExecutive.scaledStart3PPanDistance * conversionFactor2;
-    float midPanOut = self.appExecutive.scaledMid3PPanDistance * conversionFactor2;
-    float endPanOut = self.appExecutive.scaledEnd3PPanDistance * conversionFactor2;
+    float startPanOut = settings.scaledStart3PPanDistance * conversionFactor2;
+    float midPanOut = settings.scaledMid3PPanDistance * conversionFactor2;
+    float endPanOut = settings.scaledEnd3PPanDistance * conversionFactor2;
     
     kfm = keyframeArray[0];
     kfm.time = val1;
@@ -991,48 +982,30 @@ typedef enum{
 
     [hs optimizePointVelForAxis:keyframeArray];
     
-    [appExecutive.device setKeyFramePosition:startPanOut];
-    [appExecutive.device setKeyFramePosition:midPanOut];
-    [appExecutive.device setKeyFramePosition:endPanOut];
+    [device setKeyFramePosition:startPanOut];
+    [device setKeyFramePosition:midPanOut];
+    [device setKeyFramePosition:endPanOut];
     
-    [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:keyframeArray[1].velocity];
+    [device setKeyFrameVelocity:(float)0];
     
-    NSLog(@"mid pan Velocity: %g",keyframeArray[1].velocity);
-    
-    [appExecutive.device endKeyFrameTransmission];
+    [device endKeyFrameTransmission];
     
     //tilt motor
     
-    [appExecutive.device setCurrentKeyFrameAxis:2];
-    [appExecutive.device setKeyFrameCount:3];
+    [device setCurrentKeyFrameAxis:2];
+    [device setKeyFrameCount:3];
     
-    [appExecutive.device setKeyFrameAbscissa:val1]; //15
-    [appExecutive.device setKeyFrameAbscissa:val2]; //100
-    [appExecutive.device setKeyFrameAbscissa:val3]; //250
+    [device setKeyFrameAbscissa:val1]; //15
+    [device setKeyFrameAbscissa:val2]; //100
+    [device setKeyFrameAbscissa:val3]; //250
     
-    NSLog(@"appExecutive.microstep3: %f",(float)appExecutive.microstep3);
+    float conversionFactor3 = (float)settings.microstep3 / 16;
     
-    float conversionFactor3 = (float)appExecutive.microstep3 / 16;
-    
-    float startTiltOut = self.appExecutive.scaledStart3PTiltDistance * conversionFactor3;
-    float midTiltOut = self.appExecutive.scaledMid3PTiltDistance * conversionFactor3;
-    float endTiltOut = self.appExecutive.scaledEnd3PTiltDistance * conversionFactor3;
-    
-    NSLog(@"startSlideOut: %f",startSlideOut);
-    NSLog(@"startPanOut: %f",startPanOut);
-    NSLog(@"startTiltOut: %f",startTiltOut);
-    
-    NSLog(@"midSlideOut: %f",midSlideOut);
-    NSLog(@"midPanOut: %f",midPanOut);
-    NSLog(@"midTiltOut: %f",midTiltOut);
-    
-    NSLog(@"endSlideOut: %f",endSlideOut);
-    NSLog(@"endPanOut: %f",endPanOut);
-    NSLog(@"endTiltOut: %f",endTiltOut);
-    
-    debugTxt.text = @"";
+    float startTiltOut = settings.scaledStart3PTiltDistance * conversionFactor3;
+    float midTiltOut = settings.scaledMid3PTiltDistance * conversionFactor3;
+    float endTiltOut = settings.scaledEnd3PTiltDistance * conversionFactor3;
     
     debugTxt.text = [NSString stringWithFormat:@"%@\n start tilt in: %f\n mid tilt in: %f\n end tilt in: %f",debugTxt.text, startTiltOut,midTiltOut,endTiltOut];
     
@@ -1051,17 +1024,17 @@ typedef enum{
     
     [hs optimizePointVelForAxis:keyframeArray];
     
-    [appExecutive.device setKeyFramePosition:startTiltOut];
-    [appExecutive.device setKeyFramePosition:midTiltOut];
-    [appExecutive.device setKeyFramePosition:endTiltOut];
+    [device setKeyFramePosition:startTiltOut];
+    [device setKeyFramePosition:midTiltOut];
+    [device setKeyFramePosition:endTiltOut];
     
-    [appExecutive.device setKeyFrameVelocity:(float)0];
-    [appExecutive.device setKeyFrameVelocity:keyframeArray[1].velocity];
-    [appExecutive.device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:(float)0];
+    [device setKeyFrameVelocity:keyframeArray[1].velocity];
+    [device setKeyFrameVelocity:(float)0];
     
     NSLog(@"mid tilt Velocity: %g",keyframeArray[1].velocity);
     
-    [appExecutive.device endKeyFrameTransmission];
+    [device endKeyFrameTransmission];
         
     //    if (self.programMode == NMXProgramModeSMS)
     //    {
@@ -1080,9 +1053,7 @@ typedef enum{
 
 - (void) setupAfterConnection {
 
-    device = [AppExecutive sharedInstance].device;
-
-    self.programMode = [device mainQueryProgramMode];
+    self.programMode = [self.appExecutive.device mainQueryProgramMode];
     
     switch (self.programMode)
     {
@@ -1105,7 +1076,7 @@ typedef enum{
             self.timelapseView.hidden = YES;
             self.videoView.hidden = NO;
             
-            if ([device mainQueryPingPongMode])
+            if ([self.appExecutive.device mainQueryPingPongMode])
             {
                 self.videoTitle.text = @"Video Ping Pong";
             }
@@ -1119,11 +1090,11 @@ typedef enum{
     NMXRunStatus runStatus;
     if (self.appExecutive.is3P == NO)
     {
-        runStatus = [device mainQueryRunStatus];
+        runStatus = [self.appExecutive.device mainQueryRunStatus];
     }
     else
     {
-        runStatus = [device queryKeyFrameProgramRunState];
+        runStatus = [self.appExecutive.device queryKeyFrameProgramRunState];
     }
 
     if (runStatus & NMXRunStatusDelayTimer)
@@ -1151,10 +1122,14 @@ typedef enum{
     [self.disconnectedTimer invalidate];
     self.disconnectedTimer = nil;
 
-    [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
+    if (!self.disconnectedDeviceVC)
+    {
+        [[AppExecutive sharedInstance].deviceManager setDelegate: nil];
+    }
     
     [super viewWillDisappear: animated];
 
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 - (void) dealloc
@@ -1230,6 +1205,11 @@ typedef enum{
         
         [msvc setScreenInd:5];
     }
+    else if ([segue.identifier isEqualToString:SegueToDisconnectedDeviceViewController])
+    {
+        self.disconnectedDeviceVC = segue.destinationViewController;
+        self.disconnectedDeviceVC.delegate = self;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -1238,39 +1218,56 @@ typedef enum{
 
 - (IBAction)mangeAtProgramEndSelection:(id)sender {
     
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        NSNumber *mode = [appExecutive.userDefaults objectForKey: @"keepAlive"];
+        self.atProgramEndControl.selectedSegmentIndex = [mode intValue];
+        return;
+    }
+    
     NSInteger atEndSelection = self.atProgramEndControl.selectedSegmentIndex;
     
-    [appExecutive.defaults setObject: [NSNumber numberWithLong:atEndSelection] forKey: @"keepAlive"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithLong:atEndSelection] forKey: @"keepAlive"];
+    [appExecutive.userDefaults synchronize];
     
-    //NSLog(@"keepAlive setting: %ld",(long)[appExecutive.defaults integerForKey: @"keepAlive"]);
-    
-    [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
-    if (device.fwVersion >= 52)
+    for (NMXDevice *device in self.appExecutive.deviceList)
     {
-        [device mainSetPingPongMode: atEndSelection==AtProgramEndPingPong];
+        [device keepAlive: atEndSelection==AtProgramEndKeepAlive];
+        if (device.fwVersion >= 52)
+        {
+            [device mainSetPingPongMode: atEndSelection==AtProgramEndPingPong];
+        }
     }
 
 }
 
 - (IBAction) cancelTimer: (JoyButton *) sender {
 
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
+    
     cancelBtn.hidden = YES;
     goBtn.hidden = YES;
-    
-    //[device setDelayProgramStartTimer:0];
     
     if (appExecutive.is3P == YES)
     {
         originalCountdownTime = 0;
-        [[AppExecutive sharedInstance].device stopKeyFrameProgram];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device stopKeyFrameProgram];
+        }
         
         [keyframeTimer invalidate];
         keyframeTimer = nil;
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStopPlannedMove];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainStopPlannedMove];
+        }
         
         [self.statusTimer invalidate];
         self.statusTimer = nil;
@@ -1278,15 +1275,19 @@ typedef enum{
     
     [countdownTimer invalidate];
     
-    //[self manageCountupTimer];
-    
     [self transitionToMotorRampingOrStartProgramState];
     startTimerBtn.hidden = NO;
 
     timerContainer.hidden = YES;
+    [self setDevicePickerVisible: YES];
 }
 
 - (IBAction) bypassTimer: (JoyButton *) sender {
+
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
 
     cancelBtn.hidden = YES;
     goBtn.hidden = YES;
@@ -1294,18 +1295,28 @@ typedef enum{
     [countdownTimer invalidate];
     
     timerContainer.hidden = YES;
+    [self setDevicePickerVisible: YES];
     
     if (appExecutive.is3P == YES)
     {
         originalCountdownTime = 0;
-        [[AppExecutive sharedInstance].device stopKeyFrameProgram];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device stopKeyFrameProgram];
+        }
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStopPlannedMove];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainStopPlannedMove];
+        }
     }
     
-    [device setDelayProgramStartTimer:0];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device setDelayProgramStartTimer:0];
+    }
     
     [NSTimer scheduledTimerWithTimeInterval:0.150 target:self selector:@selector(removeDelayTimer) userInfo:nil repeats:NO];
 }
@@ -1322,7 +1333,7 @@ typedef enum{
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+        [self start2PProgram];
     }
     
     [self showKeepAliveView];
@@ -1337,18 +1348,26 @@ typedef enum{
 
 - (IBAction) handleSendMotorsToStartButton: (JoyButton *) sender {
     
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
+
 	//DDLogDebug(@"Send Motors To Start Button");
     originalCountdownTime = 0;
     
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
+    [appExecutive.userDefaults synchronize];
     
-    // Set to fastest setting to allow return to home to perform optimally
-    [device motorSet: device.sledMotor Microstep: 4];
-    [device motorSet: device.panMotor Microstep: 4];
-    [device motorSet: device.tiltMotor Microstep: 4];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        // Set to fastest setting to allow return to home to perform optimally
+        [device motorSet: device.sledMotor Microstep: 4];
+        [device motorSet: device.panMotor Microstep: 4];
+        [device motorSet: device.tiltMotor Microstep: 4];
     
-    [device mainSendMotorsToStart];
+        [device mainSendMotorsToStart];
+    }
 
 	[self transitionToState: ControllerStateMotorRampingOrStartProgram];
     
@@ -1357,10 +1376,18 @@ typedef enum{
 
 - (IBAction) handleStartProgramButton: (JoyButton *) sender {
     
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
+
 	DDLogDebug(@"Start Program Button");
     originalCountdownTime = 0;
 
-    [device setDelayProgramStartTimer:0];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        [device setDelayProgramStartTimer:0];
+    }
 
     [self startProgram];
 }
@@ -1374,6 +1401,11 @@ typedef enum{
 
 - (IBAction) handleConfirmPauseProgramButton: (JoyButton *) sender {
 
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
+    
 	DDLogDebug(@"Confirm Pause Program Button");
     
     self.confirmPauseTimer = nil;
@@ -1385,18 +1417,29 @@ typedef enum{
         [keyframeTimer invalidate];
         keyframeTimer = nil;
 
-        [[AppExecutive sharedInstance].device pauseKeyFrameProgram];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device pauseKeyFrameProgram];
+        }
     }
     else
     {
         self.statusTimer = nil;
-        [[AppExecutive sharedInstance].device mainPausePlannedMove];
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            [device mainPausePlannedMove];
+        }
     }
 }
 
 - (IBAction) handleResumeProgramButton: (JoyButton *) sender {
 
 	DDLogDebug(@"Resume Program Button");
+    
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
 
 	[self transitionToState: ControllerStatePauseProgram];
     
@@ -1408,41 +1451,27 @@ typedef enum{
     }
     else
     {
-        [[AppExecutive sharedInstance].device mainStartPlannedMove];
+        [self start2PProgram];
     }
 }
 
 - (IBAction) handleStopProgramButton: (JoyButton *) sender {
     
 	DDLogDebug(@"Stop Program Button");
+
+    if (NO == [self checkDeviceConnectionBeforeAction])
+    {
+        return;
+    }
     
     [self.atProgramEndControl setSelectedSegmentIndex:AtProgramEndStop];
     
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
-    [appExecutive.defaults synchronize];
-    
-    [appExecutive.defaults setObject: @"no" forKey: @"didDisconnect"];
-    [appExecutive.defaults synchronize];
-    
-    [appExecutive.defaults setObject: appExecutive.device.name forKey: @"deviceName"];
-    [appExecutive.defaults synchronize];
+    [appExecutive.userDefaults setObject: [NSNumber numberWithInt:0] forKey: @"keepAlive"];
+    [appExecutive.userDefaults synchronize];
 
 	[self transitionToState: ControllerStateMotorRampingOrSendMotors];
-    
-    if (appExecutive.is3P == YES)
-    {
-        [[AppExecutive sharedInstance].device stopKeyFrameProgram];
-    }
-    else
-    {
-        [[AppExecutive sharedInstance].device mainStopPlannedMove];
-        
-        [device keepAlive:0];
-        if (device.fwVersion >= 52)
-        {
-            [device mainSetPingPongMode: NO];
-        }
-    }
+
+    [self.appExecutive stopProgram];
     
     keepAliveView.hidden = YES;
     
@@ -1451,17 +1480,15 @@ typedef enum{
 
 - (IBAction) handleReconnect:(id)sender {
     
-    [AppExecutive sharedInstance].device.delegate = self;
-    [[AppExecutive sharedInstance].device connect];
-    
-    //mm this looks wrong!   should only do this on didConnect
-    [self.disconnectedTimer invalidate];
-    self.disconnectedTimer = nil;
-    
-    if (self.appExecutive.is3P == YES)
+    for (NMXDevice *device in self.appExecutive.deviceList)
     {
-        [self startKeyframeTimer];
+        device.delegate = self;
+        if (device.disconnected)
+        {
+            [device connect];
+        }
     }
+    
 }
 
 - (void) didConnect: (NMXDevice *) device1 {
@@ -1476,20 +1503,22 @@ typedef enum{
     [device1 mainSetJoystickMode: false];
     
     [self showKeepAliveView];
+
+    if (self.appExecutive.is3P == YES)
+    {
+        [self startKeyframeTimer];
+    }
     
     [self setupAfterConnection];
 }
 
-- (void) didDisconnectDevice: (CBPeripheral *) peripheral {
+- (void) didDisconnectDevice: (NMXDevice *) device {
     
     DDLogDebug(@"Did Disconnect Device");
-    
-//    [appExecutive.defaults setObject: @"yes" forKey: @"didDisconnect"];
-//    [appExecutive.defaults synchronize];
-    
-    [appExecutive.defaults setObject: appExecutive.device.name forKey: @"deviceName"];
-    [appExecutive.defaults synchronize];
 
+    NMXDevice *newDevice = [self findConnectedDevice];
+    if (newDevice) return;
+    
     dispatch_async(dispatch_get_main_queue(), ^(void) {
 
         disconnectStatusLbl.text = @"Did Disconnect Device Init";
@@ -1523,9 +1552,38 @@ typedef enum{
     });
 }
 
-- (void) deviceDisconnect: (id) object
+- (BOOL) checkDeviceConnectionBeforeAction
 {
-    [self didDisconnectDevice: nil];
+    NMXDevice *disconnectedDevice = nil;
+    for (NMXDevice *aDevice in self.appExecutive.deviceList)
+    {
+        if (aDevice.disconnected == YES)
+        {
+            disconnectedDevice = aDevice;
+        }
+    }
+    
+    if (disconnectedDevice)
+    {
+        if (self.disconnectedDeviceVC)
+        {
+            [self.disconnectedDeviceVC reloadDeviceList];
+        }
+        else
+        {
+            [self performSegueWithIdentifier: SegueToDisconnectedDeviceViewController sender: self];
+        }
+        
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    NMXDevice *device = notification.object;
+    [self didDisconnectDevice: device];
 }
 
 
@@ -1612,8 +1670,6 @@ typedef enum{
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"showNotificationHost"
      object:self.restorationIdentifier];
-    
-    //[[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
     
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         
@@ -1705,14 +1761,22 @@ typedef enum{
 
 - (void) handleSendMotorsTimer: (NSTimer *) sender {
     
-    bool moving;
+    bool moving = NO;
     
-    moving = [device motorQueryRunning: device.sledMotor];
-    
-    if (!moving)
-        moving = [device motorQueryRunning: device.panMotor];
-    if (!moving)
-        moving = [device motorQueryRunning: device.tiltMotor];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        if (!moving)
+            moving = [device motorQueryRunning: device.sledMotor];
+        if (!moving)
+            moving = [device motorQueryRunning: device.panMotor];
+        if (!moving)
+            moving = [device motorQueryRunning: device.tiltMotor];
+        
+        if (moving)
+        {
+            break;
+        }
+    }
 
     if (!moving)
     {
@@ -1723,16 +1787,20 @@ typedef enum{
             
             self.startProgramButton.enabled = YES;
             
-            if (!self.appExecutive.is3P || [device fwVersion] >= 61)
+            if (!self.appExecutive.is3P || [self.appExecutive.device fwVersion] >= 61)
             {
                 startTimerBtn.hidden = NO;
             }
-            
-            // Reset motors to correct microstep values
-            [device motorSet: device.sledMotor Microstep: appExecutive.microstep1];
-            [device motorSet: device.panMotor Microstep: appExecutive.microstep2];
-            [device motorSet: device.tiltMotor Microstep: appExecutive.microstep3];
-            
+
+            for (NMXDevice *device in self.appExecutive.deviceList)
+            {
+                JSDeviceSettings *settings = device.settings;
+
+                // Reset motors to correct microstep values
+                [device motorSet: device.sledMotor Microstep: settings.microstep1];
+                [device motorSet: device.panMotor Microstep: settings.microstep2];
+                [device motorSet: device.tiltMotor Microstep: settings.microstep3];
+            }
             [MBProgressHUD hideHUDForView:self.view animated:YES];
         });
     }
@@ -1747,13 +1815,42 @@ typedef enum{
     [self.disconnectedTimer invalidate];
     self.disconnectedTimer = nil;
     
+    [self.statusTimer invalidate];
+    self.statusTimer = nil;
+    
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         
-        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];
+        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self.appExecutive.device];
     });
 }
 
+- (NMXDevice *)findConnectedDevice
+{
+    NMXDevice *device = nil;
+    for (NMXDevice *aDevice in self.appExecutive.deviceList)
+    {
+        if (aDevice.disconnected == NO)
+        {
+            device = aDevice;
+            [self.appExecutive setActiveDevice:device];
+        }
+    }
+    
+    return device;
+}
+
 - (void) handleKeyFrameStatusTimer: (NSTimer *) sender {
+    
+    NMXDevice *device = self.appExecutive.device;
+    if (device.disconnected)
+    {
+        device = [self findConnectedDevice];
+    }
+    if (nil == device)
+    {
+        [self killStatusTimerOnDisconnect];
+        return;
+    }
     
     NMXRunStatus runStatus = [device queryKeyFrameProgramRunState];
     
@@ -1800,6 +1897,7 @@ typedef enum{
     else if (runStatus & NMXRunStatusRunning)
     {
         timerContainer.hidden = YES;
+        [self setDevicePickerVisible: YES];
         
         //NSLog(@"NMXKeyFrameRunStatusRunning");
         
@@ -1940,7 +2038,7 @@ typedef enum{
                                     playhead.frame.size.width,
                                     playhead.frame.size.height);
     }
-    else if (runStatus & NMXRunStatusUnknown)
+    else if (runStatus == NMXRunStatusUnknown)
     {
         NSLog(@"something else");
         [self killStatusTimerOnDisconnect];
@@ -1960,6 +2058,20 @@ typedef enum{
 }
 
 - (void) handleStatusTimer: (NSTimer *) sender {
+    
+    NMXDevice *device = self.appExecutive.device;
+    
+    NSLog(@"Status timer from %@", device.name);
+    
+    if (device.disconnected)
+    {
+        device = [self findConnectedDevice];
+    }
+    if (nil == device)
+    {
+        [self killStatusTimerOnDisconnect];
+        return;
+    }
     
     NMXRunStatus runStatus = [device mainQueryRunStatus];
     
@@ -2045,20 +2157,9 @@ typedef enum{
     }
     else if (runStatus & NMXRunStatusRunning) {
         
-/*
- //mm debug cycle timing
-        UInt32 lastRunTime = [device mainQueryRunTime];
-        AppExecutive *ae = [AppExecutive sharedInstance];
-        NSInteger intervalTime = [ae intervalNumber].integerValue;
-        UInt32 timeIntoCycle = lastRunTime % intervalTime;
-        NSInteger focus = [ae.focusNumber integerValue];
-        NSInteger trigger = [ae.triggerNumber integerValue];
-        NSInteger delay = [ae.delayNumber integerValue];
-        NSLog(@"Into Cycle %u    Start of MM = %ld", timeIntoCycle, focus+trigger+delay-900);
-*/
-        
         timerContainer.hidden = YES;
-            
+        [self setDevicePickerVisible: YES];
+        
         //NSLog(@"NMXRunStatusRunning");
         
         int devicePercentComplete = [device mainQueryProgramPercentComplete];
@@ -2166,19 +2267,8 @@ typedef enum{
     }
     else if (runStatus == NMXRunStatusUnknown) {
         NSLog(@"something else: %i",runStatus);
-            
-        [self.statusTimer invalidate];
-        self.statusTimer = nil;
         
-        keyframeTimer = nil;
-        
-        [self.disconnectedTimer invalidate];
-        self.disconnectedTimer = nil;
-        
-        dispatch_async(dispatch_get_main_queue(), ^(void) {
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"program disconnect during run"];
-        });
+        [self killStatusTimerOnDisconnect];
         
     }
     else {
@@ -2208,6 +2298,7 @@ typedef enum{
 
 - (void) calculatePingPongReverse
 {
+    NMXDevice *device = self.appExecutive.device;
     int runningBackwards = 0;
     
     if (AtProgramEndPingPong != self.atProgramEndControl.selectedSegmentIndex)
@@ -2248,6 +2339,7 @@ typedef enum{
 
 - (void) transitionToPauseProgramState {
     
+    NMXDevice *device = self.appExecutive.device;
 	DDLogDebug(@"transitionToPauseProgramState");
 
 	self.pauseProgramButton.hidden = NO;
@@ -2314,13 +2406,16 @@ typedef enum{
 
 - (void) setupGraphViews3P {
     
+    NMXDevice *device = self.appExecutive.device;
     masterFrameCount = [self.appExecutive.frameCountNumber floatValue];
     
     graph3P.is3P = YES;
-    
-    graph3P.frame1 = appExecutive.slide3PVal1;
-    graph3P.frame2 = appExecutive.slide3PVal2;
-    graph3P.frame3 = appExecutive.slide3PVal3;
+
+    JSDeviceSettings *settings = device.settings;
+
+    graph3P.frame1 = settings.slide3PVal1;
+    graph3P.frame2 = settings.slide3PVal2;
+    graph3P.frame3 = settings.slide3PVal3;
     
     graph3P.headerString = @"3-Point Move";
     
@@ -2355,73 +2450,43 @@ typedef enum{
 
 - (void) setupGraphViews {
     
+    NMXDevice *device = self.displayedDevice;
+    JSDeviceSettings *settings = device.settings;
+
     masterFrameCount = [self.appExecutive.frameCountNumber floatValue];
     
-    NSArray *slideIncrease = [self.appExecutive slideIncreaseValues];
-    NSArray *slideDecrease = [self.appExecutive slideDecreaseValues];
-    
-    //    NSLog(@"slideIncrease: %@",slideIncrease);
-    //    NSLog(@"slideDecrease: %@",slideDecrease);
+    NSArray *slideIncrease = [settings slideIncreaseValues];
+    NSArray *slideDecrease = [settings slideDecreaseValues];
     
     float firstSlideIncreasePoint = [[slideIncrease objectAtIndex:0] floatValue];
     float secondSlideIncreasePoint = [[slideIncrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstSlideIncreasePoint: %f",firstSlideIncreasePoint);
-    //    NSLog(@"secondSlideIncreasePoint: %f",secondSlideIncreasePoint);
-    
     float firstSlideDecreasePoint = [[slideDecrease objectAtIndex:0] floatValue];
     float secondSlideDecreasePoint = [[slideDecrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstSlideDecreasePoint: %f",firstSlideDecreasePoint);
-    //    NSLog(@"secondSlideDecreasePoint: %f",secondSlideDecreasePoint);
-    
-    NSArray *panIncrease = [self.appExecutive panIncreaseValues];
-    NSArray *panDecrease = [self.appExecutive panDecreaseValues];
-    
-    //    NSLog(@"panIncrease: %@",panIncrease);
-    //    NSLog(@"panDecrease: %@",panDecrease);
+    NSArray *panIncrease = [settings panIncreaseValues];
+    NSArray *panDecrease = [settings panDecreaseValues];
     
     float firstPanIncreasePoint = [[panIncrease objectAtIndex:0] floatValue];
     float secondPanIncreasePoint = [[panIncrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstPanIncreasePoint: %f",firstPanIncreasePoint);
-    //    NSLog(@"secondPanIncreasePoint: %f",secondPanIncreasePoint);
-    
     float firstPanDecreasePoint = [[panDecrease objectAtIndex:0] floatValue];
     float secondPanDecreasePoint = [[panDecrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstPanDecreasePoint: %f",firstPanDecreasePoint);
-    //    NSLog(@"secondPanDecreasePoint: %f",secondPanDecreasePoint);
-    
-    NSArray *tiltIncrease = [self.appExecutive tiltIncreaseValues];
-    NSArray *tiltDecrease = [self.appExecutive tiltDecreaseValues];
-    
-    //    NSLog(@"tiltIncrease: %@",tiltIncrease);
-    //    NSLog(@"tiltDecrease: %@",tiltDecrease);
+    NSArray *tiltIncrease = [settings tiltIncreaseValues];
+    NSArray *tiltDecrease = [settings tiltDecreaseValues];
     
     float firstTiltIncreasePoint = [[tiltIncrease objectAtIndex:0] floatValue];
     float secondTiltIncreasePoint = [[tiltIncrease objectAtIndex:1] floatValue];
     
-    //    NSLog(@"firstTiltIncreasePoint: %f",firstTiltIncreasePoint);
-    //    NSLog(@"secondTiltIncreasePoint: %f",secondTiltIncreasePoint);
-    
     float firstTiltDecreasePoint = [[tiltDecrease objectAtIndex:0] floatValue];
     float secondTiltDecreasePoint = [[tiltDecrease objectAtIndex:1] floatValue];
-    
-    //    NSLog(@"firstTiltDecreasePoint: %f",firstTiltDecreasePoint);
-    //    NSLog(@"secondTiltDecreasePoint: %f",secondTiltDecreasePoint);
     
     float calcFirstSlideIncreasePoint = firstSlideIncreasePoint/2;
     float calcSecondSlideIncreasePoint = secondSlideIncreasePoint/2;
     
     float calcFirstSlideDecreasePoint = firstSlideDecreasePoint/2 + .5;
     float calcSecondSlideDecreasePoint = secondSlideDecreasePoint/2 + .5;
-    
-    //    NSLog(@"calcFirstSlideIncreasePoint: %f",calcFirstSlideIncreasePoint);
-    //    NSLog(@"calcSecondSlideIncreasePoint: %f",calcSecondSlideIncreasePoint);
-    //
-    //    NSLog(@"calcFirstSlideDecreasePoint: %f",calcFirstSlideDecreasePoint);
-    //    NSLog(@"calcSecondSlideDecreasePoint: %f",calcSecondSlideDecreasePoint);
     
     graphView.frame1 = calcFirstSlideIncreasePoint;
     graphView.frame2 = calcSecondSlideIncreasePoint;
@@ -2459,7 +2524,7 @@ typedef enum{
     tiltGraph.headerString = @"Tilt";
     tiltGraph.frameCount = masterFrameCount;
     
-    self.programMode = [device mainQueryProgramMode];
+    self.programMode = [self.appExecutive.device mainQueryProgramMode];
     
     if(self.programMode == NMXProgramModeVideo)
     {
@@ -2468,22 +2533,14 @@ typedef enum{
         tiltGraph.isVideo = YES;
         keepAliveView.hidden = YES;
         
-        //NSString *a = [DurationViewController stringForShortDuration: [self.appExecutive.shotDurationNumber integerValue]];
-        
         NSString *a = [ShortDurationViewController stringForShortDuration: [self.appExecutive.videoLengthNumber integerValue]];
         
         graphView.videoLength = a;
         panGraph.videoLength = a;
         tiltGraph.videoLength = a;
-        
-        //NSLog(@"ran videoLength: %@",a);
     }
     
     graphWidth = graphView.frame.size.width;
-    
-    //NSLog(@"graphViewContainer: %f", graphViewContainer.frame.size.width);
-    
-    //NSLog(@"graphWidth: %f", graphWidth);
     
     screenRatio = (screenWidth - 32)/graphWidth;
 }
@@ -2892,54 +2949,14 @@ typedef enum{
 
 - (void) showVoltageTimer {
     
-//    float voltage = self.appExecutive.voltage;
-//    
-//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-//    
-//    float diff = self.appExecutive.voltageHigh - voltage;
-//    
-//    float per = diff/range;
-//    
-//    float per2 = voltage/self.appExecutive.voltageHigh;
+    float voltagePercent = [self.appExecutive calculateVoltage: NO];
     
-    //per2 = .35;
-    
-//    NSLog(@"voltage: %.02f",voltage);
-//    NSLog(@"high: %.02f",self.appExecutive.voltageHigh);
-//    NSLog(@"low: %.02f",self.appExecutive.voltageLow);
-//    NSLog(@"range: %.02f",range);
-//    NSLog(@"diff: %.02f",diff);
-//    NSLog(@"per: %.02f",per);
-//    NSLog(@"per2: %.02f",per2);
-    
-    float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newBase: %.02f",newBase);
-    
-    float newVoltage = self.appExecutive.voltage - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newVoltage: %.02f",newVoltage);
-    
-    float per4 = newVoltage/newBase;
-    
-    //NSLog(@"per4: %.02f",per4);
-    
-    if (per4 > 1)
-    {
-        per4 = 1;
-    }
-    
-    if (per4 < 0)
-    {
-        per4 = 0;
-    }
-    
-    float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
+    float offset = 1 - (batteryIcon.frame.size.height * voltagePercent) - .5;
     
     UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
                                                          batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
                                                          batteryIcon.frame.size.width * .47,
-                                                         batteryIcon.frame.size.height * per4)];
+                                                         batteryIcon.frame.size.height * voltagePercent)];
     
 //    [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 7,
 //                                                         batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
@@ -2950,5 +2967,76 @@ typedef enum{
     
     [controlBackground addSubview:v];
 }
+
+
+#pragma mark - UIPickerViewDelegate Protocol Methods
+
+
+- (CGFloat) pickerView: (UIPickerView *) pickerView rowHeightForComponent: (NSInteger) component {
+    
+    return 18.0;
+}
+
+- (CGFloat) pickerView: (UIPickerView *) pickerView widthForComponent: (NSInteger) component {
+    
+    return 280.0;
+}
+
+- (NSAttributedString *) pickerView: (UIPickerView *) pickerView attributedTitleForRow: (NSInteger) row forComponent: (NSInteger) component {
+    
+    NSDictionary *	attributes	=  @{ NSForegroundColorAttributeName: [UIColor whiteColor]};
+    NSString *		string		= @"";
+    
+    NSArray<NMXDevice *> *devices = self.appExecutive.deviceList;
+    
+    switch (component)
+    {
+        case 0:
+            string = [self.appExecutive stringWithHandleForDeviceName: devices[row].name];
+            break;
+        default:
+            return nil;
+            break;
+    }
+    
+    return [[NSAttributedString alloc] initWithString: string attributes: attributes];
+}
+
+- (void) pickerView: (UIPickerView *) pickerView didSelectRow: (NSInteger) row inComponent: (NSInteger) component
+{
+    NSArray<NMXDevice *> *devices = self.appExecutive.deviceList;
+    self.displayedDevice = devices[row];
+    
+    [self setupGraphViews];
+    [graphView setNeedsDisplay];
+    [panGraph setNeedsDisplay];
+    [tiltGraph setNeedsDisplay];
+}
+
+
+//------------------------------------------------------------------------------
+
+#pragma mark - UIPickerViewDataSource Protocol Methods
+
+
+- (NSInteger) numberOfComponentsInPickerView: (UIPickerView *) pickerView {
+    return 1;
+}
+
+- (NSInteger) pickerView: (UIPickerView *) pickerView numberOfRowsInComponent: (NSInteger) component {
+    return self.appExecutive.deviceList.count;
+}
+
+#pragma mark JSDisconnectedDeviceDelegate
+
+- (void) willAbortReconnect
+{
+}
+
+- (void) abortReconnect
+{
+    self.disconnectedDeviceVC = nil;
+}
+
 
 @end

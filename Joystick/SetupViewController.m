@@ -74,6 +74,9 @@
 @property (strong, nonatomic) IBOutlet UIView *bufferColorBarView;
 @property (strong, nonatomic) IBOutlet UIView *intervalColorBarView;
 
+@property JSDisconnectedDeviceVC *disconnectedDeviceVC;
+@property BOOL abort;
+@property BOOL disconnected;
 
 @end
 
@@ -97,6 +100,7 @@ NSString	static	*kSegueForFrameRateInput			= @"SegueForFrameRateInput";
 NSString	static	*kSegueForTestCameraModalView		= @"SegueForTestCameraModalView";
 NSString	static	*kSegueForAboutView					= @"SegueForAboutView";
 NSString    static  *kSequeForCameraSettingsView        = @"SegueToCameraSettingsViewController";
+NSString    static	*SegueToDisconnectedDeviceViewController = @"DeviceDisconnectedSequeFromSetup";
 
 NSString	static	*kShotDurationName		= @"kShotDurationName";
 NSString	static	*kVideoLengthName		= @"kVideoLengthName";
@@ -217,28 +221,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     self.bufferColorBarView.backgroundColor = [CameraSettingsTimelineView bufferColor];
     self.intervalColorBarView.backgroundColor = [CameraSettingsTimelineView intervalColor];
     
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationLoadPreset:)
-     name:@"loadPreset" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationSavePreset:)
-     name:@"savePreset" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationRestoreDefaults:)
-     name:@"restoreDefaults" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(handleNotificationRemoveSubviews:)
-     name:@"removeSubviews" object:nil];
-    
-    appDelegate.isHome = NO;
-    
     if (self.appExecutive.isVideo == YES) {
         
         NSLog(@"isVideo");
@@ -269,60 +251,21 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) showVoltageTimer {
     
-    
-	
-//    float voltage = self.appExecutive.voltage;
-//    
-//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-//    
-//    float diff = self.appExecutive.voltageHigh - voltage;
-//    
-//    float per = diff/range;
-//    
-//    float per2 = voltage/self.appExecutive.voltageHigh;
-    
-    //per2 = .35;
-    
-//    NSLog(@"voltage: %.02f",voltage);
-//    NSLog(@"high: %.02f",self.appExecutive.voltageHigh);
-//    NSLog(@"low: %.02f",self.appExecutive.voltageLow);
-//    NSLog(@"range: %.02f",range);
-//    NSLog(@"diff: %.02f",diff);
-//    NSLog(@"per: %.02f",per);
-//    NSLog(@"per2: %.02f",per2);
-    
-    float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newBase: %.02f",newBase);
-    
-    float newVoltage = self.appExecutive.voltage - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newVoltage: %.02f",newVoltage);
-    
-    float per4 = newVoltage/newBase;
-    
-    //NSLog(@"per4: %.02f",per4);
-    
-    if (per4 > 1)
+    float voltagePercent = [self.appExecutive calculateVoltage: NO];
+
+    if (voltagePercent > 0)
     {
-        per4 = 1;
+        float offset = 1 - (batteryIcon.frame.size.height * voltagePercent) - .5;
+    
+        UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
+                                                             batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
+                                                             batteryIcon.frame.size.width * .47,
+                                                             batteryIcon.frame.size.height * voltagePercent)];
+    
+        v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
+    
+        [self.view addSubview:v];
     }
-    
-    if (per4 < 0)
-    {
-        per4 = 0;
-    }
-    
-    float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
-    
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
-                                                         batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
-                                                         batteryIcon.frame.size.width * .47,
-                                                         batteryIcon.frame.size.height * per4)];
-    
-    v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
-    
-    [self.view addSubview:v];
 }
 
 - (int) convert: (int)val : (int)setting {
@@ -350,6 +293,25 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 - (void) viewWillAppear: (BOOL) animated {
 
 	[super viewWillAppear: animated];
+    
+    // remove observers to prevent double add
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationLoadPreset:)
+                                                 name:@"loadPreset" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationSavePreset:)
+                                                 name:@"savePreset" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationRestoreDefaults:)
+                                                 name:@"restoreDefaults" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNotificationRemoveSubviews:)
+                                                 name:@"removeSubviews" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(deviceDisconnect:)
@@ -383,14 +345,27 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 	[self.settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
 }
 
-- (void) deviceDisconnect: (id) object {
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"showNotificationHost" object:self.restorationIdentifier];
-    
-    NSLog(@"deviceDisconnect setupview");
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    NSLog(@"Setup got device disconnect   MODAL VIEW = %p", self.presentedViewController);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController popToRootViewControllerAnimated: true];
+        
+        if (!self.disconnected)
+        {
+            self.disconnected = YES;
+            
+            if (self.disconnectedDeviceVC)
+            {
+                [self.disconnectedDeviceVC reloadDeviceList];
+            }
+            else
+            {
+                [self performSegueWithIdentifier: SegueToDisconnectedDeviceViewController sender: self];
+            }
+            
+        }
+        
     });
 }
 
@@ -409,41 +384,37 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 }
 
 - (void) popMinSeconds {
+
+    float max = -FLT_MAX;
     
-    int microstepSetting1 = appExecutive.microstep1 * 200;
-    int microstepSetting2 = appExecutive.microstep2 * 200;
-    int microstepSetting3 = appExecutive.microstep3 * 200;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
     
-//    NSLog(@"appExecutive.microstep1: %i",appExecutive.microstep1);
-//    NSLog(@"appExecutive.microstep2: %i",appExecutive.microstep2);
-//    NSLog(@"appExecutive.microstep3: %i",appExecutive.microstep3);
-    
-    int start1 = appExecutive.startPoint1;
-    int end1 = appExecutive.endPoint1;
-    int distance1 = start1 - end1;
-    
-    int start2 = appExecutive.startPoint2;
-    int end2 = appExecutive.endPoint2;
-    int distance2 = start2 - end2;
-    
-    int start3 = appExecutive.startPoint3;
-    int end3 = appExecutive.endPoint3;
-    int distance3 = start3 - end3;
-    
-    int con1 = abs([self convert:distance1:microstepSetting1]);
-    int con2 = abs([self convert:distance2:microstepSetting2]);
-    int con3 = abs([self convert:distance3:microstepSetting3]);
-    
-//    NSLog(@"converted1: %i",con1);
-//    NSLog(@"converted2: %i",con2);
-//    NSLog(@"converted3: %i",con3);
-    
-    float max = MAX(MAX(con1, con2), con3);
+        int microstepSetting1 = settings.microstep1 * 200;
+        int microstepSetting2 = settings.microstep2 * 200;
+        int microstepSetting3 = settings.microstep3 * 200;
+        
+        int start1 = settings.startPoint1;
+        int end1 = settings.endPoint1;
+        int distance1 = start1 - end1;
+        
+        int start2 = settings.startPoint2;
+        int end2 = settings.endPoint2;
+        int distance2 = start2 - end2;
+        
+        int start3 = settings.startPoint3;
+        int end3 = settings.endPoint3;
+        int distance3 = start3 - end3;
+        
+        int con1 = abs([self convert:distance1:microstepSetting1]);
+        int con2 = abs([self convert:distance2:microstepSetting2]);
+        int con3 = abs([self convert:distance3:microstepSetting3]);
+        
+        max = MAX(max, MAX(MAX(con1, con2), con3));
+    }
     
     float minSeconds = max/3300;
-    
-//    NSLog(@"minSeconds: %f",minSeconds);
-//    NSLog(@"minSecondsInt: %i",(int)minSeconds);
     
     minimuDurationLbl.text = [SetupViewController stringForTime2:minSeconds * 1000];
 }
@@ -517,6 +488,8 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     
 	[super viewDidAppear: animated];
     isVisible = YES;
+    self.disconnectedDeviceVC = nil;
+    self.disconnected = NO;
 
 	[self handleRecordModeControl: self.recordModeControl];
 
@@ -620,6 +593,12 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         
         [msvc setScreenInd:3];
     }
+    else if ([segue.identifier isEqualToString:SegueToDisconnectedDeviceViewController])
+    {
+        self.disconnectedDeviceVC = segue.destinationViewController;
+        self.disconnectedDeviceVC.delegate = self;
+    }
+
 }
 
 - (IBAction) unwindFromMotorRampingViewController: (UIStoryboardSegue *) segue {
@@ -773,13 +752,15 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
 - (void) checkProgramAndHandleNext {
 
-    NMXDevice * device = [AppExecutive sharedInstance].device;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
+        [settings synchronize];
+    }
     
     if (appExecutive.is3P == NO) {
 
-        if ((NO == [device motorQueryFeasibility: device.sledMotor]) ||
-            (NO == [device motorQueryFeasibility: device.panMotor]) ||
-            (NO == [device motorQueryFeasibility: device.tiltMotor]))
+        if (NO == [appExecutive queryMotorFeasibility])
         {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
                                                             message: @"Increase shot duration"
@@ -807,132 +788,66 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 
     //DDLogDebug(@"Next Button");
 
-    NMXDevice * device = [AppExecutive sharedInstance].device;
     __block UInt32 durationInMS;
     __block UInt32 accelInMS;
+    __block NMXFPS fps;
+    __block NMXProgramMode programMode;
+    __block BOOL pingPong = NO;
+
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     if (self.recordModeControl.selectedSegmentIndex == 1)
     {
-        // Video Mode
-        
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
-            [device mainSetProgramMode: NMXProgramModeVideo];
-            
-            durationInMS = (int)[self.appExecutive.videoLengthNumber integerValue];
-            
-            if (durationInMS > 50000)
-                accelInMS = 5000;
-            else
-                accelInMS = durationInMS / 10;
-            
-            [device mainSetPingPongMode: (self.videoModeControl.selectedSegmentIndex == 1)];
-            [device cameraSetEnable: false];
-            
-            [device motorSet: device.sledMotor SetLeadInShotsOrTime: 0];
-            [device motorSet: device.panMotor SetLeadInShotsOrTime: 0];
-            [device motorSet: device.tiltMotor SetLeadInShotsOrTime: 0];
-            
-            [device motorSet: device.sledMotor SetProgramAccel: accelInMS];
-            [device motorSet: device.panMotor SetProgramAccel: accelInMS];
-            [device motorSet: device.tiltMotor SetProgramAccel: accelInMS];
-            
-            [device motorSet: device.sledMotor SetShotsTotalTravelTime: durationInMS];
-            [device motorSet: device.panMotor SetShotsTotalTravelTime: durationInMS];
-            [device motorSet: device.tiltMotor SetShotsTotalTravelTime: durationInMS];
-            
-            [device motorSet: device.sledMotor SetProgramDecel: accelInMS];
-            [device motorSet: device.panMotor SetProgramDecel: accelInMS];
-            [device motorSet: device.tiltMotor SetProgramDecel: accelInMS];
-            
-            [device motorSet: device.sledMotor SetLeadOutShotsOrTime: 0];
-            [device motorSet: device.panMotor SetLeadOutShotsOrTime: 0];
-            [device motorSet: device.tiltMotor SetLeadOutShotsOrTime: 0];
-
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [MBProgressHUD hideHUDForView:self.view animated:YES];
-                [self checkProgramAndHandleNext];
-            });
-        });
+        programMode = NMXProgramModeVideo;
+        durationInMS = (int)[self.appExecutive.videoLengthNumber integerValue];
+        pingPong = (self.videoModeControl.selectedSegmentIndex == 1);
+        if (durationInMS > 50000)
+            accelInMS = 5000;
+        else
+            accelInMS = durationInMS / 10;
     }
     else
     {
-        // Timelapse Mode
-
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        if (self.timelapseModeControl.selectedSegmentIndex == 1)
+        {
+            programMode = NMXProgramModeTimelapse;
+            durationInMS = (int)[self.appExecutive.shotDurationNumber integerValue];
+        }
+        else
+        {
+            programMode = NMXProgramModeSMS;
+            durationInMS = [self.appExecutive.frameCountNumber intValue];
+        }
+        accelInMS = durationInMS / 10;
         
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        switch ([self.appExecutive.frameRateNumber integerValue])
+        {
+            case 24:
+                fps = NMXFPS24;
+                break;
+            case 25:
+                fps = NMXFPS25;
+                break;
+            case 30:
+            default:
+                fps = NMXFPS30;
+                break;
+        }
+    }
+    
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
-            if (self.timelapseModeControl.selectedSegmentIndex == 1)
-            {
-                [device mainSetProgramMode: NMXProgramModeTimelapse];
-                durationInMS = (int)[self.appExecutive.shotDurationNumber integerValue];
-            }
-            else
-            {
-                [device mainSetProgramMode: NMXProgramModeSMS];
-                durationInMS = [self.appExecutive.frameCountNumber intValue];
-            }
-            
-            accelInMS = durationInMS / 10;
-            
-            NMXFPS fps;
-            
-            switch ([self.appExecutive.frameRateNumber integerValue])
-            {
-                case 24:
-                    fps = NMXFPS24;
-                    break;
-                case 25:
-                    fps = NMXFPS25;
-                    break;
-                case 30:
-                default:
-                    fps = NMXFPS30;
-                    break;
-            }
-            
-            [device mainSetFPS: fps];
-            
-            [device cameraSetFrames: [self.appExecutive.frameCountNumber intValue]];
-            
-            [device cameraSetTriggerTime: (UInt32)[self.appExecutive.triggerNumber unsignedIntegerValue]];
-            [device cameraSetFocusTime: (UInt16)[self.appExecutive.focusNumber unsignedIntegerValue]];
-            [device cameraSetExposureDelay: (UInt16)[self.appExecutive.delayNumber unsignedIntegerValue]];
-            [device cameraSetInterval: (UInt32)[self.appExecutive.intervalNumber unsignedIntegerValue]];
-            
-            [device motorSet: device.sledMotor SetShotsTotalTravelTime: durationInMS];
-            [device motorSet: device.panMotor SetShotsTotalTravelTime: durationInMS];
-            [device motorSet: device.tiltMotor SetShotsTotalTravelTime: durationInMS];
-            
-            [device motorSet: device.sledMotor SetProgramAccel: accelInMS];
-            [device motorSet: device.panMotor SetProgramAccel: accelInMS];
-            [device motorSet: device.tiltMotor SetProgramAccel: accelInMS];
-            
-            [device motorSet: device.sledMotor SetProgramDecel: accelInMS];
-            [device motorSet: device.panMotor SetProgramDecel: accelInMS];
-            [device motorSet: device.tiltMotor SetProgramDecel: accelInMS];
-            
-            [device motorSet: device.sledMotor SetLeadInShotsOrTime: 0];
-            [device motorSet: device.panMotor SetLeadInShotsOrTime: 0];
-            [device motorSet: device.tiltMotor SetLeadInShotsOrTime: 0];
-            
-            [device motorSet: device.sledMotor SetLeadOutShotsOrTime: 0];
-            [device motorSet: device.panMotor SetLeadOutShotsOrTime: 0];
-            [device motorSet: device.tiltMotor SetLeadOutShotsOrTime: 0];
+        [self.appExecutive setProgamSettings: programMode
+                                pingPongMode: pingPong
+                                    duration: durationInMS
+                                       accel: accelInMS
+                                         fps: fps];
 
-            [device cameraSetEnable: true];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
+        dispatch_async(dispatch_get_main_queue(), ^{
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
                 [self checkProgramAndHandleNext];
-            });
         });
-    }
+    });
 }
 
 //------------------------------------------------------------------------------
@@ -1145,16 +1060,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 - (void) handleNotificationSavePreset:(NSNotification *)pNotification {
     
     NSLog(@"handleNotificationSavePreset");
-    
-    NSString *slideIncreaseString = [appExecutive.slideIncreaseValues componentsJoinedByString:@","];
-    NSString *slideDecreaseString = [appExecutive.slideDecreaseValues componentsJoinedByString:@","];
-    
-    NSString *panIncreaseString = [appExecutive.panIncreaseValues componentsJoinedByString:@","];
-    NSString *panDecreaseString = [appExecutive.panDecreaseValues componentsJoinedByString:@","];
-    
-    NSString *tiltIncreaseString = [appExecutive.tiltIncreaseValues componentsJoinedByString:@","];
-    NSString *tiltDecreaseString = [appExecutive.tiltDecreaseValues componentsJoinedByString:@","];
-    
+
     entity = [NSEntityDescription entityForName:@"PresetOb" inManagedObjectContext:appDelegate.managedObjectContext];
     
     PresetOb *preset1 = [[PresetOb alloc] initWithEntity:entity insertIntoManagedObjectContext:appDelegate.managedObjectContext];
@@ -1172,12 +1078,6 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
     preset1.delay = appExecutive.delayNumber;
     preset1.smscontinuous = [NSNumber numberWithInt:(int)recordModeControl.selectedSegmentIndex];
     preset1.timelapsevideo = [NSNumber numberWithInt:(int)timelapseModeControl.selectedSegmentIndex];
-    preset1.slideincrease = slideIncreaseString;
-    preset1.slidedecrease = slideDecreaseString;
-    preset1.panincrease = panIncreaseString;
-    preset1.pandecrease = panDecreaseString;
-    preset1.tiltincrease = tiltIncreaseString;
-    preset1.tiltdecrease = tiltDecreaseString;
     
     NSError *error = nil;
     
@@ -1195,6 +1095,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
                                 cancelButtonTitle:@"OK"
                                 otherButtonTitles:nil];
     [insertAlert show];
+
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
@@ -1205,6 +1106,20 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
 - (void) didReceiveMemoryWarning {
     
     [super didReceiveMemoryWarning];
+}
+
+#pragma mark JSDisconnectedDeviceDelegate
+
+- (void) willAbortReconnect
+{
+    self.abort= YES;
+}
+
+- (void) abortReconnect
+{
+    [self.appExecutive removeAllDevices];
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [self.navigationController popToRootViewControllerAnimated: true];
 }
 
 @end

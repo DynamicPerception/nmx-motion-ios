@@ -35,7 +35,7 @@
     
     if (self)
     {
-        self.myDevices = [NSMutableArray arrayWithCapacity: 3];
+        [self resetDeviceList];
         
         self.myCBCentralManager = [[CBCentralManager alloc] initWithDelegate: self queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) options: nil];
         self.scanRequested = false;
@@ -69,6 +69,22 @@
     }
 }
 
+- (NMXDevice *)addToList: (NMXDevice *)newDevice
+{
+    for (NMXDevice *device in self.myDevices)
+    {
+        if ([device.name isEqualToString:newDevice.name])
+        {
+            return device;
+        }
+    }
+    
+    [self.myDevices addObject: newDevice];
+    
+    return newDevice;
+}
+
+
 - (void) centralManager: (CBCentralManager *) central
   didDiscoverPeripheral: (CBPeripheral *) peripheral
       advertisementData: (NSDictionary *) advertisementData
@@ -77,25 +93,8 @@
     //DDLogDebug(@"Discovered %@", peripheral.name);
     
     NMXDevice * newDevice = [[NMXDevice alloc] initWithPeripheral: peripheral andCentralManager: self.myCBCentralManager];
-    
-    //randall update 1 - check if device already added to list
-    
-    bool alreadyAdded = false;
-    
-    for (NMXDevice *device in self.myDevices)
-    {
-        if ([device.name isEqualToString:newDevice.name])
-        {
-            alreadyAdded = true;
-        }
-    }
-    
-    if(!alreadyAdded)
-    {
-        [self.myDevices addObject: newDevice];
-    }
-    
-    //randall update 1 end
+
+    newDevice = [self addToList: newDevice];
     
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDiscoverDevice:)]))
         [self.delegate didDiscoverDevice: newDevice];
@@ -109,6 +108,9 @@
     if (peripheral.delegate)
     {
         NMXDevice *peripheralDelegate = (NMXDevice *)peripheral.delegate;
+        
+        peripheralDelegate = [self addToList: peripheralDelegate];
+        
         if ([peripheralDelegate respondsToSelector:@selector(peripheralWasConnected:)])
         {
             [peripheralDelegate peripheralWasConnected: peripheral];
@@ -122,35 +124,31 @@
 
     //DDLogDebug(@"centralManager Peripheral disconnected");
     
-    for (NMXDevice *device in self.myDevices)
+    NSArray *deviceArray = [NSArray arrayWithArray:self.myDevices];
+    NMXDevice *disconnectedDevice = nil;
+    
+    for (NMXDevice *device in deviceArray)
     {
         if ([device.name isEqualToString: peripheral.name])
         {
-            [self.myDevices removeObject: device];
+            disconnectedDevice = device;
+            [disconnectedDevice disconnect];
         }
     }
 
     if ((self.delegate) && ([self.delegate respondsToSelector:@selector(didDisconnectDevice:)]))
     {
-        [self.delegate didDisconnectDevice: peripheral];
+        [self.delegate didDisconnectDevice: disconnectedDevice];
     }
     else
     {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             
             if (!disconnected) {
-                
-                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"central didDisconnectPeripheral"];
-                
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Bluetooth Issue"
-                                                                message: @"All settings saved on NMX - Tap Connect to reconnect"
-                                                               delegate: self
-                                                      cancelButtonTitle: @"OK"
-                                                      otherButtonTitles: nil];
-                
-                [alert show];
-                
+
                 disconnected = YES;
+
+                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: disconnectedDevice];
             }
                         
             
@@ -195,6 +193,11 @@
 - (void) notInReview {
     
     inReview = NO;
+}
+
+- (void) resetDeviceList
+{
+    self.myDevices = [NSMutableArray arrayWithCapacity: 3];
 }
 
 - (NSArray *) deviceList {

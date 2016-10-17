@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
+@class JSDeviceSettings;
+
 #define kDeviceDisconnectedNotification     @"com.dynamicperception.disconnect"
 
 typedef enum : unsigned char {
@@ -55,9 +57,10 @@ typedef enum : unsigned char {
 
 typedef enum : unsigned char {
 
-    NMXFPS24 = 0,
-    NMXFPS30 = 1,
+    NMXFPS30 = 0,
+    NMXFPS24 = 1,
     NMXFPS25 = 2
+    
 } NMXFPS;
 
 
@@ -69,14 +72,22 @@ typedef enum : unsigned char {
 
 - (void) didConnect: (NMXDevice *) device;
 
+@optional
+
+- (void) reconnectFailed: (NMXDevice *) device;
 
 @end
 
 @interface NMXDevice : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
+@property (atomic, strong) CBPeripheral *myPeripheral;
+
 - (id) initWithPeripheral: (CBPeripheral *) peripheral andCentralManager: (CBCentralManager *) centralManager;
 - (void) connect;
 - (void) disconnect;
+
+- (void) setDeviceAddress:(unsigned char) address;
+- (int) queryDeviceAddress;
 
 - (UInt32) mainQueryStartHere;
 
@@ -93,6 +104,7 @@ typedef enum : unsigned char {
 - (void) mainSetStartHere;
 - (void) mainSetStopHere;
 - (void) mainSetFPS: (NMXFPS) fps;
+- (void) mainSetControllerCount: (UInt8) controllerCount;
 - (void) mainFlipStartStop;
 
 - (UInt16) mainQueryFirmwareVersion;
@@ -104,15 +116,18 @@ typedef enum : unsigned char {
 - (NMXProgramMode) mainQueryProgramMode;
 - (bool) mainQueryPingPongMode;
 - (NMXFPS) mainQueryFPS;
+- (UInt32) mainQueryControllerCount;
 - (void) motorEnable: (int) motorNumber;
 - (void) motorSet: (int) motorNumber SleepMode: (int) sleepMode;
 - (void) motorSet: (int) motorNumber InvertDirection: (bool) invertDirection;
 - (void) motorSet: (int) motorNumber Disabled: (bool) inDisabled;
 - (void) motorSet: (int) motorNumber SetBacklash: (UInt16) backlash;
+- (void) motorSet: (int) motorNumber SetMaxStepRate: (UInt16) maxStepRate;
 - (void) motorSet: (int) motorNumber Microstep: (unsigned char) microstep;
 - (void) motorSet: (int) motorNumber ContinuousSpeed: (float) speed;
 - (void) motorMove: (int) motorNumber Direction: (unsigned char) direction Steps: (UInt32) steps;
 - (UInt16) motorQueryBacklash: (int) motorNumber;
+- (UInt16) motorQueryMaxStepRate: (int) motorNumber;
 - (void) takeUpBacklashKeyFrameProgram;
 - (int) motorQueryCurrentPosition: (int) motorNumber;
 - (bool) motorQueryRunning: (int) motorNumber;
@@ -163,11 +178,13 @@ typedef enum : unsigned char {
 @property (assign) unsigned char sledMotor;
 @property (assign) unsigned char panMotor;
 @property (assign) unsigned char tiltMotor;
+@property (atomic) unsigned char address;
 @property bool inBackground;
 @property (readonly) UInt16 fwVersion;
 @property (readonly) BOOL fwVersionUpdateAvailable;
 @property (readonly) bool disconnected;
 @property (atomic) int serviceDiscoveryRetryCount;
+@property JSDeviceSettings *settings;
 
 - (void) setHomePosition : (int) motor;
 
@@ -194,6 +211,8 @@ typedef enum : unsigned char {
 - (void) motorSendToEndPoint: (int) motorNumber;
 
 - (void) peripheralWasConnected: (CBPeripheral *) peripheral;
+
++ (unsigned char) defaultAddress;
 
 @end
 

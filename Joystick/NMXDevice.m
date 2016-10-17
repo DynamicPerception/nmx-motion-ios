@@ -12,15 +12,17 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "NSNumber+ASI.h"
+#import "AppExecutive.h"
 
 #define kDefaultsMotorSledMicrosteps   @"MotorSledMicrosteps"
-#define kDefaultsMotorPanMicrosteps   @"MotorPanMicrosteps"
+#define kDefaultsMotorPanMicrosteps    @"MotorPanMicrosteps"
 #define kDefaultsMotorTiltMicrosteps   @"MotorTiltMicrosteps"
 #define kDefaultsMotorSledInvert       @"MotorSledInvert"
 #define kDefaultsMotorPanInvert        @"MotorPanInvert"
 #define kDefaultsMotorTiltInvert       @"MotorTiltInvert"
+#define kDefaultsDeviceAddress         @"DeviceAddress"
 
-#define kCurrentSupportedFirmwareVersion 60
+#define kCurrentSupportedFirmwareVersion 72
 
 
 typedef enum : unsigned char {
@@ -38,6 +40,7 @@ typedef enum : unsigned char {
     NMXCommandMainSetStartHere = 26,
     NMXCommandMainSetStopHere = 27,
     NMXCommandMainSetFPS = 28,
+    NMXCommandMainSetControllerCount = 33,
     NMXCommandMainSetAppMode = 51,
     NMXCommandMainFlipStartStopPoints = 29,
     NMXCommandMainQueryFirmwareVersion = 100,
@@ -51,9 +54,11 @@ typedef enum : unsigned char {
     NMXCommandMainQueryProgramPercentComplete = 123,
     NMXCommandMainQueryTotalRunTime = 125,
     NMXCommandMainQueryFPS = 127,
+    NMXCommandMainQueryControllerCount = 134,
     NMXCommandMainQueryRunStatus = 140,    // introduced in firmware v. 0.51
     
 } NMXCommandMain;
+
 
 
 typedef enum : unsigned char {
@@ -62,6 +67,7 @@ typedef enum : unsigned char {
     NMXCommandMotorEnable = 3,
     NMXCommandMotorSetBacklash = 5,
     NMXCommandMotorSetMicroStep = 6,
+    NMXCommandMotorSetMaxStepRate = 7,
     NMXCommandMotorSetContinuousSpeed = 13,
     NMXCommandMotorSetContinuousAccelDecelRate = 14, //Dampening
     NMXCommandMotorMoveSimple = 15,
@@ -81,6 +87,7 @@ typedef enum : unsigned char {
     NMXCommandMotorPosition = 31,
     NMXCommandMotorQueryBacklash = 101,
     NMXCommandMotorMicrostepValue = 102,
+    NMXCommandMotorQueryMaxStepRate = 104,
     NMXCommandMotorQueryCurrentPosition = 106,
     NMXCommandMotorQueryRunning = 107,
     NMXCommandMotorQueryContinuousAccelDecel = 109,
@@ -119,6 +126,21 @@ typedef enum : unsigned char {
     NMXCommandCameraQuerySlaveMode = 112,
     
 } NMXCommandCamera;
+
+typedef enum : unsigned char {
+    
+    NMXCommandBroadcastStart         = 1,
+    NMXCommandBroadcastStop          = 2,
+    NMXCommandBroadcastPause         = 3,
+    NMXCommandBroadcastAssignAddress = 4,
+    NMXCommandBroadcastEnableGraffik = 5,   // unused by this app
+    NMXCommandBroadcastStartKF       = 7,
+    NMXCommandBroadcastStopKF        = 8,
+    NMXCommandBroadcastPauseKF       = 9,
+    NMXCommandBroadcastQueryAddress  = 10,
+    
+} NMXCommandBroadcast;
+
 
 
 typedef enum: unsigned char {
@@ -165,8 +187,14 @@ typedef enum: unsigned char {
 
 
 @interface  NMXDevice()
+{
+    NMXMovingDirection moving[4];
+    bool invertDirection[4];
+    bool disabled[4];
+    bool waitForResponse;
+}
+
 @property (atomic, strong) CBCentralManager *myCBCentralManager;
-@property (atomic, strong) CBPeripheral *myPeripheral;
 @property (atomic, strong) NSMutableArray *myServices;
 @property (atomic, strong) CBCharacteristic *myOutputCharacteristic;
 @property (atomic, strong) NSMutableData *myNotifyBuffer;
@@ -185,10 +213,6 @@ typedef enum: unsigned char {
 
 @implementation NMXDevice
 
-NMXMovingDirection moving[4];
-bool invertDirection[4];
-bool disabled[4];
-bool waitForResponse;
 
 @synthesize inBackground;
 
@@ -212,14 +236,7 @@ bool waitForResponse;
         moving[1] = NMXMovingStopped;
         moving[2] = NMXMovingStopped;
         moving[3] = NMXMovingStopped;
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        
-        invertDirection[0] = false;
-        invertDirection[1] = [defaults boolForKey: kDefaultsMotorSledInvert];
-        invertDirection[2] = [defaults boolForKey: kDefaultsMotorPanInvert];
-        invertDirection[3] = [defaults boolForKey: kDefaultsMotorTiltInvert];
-        
+
         disabled[0] = false;
         disabled[1] = false;
         disabled[2] = false;
@@ -236,10 +253,25 @@ bool waitForResponse;
         
         waitForResponse = true;
         
+        self.address = [NMXDevice defaultAddress];        // default the address to 3 if it hasn't been set already
+        AppExecutive *appExecutive = [AppExecutive sharedInstance];
+        self.settings = [appExecutive defaultsForDevice: self];
+
+        invertDirection[0] = false;
+        invertDirection[1] = [self.settings boolForKey: kDefaultsMotorSledInvert];
+        invertDirection[2] = [self.settings boolForKey: kDefaultsMotorPanInvert];
+        invertDirection[3] = [self.settings boolForKey: kDefaultsMotorTiltInvert];
+
         self.serviceDiscoveryRetryCount = 3;
+        
     }
     
     return self;
+}
+
++ (unsigned char) defaultAddress
+{
+    return 3;
 }
 
 - (NSString *) name {
@@ -269,6 +301,7 @@ bool waitForResponse;
 didDiscoverCharacteristicsForService: (CBService *) service
               error: (NSError *) error {
 
+    NSLog(@"Did discover characteristic ");
     for (CBCharacteristic *characteristic in service.characteristics)
     {
         //DDLogDebug(@"Discovered characteristic %@ of service %@", characteristic, service);
@@ -279,6 +312,7 @@ didDiscoverCharacteristicsForService: (CBService *) service
         }
         if ([characteristic.UUID isEqual: [CBUUID UUIDWithString:@"BF45E40A-DE2A-4BC8-BBA0-E5D6065F1B4B"]])
         {
+            NSLog(@"NMXDevice %p did discover and UUID match   Delegate = %p", self, self.delegate);
             self.myOutputCharacteristic = characteristic;
             if (self.delegate)
             {
@@ -379,6 +413,13 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         DDLogDebug(@"Cannot connect to device, bailing out");
         [self abortConnectionRetry];
+        
+        if ((self.delegate) && ([self.delegate respondsToSelector:@selector(reconnectFailed:)]))
+        {
+            [self.delegate reconnectFailed: self];
+        }
+
+        
         return;
     }
     else if (NO == self.disconnected)
@@ -405,6 +446,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (void) peripheralWasConnected: (CBPeripheral *) peripheral
 {
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(deviceDisconnect:)
+                                                 name: kDeviceDisconnectedNotification
+                                               object: nil];
+
     NSLog(@"Delegate .... peripheral Was connected");
     
     [self abortConnectionRetry];
@@ -416,26 +462,28 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     DDLogDebug(@"state = %d", (int)self.myCBCentralManager.state);
     self.myPeripheral.delegate = self;
     [self.myCBCentralManager connectPeripheral: self.myPeripheral options: nil];
-
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(deviceDisconnect:)
-                                                 name: kDeviceDisconnectedNotification
-                                               object: nil];
 }
 
 - (void) disconnect
 {
+    self.disconnected = YES;
+    NSLog(@"NMXDevice disconnected sending notification");
     [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
-    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self userInfo:nil];
 }
 
 // Handle notification that the device was disconnected
-- (void) deviceDisconnect: (id) object {
-
-    DDLogDebug(@"Device disconnected NMXDevice");
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    NMXDevice *device = notification.object;
     
-    self.disconnected = true;
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    if (device == self)
+    {
+        DDLogDebug(@"Device disconnected NMXDevice = %@", self.myPeripheral.name);
+    
+        self.disconnected = YES;
+        [[NSNotificationCenter defaultCenter] removeObserver: self];
+    }
 }
 
 #pragma mark - Buffer
@@ -448,7 +496,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     buffer[3] = 0;
     buffer[4] = 0;
     buffer[5] = 255;
-    buffer[6] = 3;                    // Address 1
+    buffer[6] = self.address;
     buffer[7] = subAddress;
     buffer[8] = command;
     buffer[9] = dataLength;
@@ -462,19 +510,35 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     buffer[3] = 0;
     buffer[4] = 0;
     buffer[5] = 255;
-    buffer[6] = 3;                    // Address 1
+    buffer[6] = self.address;
     buffer[7] = subAddress;
     buffer[8] = command;
     buffer[9] = dataLength;
 }
 
+- (void) setupBroadcastBuffer: (unsigned char *) buffer command: (unsigned char) command dataLength: (unsigned char) dataLength {
+    
+    buffer[0] = 0;
+    buffer[1] = 0;
+    buffer[2] = 0;
+    buffer[3] = 0;
+    buffer[4] = 0;
+    buffer[5] = 255;
+    buffer[6] = 1;
+    buffer[7] = 0;
+    buffer[8] = command;
+    buffer[9] = dataLength;
+}
+
+
 - (void) sendCommand: (NSData *) commandData WithDesc: (NSString *) desc WaitForResponse: (bool) inWaitForResponse WithTimeout: (float) inTimeout {
     
-    //NSLog(@"Sending command %@   waiting = %d   command: %@", desc, inWaitForResponse, commandData);
+    //NSLog(@"Device %@ Sending command %@   waiting = %d   command: %@", self.name, desc, inWaitForResponse, commandData);
     
     if (true == self.disconnected)
     {
-        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+        NSLog(@"NMXDevice %p cannot send command, device is not connected", self);
+        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
         return;
     }
     
@@ -585,6 +649,13 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
                     [self sendCommand: self.myLastCommand WithDesc: @"Retrying last command" WaitForResponse: waitForResponse WithTimeout: self.lastTimeout];
                     
                     self.retrying = nestedRetry;
+                    
+                    if (self.disconnected)
+                    {
+                        DDLogDebug(@"Device disconnected in waitForResponse");
+                        break;
+                    }
+                    
                 }
                 else// if(!inBackground)
                 {
@@ -596,7 +667,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
                         
                         // Send the user back to the connection screen...
                         
-                        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
                     }
                     
                     break;
@@ -617,18 +688,11 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
             if (1 != error)
             {
                 DDLogError(@"Bad response %@, last command was %@", self.myNotifyData, self.myLastCommand);
-                
-                //            dispatch_async(dispatch_get_main_queue(), ^{
-                //
-                //                [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
-                //            });
-                
-                
-                
-                
+
                 dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+                    [self.myCBCentralManager cancelPeripheralConnection: self.myPeripheral];
+                    [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
                 });
                 
                 
@@ -661,7 +725,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: self];
         });
     }
     
@@ -684,32 +748,10 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     NMXValueType valueType;
     NSNumber * returnedNumber;
     
-//    NSLog(@"sizeof(valueType): %lu",sizeof(valueType));
-//    NSLog(@"valueType: %c",&valueType);
-    
     if (self.myNotifyData.length != 0) {
         
         memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
 
-        //NSLog(@"Read from device value type %d", valueType);
-        
-        //    @try {
-        //
-        //        memcpy(&valueType, &self.myNotifyData.bytes[10], sizeof(valueType));
-        //    }
-        //    @catch (NSException * e) {
-        //
-        //        NSLog(@"memcpy Exception: %@", e);
-        //
-        //        dispatch_async(dispatch_get_main_queue(), ^(void) {
-        //
-        //            [[NSNotificationCenter defaultCenter] postNotificationName: kDeviceDisconnectedNotification object: @"Peripheral disconnected Randall memcpy"];
-        //        });
-        //
-        //    }
-        
-        
-        
         switch (valueType)
         {
             case NMXValueTypeByte:
@@ -961,6 +1003,15 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     newDataBytes[10] = fps;
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
     [self sendCommand: newData WithDesc: @"Set FPS" WaitForResponse: true WithTimeout: 0.2];
+}
+
+- (void) mainSetControllerCount: (UInt8) controllerCount {
+    
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainSetControllerCount dataLength: 1];
+    newDataBytes[10] = controllerCount;
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
+    [self sendCommand: newData WithDesc: @"Set Controller Count" WaitForResponse: true WithTimeout: 0.2];
 }
 
 - (void) mainFlipStartStop {
@@ -1243,7 +1294,6 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (NMXFPS) mainQueryFPS {
     
-    //mm -- FIXME  -- this was using NMXCommandMainQueryRunStatus BUG!  Confirming from Michael the correct return value
     NMXFPS          fps;
     unsigned char   newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryFPS dataLength: 0];
@@ -1258,6 +1308,30 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     return fps;
 }
+
+- (UInt32) mainQueryControllerCount {
+    
+    if (NO ==[self checkFWMinRequiredVersion: 68])
+    {
+        // This should only be called when we are running a program.  Pre V. 68 we know we are only running on 1 device
+        return 1;
+    }
+    
+    UInt32 controllerCount = 0;
+    unsigned char   newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryControllerCount dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"Query Controller Count" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        controllerCount = [[self extractReturnedNumber] UInt8Value];
+    }
+    
+    return controllerCount;
+}
+
 
 - (UInt32) mainQueryStartHere {
     
@@ -1276,6 +1350,50 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     }
     
     return  runTime;
+}
+
+- (void) setDeviceAddress:(unsigned char) address
+{
+    unsigned char newDataBytes[16];
+    [self setupBroadcastBuffer: newDataBytes command: NMXCommandBroadcastAssignAddress dataLength: 1];
+    newDataBytes[10] = address;
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
+    NSString *  descString = [NSString stringWithFormat: @"Set device address %d", address];
+    [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
+
+    [[[AppExecutive sharedInstance] defaultsForDevice: self] setInteger: address forKey: kDefaultsDeviceAddress];
+}
+
+- (int) queryDeviceAddress {
+    
+    static int tryCount = 4;
+    
+    int addr;
+    unsigned char newDataBytes[16];
+    [self setupBroadcastBuffer: newDataBytes command: NMXCommandBroadcastQueryAddress dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"Query device address" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        addr = [[self extractReturnedNumber] intValue];
+    }
+    
+    if (addr == 0 && tryCount > 0)
+    {
+        tryCount--;
+        return [self queryDeviceAddress];
+    }
+    else
+    {
+        if (tryCount <= 0)
+        {
+            return [NMXDevice defaultAddress];
+        }
+    }
+    
+    return addr;
 }
 
 #pragma mark - Motor Set
@@ -1301,20 +1419,20 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) motorSet: (int) motorNumber InvertDirection: (bool) inInvertDirection {
     
     invertDirection[motorNumber] = inInvertDirection;
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
     switch (motorNumber)
     {
         case 1:
-            [defaults setBool: inInvertDirection forKey: kDefaultsMotorSledInvert];
+            [self.settings setBool: inInvertDirection forKey: kDefaultsMotorSledInvert];
             break;
         case 2:
-            [defaults setBool: inInvertDirection forKey: kDefaultsMotorPanInvert];
+            [self.settings setBool: inInvertDirection forKey: kDefaultsMotorPanInvert];
             break;
         case 3:
-            [defaults setBool: inInvertDirection forKey: kDefaultsMotorTiltInvert];
+            [self.settings setBool: inInvertDirection forKey: kDefaultsMotorTiltInvert];
             break;
     }
-    [defaults synchronize];
+    [self.settings synchronize];
 }
 
 - (void) motorSet: (int) motorNumber Disabled: (bool) inDisabled {
@@ -1325,13 +1443,31 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 - (void) motorSet: (int) motorNumber SetBacklash: (UInt16) backlash {
     
     unsigned char newDataBytes[16];
-    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandCameraSetFocusTime dataLength: 2];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorSetBacklash dataLength: 2];
     unsigned char * backlashPtr = (unsigned char *)&backlash;
     newDataBytes[10] = backlashPtr[1];
     newDataBytes[11] = backlashPtr[0];
     
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 12];
     NSString *  descString = [NSString stringWithFormat: @"Set Backlash %d", (unsigned int)backlash];
+    [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
+}
+
+- (void) motorSet: (int) motorNumber SetMaxStepRate:(UInt16)maxStepRate
+{
+    if (_fwVersion < 72)
+    {
+        return;
+    }
+    
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorSetMaxStepRate dataLength: 2];
+    unsigned char * maxStepRatePtr = (unsigned char *)&maxStepRate;
+    newDataBytes[10] = maxStepRatePtr[1];
+    newDataBytes[11] = maxStepRatePtr[0];
+    
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 12];
+    NSString *  descString = [NSString stringWithFormat: @"Set Max Step Rate %d", (unsigned int)maxStepRate];
     [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
 }
 
@@ -1635,6 +1771,29 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     return backlash;
 }
+
+- (UInt16) motorQueryMaxStepRate:(int)motorNumber
+{
+    if (_fwVersion < 72)
+    {
+        return 4000;
+    }
+    
+    UInt16    maxSpeed = 0;
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorQueryMaxStepRate dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"QueryMaxStepRate" WaitForResponse: true WithTimeout: 0.2];
+    
+    if ([self waitForResponse])
+    {
+        maxSpeed = [[self extractReturnedNumber] UInt16Value];
+    }
+    
+    return maxSpeed;
+}
+
 
 - (int) motorQueryCurrentPosition: (int) motorNumber {
     
@@ -2287,7 +2446,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
     
-    [self sendCommand: newData WithDesc: @"Start KeyFrame Program" WaitForResponse: true WithTimeout: 0.2];
+    [self sendCommand: newData WithDesc: @"Start KeyFrame Program" WaitForResponse: false WithTimeout: 0.2];
 }
 
 - (void) stopKeyFrameProgram {

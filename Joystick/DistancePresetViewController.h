@@ -13,22 +13,6 @@
 #import "LinearRotaryViewController.h"
 
 
-typedef enum
-{
-    kLeftRightLabel,
-    kClockwiseCounterClockwiseLabel,
-    kUpDownLabel,
-    kInOutLabel,
-} DirectionLabels;
-
-
-
-@protocol DistancePresetDelegate
-
-- (void) updateBacklash: (NSInteger) value;
-
-@end
-
 @interface DistancePresetViewController : UIViewController  <UIPickerViewDelegate, UIPickerViewDataSource> {
     
     AppDelegate *appDelegate;
@@ -38,7 +22,6 @@ typedef enum
     int selectedRow;
 }
 
-@property (nonatomic, assign)		id <DistancePresetDelegate>	delegate;
 @property (nonatomic, readwrite)	NSInteger				backlash;
 @property (nonatomic, strong)		NSMutableArray *presetList;
 @property (nonatomic, strong)		NSMutableArray *presetStringList;

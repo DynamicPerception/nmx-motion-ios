@@ -24,11 +24,5 @@
 @dynamic delay;
 @dynamic smscontinuous;
 @dynamic timelapsevideo;
-@dynamic panincrease;
-@dynamic pandecrease;
-@dynamic tiltincrease;
-@dynamic tiltdecrease;
-@dynamic slideincrease;
-@dynamic slidedecrease;
 
 @end

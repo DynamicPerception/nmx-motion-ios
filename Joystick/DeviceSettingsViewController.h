@@ -17,7 +17,5 @@
     NSString *high;
 }
 
-@property (weak, nonatomic) IBOutlet UITextField *voltageLowTxt;
-@property (weak, nonatomic) IBOutlet UITextField *voltageHighTxt;
 
 @end

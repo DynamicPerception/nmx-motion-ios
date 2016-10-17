@@ -14,6 +14,7 @@
 #import "JoyButton.h"
 #import "AppExecutive.h"
 #import "MBProgressHUD.h"
+#import "JSMotorRampingTableViewCell.h"
 
 //------------------------------------------------------------------------------
 
@@ -22,56 +23,27 @@
 
 @interface MotorRampingViewController () {
     
-    BOOL setup;
-    BOOL isLocked;
-    NSString *currentFrameTarget;
     float sliderValue;
-    NSString *slidername;
     
     CGFloat minX;
     CGFloat sliderRange;
-    float currentSelectedFrameValue;
-    float currentFrameConvertedToFloat;
-    int selectedFrameCount;
+
 }
 
 @property (nonatomic, strong)				AppExecutive *		appExecutive;
-
-@property (nonatomic, strong)	IBOutlet	MotorRampingView *	slideView;
-@property (nonatomic, strong)	IBOutlet	MotorRampingView *	panView;
-@property (nonatomic, strong)	IBOutlet	MotorRampingView *	tiltView;
-
-
-@property (nonatomic, strong)	IBOutlet	UISlider *	slideIncreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	slideIncreaseFinal;
-@property (nonatomic, strong)	IBOutlet	UISlider *	slideDecreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	slideDecreaseFinal;
-
-@property (nonatomic, strong)	IBOutlet	UISlider *	panIncreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	panIncreaseFinal;
-@property (nonatomic, strong)	IBOutlet	UISlider *	panDecreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	panDecreaseFinal;
-
-@property (nonatomic, strong)	IBOutlet	UISlider *	tiltIncreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	tiltIncreaseFinal;
-@property (nonatomic, strong)	IBOutlet	UISlider *	tiltDecreaseStart;
-@property (nonatomic, strong)	IBOutlet	UISlider *	tiltDecreaseFinal;
 
 @property (nonatomic, strong)	IBOutlet	JoyButton *	editProgramButton;
 @property (nonatomic, strong)	IBOutlet	JoyButton *	nextButton;
 
 @property (strong, nonatomic) IBOutlet UIButton *lockButton;
 
-@property (strong, nonatomic) IBOutlet UITextField *frameText;
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
 
-@property (strong, nonatomic) IBOutlet UIView *frameView;
+@property JSDeviceSettings *settings;
 
-@property (strong, nonatomic) NSMutableArray *increaseSliders;
-@property (strong, nonatomic) NSMutableArray *decreaseSliders;
-
-@property (weak, nonatomic) IBOutlet UILabel *frameCount1;
-@property (weak, nonatomic) IBOutlet UILabel *frameCount2;
-@property (weak, nonatomic) IBOutlet UILabel *frameCount3;
+@property JSDisconnectedDeviceVC *disconnectedDeviceVC;
+@property BOOL abort;
+@property BOOL disconnected;
 
 @end
 
@@ -90,12 +62,11 @@ NSArray static	*frameCountStrings = nil;
 
 #pragma mark Static Variables
 
-//NSString	static	*SegueToReviewStatus
-
+NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedSeque2";
 
 #pragma mark Private Property Synthesis
 
-@synthesize appExecutive, lockButton, frameText, frameView, increaseSliders, decreaseSliders, selectedFrameNumber,picker, framePickerView, rampSettingSegment, selectedShotDuration, frameCount1, frameCount2, frameCount3, rampSettingImg,slide3P1Lbl,slide3P2Lbl,slide3P3Lbl,slide3PSlider1,slide3PSlider2,slide3PSlider3,pan3PSlider1,pan3PSlider2,pan3PSlider3,tilt3PSlider1,tilt3PSlider2,tilt3PSlider3,pan3P1Lbl,pan3P2Lbl,pan3P3Lbl,tilt3P1Lbl,tilt3P2Lbl,tilt3P3Lbl,slide3PView,pan3PView,tilt3PView,topHeaderLbl,settingsButton,batteryIcon,contentBG,slideLbl2,slideLbl1,slideLbl3,slideLbl4,panLbl2,panLbl1,panLbl3,panLbl4,tiltLbl2,tiltLbl1,tiltLbl3,tiltLbl4;
+@synthesize appExecutive, lockButton, selectedFrameNumber,picker, rampSettingSegment, selectedShotDuration, rampSettingImg,slide3P1Lbl,slide3P2Lbl,slide3P3Lbl,slide3PSlider1,slide3PSlider2,slide3PSlider3,pan3PSlider1,pan3PSlider2,pan3PSlider3,tilt3PSlider1,tilt3PSlider2,tilt3PSlider3,pan3P1Lbl,pan3P2Lbl,pan3P3Lbl,tilt3P1Lbl,tilt3P2Lbl,tilt3P3Lbl,slide3PView,pan3PView,tilt3PView,topHeaderLbl,settingsButton,batteryIcon,contentBG;
 
 
 #pragma mark Private Property Methods
@@ -113,48 +84,47 @@ NSArray static	*frameCountStrings = nil;
 
 #pragma mark - Object Management
 
-
 - (void) viewDidLoad {
     
     self.picker.delegate = self;
     self.picker.dataSource = self;
     
-    device = [AppExecutive sharedInstance].device;
-    
+    self.settings = self.appExecutive.device.settings;
+
     [self.appExecutive.device mainSetJoystickMode: false];
     
     //NSLog(@"viewdidload ramping");
     
-    programMode = [self.appExecutive.device mainQueryProgramMode];
+    self.programMode = [self.appExecutive.device mainQueryProgramMode];
     
-    
+    //    self.tableView.rowHeight = 200;
     
 #if TARGET_IPHONE_SIMULATOR
     
-    programMode = NMXProgramModeVideo;
+    self.programMode = NMXProgramModeVideo;
     
 #endif
     
     
-    //NSLog(@"programMode ramping: %i",programMode);
+    //NSLog(@"self.programMode ramping: %i",self.programMode);
     
     NSInteger	frameCount;
     
-    if(programMode == NMXProgramModeVideo)
+    if(self.programMode == NMXProgramModeVideo)
     {
-        selectedFrameCount = [self.appExecutive.videoLengthNumber intValue];
+        self.selectedFrameCount = [self.appExecutive.videoLengthNumber intValue];
         frameCount	= [self.appExecutive.videoLengthNumber integerValue];
         
         //NSLog(@"self.videoLengthNumber: %@",self.appExecutive.videoLengthNumber);
     }
     else
     {
-        selectedFrameCount = [self.appExecutive.frameCountNumber intValue]; //300
+        self.selectedFrameCount = [self.appExecutive.frameCountNumber intValue]; //300
         frameCount	= [self.appExecutive.frameCountNumber integerValue];
     }
     
-    //NSLog(@"programMode: %i",programMode);
-    NSLog(@"selectedFrameCount: %i",selectedFrameCount);
+    //NSLog(@"self.programMode: %i",self.programMode);
+    NSLog(@"selectedFrameCount: %i",self.selectedFrameCount);
     
     NSInteger	ones		= frameCount % 10;
     NSInteger	tens		= (frameCount / 10) % 10;
@@ -175,27 +145,12 @@ NSArray static	*frameCountStrings = nil;
     
     frameCountStrings = [NSArray arrayWithArray: strings];
     
-    increaseSliders = [[NSMutableArray alloc] init];
-    decreaseSliders = [[NSMutableArray alloc] init];
-    
     rampSettingSegment.selectedSegmentIndex = 0;
     
-    masterFrameCount = [self.appExecutive.frameCountNumber floatValue];
+    NSDictionary *	attributes = @{ NSForegroundColorAttributeName: [UIColor whiteColor] };
     
-    if(programMode == NMXProgramModeVideo)
-    {
-        NSString *a = [ShortDurationViewController stringForShortDuration: [self.appExecutive.videoLengthNumber integerValue]];
-        
-        frameCount1.text = a;
-        frameCount2.text = a;
-        frameCount3.text = a;
-    }
-    else
-    {
-        frameCount1.text = [NSString stringWithFormat:@"%i",(int)masterFrameCount];
-        frameCount2.text = [NSString stringWithFormat:@"%i",(int)masterFrameCount];
-        frameCount3.text = [NSString stringWithFormat:@"%i",(int)masterFrameCount];
-    }
+    [self.rampSettingSegment setTitleTextAttributes: attributes forState: UIControlStateNormal];
+    [self.rampSettingSegment setTitleTextAttributes: attributes forState: UIControlStateSelected];
     
     [self configSliders];
     [self setupSliderFunctions];
@@ -225,22 +180,15 @@ NSArray static	*frameCountStrings = nil;
      selector:@selector(handleVideoFrameNotification:)
      name:@"chooseVideoFrame" object:nil];
     
-    slideLbl1.alpha = 0;
-    slideLbl2.alpha = 0;
-    slideLbl3.alpha = 0;
-    slideLbl4.alpha = 0;
-    
-    panLbl1.alpha = 0;
-    panLbl2.alpha = 0;
-    panLbl3.alpha = 0;
-    panLbl4.alpha = 0;
-    
-    tiltLbl1.alpha = 0;
-    tiltLbl2.alpha = 0;
-    tiltLbl3.alpha = 0;
-    tiltLbl4.alpha = 0;
-    
     [super viewDidLoad];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    self.disconnectedDeviceVC = nil;
+    self.disconnected = NO;
 }
 
 - (void) timerName {
@@ -253,7 +201,7 @@ NSArray static	*frameCountStrings = nil;
     
     int cs = [pNotification.object intValue];
     
-    currentSelectedFrameValue = cs;
+    self.currentSelectedFrameValue = cs;
     
     [self frameValueSelected];
     
@@ -264,7 +212,7 @@ NSArray static	*frameCountStrings = nil;
     
     int cs = [pNotification.object intValue];
     
-    currentSelectedFrameValue = cs;
+    self.currentSelectedFrameValue = cs;
     selectedVideoFrame = cs;
     
     [self frameValueSelected];
@@ -283,9 +231,7 @@ NSArray static	*frameCountStrings = nil;
     
     NSLog(@"handleChosenFrameNotification4: %i",cs);
     
-    //frameText.text = [NSString stringWithFormat:@"%i",cs];
-    
-    currentSelectedFrameValue = cs;
+    self.currentSelectedFrameValue = cs;
     
     [self frameValueSelected];
 }
@@ -303,46 +249,11 @@ NSArray static	*frameCountStrings = nil;
     
     //NSLog(@"randall configSliders");
 
-    NSDictionary *	attributes = @{ NSForegroundColorAttributeName: [UIColor whiteColor] };
-    
-    [self.rampSettingSegment setTitleTextAttributes: attributes forState: UIControlStateNormal];
-    [self.rampSettingSegment setTitleTextAttributes: attributes forState: UIControlStateSelected];
-    
     UIColor *	blue	= [UIColor blueColor];
     UIColor *	white	= [UIColor whiteColor];
-    
-    // set colors so motion of motor has same color along slider tracks
-    
-    self.tiltIncreaseStart.minimumTrackTintColor = white;
-    self.tiltIncreaseStart.maximumTrackTintColor = blue;
-    self.tiltIncreaseFinal.minimumTrackTintColor = blue;
-    self.tiltIncreaseFinal.maximumTrackTintColor = white;
-    
-    self.tiltDecreaseStart.minimumTrackTintColor = white;
-    self.tiltDecreaseStart.maximumTrackTintColor = blue;
-    self.tiltDecreaseFinal.minimumTrackTintColor = blue;
-    self.tiltDecreaseFinal.maximumTrackTintColor = white;
-    
-    self.slideIncreaseStart.minimumTrackTintColor = white;
-    self.slideIncreaseStart.maximumTrackTintColor = blue;
-    self.slideIncreaseFinal.minimumTrackTintColor = blue;
-    self.slideIncreaseFinal.maximumTrackTintColor = white;
-    
-    self.slideDecreaseStart.minimumTrackTintColor = white;
-    self.slideDecreaseStart.maximumTrackTintColor = blue;
-    self.slideDecreaseFinal.minimumTrackTintColor = blue;
-    self.slideDecreaseFinal.maximumTrackTintColor = white;
-    
-    self.panIncreaseStart.minimumTrackTintColor = white;
-    self.panIncreaseStart.maximumTrackTintColor = blue;
-    self.panIncreaseFinal.minimumTrackTintColor = blue;
-    self.panIncreaseFinal.maximumTrackTintColor = white;
-    
-    self.panDecreaseStart.minimumTrackTintColor = white;
-    self.panDecreaseStart.maximumTrackTintColor = blue;
-    self.panDecreaseFinal.minimumTrackTintColor = blue;
-    self.panDecreaseFinal.maximumTrackTintColor = white;
-    
+
+    float masterFrameCount = [self.appExecutive.frameCountNumber floatValue];
+
     slide3PSlider1.minimumValue = 1;
     slide3PSlider1.maximumValue = masterFrameCount * .33;
     
@@ -352,49 +263,31 @@ NSArray static	*frameCountStrings = nil;
     slide3PSlider3.minimumValue = slide3PSlider2.maximumValue + 1;
     slide3PSlider3.maximumValue = masterFrameCount;
     
+    slide3PSlider1.value = self.settings.slide3PVal1;
+    slide3PSlider2.value = self.settings.slide3PVal2;
+    slide3PSlider3.value = self.settings.slide3PVal3;
     
-    if ((![appExecutive.defaults integerForKey:@"slide3PVal1"]))
+    for (NMXDevice *device in self.appExecutive.deviceList)
     {
-//        NSLog(@"min: %f",slide3PSlider2.minimumValue);
-//        NSLog(@"max: %f",slide3PSlider2.maximumValue);
-        
-        //int a = (slide3PSlider2.minimumValue + slide3PSlider2.maximumValue)/2;
-        
-        //NSLog(@"half 3p vals: %i",a);
-        
-        //appExecutive.slide3PVal2 = a;
-        
-//        [appExecutive.defaults setObject: [NSNumber numberWithInt:slide3PSlider1.minimumValue] forKey: @"slide3PVal1"];
-//        [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-//        [appExecutive.defaults setObject: [NSNumber numberWithInt:slide3PSlider3.maximumValue] forKey: @"slide3PVal3"];
-//        
-//        [appExecutive.defaults synchronize];
+        JSDeviceSettings *devSettings = device.settings;
+
+        devSettings.slide3PVal1 = slide3PSlider1.value;
+        devSettings.slide3PVal2 = slide3PSlider2.value;
+        devSettings.slide3PVal3 = slide3PSlider3.value;
     }
     
-    slide3PSlider1.value = appExecutive.slide3PVal1;
-    slide3PSlider2.value = appExecutive.slide3PVal2;
-    slide3PSlider3.value = appExecutive.slide3PVal3;
-    
-    appExecutive.slide3PVal1 = slide3PSlider1.value;
-    appExecutive.slide3PVal2 = slide3PSlider2.value;
-    appExecutive.slide3PVal3 = slide3PSlider3.value;
-    
-    if (programMode == NMXProgramModeVideo)
+    if (self.programMode == NMXProgramModeVideo)
     {
-        slide3P1Lbl.text = [NSString stringWithFormat:@"%f",appExecutive.slide3PVal1];
-        slide3P2Lbl.text = [NSString stringWithFormat:@"%f",appExecutive.slide3PVal2];
-        slide3P3Lbl.text = [NSString stringWithFormat:@"%f",appExecutive.slide3PVal3];
+        slide3P1Lbl.text = [NSString stringWithFormat:@"%f",self.settings.slide3PVal1];
+        slide3P2Lbl.text = [NSString stringWithFormat:@"%f",self.settings.slide3PVal2];
+        slide3P3Lbl.text = [NSString stringWithFormat:@"%f",self.settings.slide3PVal3];
     }
     else
     {
-        slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal1];
-        slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal2];
-        slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal3];
+        slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal1];
+        slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal2];
+        slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal3];
     }
-    
-    NSLog(@"appExecutive.slide3PVal1: %f",appExecutive.slide3PVal1);
-    NSLog(@"appExecutive.slide3PVal2: %f",appExecutive.slide3PVal2);
-    NSLog(@"appExecutive.slide3PVal3: %f",appExecutive.slide3PVal3);
     
     slide3PSlider1.minimumTrackTintColor = blue;
     slide3PSlider1.maximumTrackTintColor = white;
@@ -409,9 +302,7 @@ NSArray static	*frameCountStrings = nil;
     
     if (appExecutive.is3P == YES)
     {
-        //NSLog(@"is3P");
-        
-        if (programMode == NMXProgramModeVideo)
+        if (self.programMode == NMXProgramModeVideo)
         {
             NSLog(@"is video");
             
@@ -419,9 +310,9 @@ NSArray static	*frameCountStrings = nil;
                   
             //int sd = [self.appExecutive.shotDurationNumber intValue];
             
-            float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-            float per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
-            float per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
+            float per1 = (float)self.settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+            float per2 = (float)self.settings.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
+            float per3 = (float)self.settings.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
             
             NSLog(@"per1: %f",per1);
             NSLog(@"per2: %f",per2);
@@ -447,13 +338,7 @@ NSArray static	*frameCountStrings = nil;
 //            slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)val3];
         }
         
-        self.slideView.hidden = YES;
-        self.panView.hidden = YES;
-        self.tiltView.hidden = YES;
-        
-        frameCount1.hidden = YES;
-        frameCount2.hidden = YES;
-        frameCount3.hidden = YES;
+        self.tableView.hidden = YES;
         
         lockButton.hidden = YES;
         rampSettingSegment.hidden = YES;
@@ -510,6 +395,8 @@ NSArray static	*frameCountStrings = nil;
         [self showVoltage];
     }
     
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(deviceDisconnect:)
                                                  name: kDeviceDisconnectedNotification
@@ -539,119 +426,9 @@ NSArray static	*frameCountStrings = nil;
     [self.view setNeedsLayout];
     [self.view layoutIfNeeded];
     
-    setup = FALSE;
-    [self setupSliders];
-    
     [settingsButton setTitle: @"\u2699" forState: UIControlStateNormal];
-    
-    [NSTimer scheduledTimerWithTimeInterval:0.500 target:self selector:@selector(timerName5) userInfo:nil repeats:NO];
 }
 
-- (void) timerName5 {
-	
-    [self setupDisplays];
-}
-
-- (void) viewDidAppear: (BOOL) animated {
-    
-    //[self setupDisplays];
-}
-
-- (void) setupDisplays {
-
-    slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseStart]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
-    
-    [slideLbl1 setNeedsDisplay];
-    
-    slideLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseFinal]-6, self.slideLbl2.frame.origin.y, slideLbl2.frame.size.width, slideLbl2.frame.size.height);
-    
-    [slideLbl2 setNeedsDisplay];
-    
-    slideLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.slideDecreaseStart]-6, self.slideLbl3.frame.origin.y, slideLbl3.frame.size.width, slideLbl3.frame.size.height);
-    
-    [slideLbl3 setNeedsDisplay];
-    
-    slideLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.slideDecreaseFinal]-6, self.slideLbl4.frame.origin.y, slideLbl4.frame.size.width, slideLbl4.frame.size.height);
-    
-    [slideLbl4 setNeedsDisplay];
-    
-    //pan
-    
-    panLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.panIncreaseStart]-6, self.panLbl1.frame.origin.y, panLbl1.frame.size.width, panLbl1.frame.size.height);
-    
-    [panLbl1 setNeedsDisplay];
-    
-    panLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.panIncreaseFinal]-6, self.panLbl2.frame.origin.y, panLbl2.frame.size.width, panLbl2.frame.size.height);
-    
-    [panLbl2 setNeedsDisplay];
-    
-    panLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.panDecreaseStart]-6, self.panLbl3.frame.origin.y, panLbl3.frame.size.width, panLbl3.frame.size.height);
-    
-    [panLbl3 setNeedsDisplay];
-    
-    panLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.panDecreaseFinal]-6, self.panLbl4.frame.origin.y, panLbl4.frame.size.width, panLbl4.frame.size.height);
-    
-    [panLbl4 setNeedsDisplay];
-    
-    //tilt
-    
-    tiltLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.tiltIncreaseStart]-6, self.tiltLbl1.frame.origin.y, tiltLbl1.frame.size.width, tiltLbl1.frame.size.height);
-    
-    [tiltLbl1 setNeedsDisplay];
-    
-    tiltLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.tiltIncreaseFinal]-6, self.tiltLbl2.frame.origin.y, tiltLbl2.frame.size.width, tiltLbl2.frame.size.height);
-    
-    [tiltLbl2 setNeedsDisplay];
-    
-    tiltLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.tiltDecreaseStart]-6, self.tiltLbl3.frame.origin.y, tiltLbl3.frame.size.width, tiltLbl3.frame.size.height);
-    
-    [tiltLbl3 setNeedsDisplay];
-    
-    tiltLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.tiltDecreaseFinal]-6, self.tiltLbl4.frame.origin.y, tiltLbl4.frame.size.width, tiltLbl4.frame.size.height);
-    
-    [tiltLbl4 setNeedsDisplay];
-    
-    [UIView animateWithDuration:.4 animations:^{
-        
-        slideLbl1.alpha = 1;
-        slideLbl2.alpha = 1;
-        slideLbl3.alpha = 1;
-        slideLbl4.alpha = 1;
-        
-        panLbl1.alpha = 1;
-        panLbl2.alpha = 1;
-        panLbl3.alpha = 1;
-        panLbl4.alpha = 1;
-        
-        tiltLbl1.alpha = 1;
-        tiltLbl2.alpha = 1;
-        tiltLbl3.alpha = 1;
-        tiltLbl4.alpha = 1;
-        
-        
-    } completion:^(BOOL finished) {
-        
-        [UIView animateWithDuration:.4 animations:^{
-            
-            
-        } completion:^(BOOL finished) {
-            
-        }];
-        
-    }];
-}
-
-- (float) xPositionFromSliderValue:(UISlider *)aSlider {
-    
-    float sliderRange2 = aSlider.frame.size.width - aSlider.currentThumbImage.size.width;
-    float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
-    
-    float sliderValueToPixels = (((aSlider.value - aSlider.minimumValue)/(aSlider.maximumValue - aSlider.minimumValue)) * sliderRange2) + sliderOrigin;
-    
-    sliderValueToPixels = sliderValueToPixels - (aSlider.currentThumbImage.size.width/2);
-    
-    return sliderValueToPixels;
-}
 
 - (void) showVoltage {
     
@@ -660,75 +437,53 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) showVoltageTimer {
     
-//    float voltage = self.appExecutive.voltage;
-//    
-//    float range = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-//    
-//    float diff = self.appExecutive.voltageHigh - voltage;
-//    
-//    float per = diff/range;
-//    
-//    float per2 = voltage/self.appExecutive.voltageHigh;
+    float voltagePercent = [self.appExecutive calculateVoltage: NO];
     
-    //per2 = .35;
+    float offset = 1 - (batteryIcon.frame.size.height * voltagePercent) - .5;
     
-//    NSLog(@"voltage: %.02f",voltage);
-//    NSLog(@"high: %.02f",self.appExecutive.voltageHigh);
-//    NSLog(@"low: %.02f",self.appExecutive.voltageLow);
-//    NSLog(@"range: %.02f",range);
-//    NSLog(@"diff: %.02f",diff);
-//    NSLog(@"per: %.02f",per);
-//    NSLog(@"per2: %.02f",per2);
-    
-    float newBase = self.appExecutive.voltageHigh - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newBase: %.02f",newBase);
-    
-    float newVoltage = self.appExecutive.voltage - self.appExecutive.voltageLow;
-    
-    //NSLog(@"newVoltage: %.02f",newVoltage);
-    
-    float per4 = newVoltage/newBase;
-    
-    //NSLog(@"per4: %.02f",per4);
-    
-    if (per4 > 1)
+    if (voltagePercent > 0)
     {
-        per4 = 1;
-    }
-    
-    if (per4 < 0)
-    {
-        per4 = 0;
-    }
+        UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
+                                                             batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
+                                                             batteryIcon.frame.size.width * .47,
+                                                             batteryIcon.frame.size.height * voltagePercent)];
         
-    float offset = 1 - (batteryIcon.frame.size.height * per4) - .5;
+        v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
     
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(batteryIcon.frame.origin.x + 8,
-                                                         batteryIcon.frame.origin.y + (batteryIcon.frame.size.height + offset),
-                                                         batteryIcon.frame.size.width * .47,
-                                                         batteryIcon.frame.size.height * per4)];
-    
-    v.backgroundColor = [UIColor colorWithRed:230.0/255 green:234.0/255 blue:239.0/255 alpha:.8];
-    
-    [contentBG addSubview:v];
+        [contentBG addSubview:v];
+    }
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
     
     [super viewWillDisappear: animated];
     
-    //[[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-- (void) deviceDisconnect: (id) object {
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    NSLog(@"MotorRampingVC got device disconnect   MODAL VIEW = %p", self.presentedViewController);
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"showNotificationHost" object:self.restorationIdentifier];
-    
-    NSLog(@"deviceDisconnect motor ramping");
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController popToRootViewControllerAnimated: true];
+        
+        if (!self.disconnected)
+        {
+            self.disconnected = YES;
+            
+            if (self.disconnectedDeviceVC)
+            {
+                [self.disconnectedDeviceVC reloadDeviceList];
+            }
+            else
+            {
+                [self performSegueWithIdentifier: SegueToDisconnectedDeviceViewController sender: self];
+            }
+            
+        }
+        
     });
+    
 }
 
 - (void) didReceiveMemoryWarning {
@@ -773,165 +528,11 @@ NSArray static	*frameCountStrings = nil;
     slider.frame      = slideFrame;
 }
 
-- (void) setupSliders {
-    
-    if (setup == FALSE)
-    {
-        [self setFrameForIncreaseSlider: self.slideIncreaseStart];
-        [self setFrameForIncreaseSlider: self.slideIncreaseFinal];
-        [self setFrameForDecreaseSlider: self.slideDecreaseStart];
-        [self setFrameForDecreaseSlider: self.slideDecreaseFinal];
-        
-        [self setFrameForIncreaseSlider: self.panIncreaseStart];
-        [self setFrameForIncreaseSlider: self.panIncreaseFinal];
-        [self setFrameForDecreaseSlider: self.panDecreaseStart];
-        [self setFrameForDecreaseSlider: self.panDecreaseFinal];
-        
-        [self setFrameForIncreaseSlider: self.tiltIncreaseStart];
-        [self setFrameForIncreaseSlider: self.tiltIncreaseFinal];
-        [self setFrameForDecreaseSlider: self.tiltDecreaseStart];
-        [self setFrameForDecreaseSlider: self.tiltDecreaseFinal];
-        
-        setup = TRUE;
-    }
-    
-    // get persistent values for slider positions
-    
-    self.slideIncreaseStart.value = [[self.appExecutive.slideIncreaseValues firstObject] floatValue];
-    self.slideIncreaseFinal.value = [[self.appExecutive.slideIncreaseValues lastObject ] floatValue];
-    self.slideDecreaseStart.value = [[self.appExecutive.slideDecreaseValues firstObject] floatValue];
-    self.slideDecreaseFinal.value = [[self.appExecutive.slideDecreaseValues lastObject ] floatValue];
-    
-    self.panIncreaseStart.value = [[self.appExecutive.panIncreaseValues firstObject] floatValue];
-    self.panIncreaseFinal.value = [[self.appExecutive.panIncreaseValues lastObject ] floatValue];
-    self.panDecreaseStart.value = [[self.appExecutive.panDecreaseValues firstObject] floatValue];
-    self.panDecreaseFinal.value = [[self.appExecutive.panDecreaseValues lastObject ] floatValue];
-    
-    self.tiltIncreaseStart.value = [[self.appExecutive.tiltIncreaseValues firstObject] floatValue];
-    self.tiltIncreaseFinal.value = [[self.appExecutive.tiltIncreaseValues lastObject ] floatValue];
-    self.tiltDecreaseStart.value = [[self.appExecutive.tiltDecreaseValues firstObject] floatValue];
-    self.tiltDecreaseFinal.value = [[self.appExecutive.tiltDecreaseValues lastObject ] floatValue];
-    
-    // set endpoints of lines drawn between slider thumbs
-    
-    self.slideView.increaseStart = [self locationOfThumb: self.slideIncreaseStart];
-    self.slideView.increaseFinal = [self locationOfThumb: self.slideIncreaseFinal];
-    self.slideView.decreaseStart = [self locationOfThumb: self.slideDecreaseStart];
-    self.slideView.decreaseFinal = [self locationOfThumb: self.slideDecreaseFinal];
-    [self.slideView setNeedsDisplay];
-    
-    self.panView.increaseStart = [self locationOfThumb: self.panIncreaseStart];
-    self.panView.increaseFinal = [self locationOfThumb: self.panIncreaseFinal];
-    self.panView.decreaseStart = [self locationOfThumb: self.panDecreaseStart];
-    self.panView.decreaseFinal = [self locationOfThumb: self.panDecreaseFinal];
-    [self.panView setNeedsDisplay];
-    
-    self.tiltView.increaseStart = [self locationOfThumb: self.tiltIncreaseStart];
-    self.tiltView.increaseFinal = [self locationOfThumb: self.tiltIncreaseFinal];
-    self.tiltView.decreaseStart = [self locationOfThumb: self.tiltDecreaseStart];
-    self.tiltView.decreaseFinal = [self locationOfThumb: self.tiltDecreaseFinal];
-    [self.tiltView setNeedsDisplay];
-    
-    self.slideIncreaseStart.restorationIdentifier = @"slideIncreaseStart";
-    self.slideIncreaseFinal.restorationIdentifier = @"slideIncreaseFinal";
-    self.slideDecreaseStart.restorationIdentifier = @"slideDecreaseStart";
-    self.slideDecreaseFinal.restorationIdentifier = @"slideDecreaseFinal";
-    
-    self.panIncreaseStart.restorationIdentifier = @"panIncreaseStart";
-    self.panIncreaseFinal.restorationIdentifier = @"panIncreaseFinal";
-    self.panDecreaseStart.restorationIdentifier = @"panDecreaseStart";
-    self.panDecreaseFinal.restorationIdentifier = @"panDecreaseFinal";
-    
-    self.tiltIncreaseStart.restorationIdentifier = @"tiltIncreaseStart";
-    self.tiltIncreaseFinal.restorationIdentifier = @"tiltIncreaseFinal";
-    self.tiltDecreaseStart.restorationIdentifier = @"tiltDecreaseStart";
-    self.tiltDecreaseFinal.restorationIdentifier = @"tiltDecreaseFinal";
-    
-    //NSLog(@"(int)self.slideIncreaseValues firstObject: %f",[[self.appExecutive.slideIncreaseValues firstObject] floatValue]);
-    
-    //float conv = sender.value * (selectedFrameCount/2);
-    
-    //NSLog(@"(int)self.slideIncreaseStart.value: %i",(int)self.slideIncreaseFinal.value);
-    
-    //float a = [[self.appExecutive.slideIncreaseValues firstObject] floatValue] * (selectedFrameCount/2);
-    
-    //NSLog(@"a: %f",a);
-    
-    //int b = [[self.appExecutive.slideIncreaseValues firstObject] floatValue] * (selectedFrameCount/2);
-    
-    //NSLog(@"b: %i",b);
-    
-    s12p = (int)(self.slideIncreaseStart.value * (selectedFrameCount/2));
-    
-    
-    
-    slideLbl1.text = [NSString stringWithFormat:@"%i",(int)(self.slideIncreaseStart.value * (selectedFrameCount/2))];
-    slideLbl2.text = [NSString stringWithFormat:@"%i",(int)(self.slideIncreaseFinal.value * (selectedFrameCount/2))];
-    slideLbl3.text = [NSString stringWithFormat:@"%i",(int)(self.slideDecreaseStart.value * (selectedFrameCount/2)+selectedFrameCount/2)];
-    slideLbl4.text = [NSString stringWithFormat:@"%i",(int)(self.slideDecreaseFinal.value * (selectedFrameCount/2)+selectedFrameCount/2)];
-    
-    panLbl1.text = [NSString stringWithFormat:@"%i",(int)(self.panIncreaseStart.value * (selectedFrameCount/2))];
-    panLbl2.text = [NSString stringWithFormat:@"%i",(int)(self.panIncreaseFinal.value * (selectedFrameCount/2))];
-    panLbl3.text = [NSString stringWithFormat:@"%i",(int)(self.panDecreaseStart.value * (selectedFrameCount/2)+selectedFrameCount/2)];
-    panLbl4.text = [NSString stringWithFormat:@"%i",(int)(self.panDecreaseFinal.value * (selectedFrameCount/2)+selectedFrameCount/2)];
-    
-    tiltLbl1.text = [NSString stringWithFormat:@"%i",(int)(self.tiltIncreaseStart.value * (selectedFrameCount/2))];
-    tiltLbl2.text = [NSString stringWithFormat:@"%i",(int)(self.tiltIncreaseFinal.value * (selectedFrameCount/2))];
-    tiltLbl3.text = [NSString stringWithFormat:@"%i",(int)(self.tiltDecreaseStart.value * (selectedFrameCount/2)+selectedFrameCount/2)];
-    tiltLbl4.text = [NSString stringWithFormat:@"%i",(int)(self.tiltDecreaseFinal.value * (selectedFrameCount/2)+selectedFrameCount/2)];
-    
-    
-    if (programMode == NMXProgramModeVideo && self.appExecutive.is3P == NO)
-    {
-        NSLog(@"is video");
-        
-//        slideLbl1.text = [self convertTime:self.slideIncreaseStart];
-//        slideLbl2.text = [self convertTime:self.slideIncreaseFinal];
-//        slideLbl3.text = [self convertTime:self.slideDecreaseStart];
-//        slideLbl4.text = [self convertTime:self.slideDecreaseFinal];
-//        
-//        panLbl1.text = [self convertTime:self.panIncreaseStart];
-//        panLbl2.text = [self convertTime:self.panIncreaseFinal];
-//        panLbl3.text = [self convertTime:self.panDecreaseStart];
-//        panLbl4.text = [self convertTime:self.panDecreaseFinal];
-//        
-//        tiltLbl1.text = [self convertTime:self.tiltIncreaseStart];
-//        tiltLbl2.text = [self convertTime:self.tiltIncreaseFinal];
-//        tiltLbl3.text = [self convertTime:self.tiltDecreaseStart];
-//        tiltLbl4.text = [self convertTime:self.tiltDecreaseFinal];
-        
-        slideLbl1.text = [self convertTime2:[slideLbl1.text floatValue]];
-        slideLbl2.text = [self convertTime2:[slideLbl2.text floatValue]];
-        slideLbl3.text = [self convertTime2:[slideLbl3.text floatValue]];
-        slideLbl4.text = [self convertTime2:[slideLbl4.text floatValue]];
-        
-        panLbl1.text = [self convertTime2:[panLbl1.text floatValue]];
-        panLbl2.text = [self convertTime2:[panLbl2.text floatValue]];
-        panLbl3.text = [self convertTime2:[panLbl3.text floatValue]];
-        panLbl4.text = [self convertTime2:[panLbl4.text floatValue]];
-        
-        tiltLbl1.text = [self convertTime2:[tiltLbl1.text floatValue]];
-        tiltLbl2.text = [self convertTime2:[tiltLbl2.text floatValue]];
-        tiltLbl3.text = [self convertTime2:[tiltLbl3.text floatValue]];
-        tiltLbl4.text = [self convertTime2:[tiltLbl4.text floatValue]];
-    }
-}
-
 - (NSString *)convertTime2 : (float)val {
-    
-    //int sd = [self.appExecutive.videoLengthNumber intValue];
     
     int sd = [self.appExecutive.frameCountNumber intValue];
     
-    //float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-    //float val1 = sd * per1;
-    
     float per1 = val/[self.appExecutive.frameCountNumber floatValue];
-    
-    //per1 = val * (selectedFrameCount/2);
-    
-    NSLog(@"%f per: %f",val,per1);
-    
     float val1 = sd * per1;
     
     NSString *a = [self stringForTimeDisplay: (int)val1];
@@ -941,14 +542,7 @@ NSArray static	*frameCountStrings = nil;
 
 - (NSString *)convertTime : (UISlider *)slider {
     
-    //int sd = [self.appExecutive.videoLengthNumber intValue];
-    
     int sd = [self.appExecutive.frameCountNumber intValue];
-    
-    NSLog(@"");
-    
-    //float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
-    //float val1 = sd * per1;
     
     float per1;
     
@@ -960,7 +554,7 @@ NSArray static	*frameCountStrings = nil;
         
         //NSLog(@"%@",b);
         
-        per1 = slider.value * (selectedFrameCount/2)+selectedFrameCount/2;
+        per1 = slider.value * (self.selectedFrameCount/2)+self.selectedFrameCount/2;
     }
     else
     {
@@ -968,7 +562,7 @@ NSArray static	*frameCountStrings = nil;
         
         //NSLog(@"%@",b);
         
-        per1 = slider.value * (selectedFrameCount/2);
+        per1 = slider.value * (self.selectedFrameCount/2);
     }
     
     //float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
@@ -1004,7 +598,7 @@ NSArray static	*frameCountStrings = nil;
         FrameCountViewController *secView = [segue destinationViewController];
         
         [secView setIsMotorSegue:YES];
-        [secView setCurrentFrameValue:currentSelectedFrameValue];
+        [secView setCurrentFrameValue:self.currentSelectedFrameValue];
         [secView setIsRampingScreen:YES];
     }
     else if ([segue.identifier isEqualToString:@"VideoMotorRamp"])
@@ -1012,7 +606,7 @@ NSArray static	*frameCountStrings = nil;
         ShortDurationViewController *secView = [segue destinationViewController];
         [secView setIsMotorSegue:YES];
         [secView setIsSettingVideoFrame:YES];
-        [secView setIsMotorSegueVal:currentSelectedFrameValue];
+        [secView setIsMotorSegueVal:self.currentSelectedFrameValue];
         [secView setSelectedVideoFrame:newVal];
         
     }
@@ -1029,6 +623,12 @@ NSArray static	*frameCountStrings = nil;
         
         [msvc setScreenInd:4];
     }
+    else if ([segue.identifier isEqualToString:SegueToDisconnectedDeviceViewController])
+    {
+        self.disconnectedDeviceVC = segue.destinationViewController;
+        self.disconnectedDeviceVC.delegate = self;
+    }
+
 }
 
 - (IBAction) unwindFromReviewStatusViewController: (UIStoryboardSegue *) segue {
@@ -1044,538 +644,108 @@ NSArray static	*frameCountStrings = nil;
     [self dismissViewControllerAnimated: YES completion: NULL];
 }
 
-- (CGPoint) locationOfThumb: (UISlider *) slider {
-    
-    CGFloat 	value		= slider.value;
-    CGFloat		range		= slider.maximumValue - slider.minimumValue;
-    CGRect		totalTrack	= [slider trackRectForBounds: slider.bounds];
-    CGFloat		thumbWidth	= 26.0;
-    CGRect		thumbTrack	= CGRectInset(totalTrack, thumbWidth / 2.0, 0.0);
-    CGFloat		thumbX		= thumbTrack.origin.x + (value / range) * thumbTrack.size.width;
-    CGFloat		thumbY		= thumbTrack.origin.y + thumbTrack.size.height / 2.0;
-    CGPoint		thumbPoint	= CGPointMake(thumbX, thumbY);
-    CGPoint		location	= [slider convertPoint: thumbPoint toView: slider.superview];
-    
-    //DDLogDebug(@"Thumb: (%g, %g)", location.x, location.y);
-    
-    return location;
-}
-
-#pragma mark Slide Controls
-
-- (IBAction) handleSlideIncreaseStart: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
-    
-    if (sender.value > self.slideIncreaseFinal.value)
-    {
-        self.slideIncreaseFinal.value = sender.value;
-        
-        [self updateSlideIncreaseFinalLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.slideView.increaseStart = [self locationOfThumb: sender];
-    self.slideView.increaseFinal = [self locationOfThumb: self.slideIncreaseFinal];
-    
-    //NSLog(@"start %@",self.slideView.increaseStart);
-    
-    [self.slideView setNeedsDisplay];
-    
-    [self updateSlideIncreaseStartLabel];
-    
-    [self saveSlideIncreaseValues];
-    
-    if (isLocked)
-    {
-        [self updatePanIncreaseStart:sender];
-        [self updateTiltIncreaseStart:sender];
-    }
-}
-
-- (IBAction) handleSlideIncreaseFinal: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
-    
-    if (sender.value < self.slideIncreaseStart.value)
-    {
-        self.slideIncreaseStart.value = sender.value;
-        
-        [self updateSlideIncreaseStartLabel];
-    }
-    
-    NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.slideView.increaseStart = [self locationOfThumb: self.slideIncreaseStart];
-    self.slideView.increaseFinal = [self locationOfThumb: sender];
-    
-    [self.slideView setNeedsDisplay];
-    
-    [self updateSlideIncreaseFinalLabel];
-    
-    [self saveSlideIncreaseValues];
-    
-    if (isLocked)
-    {
-        [self updatePanIncreaseFinal:sender];
-        [self updateTiltIncreaseFinal:sender];
-    }
-}
-
-- (void) saveSlideIncreaseValues {
-    
-    NSNumber *	startValue	= [NSNumber numberWithFloat: self.slideIncreaseStart.value];
-    NSNumber *	finalValue	= [NSNumber numberWithFloat: self.slideIncreaseFinal.value];
-    NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
-    
-    //NSLog(@"rampValues: %@",rampValues);
-    
-    self.appExecutive.slideIncreaseValues = rampValues;
-}
-
-- (IBAction) handleSlideDecreaseStart: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
-    
-    if (sender.value > self.slideDecreaseFinal.value)
-    {
-        self.slideDecreaseFinal.value = sender.value;
-        
-        [self updateSlideDecreaseFinalLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    //NSLog(@"sender.value: %f",sender.value);
-    
-    self.slideView.decreaseStart = [self locationOfThumb: sender];
-    self.slideView.decreaseFinal = [self locationOfThumb: self.slideDecreaseFinal];
-    
-    [self.slideView setNeedsDisplay];
-    
-    [self updateSlideDecreaseStartLabel];
-    
-    [self saveSlideDecreaseValues];
-    
-    if (isLocked)
-    {
-        [self updatePanDecreaseStart:sender];
-        [self updateTiltDecreaseStart:sender];
-    }
-}
-
-- (IBAction) handleSlideDecreaseFinal: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
-    
-    if (sender.value < self.slideDecreaseStart.value)
-    {
-        self.slideDecreaseStart.value = sender.value;
-        
-        [self updateSlideDecreaseStartLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.slideView.decreaseStart = [self locationOfThumb: self.slideDecreaseStart];
-    self.slideView.decreaseFinal = [self locationOfThumb: sender];
-    
-    [self.slideView setNeedsDisplay];
-    
-    [self updateSlideDecreaseFinalLabel];
-    
-    [self saveSlideDecreaseValues];
-    
-    if (isLocked)
-    {
-        [self updatePanDecreaseFinal:sender];
-        [self updateTiltDecreaseFinal:sender];
-    }
-}
-
-- (void) saveSlideDecreaseValues {
-    
-    NSNumber *	startValue	= [NSNumber numberWithFloat: self.slideDecreaseStart.value];
-    NSNumber *	finalValue	= [NSNumber numberWithFloat: self.slideDecreaseFinal.value];
-    NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
-    
-    self.appExecutive.slideDecreaseValues = rampValues;
-}
-
-#pragma mark Pan Controls
-
-- (IBAction) handlePanIncreaseStart: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
-    
-    if (sender.value > self.panIncreaseFinal.value)
-    {
-        self.panIncreaseFinal.value = sender.value;
-        
-        [self updatePanIncreaseFinalLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.panView.increaseStart = [self locationOfThumb: sender];
-    self.panView.increaseFinal = [self locationOfThumb: self.panIncreaseFinal];
-    
-    [self.panView setNeedsDisplay];
-
-    [self updatePanIncreaseStartLabel];
-    
-    [self savePanIncreaseValues];
-    
-    if (isLocked)
-    {
-        [self updateSlideIncreaseStart:sender];
-        [self updateTiltIncreaseStart:sender];
-    }
-}
-
-- (IBAction) handlePanIncreaseFinal: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
-    
-    if (sender.value < self.panIncreaseStart.value)
-    {
-        self.panIncreaseStart.value = sender.value;
-        
-        [self updatePanIncreaseStartLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.panView.increaseStart = [self locationOfThumb: self.panIncreaseStart];
-    self.panView.increaseFinal = [self locationOfThumb: sender];
-    
-    [self.panView setNeedsDisplay];
-    
-    [self updatePanIncreaseFinalLabel];
-    
-    [self savePanIncreaseValues];
-    
-    if (isLocked)
-    {
-        [self updateSlideIncreaseFinal:sender];
-        [self updateTiltIncreaseFinal:sender];
-    }
-}
-
-- (void) savePanIncreaseValues {
-    
-    NSNumber *	startValue	= [NSNumber numberWithFloat: self.panIncreaseStart.value];
-    NSNumber *	finalValue	= [NSNumber numberWithFloat: self.panIncreaseFinal.value];
-    NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
-    
-    self.appExecutive.panIncreaseValues = rampValues;
-}
-
-- (IBAction) handlePanDecreaseStart: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
-    
-    if (sender.value > self.panDecreaseFinal.value)
-    {
-        self.panDecreaseFinal.value = sender.value;
-        
-        [self updatePanDecreaseFinalLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.panView.decreaseStart = [self locationOfThumb: sender];
-    self.panView.decreaseFinal = [self locationOfThumb: self.panDecreaseFinal];
-    
-    [self.panView setNeedsDisplay];
-    
-    [self updatePanDecreaseStartLabel];
-    
-    [self savePanDecreaseValues];
-    
-    if (isLocked)
-    {
-        [self updateSlideDecreaseStart:sender];
-        [self updateTiltDecreaseStart:sender];
-    }
-}
-
-- (IBAction) handlePanDecreaseFinal: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
-    
-    if (sender.value < self.panDecreaseStart.value)
-    {
-        self.panDecreaseStart.value = sender.value;
-        
-        [self updatePanDecreaseStartLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.panView.decreaseStart = [self locationOfThumb: self.panDecreaseStart];
-    self.panView.decreaseFinal = [self locationOfThumb: sender];
-    
-    [self.panView setNeedsDisplay];
-    
-    [self updatePanDecreaseFinalLabel];
-    
-    [self savePanDecreaseValues];
-    
-    if (isLocked)
-    {
-        [self updateSlideDecreaseFinal:sender];
-        [self updateTiltDecreaseFinal:sender];
-    }
-}
-
-- (void) savePanDecreaseValues {
-    
-    NSNumber *	startValue	= [NSNumber numberWithFloat: self.panDecreaseStart.value];
-    NSNumber *	finalValue	= [NSNumber numberWithFloat: self.panDecreaseFinal.value];
-    NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
-    
-    self.appExecutive.panDecreaseValues = rampValues;
-}
-
-#pragma mark Tilt Controls
-
-- (IBAction) handleTiltIncreaseStart: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
-    
-    if (sender.value > self.tiltIncreaseFinal.value)
-    {
-        self.tiltIncreaseFinal.value = sender.value;
-        
-        [self updateTiltIncreaseFinalLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.tiltView.increaseStart = [self locationOfThumb: sender];
-    self.tiltView.increaseFinal = [self locationOfThumb: self.tiltIncreaseFinal];
-    
-    [self.tiltView setNeedsDisplay];
-    
-    [self updateTiltIncreaseStartLabel];
-    
-    [self saveTiltIncreaseValues];
-    
-    if (isLocked)
-    {
-        [self updateSlideIncreaseStart:sender];
-        [self updatePanIncreaseStart:sender];
-    }
-}
-
-- (IBAction) handleTiltIncreaseFinal: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2);
-    
-    if (sender.value < self.tiltIncreaseStart.value)
-    {
-        self.tiltIncreaseStart.value = sender.value;
-        
-        [self updateTiltIncreaseStartLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.tiltView.increaseStart = [self locationOfThumb: self.tiltIncreaseStart];
-    self.tiltView.increaseFinal = [self locationOfThumb: sender];
-    
-    [self.tiltView setNeedsDisplay];
-    
-    [self updateTiltIncreaseFinalLabel];
-    
-    [self saveTiltIncreaseValues];
-    
-    if (isLocked)
-    {
-        [self updateSlideIncreaseFinal:sender];
-        [self updatePanIncreaseFinal:sender];
-    }
-}
-
-- (void) saveTiltIncreaseValues {
-    
-    NSNumber *	startValue	= [NSNumber numberWithFloat: self.tiltIncreaseStart.value];
-    NSNumber *	finalValue	= [NSNumber numberWithFloat: self.tiltIncreaseFinal.value];
-    NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
-    
-    self.appExecutive.tiltIncreaseValues = rampValues;
-}
-
-- (IBAction) handleTiltDecreaseStart: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
-    
-    if (sender.value > self.tiltDecreaseFinal.value)
-    {
-        self.tiltDecreaseFinal.value = sender.value;
-        
-        [self updateTiltDecreaseFinalLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.tiltView.decreaseStart = [self locationOfThumb: sender];
-    self.tiltView.decreaseFinal = [self locationOfThumb: self.tiltDecreaseFinal];
-    
-    [self.tiltView setNeedsDisplay];
-    
-    [self updateTiltDecreaseStartLabel];
-    
-    [self saveTiltDecreaseValues];
-    
-    if (isLocked)
-    {
-        [self updateSlideDecreaseStart:sender];
-        [self updatePanDecreaseStart:sender];
-    }
-}
-
-- (IBAction) handleTiltDecreaseFinal: (UISlider *) sender {
-    
-    currentSelectedFrameValue = sender.value * (selectedFrameCount/2)+selectedFrameCount/2;
-    
-    if (sender.value < self.tiltDecreaseStart.value)
-    {
-        self.tiltDecreaseStart.value = sender.value;
-        
-        [self updateTiltDecreaseStartLabel];
-    }
-    
-    //[self updateFrameText];
-    
-    //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
-    
-    self.tiltView.decreaseStart = [self locationOfThumb: self.tiltDecreaseStart];
-    self.tiltView.decreaseFinal = [self locationOfThumb: sender];
-    
-    [self.tiltView setNeedsDisplay];
-    
-    [self updateTiltDecreaseFinalLabel];
-    
-    [self saveTiltDecreaseValues];
-    
-    if (isLocked)
-    {
-        [self updateSlideDecreaseFinal:sender];
-        [self updatePanDecreaseFinal:sender];
-    }
-}
-
-- (void) saveTiltDecreaseValues {
-    
-    NSNumber *	startValue	= [NSNumber numberWithFloat: self.tiltDecreaseStart.value];
-    NSNumber *	finalValue	= [NSNumber numberWithFloat: self.tiltDecreaseFinal.value];
-    NSArray *	rampValues	= [NSArray arrayWithObjects: startValue, finalValue, nil];
-    
-    self.appExecutive.tiltDecreaseValues = rampValues;
-}
-
 - (IBAction) handleEditProgramButton: (UIButton *) sender {
 
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *settings = device.settings;
+        [settings synchronize];
+    }
+    
     return; // unwind
 }
 
 - (IBAction) handleNextButton: (UIButton *) sender {
 
-    //NMXDevice * device = [AppExecutive sharedInstance].device;
-    
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            JSDeviceSettings *settings = device.settings;
+            [settings synchronize];
+        }
+
+        NSString *unfeasibleDevice = nil;
+        
+        if (appExecutive.is3P == NO)
+        {
+            for (NMXDevice *device in self.appExecutive.deviceList)
+            {
+                for (int channel = 0; channel < kNumChannels; channel++)
+                {
+                    NSArray *increaseValues, *decreaseValues;
+                    unsigned char motor;
+                    if (channel == kSlideChannel)
+                    {
+                        motor = device.sledMotor;
+                        increaseValues = device.settings.slideIncreaseValues;
+                        decreaseValues = device.settings.slideDecreaseValues;
+                    }
+                    else if (channel == kPanChannel)
+                    {
+                        motor = device.panMotor;
+                        increaseValues = device.settings.panIncreaseValues;
+                        decreaseValues = device.settings.panDecreaseValues;
+                    }
+                    else
+                    {
+                        motor = device.tiltMotor;
+                        increaseValues = device.settings.tiltIncreaseValues;
+                        decreaseValues = device.settings.tiltDecreaseValues;
+                    }
+                    
+                    UInt32  durationInMS = [device motorQueryShotsTotalTravelTime: motor] +
+                    [device motorQueryLeadInShotsOrTime: motor] +
+                    [device motorQueryLeadOutShotsOrTime: motor];
+                    UInt32  leadIn, leadOut, accelInMS, decelInMS;
+                    
+                    float increaseStart = [[increaseValues firstObject] floatValue];
+                    float increaseEnd = [[increaseValues lastObject] floatValue];
+                    float decreaseStart = [[decreaseValues firstObject] floatValue];
+                    float decreaseEnd = [[decreaseValues lastObject] floatValue];
+                    
+                    leadIn = durationInMS * increaseStart / 2;
+                    accelInMS = durationInMS * (increaseEnd - increaseStart) / 2;
+                    leadOut = durationInMS * (1 - decreaseEnd) / 2;
+                    decelInMS = durationInMS * (decreaseEnd - decreaseStart) / 2;
+                    
+                    [device motorSet: motor SetLeadInShotsOrTime: leadIn];
+                    [device motorSet: motor SetProgramAccel: accelInMS];
+                    [device motorSet: motor SetProgramDecel: decelInMS];
+                    [device motorSet: motor SetLeadOutShotsOrTime: leadOut];
+                    [device motorSet: motor SetShotsTotalTravelTime: durationInMS - leadIn - leadOut];
+                    
+                    if (NO == [device motorQueryFeasibility: motor])
+                    {
+                        unfeasibleDevice = [appExecutive stringWithHandleForDeviceName: device.name];
+                        break;
+                    }
+                }
+            }
+            
+        }
     
-    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        UInt32  durationInMS = [device motorQueryShotsTotalTravelTime: device.sledMotor] + [device motorQueryLeadInShotsOrTime: device.sledMotor] + [device motorQueryLeadOutShotsOrTime: device.sledMotor];
-        
-        UInt32  leadIn, leadOut, accelInMS, decelInMS;
-        
-        leadIn = durationInMS * self.slideIncreaseStart.value / 2;
-        accelInMS = durationInMS * (self.slideIncreaseFinal.value - self.slideIncreaseStart.value) / 2;
-        leadOut = durationInMS * (1 - self.slideDecreaseFinal.value) / 2;
-        decelInMS = durationInMS * (self.slideDecreaseFinal.value - self.slideDecreaseStart.value) / 2;
-        
-        [device motorSet: device.sledMotor SetLeadInShotsOrTime: leadIn];
-        [device motorSet: device.sledMotor SetProgramAccel: accelInMS];
-        [device motorSet: device.sledMotor SetProgramDecel: decelInMS];
-        [device motorSet: device.sledMotor SetLeadOutShotsOrTime: leadOut];
-        [device motorSet: device.sledMotor SetShotsTotalTravelTime: durationInMS - leadIn - leadOut];
-        
-        durationInMS = [device motorQueryShotsTotalTravelTime: device.panMotor] + [device motorQueryLeadInShotsOrTime: device.panMotor] + [device motorQueryLeadOutShotsOrTime: device.panMotor];
-        leadIn = durationInMS * self.panIncreaseStart.value / 2;
-        accelInMS = durationInMS * (self.panIncreaseFinal.value - self.panIncreaseStart.value) / 2;
-        leadOut = durationInMS * (1 - self.panDecreaseFinal.value) / 2;
-        decelInMS = durationInMS * (self.panDecreaseFinal.value - self.panDecreaseStart.value) / 2;
-        
-        [device motorSet: device.panMotor SetLeadInShotsOrTime: leadIn];
-        [device motorSet: device.panMotor SetProgramAccel: accelInMS];
-        [device motorSet: device.panMotor SetProgramDecel: decelInMS];
-        [device motorSet: device.panMotor SetLeadOutShotsOrTime: leadOut];
-        [device motorSet: device.panMotor SetShotsTotalTravelTime: durationInMS - leadIn - leadOut];
-        
-        durationInMS = [device motorQueryShotsTotalTravelTime: device.tiltMotor] + [device motorQueryLeadInShotsOrTime: device.tiltMotor] + [device motorQueryLeadOutShotsOrTime: device.tiltMotor];
-        leadIn = durationInMS * self.tiltIncreaseStart.value / 2;
-        accelInMS = durationInMS * (self.tiltIncreaseFinal.value - self.tiltIncreaseStart.value) / 2;
-        leadOut = durationInMS * (1 - self.tiltDecreaseFinal.value) / 2;
-        decelInMS = durationInMS * (self.tiltDecreaseFinal.value - self.tiltDecreaseStart.value) / 2;
-        
-        [device motorSet: device.tiltMotor SetLeadInShotsOrTime: leadIn];
-        [device motorSet: device.tiltMotor SetProgramAccel: accelInMS];
-        [device motorSet: device.tiltMotor SetProgramDecel: decelInMS];
-        [device motorSet: device.tiltMotor SetLeadOutShotsOrTime: leadOut];
-        [device motorSet: device.tiltMotor SetShotsTotalTravelTime: durationInMS - leadIn - leadOut];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
             
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-            
-            if (appExecutive.is3P == NO)
-            {
-                if ((NO == [device motorQueryFeasibility: device.sledMotor]) ||
-                    (NO == [device motorQueryFeasibility: device.panMotor]) ||
-                    (NO == [device motorQueryFeasibility: device.tiltMotor]))
-                {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
-                                                                    message: @"Reduce ramping or lead in/out time"
-                                                                   delegate: self
-                                                          cancelButtonTitle: @"OK"
-                                                          otherButtonTitles: nil];
-                    [alert show];
-                }
-                else
-                {
-                    [self performSegueWithIdentifier: kSegueToReviewStatusViewController sender: self];
-                }
-            }
-            else
-            {
-                [self performSegueWithIdentifier: kSegueToReviewStatusViewController sender: self];
-            }
-        });
+        if (unfeasibleDevice)
+        {
+            NSString *message = [NSString stringWithFormat:@"Reduce ramping or lead in/out time for device : %@", unfeasibleDevice];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
+                                                            message: message
+                                                           delegate: self
+                                                  cancelButtonTitle: @"OK"
+                                                  otherButtonTitles: nil];
+            [alert show];
+        }
+        else
+        {
+            [self performSegueWithIdentifier: kSegueToReviewStatusViewController sender: self];
+        }
+
     });
+
 }
 
 #pragma mark Randall Updates - Ramp Easing
@@ -1584,21 +754,25 @@ NSArray static	*frameCountStrings = nil;
     
     UISlider *s = sender;
     
-    appExecutive.slide3PVal1 = s.value;
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        JSDeviceSettings *devSettings = device.settings;
+        devSettings.slide3PVal1 = s.value;
+    }
     
-    currentSelectedFrameValue = appExecutive.slide3PVal1;
+    self.currentSelectedFrameValue = self.settings.slide3PVal1;
     
     NSLog(@"s.value: %f",s.value);
     
-    slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal1];
+    slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal1];
     
-    if (programMode == NMXProgramModeVideo)
+    if (self.programMode == NMXProgramModeVideo)
     {
         int sd = [self.appExecutive.videoLengthNumber intValue];
         
         //int sd = [self.appExecutive.shotDurationNumber intValue];
         
-        float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+        float per1 = (float)self.settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
         
         float val1 = sd * per1;
         
@@ -1615,30 +789,27 @@ NSArray static	*frameCountStrings = nil;
         
         slide3P1Lbl.text = a;
     }
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-    [appExecutive.defaults synchronize];
 }
 
 - (IBAction) handleSlide3PSlider2:(id)sender {
     
     UISlider *s = sender;
     
-    appExecutive.slide3PVal2 = s.value;
+    self.settings.slide3PVal2 = s.value;
     
-    currentSelectedFrameValue = appExecutive.slide3PVal2;
+    self.currentSelectedFrameValue = self.settings.slide3PVal2;
     
     //NSLog(@"slide3PVal2: %f",appExecutive.slide3PVal2);
     
-    slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal2];
+    slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal2];
     
-    if (programMode == NMXProgramModeVideo)
+    if (self.programMode == NMXProgramModeVideo)
     {
         int sd = [self.appExecutive.videoLengthNumber intValue];
         
         //int sd = [self.appExecutive.shotDurationNumber intValue];
         
-        float per2 = (float)self.appExecutive.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
+        float per2 = (float)self.settings.slide3PVal2/[self.appExecutive.frameCountNumber floatValue];
         
         float val2 = sd * per2;
         
@@ -1650,30 +821,27 @@ NSArray static	*frameCountStrings = nil;
         
         slide3P2Lbl.text = a;
     }
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-    [appExecutive.defaults synchronize];
 }
 
 - (IBAction) handleSlide3PSlider3:(id)sender {
     
     UISlider *s = sender;
     
-    appExecutive.slide3PVal3 = s.value;
+    self.settings.slide3PVal3 = s.value;
     
-    currentSelectedFrameValue = appExecutive.slide3PVal3;
+    self.currentSelectedFrameValue = self.settings.slide3PVal3;
     
-    slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal3];
+    slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal3];
     
     //NSLog(@"slide3PVal3: %f",appExecutive.slide3PVal3);
     
-    if (programMode == NMXProgramModeVideo)
+    if (self.programMode == NMXProgramModeVideo)
     {
         int sd = [self.appExecutive.videoLengthNumber intValue];
         
         //int sd = [self.appExecutive.shotDurationNumber intValue];
         
-        float per3 = (float)self.appExecutive.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
+        float per3 = (float)self.settings.slide3PVal3/[self.appExecutive.frameCountNumber floatValue];
         
         float val3 = sd * per3;
         
@@ -1685,93 +853,6 @@ NSArray static	*frameCountStrings = nil;
         
         slide3P3Lbl.text = a;
     }
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handlePan3PSlider1:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.pan3PVal1 = s.value;
-    
-    NSLog(@"pan3PVal1: %i",appExecutive.pan3PVal1);
-    
-    pan3P1Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.pan3PVal1];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.pan3PVal1] forKey: @"pan3PVal1"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handlePan3PSlider2:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.pan3PVal2 = s.value;
-    
-    NSLog(@"pan3PVal2: %i",appExecutive.pan3PVal2);
-    
-    pan3P2Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.pan3PVal2];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.pan3PVal2] forKey: @"pan3PVal2"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handlePan3PSlider3:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.pan3PVal3 = s.value;
-    
-    pan3P3Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.pan3PVal3];
-    
-    NSLog(@"pan3PVal3: %i",appExecutive.pan3PVal3);
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.pan3PVal3] forKey: @"pan3PVal3"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handleTilt3PSlider1:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.tilt3PVal1 = s.value;
-    
-    NSLog(@"tilt3PVal1: %i",appExecutive.tilt3PVal1);
-    
-    tilt3P1Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.tilt3PVal1];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.tilt3PVal1] forKey: @"tilt3PVal1"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handleTilt3PSlider2:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.tilt3PVal2 = s.value;
-    
-    NSLog(@"tilt3PVal2: %i",appExecutive.tilt3PVal2);
-    
-    tilt3P2Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.tilt3PVal2];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.tilt3PVal2] forKey: @"tilt3PVal2"];
-    [appExecutive.defaults synchronize];
-}
-
-- (IBAction) handleTilt3PSlider3:(id)sender {
-    
-    UISlider *s = sender;
-    
-    appExecutive.tilt3PVal3 = s.value;
-    
-    tilt3P3Lbl.text = [NSString stringWithFormat:@"%i",appExecutive.tilt3PVal3];
-    
-    NSLog(@"tilt3PVal3: %i",appExecutive.tilt3PVal3);
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithInt:appExecutive.tilt3PVal3] forKey: @"tilt3PVal3"];
-    [appExecutive.defaults synchronize];
 }
 
 - (IBAction) updateRampEasingValue:(id)sender {
@@ -1798,15 +879,15 @@ NSArray static	*frameCountStrings = nil;
 
 - (IBAction) handleLockButton:(id)sender {
     
-    if (isLocked) {
+    if (self.isLocked) {
         
-        isLocked = false;
+        self.isLocked = false;
         
         [lockButton setTitle:@"Lock" forState:UIControlStateNormal];
     }
     else
     {
-        isLocked = true;
+        self.isLocked = true;
         
         [lockButton setTitle:@"Unlock" forState:UIControlStateNormal];
     }
@@ -1819,28 +900,28 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) updateSlide3PVal1: (UISlider *) slider {
     
-//    if (slider.value > appExecutive.slide3PVal1)
-//        appExecutive.slide3PVal1 = slider.value;
-    
     sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
     
-    appExecutive.slide3PVal1 = sliderValue;
-    
-    NSLog(@"upsl3p1 appExecutive.slide3PVal1: %f",appExecutive.slide3PVal1);
-    
-    slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal1];
-    
-    if (programMode == NMXProgramModeVideo)
+    for (NMXDevice *device in self.appExecutive.deviceList)
     {
-        NSLog(@"upsl3p1 currentSelectedFrameValue: %f",currentSelectedFrameValue);
+        JSDeviceSettings *devSettings = device.settings;
+        devSettings.slide3PVal1 = sliderValue;
+    }
+    
+    NSLog(@"upsl3p1 appExecutive.slide3PVal1: %f",self.settings.slide3PVal1);
+    
+    slide3P1Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal1];
+    
+    if (self.programMode == NMXProgramModeVideo)
+    {
+        NSLog(@"upsl3p1 currentSelectedFrameValue: %f",self.currentSelectedFrameValue);
         NSLog(@"upsl3p1 selectedVideoFrame: %i",selectedVideoFrame);
         
         int sd = [self.appExecutive.videoLengthNumber intValue];
         
         //int sd = [self.appExecutive.shotDurationNumber intValue];
         
-        float per1 = (float)self.appExecutive.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
+        float per1 = (float)self.settings.slide3PVal1/[self.appExecutive.frameCountNumber floatValue];
         
         NSLog(@"upsl3p1 per1: %f",per1);
         
@@ -1855,29 +936,17 @@ NSArray static	*frameCountStrings = nil;
     
     [self.slide3PView setNeedsDisplay];
     
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal1] forKey: @"slide3PVal1"];
-    [appExecutive.defaults synchronize];
-    
-    //[self saveSlideIncreaseValues];
 }
 
 - (void) updateSlide3PVal2: (UISlider *) slider {
     
-//    if (slider.value > appExecutive.slide3PVal2)
-//        appExecutive.slide3PVal2 = slider.value;
-    
     sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
     
-    appExecutive.slide3PVal2 = sliderValue;
+    self.settings.slide3PVal2 = sliderValue;
     
-    //NSLog(@"updateSlide3PVal2 appExecutive.slide3PVal2: %f",appExecutive.slide3PVal2);
+    slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal2];
     
-    //slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal2];
-    
-    slide3P2Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal2];
-    
-    if (programMode == NMXProgramModeVideo)
+    if (self.programMode == NMXProgramModeVideo)
     {
         NSString *a = [self stringForTimeDisplay: (int)selectedVideoFrame];
         
@@ -1886,27 +955,17 @@ NSArray static	*frameCountStrings = nil;
     
     [self.slide3PView setNeedsDisplay];
     
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal2] forKey: @"slide3PVal2"];
-    [appExecutive.defaults synchronize];
-    
-    //[self saveSlideIncreaseValues];
 }
 
 - (void) updateSlide3PVal3: (UISlider *) slider {
     
-    //NSLog(@"updateSlide3PVal3");
-    
-    //    if (slider.value > appExecutive.slide3PVal2)
-    //        appExecutive.slide3PVal2 = slider.value;
-    
     sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
     
-    appExecutive.slide3PVal3 = sliderValue;
+    self.settings.slide3PVal3 = sliderValue;
     
-    slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)appExecutive.slide3PVal3];
+    slide3P3Lbl.text = [NSString stringWithFormat:@"%i",(int)self.settings.slide3PVal3];
     
-    if (programMode == NMXProgramModeVideo)
+    if (self.programMode == NMXProgramModeVideo)
     {
         NSString *a = [self stringForTimeDisplay: (int)selectedVideoFrame];
         
@@ -1914,440 +973,47 @@ NSArray static	*frameCountStrings = nil;
     }
     
     [self.slide3PView setNeedsDisplay];
-    
-    [appExecutive.defaults setObject: [NSNumber numberWithFloat:appExecutive.slide3PVal3] forKey: @"slide3PVal3"];
-    [appExecutive.defaults synchronize];
-    
-    //[self saveSlideIncreaseValues];
 }
 
-//increase start
-
-- (void) updateSlideIncreaseStartLabel
+// 2P cell
+- (void) showFrameText:(JSMotorRampingTableViewCell *)cell slider:(UISlider *)slider
 {
-    if (programMode == NMXProgramModeVideo) {
-        slideLbl1.text = [self convertTime2:currentSelectedFrameValue];
-    } else {
-        slideLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
+    self.currentCell = cell;
+    self.selectedSlider = slider;
+    self.currentFrameTarget = slider.restorationIdentifier;
 
-    slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseStart]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
-    [slideLbl1 setNeedsDisplay];
+    [self showFrameText];
 }
 
-- (void) updatePanIncreaseStartLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        panLbl1.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        panLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-
-    panLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.panIncreaseStart]-6, self.panLbl1.frame.origin.y, panLbl1.frame.size.width, panLbl1.frame.size.height);
-    [panLbl1 setNeedsDisplay];
-}
-
-- (void) updateTiltIncreaseStartLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        tiltLbl1.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        tiltLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-
-    tiltLbl1.frame = CGRectMake([self xPositionFromSliderValue:self.tiltIncreaseStart]-6, self.tiltLbl1.frame.origin.y, tiltLbl1.frame.size.width, tiltLbl1.frame.size.height);
-    [tiltLbl1 setNeedsDisplay];
-
-}
-
-- (void) updateSlideIncreaseStart: (UISlider *) slider {
-    
-    if (slider.value > self.slideIncreaseFinal.value)
-        self.slideIncreaseFinal.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.slideIncreaseStart.value = sliderValue;
-    
-    self.slideView.increaseStart = [self locationOfThumb: self.slideIncreaseStart];
-    self.slideView.increaseFinal = [self locationOfThumb: self.slideIncreaseFinal];
-    
-    [self.slideView setNeedsDisplay];
-    
-    slideLbl1.frame = CGRectMake([self xPositionFromSliderValue:slider]-6, self.slideLbl1.frame.origin.y, slideLbl1.frame.size.width, slideLbl1.frame.size.height);
-    
-    slideLbl1.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    
-    
-    [self saveSlideIncreaseValues];
-    
-    [self updateSlideIncreaseStartLabel];
-}
-
-- (void) updatePanIncreaseStart: (UISlider *) slider {
-    
-    if (slider.value > self.panIncreaseFinal.value)
-        self.panIncreaseFinal.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.panIncreaseStart.value = sliderValue;
-    
-    self.panView.increaseStart = [self locationOfThumb: self.panIncreaseStart];
-    self.panView.increaseFinal = [self locationOfThumb: self.panIncreaseFinal];
-    
-    [self.panView setNeedsDisplay];
-    [self savePanIncreaseValues];
-
-    [self updatePanIncreaseStartLabel];
-}
-
-- (void) updateTiltIncreaseStart: (UISlider *) slider {
-    
-    if (slider.value > self.tiltIncreaseFinal.value)
-        self.tiltIncreaseFinal.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.tiltIncreaseStart.value = sliderValue;
-    
-    self.tiltView.increaseStart = [self locationOfThumb: self.tiltIncreaseStart];
-    self.tiltView.increaseFinal = [self locationOfThumb: self.tiltIncreaseFinal];
-    
-    [self.tiltView setNeedsDisplay];
-    [self saveTiltIncreaseValues];
-    
-    [self updateTiltDecreaseStartLabel];
-}
-
-//increase final
-
-- (void) updateSlideIncreaseFinalLabel
-{
-    if (programMode == NMXProgramModeVideo)
-    {
-        slideLbl2.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else
-    {
-        slideLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-    
-    slideLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.slideIncreaseFinal]-6, self.slideLbl2.frame.origin.y, slideLbl2.frame.size.width, slideLbl2.frame.size.height);
-    [slideLbl2 setNeedsDisplay];
-}
-
-- (void) updatePanIncreaseFinalLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        panLbl2.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        panLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-    
-    panLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.panIncreaseFinal]-6, self.panLbl2.frame.origin.y, panLbl2.frame.size.width, panLbl2.frame.size.height);
-    [panLbl2 setNeedsDisplay];
-}
-
-- (void) updateTiltIncreaseFinalLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        tiltLbl2.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        tiltLbl2.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-
-    tiltLbl2.frame = CGRectMake([self xPositionFromSliderValue:self.tiltIncreaseFinal]-6, self.tiltLbl2.frame.origin.y, tiltLbl2.frame.size.width, tiltLbl2.frame.size.height);
-    [tiltLbl2 setNeedsDisplay];
-}
-
-
-- (void) updateSlideIncreaseFinal: (UISlider *) slider {
-    
-    if (slider.value < self.slideIncreaseStart.value)
-        self.slideIncreaseStart.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.slideIncreaseFinal.value = sliderValue;
-    
-    self.slideView.increaseStart = [self locationOfThumb: self.slideIncreaseStart];
-    self.slideView.increaseFinal = [self locationOfThumb: self.slideIncreaseFinal];
-    
-    [self.slideView setNeedsDisplay];
-    [self saveSlideIncreaseValues];
-    
-    [self updateSlideIncreaseFinalLabel];
-}
-
-- (void) updatePanIncreaseFinal: (UISlider *) slider {
-    
-    if (slider.value < self.panIncreaseStart.value)
-        self.panIncreaseStart.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.panIncreaseFinal.value = sliderValue;
-    
-    self.panView.increaseStart = [self locationOfThumb: self.panIncreaseStart];
-    self.panView.increaseFinal = [self locationOfThumb: self.panIncreaseFinal];
-    
-    [self.panView setNeedsDisplay];
-    [self savePanIncreaseValues];
-    
-    [self updatePanIncreaseFinalLabel];
-}
-
-- (void) updateTiltIncreaseFinal: (UISlider *) slider {
-    
-    if (slider.value < self.tiltIncreaseStart.value)
-        self.tiltIncreaseStart.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.tiltIncreaseFinal.value = sliderValue;
-    
-    self.tiltView.increaseStart = [self locationOfThumb: self.tiltIncreaseStart];
-    self.tiltView.increaseFinal = [self locationOfThumb: self.tiltIncreaseFinal];
-    
-    [self.tiltView setNeedsDisplay];
-    [self saveTiltIncreaseValues];
-    
-    [self updateTiltIncreaseFinalLabel];
-}
-
-//decrease start
-
-- (void) updateSlideDecreaseStartLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        slideLbl3.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        slideLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-
-    slideLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.slideDecreaseStart]-6, self.slideLbl3.frame.origin.y, slideLbl3.frame.size.width, slideLbl3.frame.size.height);
-    [slideLbl3 setNeedsDisplay];
-}
-
-
-- (void) updatePanDecreaseStartLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        panLbl3.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        panLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-
-    panLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.panDecreaseStart]-6, self.panLbl3.frame.origin.y, panLbl3.frame.size.width, panLbl3.frame.size.height);
-    [panLbl3 setNeedsDisplay];
-}
-
-- (void) updateTiltDecreaseStartLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        tiltLbl3.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        tiltLbl3.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-
-    tiltLbl3.frame = CGRectMake([self xPositionFromSliderValue:self.tiltDecreaseStart]-6, self.tiltLbl3.frame.origin.y, tiltLbl3.frame.size.width, tiltLbl3.frame.size.height);
-    [tiltLbl3 setNeedsDisplay];
-}
-
-
-- (void) updateSlideDecreaseStart: (UISlider *) slider {
-    
-    if (slider.value > self.slideDecreaseFinal.value)
-        self.slideDecreaseFinal.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.slideDecreaseStart.value = sliderValue;
-    
-    self.slideView.decreaseStart = [self locationOfThumb: self.slideDecreaseStart];
-    self.slideView.decreaseFinal = [self locationOfThumb: self.slideDecreaseFinal];
-    
-    [self.slideView setNeedsDisplay];
-    [self saveSlideDecreaseValues];
-    
-    [self updateSlideDecreaseStartLabel];
-}
-
-- (void) updatePanDecreaseStart: (UISlider *) slider {
-    
-    if (slider.value > self.panDecreaseFinal.value)
-        self.panDecreaseFinal.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.panDecreaseStart.value = sliderValue;
-    
-    self.panView.decreaseStart = [self locationOfThumb: self.panDecreaseStart];
-    self.panView.decreaseFinal = [self locationOfThumb: self.panDecreaseFinal];
-    
-    [self.panView setNeedsDisplay];
-    [self savePanDecreaseValues];
-    
-    [self updatePanDecreaseStartLabel];
-}
-
-- (void) updateTiltDecreaseStart: (UISlider *) slider {
-    
-    if (slider.value > self.tiltDecreaseFinal.value)
-        self.tiltDecreaseFinal.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.tiltDecreaseStart.value = sliderValue;
-    
-    self.tiltView.decreaseStart = [self locationOfThumb: self.tiltDecreaseStart];
-    self.tiltView.decreaseFinal = [self locationOfThumb: self.tiltDecreaseFinal];
-    
-    [self.tiltView setNeedsDisplay];
-    [self saveTiltDecreaseValues];
-    
-    [self updateTiltDecreaseStartLabel];
-}
-
-//decrease final
-
-- (void) updateSlideDecreaseFinalLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        slideLbl4.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        slideLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-    
-    slideLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.slideDecreaseFinal]-6, self.slideLbl4.frame.origin.y, slideLbl4.frame.size.width, slideLbl4.frame.size.height);
-    [slideLbl4 setNeedsDisplay];
-}
-
-- (void) updatePanDecreaseFinalLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        panLbl4.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        panLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-
-    panLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.panDecreaseFinal]-6, self.panLbl4.frame.origin.y, panLbl4.frame.size.width, panLbl4.frame.size.height);
-    [panLbl4 setNeedsDisplay];
-}
-
-- (void) updateTiltDecreaseFinalLabel
-{
-    if (programMode == NMXProgramModeVideo) {
-        tiltLbl4.text = [self convertTime2:currentSelectedFrameValue];
-    }
-    else {
-        tiltLbl4.text = [NSString stringWithFormat:@"%i",(int)currentSelectedFrameValue];
-    }
-
-    tiltLbl4.frame = CGRectMake([self xPositionFromSliderValue:self.tiltDecreaseFinal]-6, self.tiltLbl4.frame.origin.y, tiltLbl4.frame.size.width, tiltLbl4.frame.size.height);
-    [tiltLbl4 setNeedsDisplay];
-
-}
-
-
-- (void) updateSlideDecreaseFinal: (UISlider *) slider {
-    
-    if (slider.value < self.slideDecreaseStart.value)
-        self.slideDecreaseStart.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.slideDecreaseFinal.value = sliderValue;
-    
-    self.slideView.decreaseStart = [self locationOfThumb: self.slideDecreaseStart];
-    self.slideView.decreaseFinal = [self locationOfThumb: self.slideDecreaseFinal];
-    
-    [self.slideView setNeedsDisplay];
-    [self saveSlideDecreaseValues];
-    
-    [self updateSlideDecreaseFinalLabel];
-}
-
-- (void) updatePanDecreaseFinal: (UISlider *) slider {
-    
-    if (slider.value < self.panDecreaseStart.value)
-        self.panDecreaseStart.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.panDecreaseFinal.value = sliderValue;
-    
-    self.panView.decreaseStart = [self locationOfThumb: self.panDecreaseStart];
-    self.panView.decreaseFinal = [self locationOfThumb: self.panDecreaseFinal];
-    
-    [self.panView setNeedsDisplay];
-    [self savePanDecreaseValues];
-    
-    [self updatePanDecreaseFinalLabel];
-}
-
-- (void) updateTiltDecreaseFinal: (UISlider *) slider {
-    
-    if (slider.value < self.tiltDecreaseStart.value)
-        self.tiltDecreaseStart.value = slider.value;
-    
-    sliderValue = slider.value;
-    slidername = slider.restorationIdentifier;
-    
-    self.tiltDecreaseFinal.value = sliderValue;
-    
-    self.tiltView.decreaseStart = [self locationOfThumb: self.tiltDecreaseStart];
-    self.tiltView.decreaseFinal = [self locationOfThumb: self.tiltDecreaseFinal];
-    
-    [self.tiltView setNeedsDisplay];
-    [self saveTiltDecreaseValues];
-    
-    [self updateTiltDecreaseFinalLabel];
-
-}
-
-- (IBAction) showFrameText:(id)sender {
+// coming from 3P
+- (void) showFrameText:(id)sender {
     
     UISlider *slider = sender;
-    
-    currentFrameTarget = slider.restorationIdentifier;
-    
-    if (appExecutive.is3P && programMode == NMXProgramModeVideo)
+    self.currentCell = nil;
+    self.selectedSlider = slider;
+    self.currentFrameTarget = slider.restorationIdentifier;
+
+    [self showFrameText];
+}
+
+
+- (void) showFrameText
+{
+    if (appExecutive.is3P && self.programMode == NMXProgramModeVideo)
     {
         float selected3PVal;
         
-        if ([currentFrameTarget isEqualToString:@"3PS"])
+        if ([self.currentFrameTarget isEqualToString:@"3PS"])
         {
-            selected3PVal = appExecutive.slide3PVal1;
+            selected3PVal = self.settings.slide3PVal1;
         }
-        else if ([currentFrameTarget isEqualToString:@"3PM"])
+        else if ([self.currentFrameTarget isEqualToString:@"3PM"])
         {
-            selected3PVal = appExecutive.slide3PVal2;
+            selected3PVal = self.settings.slide3PVal2;
         }
-        else if ([currentFrameTarget isEqualToString:@"3PE"])
+        else if ([self.currentFrameTarget isEqualToString:@"3PE"])
         {
-            selected3PVal = appExecutive.slide3PVal3;
+            selected3PVal = self.settings.slide3PVal3;
         }
         
         int sd = [self.appExecutive.videoLengthNumber intValue];
@@ -2363,7 +1029,7 @@ NSArray static	*frameCountStrings = nil;
         NSLog(@"newVal: %i",newVal);
     }
     
-    NSString *framestring = [NSString stringWithFormat:@"%f",currentSelectedFrameValue];
+    NSString *framestring = [NSString stringWithFormat:@"%f",self.currentSelectedFrameValue];
     
     NSLog(@"framestring: %@",framestring);
     
@@ -2380,10 +1046,8 @@ NSArray static	*frameCountStrings = nil;
     
     
     
-    if(programMode == NMXProgramModeVideo)
+    if(self.programMode == NMXProgramModeVideo)
     {
-        //NSLog(@"go to isMotorSegue");
-        
         NSLog(@"NMXProgramModeVideo");
         
         [self performSegueWithIdentifier:@"VideoMotorRamp" sender:self];
@@ -2393,23 +1057,9 @@ NSArray static	*frameCountStrings = nil;
         NSLog(@"NMXProgramModeSMS");
         
         [self performSegueWithIdentifier:@"FrameCountMotorRamp" sender:self];
-        
-//        if(programMode == NMXProgramModeTimelapse)
-//        {
-//            NSLog(@"NMXProgramModeTimelapse");
-//            
-//            [self performSegueWithIdentifier:@"ContinuousMotorRamp" sender:self];
-//        }
-//        else
-//        {
-//            //NMXProgramModeSMS
-//            
-//            NSLog(@"NMXProgramModeSMS");
-//            
-//            [self performSegueWithIdentifier:@"FrameCountMotorRamp" sender:self];
-//        }        
     }
 }
+
 
 - (float) roundNumber10: (float)val {
     
@@ -2418,52 +1068,20 @@ NSArray static	*frameCountStrings = nil;
     return val1;
 }
 
-- (IBAction) resetSelectedThumb:(id)sender {
-    
-    UISlider *slider = sender;
-    
+- (void) resetThumbSelection
+{
     UIImage *w = [self imageWithImage:[UIImage imageNamed:@"thumb3.png"] scaledToSize:CGSizeMake(30.0, 30.0)];
-    UIImage *b = [self imageWithImage:[UIImage imageNamed:@"thumbBlue.png"] scaledToSize:CGSizeMake(30.0, 30.0)];
     
-    for (UISlider *s in increaseSliders)
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
     {
-        [s setThumbImage:w forState:UIControlStateNormal];
-    }
-    
-    for (UISlider *s in decreaseSliders)
-    {
-        [s setThumbImage:w forState:UIControlStateNormal];
-    }
-    
-    [slider setThumbImage:b forState:UIControlStateNormal];
-    [slider setThumbImage:b forState:UIControlStateHighlighted];
-    [slider setThumbImage:b forState:UIControlStateSelected];
-    
-    NSString *framestring = [NSString stringWithFormat:@"%f",currentSelectedFrameValue];
-    
-    //frameText.text = framestring;
-    
-    NSInteger	frameCount	= [framestring integerValue];
-    NSInteger	ones		= frameCount % 10;
-    NSInteger	tens		= (frameCount / 10) % 10;
-    NSInteger	hundreds	= (frameCount / 100) % 10;
-    NSInteger	thousands	= (frameCount / 1000) % 10;
-    
-    [self.picker selectRow: thousands inComponent: 0 animated: NO];
-    [self.picker selectRow: hundreds  inComponent: 1 animated: NO];
-    [self.picker selectRow: tens      inComponent: 2 animated: NO];
-    [self.picker selectRow: ones      inComponent: 3 animated: NO];
-    
-    currentFrameTarget = slider.restorationIdentifier;
-    
-    //NSLog(@"slider.restorationIdentifier : %@",slider.restorationIdentifier );
-    //NSLog(@"currentFrameTarget: %@",currentFrameTarget);
-    
-    if (![slider.restorationIdentifier isEqualToString:currentFrameTarget])
-    {
-        //[self hideFrameText];
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell setThumbImage: w];
+        }
     }
 }
+
 
 - (UIImage *) imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
     
@@ -2473,24 +1091,6 @@ NSArray static	*frameCountStrings = nil;
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;
-}
-
-- (void) hideFrameText {
-    
-    [UIView animateWithDuration:.2 animations:^{
-        
-        //frameView.alpha = 0;
-        framePickerView.alpha = 0;
-        
-    } completion:^(BOOL finished) {
-        
-        [UIView animateWithDuration:.2 animations:^{
-    
-            
-        } completion:^(BOOL finished) {
-            
-        }];
-    }];
 }
 
 - (void) frameValueSelected {
@@ -2503,8 +1103,6 @@ NSArray static	*frameCountStrings = nil;
     {
         [self frameSelected2P];
     }
-    
-    [self hideFrameText];
 }
 
 - (void) frameSelected3P {
@@ -2512,62 +1110,47 @@ NSArray static	*frameCountStrings = nil;
     [self updateOther3PThumbs];
 }
 
-- (void) frameSelected2P {
-    
-    bool increaseSelected = false;
-    
-    int frameCountHalf = (selectedFrameCount/2);
-    
-    for (UISlider *a in increaseSliders)
+- (void) frameSelected2P
+{
+    int frameCountHalf = (self.selectedFrameCount/2);
+
+    if ([self.currentFrameTarget containsString:@"increase"])
     {
-        if ([a.restorationIdentifier isEqualToString:currentFrameTarget])
-        {
-            //NSLog(@"is increase slider");
-            
-            currentFrameConvertedToFloat = currentSelectedFrameValue/(selectedFrameCount/2);
-            
-            increaseSelected = true;
-            
-            break;
-        }
-    }
-    
-    for (UISlider *a in decreaseSliders)
-    {
-        if ([a.restorationIdentifier isEqualToString:currentFrameTarget])
-        {
-            float f2 = currentSelectedFrameValue - (selectedFrameCount/2);
-            float f3 = f2 / (selectedFrameCount/2);
-            
-            currentFrameConvertedToFloat = f3;
-            
-            break;
-        }
-    }
-    
-    NSLog(@"%@ currentFrameConvertedToFloat: %f", currentFrameTarget, currentFrameConvertedToFloat);
-    
-    if (increaseSelected)
-    {
-        if (currentSelectedFrameValue > selectedFrameCount/2)
-        {
-            frameText.text = [NSString stringWithFormat:@"%i",frameCountHalf];
-        }
+        self.currentFrameConvertedToFloat = self.currentSelectedFrameValue/frameCountHalf;
     }
     else
     {
-        if (currentSelectedFrameValue < selectedFrameCount/2)
-        {
-            frameText.text = [NSString stringWithFormat:@"%i",frameCountHalf];
-        }
+        float f2 = self.currentSelectedFrameValue - frameCountHalf;
+        float f3 = f2 / (self.selectedFrameCount/2);
+        self.currentFrameConvertedToFloat = f3;
     }
+    
+    self.selectedSlider.value = self.currentFrameConvertedToFloat;
+ 
+    if([self.currentFrameTarget isEqualToString:@"increaseStart"])
+    {
+        [self.currentCell updateIncreaseStart: self.selectedSlider];
+    }
+    else if([self.currentFrameTarget isEqualToString:@"increaseFinal"])
+    {
+        [self.currentCell updateIncreaseFinal: self.selectedSlider];
+    }
+    if([self.currentFrameTarget isEqualToString:@"decreaseStart"])
+    {
+        [self.currentCell updateDecreaseStart: self.selectedSlider];
+    }
+    if([self.currentFrameTarget isEqualToString:@"decreaseFinal"])
+    {
+        [self.currentCell updateDecreaseFinal: self.selectedSlider];
+    }
+
     
     [self updateOther2PThumbs];
 }
 
 - (void) updateOther3PThumbs {
     
-    if (programMode == NMXProgramModeVideo)
+    if (self.programMode == NMXProgramModeVideo)
     {
         int sd = [self.appExecutive.videoLengthNumber intValue];
         
@@ -2581,11 +1164,11 @@ NSArray static	*frameCountStrings = nil;
         //.75 * 20 = x;
         //15
         
-        //NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
+        //NSLog(@"self.currentSelectedFrameValue: %f",self.currentSelectedFrameValue);
         
-        float val1 = currentSelectedFrameValue/(float)sd; //60000/80000
+        float val1 = self.currentSelectedFrameValue/(float)sd; //60000/80000
         
-        NSLog(@"%f/%f = val1: %f",currentSelectedFrameValue,(float)sd,val1);
+        NSLog(@"%f/%f = val1: %f",self.currentSelectedFrameValue,(float)sd,val1);
         
         float val5 = val1 * [self.appExecutive.frameCountNumber floatValue]; //.75 * 20
         
@@ -2595,32 +1178,36 @@ NSArray static	*frameCountStrings = nil;
 //        
 //        NSLog(@"val6: %f",val6);
         
-        currentSelectedFrameValue = val5;
+        self.currentSelectedFrameValue = val5;
     }
     
-    if([currentFrameTarget isEqualToString:@"3PS"])
+    if([self.currentFrameTarget isEqualToString:@"3PS"])
     {
-        NSLog(@"3PS: %f",currentSelectedFrameValue);
+        NSLog(@"3PS: %f",self.currentSelectedFrameValue);
         
-        slide3PSlider1.value = currentSelectedFrameValue;
+        slide3PSlider1.value = self.currentSelectedFrameValue;
         
-        appExecutive.slide3PVal1 = sliderValue;
+        for (NMXDevice *device in self.appExecutive.deviceList)
+        {
+            JSDeviceSettings *devSettings = device.settings;
+            devSettings.slide3PVal1 = sliderValue;
+        }
         
         [self updateSlide3PVal1:slide3PSlider1];
     }
-    else if([currentFrameTarget isEqualToString:@"3PM"])
+    else if([self.currentFrameTarget isEqualToString:@"3PM"])
     {
-        NSLog(@"3PM: %f",currentSelectedFrameValue);
+        NSLog(@"3PM: %f",self.currentSelectedFrameValue);
         
-        slide3PSlider2.value = currentSelectedFrameValue;
+        slide3PSlider2.value = self.currentSelectedFrameValue;
         
         [self updateSlide3PVal2:slide3PSlider2];
     }
     else
     {
-        NSLog(@"3PE: %f",currentSelectedFrameValue);
+        NSLog(@"3PE: %f",self.currentSelectedFrameValue);
         
-        slide3PSlider3.value = currentSelectedFrameValue;
+        slide3PSlider3.value = self.currentSelectedFrameValue;
         
         [self updateSlide3PVal3:slide3PSlider3];
     }
@@ -2628,155 +1215,25 @@ NSArray static	*frameCountStrings = nil;
 
 - (void) updateOther2PThumbs {
 
-    if([currentFrameTarget isEqualToString:@"slideIncreaseStart"])
+    if (self.isLocked)
     {
-        self.slideIncreaseStart.value = currentFrameConvertedToFloat;
-        
-        [self updateSlideIncreaseStart:self.slideIncreaseStart];
-        
-        if (isLocked)
+        if([self.currentFrameTarget isEqualToString:@"increaseStart"])
         {
-            [self updatePanIncreaseStart:self.slideIncreaseStart];
-            [self updateTiltIncreaseStart:self.slideIncreaseStart];
+            [self updateIncreaseStartSliders: self.selectedSlider];
+        }
+        else if([self.currentFrameTarget isEqualToString:@"increaseFinal"])
+        {
+            [self updateIncreaseFinalSliders: self.selectedSlider];
+        }
+        else if([self.currentFrameTarget isEqualToString:@"decreaseStart"])
+        {
+            [self updateDecreaseStartSliders: self.selectedSlider];
+        }
+        else if([self.currentFrameTarget isEqualToString:@"decreaseFinal"])
+        {
+            [self updateDecreaseFinalSliders: self.selectedSlider];
         }
     }
-    else if([currentFrameTarget isEqualToString:@"slideIncreaseFinal"])
-    {
-        self.slideIncreaseFinal.value = currentFrameConvertedToFloat;
-        
-        [self updateSlideIncreaseFinal:self.slideIncreaseFinal];
-        
-        if (isLocked) {
-            
-            [self updatePanIncreaseFinal:self.slideIncreaseFinal];
-            [self updateTiltIncreaseFinal:self.slideIncreaseFinal];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"slideDecreaseStart"])
-    {
-        self.slideDecreaseStart.value = currentFrameConvertedToFloat;
-        
-        [self updateSlideDecreaseStart:self.slideDecreaseStart];
-        
-        if (isLocked) {
-            
-            [self updatePanDecreaseStart:self.slideDecreaseStart];
-            [self updateTiltDecreaseStart:self.slideDecreaseStart];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"slideDecreaseFinal"])
-    {
-        self.slideDecreaseFinal.value = currentFrameConvertedToFloat;
-        
-        [self updateSlideDecreaseFinal:self.slideDecreaseFinal];
-        
-        if (isLocked) {
-            
-            [self updatePanDecreaseFinal:self.slideDecreaseFinal];
-            [self updateTiltDecreaseFinal:self.slideDecreaseFinal];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"panIncreaseStart"])
-    {
-        self.panIncreaseStart.value = currentFrameConvertedToFloat;
-        
-        [self updatePanIncreaseStart:self.panIncreaseStart];
-        
-        if (isLocked) {
-            
-            [self updateSlideIncreaseStart:self.panIncreaseStart];
-            [self updateTiltIncreaseStart:self.panIncreaseStart];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"panIncreaseFinal"])
-    {
-        self.panIncreaseFinal.value = currentFrameConvertedToFloat;
-        
-        [self updatePanIncreaseFinal:self.panIncreaseFinal];
-        
-        if (isLocked) {
-            
-            [self updateSlideIncreaseFinal:self.panIncreaseFinal];
-            [self updateTiltIncreaseFinal:self.panIncreaseFinal];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"panDecreaseStart"])
-    {
-        self.panDecreaseStart.value = currentFrameConvertedToFloat;
-        
-        [self updatePanDecreaseStart:self.panDecreaseStart];
-        
-        if (isLocked) {
-            
-            [self updateSlideDecreaseStart:self.panDecreaseStart];
-            [self updateTiltDecreaseStart:self.panDecreaseStart];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"panDecreaseFinal"])
-    {
-        self.panDecreaseFinal.value = currentFrameConvertedToFloat;
-        
-        [self updatePanDecreaseFinal:self.panDecreaseFinal];
-        
-        if (isLocked) {
-            
-            [self updateSlideDecreaseFinal:self.panDecreaseFinal];
-            [self updateTiltDecreaseFinal:self.panDecreaseFinal];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"tiltIncreaseStart"])
-    {
-        self.tiltIncreaseStart.value = currentFrameConvertedToFloat;
-        
-        [self updateTiltIncreaseStart:self.tiltIncreaseStart];
-        
-        if (isLocked) {
-            
-            [self updateSlideIncreaseStart:self.tiltIncreaseStart];
-            [self updatePanIncreaseStart:self.tiltIncreaseStart];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"tiltIncreaseFinal"])
-    {
-        self.tiltIncreaseFinal.value = currentFrameConvertedToFloat;
-        
-        [self updateTiltIncreaseFinal:self.tiltIncreaseFinal];
-        
-        if (isLocked) {
-            
-            [self updateSlideIncreaseFinal:self.tiltIncreaseFinal];
-            [self updatePanIncreaseFinal:self.tiltIncreaseFinal];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"tiltDecreaseStart"])
-    {
-        self.tiltDecreaseStart.value = currentFrameConvertedToFloat;
-        
-        [self updateTiltDecreaseStart:self.tiltDecreaseStart];
-        
-        if (isLocked) {
-            
-            [self updateSlideDecreaseStart:self.tiltDecreaseStart];
-            [self updatePanDecreaseStart:self.tiltDecreaseStart];
-        }
-    }
-    else if([currentFrameTarget isEqualToString:@"tiltDecreaseFinal"])
-    {
-        self.tiltDecreaseFinal.value = currentFrameConvertedToFloat;
-        
-        [self updateTiltDecreaseFinal:self.tiltDecreaseFinal];
-        
-        if (isLocked) {
-            
-            [self updateSlideDecreaseFinal:self.tiltDecreaseFinal];
-            [self updatePanDecreaseFinal:self.tiltDecreaseFinal];
-        }
-    }
-}
-
-- (void) updateFrameText {
-    
-    frameText.text = [NSString stringWithFormat:@"%f",currentSelectedFrameValue];
 }
 
 - (BOOL) textFieldShouldReturn:(UITextField*)textField {
@@ -2803,7 +1260,6 @@ NSArray static	*frameCountStrings = nil;
                                       target:self.view action:nil];
     
     keyboardToolbar.items = @[flexBarButton, doneBarButton];
-    self.frameText.inputAccessoryView = keyboardToolbar;
     
     doneBarButton.target = self;
     doneBarButton.action = @selector( doneEditingFrame: );
@@ -2811,65 +1267,12 @@ NSArray static	*frameCountStrings = nil;
 
 - (IBAction) doneEditingFrame:(id)sender {
     
-    //[self.frameText resignFirstResponder];
-    
-    [self hideFrameText];
-    
     [NSTimer scheduledTimerWithTimeInterval:0.250 target:self selector:@selector(frameValueSelected) userInfo:nil repeats:NO];
 }
 
+
 - (void) setupSliderFunctions {
 
-    frameView.alpha = 0;
-    framePickerView.alpha = 0;
-    
-    frameText.delegate = self;
-    //frameText.borderStyle = UITextBorderStyleNone;
-    
-    [self.slideIncreaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.slideDecreaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.slideIncreaseFinal addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.slideDecreaseFinal addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    
-    [self.panIncreaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.panDecreaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.panIncreaseFinal addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.panDecreaseFinal addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    
-    [self.tiltIncreaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.tiltDecreaseStart addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.tiltIncreaseFinal addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    [self.tiltDecreaseFinal addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    
-    [self.slideIncreaseStart addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.slideDecreaseStart addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.slideIncreaseFinal addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.slideDecreaseFinal addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    
-    [self.panIncreaseStart addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.panDecreaseStart addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.panIncreaseFinal addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.panDecreaseFinal addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    
-    [self.tiltIncreaseStart addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.tiltDecreaseStart addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.tiltIncreaseFinal addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    [self.tiltDecreaseFinal addTarget:self action:@selector(resetSelectedThumb:) forControlEvents:UIControlEventTouchDown];
-    
-    [increaseSliders addObject:self.slideIncreaseStart];
-    [increaseSliders addObject:self.slideIncreaseFinal];
-    [increaseSliders addObject:self.panIncreaseStart];
-    [increaseSliders addObject:self.panIncreaseFinal];
-    [increaseSliders addObject:self.tiltIncreaseStart];
-    [increaseSliders addObject:self.tiltIncreaseFinal];
-    
-    [decreaseSliders addObject:self.slideDecreaseStart];
-    [decreaseSliders addObject:self.slideDecreaseFinal];
-    [decreaseSliders addObject:self.panDecreaseStart];
-    [decreaseSliders addObject:self.panDecreaseFinal];
-    [decreaseSliders addObject:self.tiltDecreaseStart];
-    [decreaseSliders addObject:self.tiltDecreaseFinal];
-    
     [slide3PSlider1 addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
     [slide3PSlider2 addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
     [slide3PSlider3 addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
@@ -2881,25 +1284,8 @@ NSArray static	*frameCountStrings = nil;
     [tilt3PSlider1 addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
     [tilt3PSlider2 addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
     [tilt3PSlider3 addTarget:self action:@selector(showFrameText:) forControlEvents:UIControlEventTouchDownRepeat];
-    
-    UIImage *i = [self imageWithImage:[UIImage imageNamed:@"thumb3.png"] scaledToSize:CGSizeMake(30.0, 30.0)];
-    
-    for (UISlider *s in increaseSliders) {
-        
-        [s setThumbImage:i forState:UIControlStateNormal];
-        [s setThumbImage:i forState:UIControlStateHighlighted];
-        [s setThumbImage:i forState:UIControlStateSelected];
-        //[s setThumbTintColor:[UIColor whiteColor]];
-    }
-    
-    for (UISlider *s in decreaseSliders) {
-        
-        [s setThumbImage:i forState:UIControlStateNormal];
-        [s setThumbImage:i forState:UIControlStateHighlighted];
-        [s setThumbImage:i forState:UIControlStateSelected];
-        //[s setThumbTintColor:[UIColor whiteColor]];
-    }
 }
+ 
 
 #pragma mark - UIPickerViewDelegate Protocol Methods
 
@@ -2931,13 +1317,138 @@ NSArray static	*frameCountStrings = nil;
     
     NSString *framestring = [NSString stringWithFormat:@"%@",[NSNumber numberWithInteger: frameCount]];
     
-    frameText.text = framestring;
+    self.currentSelectedFrameValue = [framestring floatValue];
     
-    currentSelectedFrameValue = [framestring floatValue];
-    
-    NSLog(@"currentSelectedFrameValue: %f",currentSelectedFrameValue);
+    NSLog(@"self.currentSelectedFrameValue: %f",self.currentSelectedFrameValue);
     
     return;
+}
+
+- (void) updateIncreaseStartSliders: (UISlider *) slider
+{
+    NSNumber *	startValue	= [NSNumber numberWithFloat: slider.value];
+
+    // update the device settings
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        NSNumber *final = [device.settings.slideIncreaseValues lastObject];
+        float finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *sliderampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        final = [device.settings.panIncreaseValues lastObject];
+        finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *panrampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        final = [device.settings.tiltIncreaseValues lastObject];
+        finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *tiltrampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        device.settings.slideIncreaseValues = sliderampValues;
+        device.settings.panIncreaseValues = panrampValues;
+        device.settings.tiltIncreaseValues = tiltrampValues;
+    }
+    
+    // update the visible sliders
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+    {
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell updateIncreaseStart:slider];
+        }
+    }
+}
+
+- (void) updateIncreaseFinalSliders: (UISlider *) slider
+{
+    NSNumber *finalValue = [NSNumber numberWithFloat: slider.value];
+    
+    // update the device settings
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        NSNumber *start = [device.settings.slideIncreaseValues firstObject];
+        float startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *sliderampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        start = [device.settings.panIncreaseValues firstObject];
+        startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *panrampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        start = [device.settings.tiltIncreaseValues firstObject];
+        startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *tiltrampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        device.settings.slideIncreaseValues = sliderampValues;
+        device.settings.panIncreaseValues = panrampValues;
+        device.settings.tiltIncreaseValues = tiltrampValues;
+    }
+
+    // update the visible sliders
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+    {
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell updateIncreaseFinal:slider];
+        }
+    }
+}
+
+- (void) updateDecreaseStartSliders: (UISlider *) slider
+{
+    NSNumber *	startValue	= [NSNumber numberWithFloat: slider.value];
+    
+    // update the device settings
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        NSNumber *final = [device.settings.slideDecreaseValues lastObject];
+        float finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *sliderampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        final = [device.settings.panDecreaseValues lastObject];
+        finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *panrampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        final = [device.settings.tiltDecreaseValues lastObject];
+        finalVal = MAX(startValue.floatValue, final.floatValue);
+        NSArray *tiltrampValues = [NSArray arrayWithObjects: startValue, [NSNumber numberWithFloat:finalVal], nil];
+        device.settings.slideDecreaseValues = sliderampValues;
+        device.settings.panDecreaseValues = panrampValues;
+        device.settings.tiltDecreaseValues = tiltrampValues;
+    }
+    
+
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+    {
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell updateDecreaseStart:slider];
+        }
+    }
+}
+
+- (void) updateDecreaseFinalSliders: (UISlider *) slider
+{
+    NSNumber *finalValue = [NSNumber numberWithFloat: slider.value];
+    
+    // update the device settings
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        NSNumber *start = [device.settings.slideDecreaseValues firstObject];
+        float startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *sliderampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        start = [device.settings.panDecreaseValues firstObject];
+        startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *panrampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        start = [device.settings.tiltDecreaseValues firstObject];
+        startVal = MIN(start.floatValue, finalValue.floatValue);
+        NSArray *tiltrampValues = [NSArray arrayWithObjects: [NSNumber numberWithFloat:startVal], finalValue, nil];
+        device.settings.slideDecreaseValues = sliderampValues;
+        device.settings.panDecreaseValues = panrampValues;
+        device.settings.tiltDecreaseValues = tiltrampValues;
+    }
+
+    for (NSInteger j = 0; j < [self.tableView numberOfSections]; ++j)
+    {
+        for (NSInteger i = 0; i < [self.tableView numberOfRowsInSection:j]; ++i)
+        {
+            JSMotorRampingTableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:j]];
+            [cell updateDecreaseFinal:slider];
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -2952,5 +1463,53 @@ NSArray static	*frameCountStrings = nil;
     return frameCountStrings.count;
 }
 
+#pragma mark - Table View Delegate
+
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
+    return self.appExecutive.deviceList.count;
+}
+
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 3;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    
+    JSMotorRampingTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DeviceRampingCell" forIndexPath:indexPath];
+    cell.mrvc = self;
+    
+    cell.device = self.appExecutive.device;
+    int deviceIndex = (int)indexPath.section;
+    int row = (int)indexPath.row;
+    
+    cell.channel = row;
+    cell.device = self.appExecutive.deviceList[deviceIndex];
+    
+    [cell configure];
+    
+    return cell;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSString *name = [self.appExecutive stringWithHandleForDeviceName: self.appExecutive.deviceList[section].name];
+    return name;
+}
+
+#pragma mark JSDisconnectedDeviceDelegate
+
+- (void) willAbortReconnect
+{
+    self.abort= YES;
+}
+
+- (void) abortReconnect
+{
+    [self.appExecutive removeAllDevices];
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [self.navigationController popToRootViewControllerAnimated: true];
+}
 
 @end

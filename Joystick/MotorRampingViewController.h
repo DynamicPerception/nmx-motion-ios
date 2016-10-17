@@ -14,46 +14,37 @@
 #import "NMXDeviceManager.h"
 #import "SetupViewController.h"
 #import "HelpViewController.h"
+#import "JSDisconnectedDeviceVC.h"
+
+@class JSMotorRampingTableViewCell;
 
 NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewController";
 
-@interface MotorRampingViewController : UIViewController <UITextFieldDelegate, MotorRampingDelegate, UIPickerViewDataSource, UIPickerViewDelegate> {
+@interface MotorRampingViewController : UIViewController <UITextFieldDelegate, MotorRampingDelegate, UIPickerViewDataSource,
+                                                          UIPickerViewDelegate, JSDisconnectedDeviceDelegate> {
 
     //id myDelegate;
     
-    NMXProgramMode      programMode;
-    NMXDevice *device;
     bool isVideo;
     UInt32  rampMode;
-    float masterFrameCount;
     
     NSTimer *update3PTimer;
     bool isProg;
     int newVal;
     int selectedVideoFrame;
     float selectedPercentage;
-    
-    int s12p;
-    int s22p;
-    int s32p;
-    int s42p;
-    
-    int p12p;
-    int p22p;
-    int p32p;
-    int p42p;
-    
-    int t12p;
-    int t22p;
-    int t32p;
-    int t42p;
 }
+
+@property float          currentSelectedFrameValue;
+@property int            selectedFrameCount;
+@property NMXProgramMode programMode;
+@property BOOL           isLocked;
+
 
 @property int selectedFrameNumber;
 @property int selectedShotDuration;
 
 @property (nonatomic, strong)	IBOutlet UIPickerView *	picker;
-@property (strong, nonatomic) IBOutlet UIView *framePickerView;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *rampSettingSegment;
 @property (weak, nonatomic) IBOutlet UIImageView *rampSettingImg;
 
@@ -90,21 +81,6 @@ NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewC
 @property (weak, nonatomic) IBOutlet UIImageView *batteryIcon;
 @property (weak, nonatomic) IBOutlet UIView *contentBG;
 
-- (IBAction) handleSlide3PSlider1:(id)sender;
-- (IBAction) handleSlide3PSlider2:(id)sender;
-- (IBAction) handleSlide3PSlider3:(id)sender;
-
-- (IBAction) handlePan3PSlider1:(id)sender;
-- (IBAction) handlePan3PSlider2:(id)sender;
-- (IBAction) handlePan3PSlider3:(id)sender;
-
-- (IBAction) handleTilt3PSlider1:(id)sender;
-- (IBAction) handleTilt3PSlider2:(id)sender;
-- (IBAction) handleTilt3PSlider3:(id)sender;
-
-- (IBAction) updateRampEasingValue:(id)sender;
-- (void) saveFrame: (NSNumber *)number;
-
 @property (weak, nonatomic) IBOutlet UILabel *slideLbl2;
 @property (weak, nonatomic) IBOutlet UILabel *slideLbl1;
 @property (weak, nonatomic) IBOutlet UILabel *slideLbl3;
@@ -120,6 +96,26 @@ NSString	static	*kSegueToMotorRampingViewController	= @"SegueToMotorRampingViewC
 @property (weak, nonatomic) IBOutlet UILabel *tiltLbl3;
 @property (weak, nonatomic) IBOutlet UILabel *tiltLbl4;
 
+@property NSString *currentFrameTarget;
+@property float currentFrameConvertedToFloat;
+@property UISlider *selectedSlider;
+@property JSMotorRampingTableViewCell *currentCell;
 
+- (IBAction) handleSlide3PSlider1:(id)sender;
+- (IBAction) handleSlide3PSlider2:(id)sender;
+- (IBAction) handleSlide3PSlider3:(id)sender;
+- (IBAction) updateRampEasingValue:(id)sender;
+- (void) showFrameText:(JSMotorRampingTableViewCell *)cell slider:(UISlider *)slider;
+
+- (void) resetThumbSelection;
+- (void) saveFrame: (NSNumber *)number;
+- (NSString *)convertTime2 : (float)val;
+
+- (void) updateIncreaseStartSliders: (UISlider *) slider;
+- (void) updateIncreaseFinalSliders: (UISlider *) slider;
+- (void) updateDecreaseStartSliders: (UISlider *) slider;
+- (void) updateDecreaseFinalSliders: (UISlider *) slider;
+
+- (UIImage *) imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 
 @end

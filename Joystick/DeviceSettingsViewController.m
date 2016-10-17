@@ -12,8 +12,9 @@
 #import "AppExecutive.h"
 #import "JoyButton.h"
 #import "NMXDevice.h"
+#import "JSDeviceSettingsVC.h"
 
-@interface DeviceSettingsViewController ()
+@interface DeviceSettingsViewController () <UIPageViewControllerDataSource>
 
 #pragma mark Private Property Synthesis
 
@@ -21,53 +22,30 @@
 
 // Device Information subview
 
-@property (weak, nonatomic) IBOutlet UILabel *		firmwareVersionLabel;
-@property (weak, nonatomic) IBOutlet UILabel *		voltageLabel;
-@property (weak, nonatomic) IBOutlet UILabel *		deviceIDLabel;
-@property (weak, nonatomic) IBOutlet UILabel *		deviceNameLabel;
-@property (weak, nonatomic) IBOutlet UIButton *		deviceNameButton;
-@property (strong, nonatomic) IBOutlet UISwitch *   slaveModeSwitch;
-
-// Joystick Settings subview
-
-@property (weak, nonatomic)	IBOutlet UILabel *		sensitivityValue;
-@property (weak, nonatomic)	IBOutlet UISlider *		sensitivitySlider;
-@property (weak, nonatomic)	IBOutlet UISwitch *		dominantAxisSwitch;
+@property (strong, nonatomic) IBOutlet UIView *deviceInfoView;
+@property (strong, nonatomic) IBOutlet UILabel *deviceInfoLabel;
 
 // Top container view
 
 @property (weak, nonatomic) IBOutlet JoyButton *	emailLogFileButton;
 @property (weak, nonatomic) IBOutlet UILabel *		appVersionLabel;
-
-@property (nonatomic, readonly) 	NSString *		deviceID;
-@property (nonatomic, strong)		UIAlertView *	nameAlertView;
-@property (nonatomic, strong)		UITextField *	nameTextField;
-
 @property (nonatomic, readonly)		NSString *		emailAddress;
+
+// Page view
+
+@property UIPageViewController *pageController;
 
 @end
 
 @implementation DeviceSettingsViewController
 
 
-static const char *SIMULATE_DEVICE	= "SIMULATE_DEVICE";
 static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 
 
 #pragma mark - Private Property Synthesis
 
 @synthesize appExecutive;
-
-@synthesize deviceID;
-@synthesize nameAlertView;
-@synthesize nameTextField;
-
-@synthesize sensitivityValue;
-@synthesize sensitivitySlider;
-@synthesize dominantAxisSwitch;
-
-@synthesize voltageHighTxt,voltageLowTxt;
-
 
 //------------------------------------------------------------------------------
 
@@ -82,21 +60,6 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 	}
 
 	return appExecutive;
-}
-
-- (NSString *) deviceID {
-
-	if (getenv(SIMULATE_DEVICE))
-	{
-		const char *	string	= getenv(SIMULATE_DEVICE);
-		NSString *		device	= [NSString stringWithUTF8String: string];
-
-		return device;
-	}
-	else
-	{
-		return self.appExecutive.device.name;
-	}
 }
 
 - (NSString *) emailAddress {
@@ -124,33 +87,28 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 
 	self.appVersionLabel.text = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 
-	UInt16 fwVersion = [self.appExecutive.device mainQueryFirmwareVersion];
+    _pageController = [self.storyboard instantiateViewControllerWithIdentifier:@"DeviceSettingsPageID"];
+    
+    _pageController.dataSource = self;
+    NSArray *startingViewControllers = @[[self itemControllerForIndex:0]];
+    [_pageController setViewControllers:startingViewControllers
+                                 direction:UIPageViewControllerNavigationDirectionForward
+                                  animated:NO
+                                completion:nil];
+    
+    [self addChildViewController:_pageController];
+    [self.view addSubview: _pageController.view];
+    [_pageController didMoveToParentViewController:self];
+    
+    UIViewController *vc = [self itemControllerForIndex: [[self.appExecutive connectedDeviceList] indexOfObject:self.appExecutive.device]];
+    [_pageController setViewControllers:[NSArray arrayWithObjects:vc, nil] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion: nil];
+}
 
-	self.firmwareVersionLabel.text = [NSString stringWithFormat: @"%d", fwVersion];
-    
-    float voltage = [self.appExecutive.device mainQueryVoltage];
-    
-    self.voltageLabel.text = [NSString stringWithFormat: @"%.02f", voltage];
-
-	self.deviceIDLabel.text = self.deviceID;
-    
-    voltageLowTxt.delegate = self;
-    voltageHighTxt.delegate = self;
-    
-    voltageHighTxt.text = [NSString stringWithFormat:@"%.02f",appExecutive.voltageHigh];
-    voltageLowTxt.text = [NSString stringWithFormat:@"%.02f",appExecutive.voltageLow];
-    
-    //voltageHighTxt.layer.borderColor=[[UIColor whiteColor]CGColor];
-    
-    voltageHighTxt.layer.cornerRadius=1.0f;
-    voltageHighTxt.layer.borderColor=[[UIColor whiteColor]CGColor];
-    voltageHighTxt.layer.borderWidth= 1.0f;
-    
-    voltageLowTxt.layer.cornerRadius=1.0f;
-    voltageLowTxt.layer.borderColor=[[UIColor whiteColor]CGColor];
-    voltageLowTxt.layer.borderWidth= 1.0f;
-    
-    
+- (void) viewDidLayoutSubviews
+{
+    int yPos = self.deviceInfoView.frame.origin.y + self.deviceInfoLabel.frame.size.height + 20;
+    int ht = _emailLogFileButton.frame.origin.y - 8 - yPos ;
+    _pageController.view.frame = CGRectMake(20, yPos, self.view.frame.size.width-40, ht);
 }
 
 - (void) viewWillAppear: (BOOL) animated {
@@ -162,27 +120,12 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 												 name: kDeviceDisconnectedNotification
 											   object: nil];
 
-	[self updateDeviceNameField];
-
-	self.dominantAxisSwitch.on		= [self.appExecutive.lockAxisNumber boolValue];
-	self.sensitivitySlider.value	= [self.appExecutive.sensitivityNumber floatValue];
-	self.sensitivityValue.text		= [NSString stringWithFormat: @"%3.0f%%", self.sensitivitySlider.value];
-    
-    [self.slaveModeSwitch setOn: [self.appExecutive.device cameraQuerySlaveMode] animated:NO];
-
 }
 
-- (void) updateDeviceNameField {
-
-	self.deviceNameLabel.text = [self.appExecutive nameForDeviceID: self.deviceID];
-}
 
 - (void) viewDidAppear: (BOOL) animated {
 
 	[super viewDidAppear: animated];
-
-	self.deviceNameButton.layer.borderWidth = 1.0;
-	self.deviceNameButton.layer.borderColor = [[UIColor whiteColor] CGColor];
 }
 
 - (void) viewWillDisappear: (BOOL) animated {
@@ -192,8 +135,9 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-- (void) deviceDisconnect: (id) object {
-
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    //NMXDevice *device = notification.object;
     NSLog(@"deviceDisconnect dsvc");
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self dismissViewControllerAnimated: YES completion: nil];
@@ -205,61 +149,9 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 
 #pragma mark - IBAction Methods
 
-
-- (IBAction) handleSensitivitySlider: (UISlider *) sender {
-
-	DDLogDebug(@"Sensitivity Slider: %g", sender.value);
-
-	self.sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", sender.value];
-	self.appExecutive.sensitivityNumber = [NSNumber numberWithFloat: sender.value];
-}
-
-- (IBAction) handleReleaseSensitivitySlider: (UISlider *) sender {
-
-	if (sender.value < 10.0)
-	{
-		[sender setValue: 10.0 animated: YES];
-	}
-
-	DDLogDebug(@"Release Sensitivity Slider: %g", sender.value);
-
-	self.sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", sender.value];
-	self.appExecutive.sensitivityNumber = [NSNumber numberWithFloat: sender.value];
-}
-
-- (IBAction) handleDominantAxisSwitch: (UISwitch *) sender {
-
-	NSString *		value		= (sender.on ? @"ON" : @"OFF");
-
-	DDLogDebug(@"Dominant Axis Switch: %@", value);
-
-	self.appExecutive.lockAxisNumber = [NSNumber numberWithBool: sender.on];
-}
-
-- (IBAction) handleDeviceNameButton: (UIButton *) sender {
-
-	DDLogDebug(@"handleDeviceNameButton");
-
-	self.nameAlertView = [[UIAlertView alloc] initWithTitle: @"User Device Name"
-												message: @"Enter friendly device name"
-											   delegate: self
-									  cancelButtonTitle: @"Cancel"
-									  otherButtonTitles: @"OK", nil];
-
-	self.nameAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
-	self.nameTextField = [self.nameAlertView textFieldAtIndex: 0];
-	self.nameTextField.delegate = self;
-
-	self.nameTextField.text = [self.appExecutive nameForDeviceID: self.deviceID];
-
-	[self.nameAlertView show];
-}
-
 - (IBAction) handleOk: (id) sender {
     
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"updateBattery"
-     object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateBattery" object:nil];
 
 	[self dismissViewControllerAnimated: YES completion: nil];
 }
@@ -297,9 +189,7 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 	return;
 }
 
-- (IBAction)setSlaveMode:(UISwitch *)sender {
-    [self.appExecutive.device cameraSetSlaveMode: [sender isOn]];
-}
+
 
 
 - (NSMutableArray *) logFileData {
@@ -386,31 +276,6 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
 }
 
 
-//------------------------------------------------------------------------------
-
-#pragma mark - UIAlertViewDelegate Methods
-
-
-- (void) alertView: (UIAlertView *) alertView clickedButtonAtIndex: (NSInteger) buttonIndex {
-
-	if (alertView == self.nameAlertView)
-	{
-		NSString *title = [alertView buttonTitleAtIndex: buttonIndex];
-
-		if ([title isEqualToString: @"OK"])
-		{
-			UITextField *	valueField	= [alertView textFieldAtIndex: 0];
-			NSString *		valueText	= valueField.text;
-
-			[self.appExecutive setHandle: valueText forDeviceName: self.deviceID];
-		}
-
-		self.nameAlertView = nil;
-		self.nameTextField = nil;
-
-		[self updateDeviceNameField];
-	}
-}
 
 //------------------------------------------------------------------------------
 
@@ -438,34 +303,56 @@ static const char *EMAIL_ADDRESS	= "EMAIL_ADDRESS";
     return YES;
 }
 
-- (BOOL) textFieldShouldReturn:(UITextField*)textField {
+#pragma mark UIPageViewControllerDataSource
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
+{
+    JSDeviceSettingsVC *itemController = (JSDeviceSettingsVC *)viewController;
     
-    self.appExecutive.voltageHigh = [voltageHighTxt.text floatValue];
-    
-    
-    self.appExecutive.voltageLow = [voltageLowTxt.text floatValue];
-    
-    
-    if (self.appExecutive.voltageHigh <= self.appExecutive.voltage)
+    if (itemController.itemIndex > 0)
     {
-        self.appExecutive.voltageHigh = self.appExecutive.voltage;
-        voltageHighTxt.text = [NSString stringWithFormat:@"%.02f", self.appExecutive.voltageHigh];
+        return [self itemControllerForIndex:itemController.itemIndex-1];
     }
     
-    if (self.appExecutive.voltageLow >= self.appExecutive.voltage)
+    return nil;
+}
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
+{
+    JSDeviceSettingsVC *itemController = (JSDeviceSettingsVC *)viewController;
+
+    if (itemController.itemIndex+1 < [self.appExecutive connectedDeviceList].count)
     {
-        self.appExecutive.voltageLow = self.appExecutive.voltage;
-        voltageLowTxt.text = [NSString stringWithFormat:@"%.02f", self.appExecutive.voltageLow];
+        return [self itemControllerForIndex:itemController.itemIndex+1];
     }
     
-    [textField resignFirstResponder];
+    return nil;
+}
+
+- (JSDeviceSettingsVC *)itemControllerForIndex:(NSUInteger)itemIndex
+{
+    if (itemIndex < [self.appExecutive connectedDeviceList].count)
+    {
+        JSDeviceSettingsVC *pageItemController = [self.storyboard instantiateViewControllerWithIdentifier:@"ItemController"];
+        pageItemController.itemIndex = (int)itemIndex;
+        return pageItemController;
+    }
     
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.voltageLow] forKey: @"voltageLow"];
-    [self.appExecutive.defaults setObject: [NSNumber numberWithFloat:self.appExecutive.voltageHigh] forKey: @"voltageHigh"];
-    
-    [self.appExecutive.defaults synchronize];
-    
-    return YES;
+    return nil;
+}
+
+
+#pragma mark Page Indicator
+
+- (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController
+{
+    NSUInteger count = [self.appExecutive connectedDeviceList].count;
+    return count > 1 ? count : 0;
+}
+
+- (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
+{
+    return [[self.appExecutive connectedDeviceList] indexOfObject:self.appExecutive.device];
 }
 
 @end

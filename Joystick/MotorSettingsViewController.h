@@ -16,7 +16,7 @@
 #import "HelpViewController.h"
 #import "OverallDistanceViewController.h"
 
-@interface MotorSettingsViewController : UIViewController <BacklashDelegate, UITextFieldDelegate,UIScrollViewDelegate, UIAlertViewDelegate> {
+@interface MotorSettingsViewController : UIViewController <IntValueDelegate, UITextFieldDelegate,UIScrollViewDelegate, UIAlertViewDelegate> {
 
     BOOL leftEnabled;
     BOOL rightEnabled;
@@ -49,7 +49,6 @@
     bool endGreater;
 }
 
-@property (nonatomic, strong)		NSString *	motorName;
 @property (nonatomic, readwrite)	NSInteger	motorNumber;
 @property (strong, nonatomic) IBOutlet UIButton *leftBtn;
 @property (strong, nonatomic) IBOutlet UIButton *rightBtn;
@@ -75,6 +74,14 @@
 @property (weak, nonatomic) IBOutlet UILabel *dampeningLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *dampeningImg;
 @property (strong, nonatomic) IBOutlet UILabel *directionLbl;
+@property (strong, nonatomic) IBOutlet UIButton *customNameButton;
+@property (strong, nonatomic) IBOutlet UITextField *customNameTxt;
+@property (strong, nonatomic) IBOutlet UILabel *maxRateLbl;
+@property (strong, nonatomic) IBOutlet UILabel *maxRateInfoLabel;
+@property (strong, nonatomic) IBOutlet UIButton *maxRateButton;
+
+
+
 @property NSNumber *directionLabelMode;
 
 - (IBAction) handleReleaseSensitivitySlider: (UISlider *) sender;

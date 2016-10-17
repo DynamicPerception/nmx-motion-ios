@@ -107,7 +107,9 @@
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-- (void) deviceDisconnect: (id) object {
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    //NMXDevice *device = notification.object;
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self dismissViewControllerAnimated: YES completion: nil];
     });
@@ -147,7 +149,10 @@
     [self.cameraTimelineView stopPlayheadAnimation];
     
 	DDLogDebug(@"Stop Camera Test Button");
-    [[AppExecutive sharedInstance].device cameraSetTestMode: false];
+    for (NMXDevice *device in [AppExecutive sharedInstance].deviceList)
+    {
+        [device cameraSetTestMode: false];
+    }
 
 	[self dismissViewControllerAnimated: YES completion: nil];
 }

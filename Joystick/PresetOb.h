@@ -25,11 +25,5 @@
 @property (nonatomic, retain) NSNumber * delay;
 @property (nonatomic, retain) NSNumber * smscontinuous;
 @property (nonatomic, retain) NSNumber * timelapsevideo;
-@property (nonatomic, retain) NSString * panincrease;
-@property (nonatomic, retain) NSString * pandecrease;
-@property (nonatomic, retain) NSString * tiltincrease;
-@property (nonatomic, retain) NSString * tiltdecrease;
-@property (nonatomic, retain) NSString * slideincrease;
-@property (nonatomic, retain) NSString * slidedecrease;
 
 @end

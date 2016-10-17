@@ -159,6 +159,8 @@
 		23F95D981A24CE8300E3D7DA /* JoyButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F95D971A24CE8300E3D7DA /* JoyButton.m */; };
 		23FD81081A23D78800FD9D49 /* CameraSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23FD81071A23D78800FD9D49 /* CameraSettingsViewController.m */; };
 		23FD810B1A23D8FC00FD9D49 /* ReviewStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23FD810A1A23D8FC00FD9D49 /* ReviewStatusViewController.m */; };
+		301A1BFA1CED22FA00A26D14 /* JSDeviceSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 301A1BF91CED22FA00A26D14 /* JSDeviceSettings.m */; };
+		3035829A1D25982300C4FCC4 /* JSMotorRampingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 303582991D25982300C4FCC4 /* JSMotorRampingTableViewCell.m */; };
 		3048A1121C40657C00855EB0 /* DeviceState_Ready.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */; };
 		3048A1131C40657C00855EB0 /* DeviceState_Ready@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */; };
 		3048A1141C40657C00855EB0 /* DeviceState_Indeterminate.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */; };
@@ -166,7 +168,11 @@
 		3048A1161C40657C00855EB0 /* DeviceState_Warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1101C40657C00855EB0 /* DeviceState_Warning.png */; };
 		3048A1171C40657C00855EB0 /* DeviceState_Warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */; };
 		304ECCFF1C98E1B70094B7B0 /* HSpline.m in Sources */ = {isa = PBXBuildFile; fileRef = 304ECCFE1C98E1B70094B7B0 /* HSpline.m */; };
+		3052909A1D5BB19700A887CA /* JSDisconnectedDeviceVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 305290991D5BB19700A887CA /* JSDisconnectedDeviceVC.m */; };
 		306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */; };
+		3090FC9F1D37031700EBB8F3 /* DeviceStateRunning.png in Resources */ = {isa = PBXBuildFile; fileRef = 3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */; };
+		3090FCA01D37031700EBB8F3 /* DeviceStateRunning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */; };
+		309AD5FF1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */; };
 		30B8EE9F1C45D0A100DCF15C /* DeviceState_Off.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */; };
 		30B8EEA01C45D0A100DCF15C /* DeviceState_Off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */; };
 		30B8EEA31C48924800DCF15C /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 30B8EEA21C48924800DCF15C /* DeviceTableViewCell.m */; };
@@ -399,6 +405,10 @@
 		23FD81071A23D78800FD9D49 /* CameraSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsViewController.m; sourceTree = "<group>"; };
 		23FD81091A23D8FC00FD9D49 /* ReviewStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReviewStatusViewController.h; sourceTree = "<group>"; };
 		23FD810A1A23D8FC00FD9D49 /* ReviewStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReviewStatusViewController.m; sourceTree = "<group>"; };
+		301A1BF81CED22FA00A26D14 /* JSDeviceSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeviceSettings.h; sourceTree = "<group>"; };
+		301A1BF91CED22FA00A26D14 /* JSDeviceSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDeviceSettings.m; sourceTree = "<group>"; };
+		303582981D25982300C4FCC4 /* JSMotorRampingTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMotorRampingTableViewCell.h; sourceTree = "<group>"; };
+		303582991D25982300C4FCC4 /* JSMotorRampingTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSMotorRampingTableViewCell.m; sourceTree = "<group>"; };
 		3048A10C1C40657C00855EB0 /* DeviceState_Ready.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Ready.png; sourceTree = "<group>"; };
 		3048A10D1C40657C00855EB0 /* DeviceState_Ready@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Ready@2x.png"; sourceTree = "<group>"; };
 		3048A10E1C40657C00855EB0 /* DeviceState_Indeterminate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Indeterminate.png; sourceTree = "<group>"; };
@@ -407,8 +417,14 @@
 		3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Warning@2x.png"; sourceTree = "<group>"; };
 		304ECCFD1C98E1B70094B7B0 /* HSpline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSpline.h; sourceTree = "<group>"; };
 		304ECCFE1C98E1B70094B7B0 /* HSpline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSpline.m; sourceTree = "<group>"; };
+		305290981D5BB19700A887CA /* JSDisconnectedDeviceVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDisconnectedDeviceVC.h; sourceTree = "<group>"; };
+		305290991D5BB19700A887CA /* JSDisconnectedDeviceVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDisconnectedDeviceVC.m; sourceTree = "<group>"; };
 		306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraSettingsTimelineView.h; sourceTree = "<group>"; };
 		306991151C62C60300C9E0E4 /* CameraSettingsTimelineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsTimelineView.m; sourceTree = "<group>"; };
+		3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceStateRunning.png; sourceTree = "<group>"; };
+		3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceStateRunning@2x.png"; sourceTree = "<group>"; };
+		309AD5FD1D08EC5B00F91CB4 /* JSDeviceSettingsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeviceSettingsVC.h; sourceTree = "<group>"; };
+		309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDeviceSettingsVC.m; sourceTree = "<group>"; };
 		30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DeviceState_Off.png; sourceTree = "<group>"; };
 		30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DeviceState_Off@2x.png"; sourceTree = "<group>"; };
 		30B8EEA11C48924800DCF15C /* DeviceTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceTableViewCell.h; sourceTree = "<group>"; };
@@ -478,14 +494,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		10871B651B8B99BD00B1D017 /* CoreData */ = {
+		10871B651B8B99BD00B1D017 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				10871B621B8B997400B1D017 /* NMXMotion.xcdatamodeld */,
 				10871B6C1B8BA05E00B1D017 /* PresetOb.h */,
 				10871B6D1B8BA05E00B1D017 /* PresetOb.m */,
+				301A1BF81CED22FA00A26D14 /* JSDeviceSettings.h */,
+				301A1BF91CED22FA00A26D14 /* JSDeviceSettings.m */,
 			);
-			name = CoreData;
+			name = Data;
 			sourceTree = "<group>";
 		};
 		10D5EBB61B94CEE2006125E1 /* assets */ = {
@@ -650,7 +668,7 @@
 				10F9DE341BEBC1B00059A727 /* reachability */,
 				10F9DE221BEBC0B40059A727 /* imagepicker */,
 				10D5EBB61B94CEE2006125E1 /* assets */,
-				10871B651B8B99BD00B1D017 /* CoreData */,
+				10871B651B8B99BD00B1D017 /* Data */,
 				3F51E8AC1B66A69400E1E2D5 /* TestFairy */,
 				3FB4A5581B5FE80A006CFF1F /* Tests */,
 				5D6A799F1B27543E00F93B71 /* MainViews */,
@@ -785,6 +803,8 @@
 				3048A10F1C40657C00855EB0 /* DeviceState_Indeterminate@2x.png */,
 				30B8EE9D1C45D0A000DCF15C /* DeviceState_Off.png */,
 				30B8EE9E1C45D0A100DCF15C /* DeviceState_Off@2x.png */,
+				3090FC9D1D37031700EBB8F3 /* DeviceStateRunning.png */,
+				3090FC9E1D37031700EBB8F3 /* DeviceStateRunning@2x.png */,
 				3048A1101C40657C00855EB0 /* DeviceState_Warning.png */,
 				3048A1111C40657C00855EB0 /* DeviceState_Warning@2x.png */,
 				3F9C16681B63D82600D7D51B /* thumbBlue@2x.png */,
@@ -819,6 +839,8 @@
 		5D6A79A31B27558600F93B71 /* SettingsViews */ = {
 			isa = PBXGroup;
 			children = (
+				303582981D25982300C4FCC4 /* JSMotorRampingTableViewCell.h */,
+				303582991D25982300C4FCC4 /* JSMotorRampingTableViewCell.m */,
 				5D25BC641A5B862B00F324AD /* DeviceSettingsViewController.h */,
 				5D25BC651A5B862B00F324AD /* DeviceSettingsViewController.m */,
 				306991141C62C60300C9E0E4 /* CameraSettingsTimelineView.h */,
@@ -861,6 +883,10 @@
 				10CF73731BD7DCF8004ED48C /* SiderealViewController.m */,
 				101F9B811C1740A9006DCFAA /* OverallDistanceViewController.h */,
 				101F9B821C1740A9006DCFAA /* OverallDistanceViewController.m */,
+				309AD5FD1D08EC5B00F91CB4 /* JSDeviceSettingsVC.h */,
+				309AD5FE1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m */,
+				305290981D5BB19700A887CA /* JSDisconnectedDeviceVC.h */,
+				305290991D5BB19700A887CA /* JSDisconnectedDeviceVC.m */,
 			);
 			name = SettingsViews;
 			sourceTree = "<group>";
@@ -918,7 +944,7 @@
 		2389AC0E19DD938100FB2679 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Dynamic Perception";
 				TargetAttributes = {
 					2389AC1519DD938100FB2679 = {
@@ -952,6 +978,7 @@
 			files = (
 				10AA77601C208053000B7249 /* dampening50.png in Resources */,
 				10AA774E1C207B9F000B7249 /* dampening.png in Resources */,
+				3090FC9F1D37031700EBB8F3 /* DeviceStateRunning.png in Resources */,
 				10CF73551BD194B6004ED48C /* degree_circleTop@2x.png in Resources */,
 				10CF72D11BC6A487004ED48C /* bl1.png in Resources */,
 				30B8EEA01C45D0A100DCF15C /* DeviceState_Off@2x.png in Resources */,
@@ -989,6 +1016,7 @@
 				3F9C16641B63D4E400D7D51B /* thumb4.png in Resources */,
 				3048A1141C40657C00855EB0 /* DeviceState_Indeterminate.png in Resources */,
 				10AA774D1C207B9F000B7249 /* dampening@2x.png in Resources */,
+				3090FCA01D37031700EBB8F3 /* DeviceStateRunning@2x.png in Resources */,
 				3048A1131C40657C00855EB0 /* DeviceState_Ready@2x.png in Resources */,
 				10D5EBBA1B94CEEC006125E1 /* doneup1.png in Resources */,
 				10D5EBB91B94CEEC006125E1 /* done1.png in Resources */,
@@ -1121,7 +1149,9 @@
 			files = (
 				2389AC2219DD938100FB2679 /* MainViewController.m in Sources */,
 				5DAEBE5719F60D6F000AC7AA /* NMXDevice.m in Sources */,
+				3052909A1D5BB19700A887CA /* JSDisconnectedDeviceVC.m in Sources */,
 				2389AC1F19DD938100FB2679 /* AppDelegate.m in Sources */,
+				301A1BFA1CED22FA00A26D14 /* JSDeviceSettings.m in Sources */,
 				100838A21B8F88C6003823E0 /* DistancePresetViewController.m in Sources */,
 				3FB4A55B1B5FE84C006CFF1F /* DrawTest.m in Sources */,
 				2397C3E41AE96FBF001FFF60 /* MotorRampingView.m in Sources */,
@@ -1156,6 +1186,7 @@
 				10CF71D31BC388E3004ED48C /* HelpViewController.m in Sources */,
 				3FB4A5671B61F0B4006CFF1F /* NotificationTest.m in Sources */,
 				306991161C62C60300C9E0E4 /* CameraSettingsTimelineView.m in Sources */,
+				309AD5FF1D08EC5B00F91CB4 /* JSDeviceSettingsVC.m in Sources */,
 				10F9DE331BEBC0C20059A727 /* ELCImagePickerController.m in Sources */,
 				3FB4A55E1B5FF154006CFF1F /* GraphView.m in Sources */,
 				106615831BA1CF1900A85529 /* LinearRotaryViewController.m in Sources */,
@@ -1165,6 +1196,7 @@
 				10871B711B8BA7F700B1D017 /* SavePresetViewController.m in Sources */,
 				10F9DE2F1BEBC0C20059A727 /* ELCAlbumPickerController.m in Sources */,
 				5D25BC661A5B862B00F324AD /* DeviceSettingsViewController.m in Sources */,
+				3035829A1D25982300C4FCC4 /* JSMotorRampingTableViewCell.m in Sources */,
 				10871B5F1B8B94B900B1D017 /* PresetViewController.m in Sources */,
 				23A14CEC19E46CC500295312 /* SetupViewController.m in Sources */,
 				2389AC4119DD949400FB2679 /* JoystickViewController.m in Sources */,

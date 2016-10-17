@@ -186,8 +186,9 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-- (void) deviceDisconnect: (id) object {    
-    
+- (void) deviceDisconnect: (NSNotification *) notification
+{
+    //NMXDevice *device = notification.object;
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self dismissViewControllerAnimated: YES completion: nil];
     });
@@ -440,15 +441,16 @@ NSString	static	*kSegueForCameraSettingsIntervalInput	= @"SegueForCameraSettings
     DDLogDebug(@"Test Camera Button");
     // go to modal view
     
-    NMXDevice * device = [AppExecutive sharedInstance].device;
+    for (NMXDevice *device in [AppExecutive sharedInstance].deviceList)
+    {
+        [device cameraSetEnable: true];
+        [device cameraSetTriggerTime: (UInt32)[self.appExecutive.triggerNumber unsignedIntegerValue]];
+        [device cameraSetFocusTime: (UInt16)[self.appExecutive.focusNumber unsignedIntegerValue]];
+        [device cameraSetExposureDelay: (UInt16)[self.appExecutive.delayNumber unsignedIntegerValue]];
+        [device cameraSetInterval: (UInt32)[self.appExecutive.intervalNumber unsignedIntegerValue]];
     
-    [device cameraSetEnable: true];
-    [device cameraSetTriggerTime: (UInt32)[self.appExecutive.triggerNumber unsignedIntegerValue]];
-    [device cameraSetFocusTime: (UInt16)[self.appExecutive.focusNumber unsignedIntegerValue]];
-    [device cameraSetExposureDelay: (UInt16)[self.appExecutive.delayNumber unsignedIntegerValue]];
-    [device cameraSetInterval: (UInt32)[self.appExecutive.intervalNumber unsignedIntegerValue]];
-    
-    [device cameraSetTestMode: true];
+        [device cameraSetTestMode: true];
+    }
 }
 
 - (IBAction) handleFocusButton: (id) sender {

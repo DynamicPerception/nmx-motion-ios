@@ -15,8 +15,10 @@
 #import "PresetOb.h"
 #import "AppDelegate.h"
 #import "HelpViewController.h"
+#import "JSDisconnectedDeviceVC.h"
 
-@interface SetupViewController : UIViewController <ExposureDelegate, DurationDelegate, ShortDurationDelegate, FrameRateDelegate, UITextFieldDelegate> {
+@interface SetupViewController : UIViewController <ExposureDelegate, DurationDelegate, ShortDurationDelegate, FrameRateDelegate,
+                                 JSDisconnectedDeviceDelegate, UITextFieldDelegate> {
     
     AppDelegate *appDelegate;
     NSEntityDescription *entity;

@@ -29,29 +29,36 @@
 #endif
 }
 
-- (IBAction) connectButtonSelected: (id) sender
-{
-    if (self.device.disconnected)
+- (IBAction)connectSwitchSelected:(id)sender {
+    if (self.connectSwitch.on)
     {
-        self.connectionTimer = [NSTimer scheduledTimerWithTimeInterval:15.0
-                                                                target:self
-                                                              selector:@selector(connectionTimeout)
-                                                              userInfo:nil
-                                                               repeats:YES];
-        
-        [self.tableView preDevicesStateChange];
-        
-        [self initFirmware];
-        
-        [self.activityIndicator startAnimating];
-        
-        UIButton *button = (UIButton *)sender;
-        button.hidden = YES;
+        if (self.device.disconnected)
+        {
+            [self connect];
+        }
     }
     else
     {
-        [self.tableView navigateToMainViewWithDevice: self.device];
+        [self disconnect];
     }
+
+}
+
+- (void) disconnect
+{
+    AppExecutive *ae = [AppExecutive sharedInstance];
+    ae.deviceManager.delegate = self;
+    
+    [self.tableView preDevicesStateChange];
+    
+    [self.device disconnect];
+    self.settingsButton.enabled = NO;
+    self.settingsButton.hidden = YES;
+    self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
+    [self.tableView.activeDevices removeObject: self.device];
+    
+    [self.tableView postDevicesStateChange];
+
 }
 
 - (void) connectionTimeout
@@ -74,7 +81,14 @@
     NSString *deviceImage = @"DeviceState_Off.png";
     if (device.fwVersion && NO == device.disconnected)
     {
-        deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+        if (NMXRunStatusRunning & self.runStatus)
+        {
+            deviceImage = @"DeviceStateRunning.png";
+        }
+        else
+        {
+            deviceImage = device.fwVersionUpdateAvailable ? @"DeviceState_Warning.png" : @"DeviceState_Ready.png";
+        }
     }
     
     return deviceImage;
@@ -82,14 +96,17 @@
 
 - (void) handleConnectionError
 {
+    [self.device disconnect];
+    
     [self.connectionTimer invalidate];
     self.connectionTimer = nil;
 
     [self.activityIndicator stopAnimating];
-    [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
-    self.connectGoButton.hidden = NO;
-    self.connectGoButton.enabled = YES;
+    //    [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
+    //    self.connectGoButton.hidden = NO;
+    //    self.connectGoButton.enabled = YES;
     self.settingsButton.hidden = YES;
+    self.connectSwitch.selected = NO;
     
     NSString *deviceImage = [self getImageForDeviceStatus: self.device];
     self.imageView.image = [UIImage imageNamed: deviceImage];
@@ -102,6 +119,76 @@
                                           otherButtonTitles: nil];
     [alert show];
 
+    [self.connectSwitch setOn:NO animated:YES];
+    [self.tableView postDevicesStateChange];
+
+}
+
+- (void) connect
+{
+    self.connectionTimer = [NSTimer scheduledTimerWithTimeInterval:15.0
+                                                            target:self
+                                                          selector:@selector(connectionTimeout)
+                                                          userInfo:nil
+                                                           repeats:YES];
+    
+    [self.tableView preDevicesStateChange];
+    
+    [self initFirmware];
+    
+    [self.activityIndicator startAnimating];
+}
+
+- (BOOL) confirmOkForMultiController: (NMXDevice *)device
+{
+    if (self.tableView.activeDevices.count == 0) return YES;
+    
+    NSString *msg = nil;
+    
+    if (device.fwVersion < 68)
+    {
+        msg = @"The firmware on the selected device must be upgraded to "
+               "v. 0.68 or newer to use in a multi-contoller environment."
+               "\nDisconnecting.";
+    }
+    else
+    {
+        for (NMXDevice *activeDevice in self.tableView.activeDevices)
+        {
+            if (activeDevice.fwVersion < 68)
+            {
+                msg = [NSString stringWithFormat:@"Device %@ must be upgraded to "
+                                                  "v. 0.68 or newer to use a multi-contoller environment."
+                                                  "\nDisconnecting.", [[AppExecutive sharedInstance] stringWithHandleForDeviceName: activeDevice.name] ];
+                break;
+            }
+        }
+    }
+    
+    if (msg)
+    {
+        [self.connectSwitch setOn:NO animated:YES];
+        [self disconnect];
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Error"
+                                                        message: msg
+                                                       delegate: nil
+                                              cancelButtonTitle: @"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        return NO;
+
+    }
+    
+    return YES;
+}
+
+- (void) determineRunStatus: (NMXDevice *)device
+{
+    int queryStatus = [device mainQueryRunStatus];
+    int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
+    
+    self.runStatus = queryStatus | queryStatusKeyFrame;
 }
 
 - (void) didConnect: (NMXDevice *) device
@@ -112,16 +199,11 @@
     
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        int queryStatus = [device mainQueryRunStatus];
-        int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
-        
-        AppExecutive *ae = [AppExecutive sharedInstance];
-        
-        if (queryStatus == 99) {
+        [self determineRunStatus: device];
+
+        if (self.runStatus == 99 || self.runStatus == NMXRunStatusUnknown) {
             
             NSLog(@"stop everything");
-            
-            ae.resetController = YES;  // FIX ME: This needs to be handled
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self handleConnectionError];
@@ -133,19 +215,26 @@
                 [self.connectionTimer invalidate];
                 self.connectionTimer = nil;
                 [self.activityIndicator stopAnimating];
-                [self.connectGoButton setTitle:@"Go >" forState:UIControlStateNormal];
-                self.connectGoButton.hidden = NO;
+                //                [self.connectGoButton setTitle:@"Go >" forState:UIControlStateNormal];
+                self.connectSwitch.on = YES;
+                //                self.connectGoButton.hidden = NO;
                 self.settingsButton.enabled = YES;
                 self.settingsButton.hidden = NO;
                 
                 NSString *deviceImage = [self getImageForDeviceStatus: device];
                 self.imageView.image = [UIImage imageNamed: deviceImage];
-                
-                if ((NMXRunStatusRunning & queryStatus) || NMXRunStatusRunning & queryStatusKeyFrame)
+
+                if (NMXRunStatusRunning & self.runStatus)
                 {
-                    [self.tableView navigateToMainViewWithDevice: self.device];
+                    self.numRunning = [device mainQueryControllerCount];
                 }
                 
+                if ([self confirmOkForMultiController: device] &&
+                    ![self.tableView.activeDevices containsObject: device])
+                {
+                    [self.tableView.activeDevices addObject: device];
+                }
+
                 [self.tableView postDevicesStateChange];
                 
             });
@@ -155,26 +244,28 @@
     
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    self.textLabel.font = [self.textLabel.font fontWithSize:18];
+}
 
 - (void) preDeviceStateChange
 {
-    self.connectGoButton.enabled = NO;
-    
-    if (NO == self.device.disconnected)
-    {
-        [self.device disconnect];
-        
-        [self.connectGoButton setTitle:@"Connect" forState:UIControlStateNormal];
-        self.settingsButton.enabled = NO;
-        self.settingsButton.hidden = YES;
-        
-        self.imageView.image = [UIImage imageNamed: @"DeviceState_Off.png"];
-    }
+    self.connectSwitch.enabled = NO;
 }
 
 - (void) postDeviceStateChange
 {
-    self.connectGoButton.enabled = YES;
+    self.connectSwitch.enabled = YES;
+}
+
+#pragma mark NMXDeviceManagerDelegate
+
+- (void) didDisconnectDevice: (NMXDevice *) device {
+    
+    self.connectSwitch.on = NO;
+
 }
 
 @end
