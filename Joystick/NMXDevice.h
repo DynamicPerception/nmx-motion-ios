@@ -107,7 +107,6 @@ typedef enum : unsigned char {
 - (void) mainSetControllerCount: (UInt8) controllerCount;
 - (void) mainFlipStartStop;
 
-- (UInt16) mainQueryFirmwareVersion;
 - (NMXRunStatus) mainQueryRunStatus;
 - (UInt32) mainQueryRunTime;
 - (float) mainQueryVoltage;
