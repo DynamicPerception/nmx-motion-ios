@@ -212,6 +212,7 @@ typedef enum : unsigned char {
 - (void) peripheralWasConnected: (CBPeripheral *) peripheral;
 
 + (unsigned char) defaultAddress;
++ (int) maximumAllowableStepRate;
 
 @end
 

@@ -274,6 +274,11 @@ typedef enum: unsigned char {
     return 3;
 }
 
++ (int) maximumAllowableStepRate
+{
+    return 5000;
+}
+
 - (NSString *) name {
 
     return self.myPeripheral.name;
@@ -1793,6 +1798,21 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (UInt16) motorQueryMaxStepRate:(int)motorNumber
 {
+    int retryCount = 3;
+    UInt16 maxRate = 0;
+    for (int i = 0; i < retryCount; i++)
+    {
+        maxRate = [self tryQueryMaxStepRate: motorNumber];
+        if (maxRate > 0) break;
+        
+        usleep(10000); //wait 10ms
+    }
+
+    return maxRate;
+}
+
+- (UInt16) tryQueryMaxStepRate:(int)motorNumber
+{
     if (_fwVersion < 72)
     {
         return 4000;
@@ -1809,6 +1829,15 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         maxSpeed = [[self extractReturnedNumber] UInt16Value];
     }
+    
+    int retryCount = 3;
+    for (int i = 0; i < retryCount; i++)
+    {
+        _fwVersion = [self mainQueryFirmwareVersion];
+        if (_fwVersion > 0) break;
+        usleep(100000); //wait 100ms
+    }
+
     
     return maxSpeed;
 }

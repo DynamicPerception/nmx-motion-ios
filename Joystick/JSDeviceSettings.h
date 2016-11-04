@@ -102,7 +102,9 @@ typedef enum
 @property float panMotorCustomValue;
 @property float tiltMotorCustomValue;
 
-@property float sensitivity;
+@property float slideSensitivity;
+@property float panSensitivity;
+@property float tiltSensitivity;
 
 @property NSString *slideDirection;
 @property NSString *panDirection;
