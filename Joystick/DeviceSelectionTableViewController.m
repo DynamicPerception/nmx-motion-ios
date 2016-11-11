@@ -27,6 +27,7 @@
 @property BOOL showMessageCell;
 
 @property NSArray *deviceList;
+@property NSArray *tempDevList;
 @end
 
 
@@ -151,7 +152,14 @@
     
 	[super viewWillAppear: animated];
 
-    self.activeDevices = [NSMutableArray new];
+    if (self.tempDevList)
+    {
+        self.tempDevList = [NSMutableArray arrayWithArray:self.tempDevList];
+    }
+    else
+    {
+        self.activeDevices = [NSMutableArray new];
+    }
     
     [[AppExecutive sharedInstance].deviceManager setDelegate: self];
     
@@ -485,6 +493,11 @@
         HelpViewController *msvc = segue.destinationViewController;
         [msvc setScreenInd:6];
     }
+    else if ([[segue identifier] isEqualToString:@"showSettingsView"])
+    {
+        self.tempDevList = [NSArray arrayWithArray:self.activeDevices];
+    }
+
 }
 
 - (void) didReceiveMemoryWarning {

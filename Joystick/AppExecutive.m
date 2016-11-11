@@ -676,7 +676,11 @@ NSString        static *kDefaultsOriginalProgramDelayTime = @"programOriginalDel
             [device keepAlive:0];
             if (device.fwVersion >= 52)
             {
-                [device mainSetPingPongMode: NO];
+                NMXProgramMode programMode = [device mainQueryProgramMode];
+                if(programMode != NMXProgramModeVideo)
+                {
+                    [device mainSetPingPongMode: NO];
+                }
             }
         }
     }
