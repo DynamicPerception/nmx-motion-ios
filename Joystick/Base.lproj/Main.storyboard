@@ -1731,7 +1731,7 @@
                                                 </constraints>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exposure" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Sn-CI-wE3" userLabel="Exposure Label">
-                                                <rect key="frame" x="8" y="48" width="182" height="17"/>
+                                                <rect key="frame" x="8" y="48" width="181.5" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -1772,7 +1772,7 @@
                                                 </constraints>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Buffer" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GN9-XX-Ofn" userLabel="Buffer Label">
-                                                <rect key="frame" x="198" y="48" width="181" height="17"/>
+                                                <rect key="frame" x="197.5" y="48" width="182" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -1800,7 +1800,7 @@
                                                 </constraints>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="03L-Yk-jjc" userLabel="Interval Label">
-                                                <rect key="frame" x="394" y="48" width="182" height="17"/>
+                                                <rect key="frame" x="394.5" y="48" width="181.5" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -4438,6 +4438,8 @@ Ramping</string>
                         <outlet property="controlBackground" destination="YXZ-9C-Psa" id="hEt-Y9-VJg"/>
                         <outlet property="okButton" destination="DGG-VD-V53" id="59z-TA-jzu"/>
                         <outlet property="picker" destination="Wl7-jY-e9p" id="tCo-5R-uI9"/>
+                        <outlet property="winInstructionsLabel" destination="pJ9-w0-GCt" id="f3G-YG-xJ0"/>
+                        <outlet property="winTitleLabel" destination="K28-ne-04H" id="xlY-Xk-6q5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kCT-2j-ump" userLabel="First Responder" sceneMemberID="firstResponder"/>
