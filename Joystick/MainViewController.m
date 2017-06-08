@@ -963,9 +963,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             [device motorEnable: device.sledMotor];
             [device motorEnable: device.panMotor];
             [device motorEnable: device.tiltMotor];
-        
-            [self setupMicrosteps];
+       
         }
+        
+        [self setupMicrosteps];
     }
     
     if ((NMXRunStatusRunning & queryStatus) == 0)
@@ -1000,6 +1001,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     [self exitJoystickMode];
     
+    float minDampening = [JSDeviceSettings rawDampeningToMotorVal:[JSDeviceSettings minDampeningVal]];
+    float maxDampening = [JSDeviceSettings rawDampeningToMotorVal:[JSDeviceSettings maxDampeningVal]];
+    
     for (NMXDevice *device in self.appExecutive.deviceList)
     {
         JSDeviceSettings *settings = device.settings;
@@ -1018,6 +1022,28 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         settings.microstep2 = [device motorQueryMicrostep2:2];
         settings.microstep3 = [device motorQueryMicrostep2:3];
 
+        // Make sure dampening setting is within allowable range
+        for (int i = 1; i<=3; i++)
+        {
+            float dampening = [device motorQueryContinuousAccelDecel: i]/100;
+            
+            Boolean toSet = NO;
+            if (dampening < maxDampening)   // Dampening in an inverse so use <
+            {
+                dampening = maxDampening;
+                toSet = YES;
+            }
+            else if (dampening > minDampening)
+            {
+                dampening = minDampening;
+                toSet = YES;
+            }
+            if (toSet)
+            {
+                [device motorSet: i ContinuousSpeedAccelDecel: dampening];
+            }
+        }
+        
         [settings synchronize];
     }
 

@@ -160,6 +160,27 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     [self setLockAxis:defaultLockAxisState];
 }
 
++ (float) maxMotorAccel
+{
+    return 30000;
+}
+
++ (float) minDampeningVal
+{
+    return .35;
+}
+
++ (float) maxDampeningVal
+{
+    return .715;
+}
+
++ (float) rawDampeningToMotorVal: (float)rawValue
+{
+    float inverseVal = 1 - rawValue;
+    float conv = pow(inverseVal,2) * [JSDeviceSettings maxMotorAccel];
+    return conv;
+}
 
 #pragma mark individual settings
 

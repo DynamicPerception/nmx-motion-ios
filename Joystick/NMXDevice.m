@@ -941,7 +941,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (unsigned char) motorAutoSetMicrosteps: (int) motorNumber {
 
-    unsigned char   microsteps;
+    unsigned char   microsteps = 0;
     unsigned char   newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorAutoSetProgramMicrosteps dataLength: 0];
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
@@ -965,7 +965,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         return YES;
     }
     
-    unsigned char   isFeasible;
+    unsigned char   isFeasible = 0;
     unsigned char   newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorQueryProgramFeasibility dataLength: 0];
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
@@ -1028,7 +1028,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     
     static int tryCount = 4;
     
-    UInt16    fwVerison;
+    UInt16    fwVerison = 0;
     unsigned char   newDataBytes[16];
     [self setupBuffer: newDataBytes subAddress: 0 command: NMXCommandMainQueryFirmwareVersion dataLength: 0];
     NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];

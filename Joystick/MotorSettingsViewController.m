@@ -198,14 +198,16 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     //NSLog(@"sensitivityRatio: %f",sensitivityRatio);
     
-    float maxAccel = 30000;
+    float maxAccel = [JSDeviceSettings maxMotorAccel];
     
-    float a;
-    float b;
+    float a = 0.f;
+    float b = 0.f;
     
     self.dampening1 = [self.appExecutive.device motorQueryContinuousAccelDecel: 1]/100;
     self.dampening2 = [self.appExecutive.device motorQueryContinuousAccelDecel: 2]/100;
     self.dampening3 = [self.appExecutive.device motorQueryContinuousAccelDecel: 3]/100;
+    
+    //NSLog(@"DAMPS = %g   %g   %g   ", [self.appExecutive.device motorQueryContinuousAccelDecel: 1], [self.appExecutive.device motorQueryContinuousAccelDecel: 2], [self.appExecutive.device motorQueryContinuousAccelDecel: 3] );
     
     if ((int)self.motorNumber == 1)
     {
@@ -217,18 +219,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     }
     else if ((int)self.motorNumber == 2)
     {
-//        float conv = pow((float)dampeningSlider.value,2) * maxAccel;
-//        
-//        dampeningSlider.value = self.appExecutive.dampening2;
-        
         a = self.dampening2/maxAccel;
     }
     else  if ((int)self.motorNumber == 3)
     {
-//        float conv = pow((float)dampeningSlider.value,2) * maxAccel;
-//        
-//        dampeningSlider.value = self.appExecutive.dampening3;
-
         a = self.dampening3/maxAccel;
     }
     
@@ -236,16 +230,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     float inverseVal = 1 - b;
     
-    //dampeningSlider.value = b;
-    
-    //dampeningSlider.maximumValue = .8; 12-15-15
-    
-    dampeningSlider.minimumValue = .35;
-    dampeningSlider.maximumValue = .715;
+    dampeningSlider.minimumValue = [JSDeviceSettings minDampeningVal];
+    dampeningSlider.maximumValue = [JSDeviceSettings maxDampeningVal];
     
     dampeningSlider.value = inverseVal;
-    
-    //dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(dampeningSlider.value * 100)];
     
     int per1 = (int)(dampeningSlider.value * 100);
     
@@ -1390,18 +1378,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (IBAction) handleDampeningSlider: (UISlider *) sender {
     
-//    CGFloat value = sender.value;
-//    CGFloat adjustedValue = sender.maximumValue - value + sender.minimumValue;
-    
-    NSLog(@"val: %f",sender.value);
-    
-    float inv = 1-sender.value;
-  
-    
-    NSLog(@"inv val: %f",inv);
-    
-    //dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(sender.value * 100)];
-    
     int per1 = (int)(sender.value * 100);
     
     dampeningLbl.text = [NSString stringWithFormat:@"%i%%",(int)(per1 + (per1 * .2))];
@@ -1478,17 +1454,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
 - (void) timerName {
     
-    float maxAccel = 30000;
-    
-    CGFloat adjustedValue = dampeningSlider.maximumValue - dampeningSlider.value + dampeningSlider.minimumValue;
-    
-    NSLog(@"adjustedValue: %f",adjustedValue);
-    
-    //float conv = pow((float)dampeningSlider.value,2) * maxAccel;
-    
-    float inverseVal = 1 - dampeningSlider.value;
-    
-    float conv = pow(inverseVal,2) * maxAccel;
+    float conv = [JSDeviceSettings rawDampeningToMotorVal: dampeningSlider.value];
     
     NSLog(@"conv: %f",conv);
     

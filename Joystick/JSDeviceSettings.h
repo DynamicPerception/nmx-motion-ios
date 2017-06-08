@@ -37,6 +37,12 @@ typedef enum
 
 - (void) restoreDefaults;
 
+// Dampening settings
++ (float) maxMotorAccel;
++ (float) minDampeningVal;
++ (float) maxDampeningVal;
++ (float) rawDampeningToMotorVal: (float)rawValue;
+
 @property float voltageLow;
 @property float voltageHigh;
 @property float voltage;
