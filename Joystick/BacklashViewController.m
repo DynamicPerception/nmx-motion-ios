@@ -147,7 +147,19 @@
 
 - (IBAction) handleOkButton: (id) sender {
 
-	[self dismissViewControllerAnimated: YES completion: nil];
+    [self dismissViewControllerAnimated: YES completion: nil];
+    
+    if (self.customRigRatioPreset)
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"backlashVCDismissed" object:nil];
+        
+        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:self.customRigRatioPreset];
+        [dict setValue:@(self.value) forKey:@"customRatio"];
+        
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:@"loadDistancePreset"
+         object:dict];
+    }
 }
 
 

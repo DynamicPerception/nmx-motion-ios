@@ -97,12 +97,15 @@ typedef enum
 
 @property int slideGear;
 @property int slideMotor;
+@property int slideCustomGearRatio;
 
 @property int panGear;
 @property int panMotor;
+@property int panCustomGearRatio;
 
 @property int tiltGear;
 @property int tiltMotor;
+@property int tiltCustomGearRatio;
 
 @property float slideMotorCustomValue;
 @property float panMotorCustomValue;

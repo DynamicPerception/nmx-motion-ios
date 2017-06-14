@@ -668,6 +668,24 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     
 }
 
+- (void) setSlideCustomGearRatio :(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"slideCustomGearRatio"];
+}
+
+- (int)slideCustomGearRatio
+{
+    int val = [self integerForKey:@"slideCustomGearRatio"];
+    if (val == 0)
+    {
+        val = 100;
+        [self setSlideCustomGearRatio:val];
+    }
+    return  val;
+    
+}
+
+
 - (void) setSlideMotor :(int)value
 {
     [self setObject: [NSNumber numberWithInt:value] forKey: @"slideMotor"];
@@ -697,6 +715,24 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     
 }
 
+- (void) setPanCustomGearRatio :(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"panCustomGearRatio"];
+}
+
+- (int)panCustomGearRatio
+{
+    int val = [self integerForKey:@"panCustomGearRatio"];
+    if (val == 0)
+    {
+        val = 100;
+        [self setPanCustomGearRatio:val];
+    }
+    return  val;
+    
+}
+
+
 - (void) setPanMotor :(int)value
 {
     [self setObject: [NSNumber numberWithInt:value] forKey: @"panMotor"];
@@ -725,6 +761,24 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     return  val;
     
 }
+
+- (void) setTiltCustomGearRatio :(int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"tiltCustomGearRatio"];
+}
+
+- (int)tiltCustomGearRatio
+{
+    int val = [self integerForKey:@"tiltCustomGearRatio"];
+    if (val == 0)
+    {
+        val = 100;
+        [self setTiltCustomGearRatio:val];
+    }
+    return  val;
+    
+}
+
 
 - (void) setTiltMotor:(int)value
 {

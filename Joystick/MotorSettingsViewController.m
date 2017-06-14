@@ -82,12 +82,15 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     switch (self.motorNumber) {
         case 1:
             microstepSetting = self.settings.microstep1;
+            customRigRatio = self.settings.slideCustomGearRatio;
             break;
         case 2:
             microstepSetting = self.settings.microstep2;
+            customRigRatio = self.settings.panCustomGearRatio;
             break;
         case 3:
             microstepSetting = self.settings.microstep3;
+            customRigRatio = self.settings.tiltCustomGearRatio;
             break;
         default:
             NSAssert(0, @"Bad motor number");
@@ -319,6 +322,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             {
                 gearRatioLbl.text = @"60:1";
             }
+            else if (self.settings.slideGear == 5)
+            {
+                NSString *str = [NSString stringWithFormat: @"%d:1", self.settings.slideCustomGearRatio];
+                gearRatioLbl.text = str;
+            }
+            
         }
         
         if (self.settings.slideMotor)
@@ -364,6 +373,11 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             {
                 gearRatioLbl.text = @"60:1";
             }
+            else if (self.settings.panGear == 5)
+            {
+                NSString *str = [NSString stringWithFormat: @"%d:1", self.settings.panCustomGearRatio];
+                gearRatioLbl.text = str;
+            }
         }
         
         if (self.settings.panMotor)
@@ -408,6 +422,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             {
                 gearRatioLbl.text = @"60:1";
             }
+            else if (self.settings.tiltGear == 5)
+            {
+                NSString *str = [NSString stringWithFormat: @"%d:1", self.settings.tiltCustomGearRatio];
+                gearRatioLbl.text = str;
+            }
+            
         }
         
         if (self.settings.tiltMotor)
@@ -660,6 +680,17 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             {
                 self.settings.slideGear = 4;
             }
+            else if ([preset isEqualToString:@"Custom"])
+            {
+                self.settings.slideGear = 5;
+                NSNumber *customRatio = [presetDict objectForKey:@"customRatio"];
+                self.settings.slideCustomGearRatio = [customRatio intValue];
+                customRigRatio = self.settings.slideCustomGearRatio;
+                
+                NSString *str = [NSString stringWithFormat: @"%d:1", self.settings.slideCustomGearRatio];
+                gearRatioLbl.text = str;
+                
+            }
         }
         else if (self.motorNumber == 2)
         {
@@ -679,6 +710,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             {
                 self.settings.panGear = 4;
             }
+            else if ([preset isEqualToString:@"Custom"])
+            {
+                self.settings.panGear = 5;
+                NSNumber *customRatio = [presetDict objectForKey:@"customRatio"];
+                self.settings.panCustomGearRatio = [customRatio intValue];
+                customRigRatio = self.settings.panCustomGearRatio;
+                
+                NSString *str = [NSString stringWithFormat: @"%d:1", self.settings.panCustomGearRatio];
+                gearRatioLbl.text = str;
+                
+            }
+            
         }
         else if (self.motorNumber == 3)
         {
@@ -697,6 +740,17 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
             else if ([preset isEqualToString:@"60:1"])
             {
                 self.settings.tiltGear = 4;
+            }
+            else if ([preset isEqualToString:@"Custom"])
+            {
+                self.settings.tiltGear = 5;
+                NSNumber *customRatio = [presetDict objectForKey:@"customRatio"];
+                self.settings.tiltCustomGearRatio = [customRatio intValue];
+                customRigRatio = self.settings.tiltCustomGearRatio;
+                
+                NSString *str = [NSString stringWithFormat: @"%d:1", self.settings.tiltCustomGearRatio];
+                gearRatioLbl.text = str;
+                
             }
         }
     }
@@ -857,6 +911,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         //gearRatio = 60;
         gearRatio = 60;
     }
+    else  // Custom
+    {
+        gearRatio = customRigRatio;
+    }
     
     reciprocal = a/gearRatio;
     
@@ -1004,6 +1062,10 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     else if ([gearRatioLbl.text isEqualToString:@"60:1"])
     {
         gearRatio = 60;
+    }
+    else
+    {
+        gearRatio = customRigRatio;
     }
     
     reciprocal = a/gearRatio;
@@ -1204,6 +1266,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleNotificationUpdateOverallDistance:)
                                                  name:@"updateOverallDistance" object:nil];
+    
 }
 
 - (void) timerNameQuerySleep {
@@ -1303,6 +1366,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         if (selectedSetting == 0)
         {
             [secView setCurrentSettingString:gearRatioLbl.text];
+            [secView setCustomRigRatio: customRigRatio];
         }
         else if (selectedSetting == 2)
         {

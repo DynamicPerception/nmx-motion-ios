@@ -338,6 +338,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         case 4:
             slideGear = 60;  // 60:1
             break;
+        case 5:
+            slideGear = settings.slideCustomGearRatio;
+            break;
         default:
             break;
     }
@@ -354,6 +357,9 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             break;
         case 4:
             panGear = 60;  // 60:1
+            break;
+        case 5:
+            panGear = settings.panCustomGearRatio;
             break;
         default:
             break;
@@ -372,6 +378,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         case 4:
             tiltGear = 60;  // 60:1
             break;
+        case 5:
+            tiltGear = settings.tiltCustomGearRatio;
         default:
             break;
     }

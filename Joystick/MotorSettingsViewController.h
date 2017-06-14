@@ -47,6 +47,7 @@
     float dampening;
     NSTimer *dampeningTimer;
     bool endGreater;
+    int customRigRatio;
 }
 
 @property (nonatomic, readwrite)	NSInteger	motorNumber;

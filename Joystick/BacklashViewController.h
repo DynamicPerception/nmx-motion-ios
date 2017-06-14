@@ -24,5 +24,6 @@
 @property int minValue;
 @property int digits;
 @property NSString *titleString;
+@property NSDictionary *customRigRatioPreset;
 
 @end

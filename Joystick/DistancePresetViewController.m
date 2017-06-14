@@ -7,6 +7,7 @@
 
 #import <CocoaLumberjack/CocoaLumberjack.h>
 
+#import "BacklashViewController.h"
 #import "DistancePresetViewController.h"
 #import "JoyButton.h"
 
@@ -97,6 +98,16 @@
                                @"5:1", @"val1", nil];
         
         [presetList addObject:dict3];
+
+        NSDictionary *dict5 = [[NSDictionary alloc] initWithObjectsAndKeys:
+                               @"Custom", @"val1", nil];
+        
+        [presetList addObject:dict5];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handlebacklashVCDismissed:)
+                                                     name:@"backlashVCDismissed" object:nil];
+        
         
     }
     else if (setting == 1) //Rig
@@ -185,11 +196,17 @@
             [picker selectRow:2 inComponent:0 animated:NO];
             selectedRow = 2;
         }
-        else
+        else if ([currentSettingString isEqualToString:@"5:1"])
         {
             [picker selectRow:3 inComponent:0 animated:NO];
             selectedRow = 3;
         }
+        else
+        {
+            [picker selectRow:4 inComponent:0 animated:NO];
+            selectedRow = 4;
+        }
+        
     }
     else if (setting == 1)
     {
@@ -285,8 +302,12 @@
 #pragma mark - IBAction Methods
 
 - (IBAction) handleOkButton: (id) sender {
-    
-    if (setting == 0 || setting == 2 || setting == 3)
+
+    if (setting == 0 && selectedRow == 4)   // custom gear ratio
+    {
+        [self performSegueWithIdentifier: @"SegueToBacklashViewController" sender: self];
+    }
+    else if (setting == 0 || setting == 2 || setting == 3)
     {
         [[NSNotificationCenter defaultCenter]
          postNotificationName:@"loadDistancePreset"
@@ -318,11 +339,47 @@
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    LinearRotaryViewController *msvc = segue.destinationViewController;
-    
-    [msvc setHeading:heading];
-    [msvc setCurrentCustomVal:currentCustomVal];
+    if ([segue.identifier isEqualToString: @"SegueToBacklashViewController"])
+    {
+        BacklashViewController *blvc = segue.destinationViewController;
+        
+        int maxVal = 999;
+        NSString *titleString = @"Set gear ratio\nAllowable Range:\n1-999 : 1";
+        
+        blvc.customRigRatioPreset = selectedPreset;
+        blvc.value = self.customRigRatio;
+        blvc.digits = 3;
+        blvc.maxValue = maxVal;
+        blvc.minValue = 1;
+        blvc.titleString = titleString;
+        blvc.delegate = self;
+    }
+    else
+    {
+        LinearRotaryViewController *msvc = segue.destinationViewController;
+        [msvc setHeading:heading];
+        [msvc setCurrentCustomVal:currentCustomVal];
+    }
 }
+
+- (void) handlebacklashVCDismissed:(NSNotification *)pNotification {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [self dismissViewControllerAnimated: NO completion: nil];
+}
+
+
+
+//------------------------------------------------------------------------------
+
+#pragma mark - IntValueDelegate Methods
+
+// Called when setting a custom rig ratio
+- (void) updateIntValue: (NSInteger) value {
+    
+    self.customRigRatio = (int)value;
+    // DDLogDebug(@"Setting Custom Ratio to : %ld", (long)value);
+}
+
 
 //------------------------------------------------------------------------------
 

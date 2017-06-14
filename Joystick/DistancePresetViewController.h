@@ -13,7 +13,7 @@
 #import "LinearRotaryViewController.h"
 
 
-@interface DistancePresetViewController : UIViewController  <UIPickerViewDelegate, UIPickerViewDataSource> {
+@interface DistancePresetViewController : UIViewController  <UIPickerViewDelegate, UIPickerViewDataSource, IntValueDelegate> {
     
     AppDelegate *appDelegate;
     NSDictionary *selectedPreset;
@@ -28,6 +28,7 @@
 @property (nonatomic, strong)		NSString *currentSettingString;
 @property int setting;
 @property float currentCustomVal;
+@property int   customRigRatio;
 
 - (IBAction) cancel:(id)sender;
 
