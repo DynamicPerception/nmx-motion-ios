@@ -1009,9 +1009,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     [self exitJoystickMode];
     
-    float minDampening = [JSDeviceSettings rawDampeningToMotorVal:[JSDeviceSettings minDampeningVal]];
-    float maxDampening = [JSDeviceSettings rawDampeningToMotorVal:[JSDeviceSettings maxDampeningVal]];
-    
     for (NMXDevice *device in self.appExecutive.deviceList)
     {
         JSDeviceSettings *settings = device.settings;
@@ -1030,28 +1027,26 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         settings.microstep2 = [device motorQueryMicrostep2:2];
         settings.microstep3 = [device motorQueryMicrostep2:3];
 
-        // Make sure dampening setting is within allowable range
+        // Set damping
         for (int i = 1; i<=3; i++)
         {
-            float dampening = [device motorQueryContinuousAccelDecel: i]/100;
-            
-            Boolean toSet = NO;
-            if (dampening < maxDampening)   // Dampening in an inverse so use <
+            float dampening;
+            if (i == 1)
             {
-                dampening = maxDampening;
-                toSet = YES;
+                dampening = settings.slideDampening;
             }
-            else if (dampening > minDampening)
+            else if (i == 2)
             {
-                dampening = minDampening;
-                toSet = YES;
+                dampening = settings.panDampening;
             }
-            if (toSet)
+            else
             {
-                [device motorSet: i ContinuousSpeedAccelDecel: dampening];
+                dampening = settings.tiltDampening;
             }
+            //NSLog(@"################ %p set motor %d   Dampening to %g", device, i, dampening);
+            [device motorSet: i ContinuousSpeedAccelDecel: dampening];
         }
-        
+
         [settings synchronize];
     }
 
@@ -1082,6 +1077,26 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
+
+- (void) setDampening : (NSTimer *) timer {
+
+    //  [self exitJoystickMode];
+
+    NSMutableDictionary *cb = [timer userInfo];
+    int motor = [[cb objectForKey: @"motor"] intValue];
+    float value = [[cb objectForKey:@"value"] floatValue];
+    NMXDevice *device = (NMXDevice *)[cb objectForKey:@"device"];
+
+    NSLog(@"*************** %p set motor %d   Dampening to %g", device, motor,value);
+    
+    [device motorSet: motor ContinuousSpeedAccelDecel: value];
+    
+    //  [self enterJoystickMode];
+
+}
+
+
+
 
 - (void) showVoltage {
 

@@ -210,7 +210,7 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     self.dampening2 = [self.appExecutive.device motorQueryContinuousAccelDecel: 2]/100;
     self.dampening3 = [self.appExecutive.device motorQueryContinuousAccelDecel: 3]/100;
     
-    //NSLog(@"DAMPS = %g   %g   %g   ", [self.appExecutive.device motorQueryContinuousAccelDecel: 1], [self.appExecutive.device motorQueryContinuousAccelDecel: 2], [self.appExecutive.device motorQueryContinuousAccelDecel: 3] );
+    //NSLog(@"DAMPS = %g   %g   %g   ", self.dampening1, self.dampening2, self.dampening3 );
     
     if ((int)self.motorNumber == 1)
     {
@@ -1334,12 +1334,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
         if (selectedSetting == 2)
         {
-            int maxVal = 5000;
+            int maxVal = 9999;
             NSString *titleString = @"Set Max Step Rate\nAllowable Range: 500-5000";
             if ([rigRatioLbl.text containsString:@"Sapphire"])
             {
                 titleString = @"Set Max Step Rate\nAllowable Range: 500-3000";
-                maxVal = 3000;
+                maxVal = 9999;
             }
             
             blvc.value = self.maxStepRate;
@@ -1525,14 +1525,19 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     if ((int)self.motorNumber == 1)
     {
         self.dampening1 = conv;
+        self.appExecutive.device.settings.slideDampening = conv;
+        
     }
     else if ((int)self.motorNumber == 2)
     {
         self.dampening2 = conv;
+        self.appExecutive.device.settings.panDampening = conv;
+
     }
     else
     {
         self.dampening3 = conv;
+        self.appExecutive.device.settings.tiltDampening = conv;
     }
 	
     [self.appExecutive.device motorSet: (int)self.motorNumber ContinuousSpeedAccelDecel: conv];

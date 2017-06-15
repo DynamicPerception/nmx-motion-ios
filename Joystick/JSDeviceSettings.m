@@ -825,6 +825,58 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     return val;
 }
 
+- (void) setSlideDampening :(float)value
+{
+    [self setObject: [NSNumber numberWithFloat: value] forKey: @"slideDampening"];
+}
+
+- (float)slideDampening
+{
+    float val = [self floatForKey: @"slideDampening"];
+    if (val == 0.f)
+    {
+        float minVal = [JSDeviceSettings rawDampeningToMotorVal:[JSDeviceSettings minDampeningVal]];
+        [self setSlideDampening:minVal];
+        val = minVal;
+    }
+    return val;
+}
+
+- (void) setPanDampening :(float)value
+{
+    [self setObject: [NSNumber numberWithFloat: value] forKey: @"panDampening"];
+}
+
+- (float)panDampening
+{
+    float val = [self floatForKey: @"panDampening"];
+    if (val == 0.f)
+    {
+        float minVal = [JSDeviceSettings rawDampeningToMotorVal:[JSDeviceSettings minDampeningVal]];
+        [self setPanDampening:minVal];
+        val = minVal;
+    }
+    
+    return val;
+}
+
+- (void) setTiltDampening :(float)value
+{
+    [self setObject: [NSNumber numberWithFloat: value] forKey: @"tiltDampening"];
+}
+
+- (float)tiltDampening
+{
+    float val = [self floatForKey: @"tiltDampening"];
+    if (val == 0.f)
+    {
+        float minVal = [JSDeviceSettings rawDampeningToMotorVal:[JSDeviceSettings minDampeningVal]];
+        [self setTiltDampening:minVal];
+        val = minVal;
+    }
+    return val;
+}
+
 - (float)sensitivity
 {
     NSNumber *num = (NSNumber *)[self.settings objectForKey:@"kDefaultsSensitivity"];

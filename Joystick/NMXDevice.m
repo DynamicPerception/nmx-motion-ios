@@ -1537,13 +1537,13 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         NSData *newData = [NSData dataWithBytes: newDataBytes length: 14];
         NSString *descString = [NSString stringWithFormat: @"Set Continuous Speed Dampening %f motor: %i", speed,motorNumber];
         
-        [self sendCommand: newData WithDesc: descString WaitForResponse: false WithTimeout: 0.1];
+        [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
         
         // Send the stop command twice just to be sure...
         
         if (0 == speed)
         {
-            [self sendCommand: newData WithDesc: descString WaitForResponse: false WithTimeout: 0.1];
+            [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
         }
 }
 
