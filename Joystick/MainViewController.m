@@ -1031,20 +1031,25 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         for (int i = 1; i<=3; i++)
         {
             float dampening;
+            int easing;
             if (i == 1)
             {
                 dampening = settings.slideDampening;
+                easing = settings.slideEasing;
             }
             else if (i == 2)
             {
                 dampening = settings.panDampening;
+                easing = settings.panEasing;
             }
             else
             {
                 dampening = settings.tiltDampening;
+                easing = settings.tiltEasing;
             }
             //NSLog(@"################ %p set motor %d   Dampening to %g", device, i, dampening);
             [device motorSet: i ContinuousSpeedAccelDecel: dampening];
+            [device motorSet: i RampingEasing: easing];
         }
 
         [settings synchronize];
@@ -1077,26 +1082,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
-
-- (void) setDampening : (NSTimer *) timer {
-
-    //  [self exitJoystickMode];
-
-    NSMutableDictionary *cb = [timer userInfo];
-    int motor = [[cb objectForKey: @"motor"] intValue];
-    float value = [[cb objectForKey:@"value"] floatValue];
-    NMXDevice *device = (NMXDevice *)[cb objectForKey:@"device"];
-
-    NSLog(@"*************** %p set motor %d   Dampening to %g", device, motor,value);
-    
-    [device motorSet: motor ContinuousSpeedAccelDecel: value];
-    
-    //  [self enterJoystickMode];
-
-}
-
-
-
 
 - (void) showVoltage {
 

@@ -73,6 +73,7 @@ typedef enum : unsigned char {
     NMXCommandMotorMoveSimple = 15,
     NMXCommandMotorSetProgramStartPoint = 16,
     NMXCommandMotorSetProgramStopPoint = 17,
+    NMXCommandMotorSetRampingEasing = 18,
     NMXCommandMotorSetLeadInShotsOrTime = 19,
     NMXCommandMotorSetTravelShotsOrTravelTime = 20,
     NMXCommandMotorSetProgramAccel = 21,
@@ -91,6 +92,7 @@ typedef enum : unsigned char {
     NMXCommandMotorQueryCurrentPosition = 106,
     NMXCommandMotorQueryRunning = 107,
     NMXCommandMotorQueryContinuousAccelDecel = 109,
+    NMXCommandMotorQueryRampingEasing = 110,
     NMXCommandMotorQueryTravelShotsOrTravelTime = 113,
     NMXCommandMotorQueryLeadInShotsOrTime = 114,
     NMXCommandMotorQuerySleep = 117,
@@ -1652,6 +1654,18 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.2];
 }
 
+- (void) motorSet: (int) motorNumber RampingEasing: (unsigned char)value
+{
+    unsigned char newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorSetRampingEasing dataLength: 1];
+    newDataBytes[10] = value;
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
+    [self sendCommand: newData WithDesc: @"Set Microstep" WaitForResponse: true WithTimeout: 0.2];
+    
+    NSLog(@"Set motor %d ramping/easing to %d", motorNumber, value);
+
+}
+
 - (void) motorSendToStartPoint: (int) motorNumber {
 
     unsigned char newDataBytes[16];
@@ -1879,7 +1893,23 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 //    return currentPosition;
 }
 
+- (int) motorQueryRampingEasing: (int) motorNumber
+{
+    char            ramping = 0;
+    unsigned char   newDataBytes[16];
+    [self setupBuffer: newDataBytes subAddress: motorNumber command: NMXCommandMotorQueryRampingEasing dataLength: 0];
+    NSData *newData = [NSData dataWithBytes: newDataBytes length: 10];
+    
+    [self sendCommand: newData WithDesc: @"QueryRampingEasing" WaitForResponse: true WithTimeout: 1.0];
+    
+    if ([self waitForResponse])
+    {
+        ramping = [[self extractReturnedNumber] charValue];
+    }
+    
+    return ramping;
 
+}
 
 - (UInt32) motorQueryLeadInShotsOrTime: (int) motorNumber {
 
@@ -2149,18 +2179,6 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 #pragma mark - Randall additions
 
-- (void) rampingSetEasing: (int)value {
-    
-    unsigned char newDataBytes[16];
-    [self setupBuffer: newDataBytes subAddress: 1 command: NMXCommandEasingRampMode dataLength: 1];
-    
-    newDataBytes[10] = value;
-    NSData *newData = [NSData dataWithBytes: newDataBytes length: 11];
-    
-    NSString *descString = [NSString stringWithFormat: @"Set Ramp Easing Value %d", (unsigned int)value];
-    
-    [self sendCommand: newData WithDesc: descString WaitForResponse: true WithTimeout: 0.3];
-}
 
 - (void) setDelayProgramStartTimer: (UInt64) timerValue {
     

@@ -145,8 +145,6 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
     
     frameCountStrings = [NSArray arrayWithArray: strings];
     
-    rampSettingSegment.selectedSegmentIndex = 0;
-    
     NSDictionary *	attributes = @{ NSForegroundColorAttributeName: [UIColor whiteColor] };
     
     [self.rampSettingSegment setTitleTextAttributes: attributes forState: UIControlStateNormal];
@@ -155,8 +153,15 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
     [self configSliders];
     [self setupSliderFunctions];
     [self addDoneButton];
-    
-    rampSettingImg.image = [UIImage imageNamed:@"linear.png"];
+
+    int rampingEasing = [self.appExecutive.device motorQueryRampingEasing:1] - 1;
+    rampSettingSegment.selectedSegmentIndex = rampingEasing;
+
+    NSString *img;
+    if (rampingEasing == 0) img = @"linear.png";
+    else if (rampingEasing == 1) img = @"parabolic.png";
+    else img = @"inverse.png";
+    rampSettingImg.image = [UIImage imageNamed: img];
     
     [NSTimer scheduledTimerWithTimeInterval:1.500 target:self selector:@selector(timerName) userInfo:nil repeats:NO];
     
@@ -872,7 +877,19 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
         rampSettingImg.image = [UIImage imageNamed:@"inverse.png"];
     }
     
-    //[device rampingSetEasing: rampMode];
+    for (NMXDevice *device in self.appExecutive.deviceList)
+    {
+        device.settings.slideEasing = rampMode;
+        device.settings.panEasing = rampMode;
+        device.settings.tiltEasing = rampMode;
+        
+        for (int i = 1; i <= 3; i++)
+        {
+            [device motorSet:1 RampingEasing: rampMode];
+        }
+        
+        [device.settings synchronize];
+    }
 }
 
 #pragma mark Randall Updates - Update Sync Slide Controls

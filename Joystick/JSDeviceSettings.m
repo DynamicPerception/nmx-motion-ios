@@ -698,6 +698,25 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     
 }
 
+
+- (void) setSlideEasing: (int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"slideEasing"];
+}
+
+- (int)slideEasing
+{
+    int val = [self integerForKey:@"slideEasing"];
+    if (val == 0)
+    {
+        val = 1;
+        [self setSlideEasing:val];
+    }
+    return  val;
+}
+
+
+
 - (void) setPanGear :(int)value
 {
     [self setObject: [NSNumber numberWithInt:value] forKey: @"panGear"];
@@ -745,6 +764,24 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     
 }
 
+
+- (void) setPanEasing: (int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"panEasing"];
+}
+
+- (int)panEasing
+{
+    int val = [self integerForKey:@"panEasing"];
+    if (val == 0)
+    {
+        val = 1;
+        [self setPanEasing:val];
+    }
+    return  val;
+}
+
+
 - (void) setTiltGear:(int)value
 {
     [self setObject: [NSNumber numberWithInt:value] forKey: @"tiltGear"];
@@ -791,6 +828,23 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     return  val;
     
 }
+
+- (void) setTiltEasing: (int)value
+{
+    [self setObject: [NSNumber numberWithInt:value] forKey: @"tiltEasing"];
+}
+
+- (int)tiltEasing
+{
+    int val = [self integerForKey:@"tiltEasing"];
+    if (val == 0)
+    {
+        val = 1;
+        [self setTiltEasing:val];
+    }
+    return  val;
+}
+
 
 - (void) setSlideMotorCustomValue :(float)value
 {
