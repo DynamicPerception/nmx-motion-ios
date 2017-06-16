@@ -201,7 +201,7 @@
         
         [self determineRunStatus: device];
 
-        if (self.runStatus == 99 || self.runStatus == NMXRunStatusUnknown) {
+        if (self.runStatus == 99 || self.runStatus == NMXRunStatusUnknown || device.fwVersion <= 0) {
             
             NSLog(@"stop everything");
             

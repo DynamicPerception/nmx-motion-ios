@@ -44,9 +44,7 @@ static const char *SIMULATE_DEVICE	= "SIMULATE_DEVICE";
 {
     [super viewDidLoad];
     
-    UInt16 fwVersion = [self.device mainQueryFirmwareVersion];
-    
-    self.firmwareVersionLabel.text = [NSString stringWithFormat: @"%d", fwVersion];
+    self.firmwareVersionLabel.text = [NSString stringWithFormat: @"%d", self.device.fwVersion];
     
     float voltage = [self.device mainQueryVoltage];
     

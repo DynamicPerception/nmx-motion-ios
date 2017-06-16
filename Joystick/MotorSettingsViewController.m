@@ -154,16 +154,19 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
         rigRatioLbl.text = @"Stage 1/0";
         joystickResponseLbl.text = @"Slider Response";
         self.customNameTxt.text = self.settings.channel1Name;
+        sensitivityRatio = [self.settings slideSensitivity]/100;
     }
     else if (self.motorNumber == 2)
     {
         rigRatioLbl.text = @"Stage R";
         self.customNameTxt.text = self.settings.channel2Name;
+        sensitivityRatio = [self.settings panSensitivity]/100;
     }
     else if (self.motorNumber == 3)
     {
         rigRatioLbl.text = @"Stage R";
         self.customNameTxt.text = self.settings.channel3Name;
+        sensitivityRatio = [self.settings tiltSensitivity]/100;
     }
 
     self.directionLbl.text = [DistancePresetViewController labelForDirectionIndex: [self.directionLabelMode intValue]];
@@ -193,10 +196,6 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     {
         [toggleJoystickSwitch setOn:YES];
     }
-    
-    sensitivityRatio = [self.settings sensitivity]/100;
-    
-    //NSLog(@"sensitivityRatio: %f",sensitivityRatio);
     
     float maxAccel = 30000;
     
@@ -1181,7 +1180,18 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     self.invertDirectionSwitch.on = [device motorQueryInvertDirection: (int)self.motorNumber];
     self.disableSwitch.on = [device motorQueryDisabled: (int) self.motorNumber];
     
-    sensitivitySlider.value	= [device.settings sensitivity];
+    if (self.motorNumber == 1)
+    {
+        sensitivitySlider.value	= [device.settings slideSensitivity];
+    }
+    else if (self.motorNumber == 2)
+    {
+        sensitivitySlider.value	= [device.settings panSensitivity];
+    }
+    else
+    {
+        sensitivitySlider.value	= [device.settings tiltSensitivity];
+    }
     sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", self.sensitivitySlider.value];
     
     switch (microstepSetting)
@@ -1283,14 +1293,12 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
 
         if (selectedSetting == 2)
         {
-            int maxVal = 5000;
-            NSString *titleString = @"Set Max Step Rate\nAllowable Range: 500-5000";
+            int maxVal = [NMXDevice maximumAllowableStepRate];
             if ([rigRatioLbl.text containsString:@"Sapphire"])
             {
-                titleString = @"Set Max Step Rate\nAllowable Range: 500-3000";
                 maxVal = 3000;
             }
-            
+            NSString *titleString = [NSString stringWithFormat: @"Set Max Step Rate\nAllowable Range: 500-%i", maxVal];
             blvc.value = self.maxStepRate;
             blvc.digits = 4;
             blvc.maxValue = maxVal;
@@ -1514,9 +1522,21 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     
     self.sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", sender.value];
     
-    self.appExecutive.device.settings.sensitivity = sender.value;
+    float sensitivity = sender.value;
+    if (self.motorNumber == 1)
+    {
+        self.appExecutive.device.settings.slideSensitivity = sensitivity;
+    }
+    else if (self.motorNumber == 2)
+    {
+        self.appExecutive.device.settings.panSensitivity = sensitivity;
+    }
+    else
+    {
+        self.appExecutive.device.settings.tiltSensitivity = sensitivity;
+    }
     
-    sensitivityRatio = self.appExecutive.device.settings.sensitivity/100;
+    sensitivityRatio = sensitivity/100;
     
     NSLog(@"sensitivityRatio: %f",sensitivityRatio);
 }
@@ -1531,7 +1551,20 @@ NSString	static	*SegueToBacklashViewController	= @"SegueToBacklashViewController
     DDLogDebug(@"Release Sensitivity Slider: %g", sender.value);
     
     self.sensitivityValue.text = [NSString stringWithFormat: @"%3.0f%%", sender.value];
-    self.appExecutive.device.settings.sensitivity = sender.value;
+    float sensitivity = sender.value;
+    if (self.motorNumber == 1)
+    {
+        self.appExecutive.device.settings.slideSensitivity = sensitivity;
+    }
+    else if (self.motorNumber == 2)
+    {
+        self.appExecutive.device.settings.panSensitivity = sensitivity;
+    }
+    else
+    {
+        self.appExecutive.device.settings.tiltSensitivity = sensitivity;
+    }
+
 }
 
 - (IBAction) goToPresets:(id)sender {

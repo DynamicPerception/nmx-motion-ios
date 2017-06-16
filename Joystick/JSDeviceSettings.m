@@ -156,7 +156,9 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     [self setObject: defaultRampingIncreaseValues() forKey: kDefaultsSlideIncreaseValues];
     [self setObject: defaultRampingDecreaseValues() forKey: kDefaultsSlideDecreaseValues];
 
-    [self setSensitivity:defaultSensitivity];
+    [self setPanSensitivity:defaultSensitivity];
+    [self setTiltSensitivity:defaultSensitivity];
+    [self setSlideSensitivity:defaultSensitivity];
     [self setLockAxis:defaultLockAxisState];
 }
 
@@ -750,23 +752,60 @@ BOOL			static defaultLockAxisState	= NO;		// Dominant axis lock off
     return val;
 }
 
-- (float)sensitivity
+- (float)slideSensitivity
 {
-    NSNumber *num = (NSNumber *)[self.settings objectForKey:@"kDefaultsSensitivity"];
+    NSNumber *num = (NSNumber *)[self.settings objectForKey:@"slideSensitivity"];
     if (num)
     {
         return [num floatValue];
     }
 
-    [self setSensitivity:defaultSensitivity];
+    [self setSlideSensitivity:defaultSensitivity];
     return defaultSensitivity;
     
 }
 
-- (void)setSensitivity:(float)sensitivity
+- (void)setSlideSensitivity:(float)sensitivity
 {
-    [self setObject: [NSNumber numberWithFloat: sensitivity] forKey: @"kDefaultsSensitivity"];
+    [self setObject: [NSNumber numberWithFloat: sensitivity] forKey: @"slideSensitivity"];
 }
+
+- (float)panSensitivity
+{
+    NSNumber *num = (NSNumber *)[self.settings objectForKey:@"panSensitivity"];
+    if (num)
+    {
+        return [num floatValue];
+    }
+    
+    [self setPanSensitivity:defaultSensitivity];
+    return defaultSensitivity;
+    
+}
+
+- (void)setPanSensitivity:(float)sensitivity
+{
+    [self setObject: [NSNumber numberWithFloat: sensitivity] forKey: @"panSensitivity"];
+}
+
+- (float)tiltSensitivity
+{
+    NSNumber *num = (NSNumber *)[self.settings objectForKey:@"tiltSensitivity"];
+    if (num)
+    {
+        return [num floatValue];
+    }
+    
+    [self setTiltSensitivity:defaultSensitivity];
+    return defaultSensitivity;
+    
+}
+
+- (void)setTiltSensitivity:(float)sensitivity
+{
+    [self setObject: [NSNumber numberWithFloat: sensitivity] forKey: @"tiltSensitivity"];
+}
+
 
 - (void) setSlideDirection:(NSString *)str
 {
