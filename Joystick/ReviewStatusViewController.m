@@ -677,6 +677,8 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
     
 	[super viewWillAppear: animated];
     
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleShotDurationNotification:)
                                                  name:@"chooseReviewShotDuration" object:nil];
@@ -1129,7 +1131,7 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
     
     [super viewWillDisappear: animated];
 
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kDeviceDisconnectedNotification object:nil];
 }
 
 - (void) dealloc
