@@ -414,7 +414,7 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         max = MAX(max, MAX(MAX(con1, con2), con3));
     }
     
-    float minSeconds = max/3300;
+    float minSeconds = max/4000;
     
     minimuDurationLbl.text = [SetupViewController stringForTime2:minSeconds * 1000];
 }
@@ -758,30 +758,9 @@ NSString	static	*kVideoShotDurationName	= @"kVideoShotDurationName";
         [settings synchronize];
     }
     
-    if (appExecutive.is3P == NO) {
-
-        if (NO == [appExecutive queryMotorFeasibility])
-        {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Too Fast For Motors"
-                                                            message: @"Increase shot duration"
-                                                           delegate: self
-                                                  cancelButtonTitle: @"OK"
-                                                  otherButtonTitles: nil];
-            [alert show];
-        }
-        else
-        {
-            // If we transition too fast, the hardware gets unhappy...
-            usleep(100);
-            [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
-        }
-    }
-    else
-    {
-        // If we transition too fast, the hardware gets unhappy...
-        usleep(100);
-        [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
-    }
+    // If we transition too fast, the hardware gets unhappy...
+    usleep(100);
+    [self performSegueWithIdentifier: kSegueToMotorRampingViewController sender: self];
 }
 
 - (IBAction) handleNextButton: (UIButton *) sender {
