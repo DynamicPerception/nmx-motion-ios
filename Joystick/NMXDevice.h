@@ -107,7 +107,6 @@ typedef enum : unsigned char {
 - (void) mainSetControllerCount: (UInt8) controllerCount;
 - (void) mainFlipStartStop;
 
-- (UInt16) mainQueryFirmwareVersion;
 - (NMXRunStatus) mainQueryRunStatus;
 - (UInt32) mainQueryRunTime;
 - (float) mainQueryVoltage;
@@ -215,6 +214,7 @@ typedef enum : unsigned char {
 - (void) peripheralWasConnected: (CBPeripheral *) peripheral;
 
 + (unsigned char) defaultAddress;
++ (int) maximumAllowableStepRate;
 
 @end
 

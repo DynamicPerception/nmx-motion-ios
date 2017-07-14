@@ -50,7 +50,6 @@
 @property (nonatomic, strong)	IBOutlet	UIImageView *				lockAxisIcon;
 
 @property (nonatomic, readonly)				BOOL						lockAxisState;
-@property (nonatomic, readonly)				CGFloat						sensitivity;
 
 @property (nonatomic, strong)   IBOutlet    UILabel *                   deviceName;	// TODO: dead code?
 
@@ -107,7 +106,6 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 @synthesize fireCameraButton;
 
 @synthesize lockAxisState;
-@synthesize sensitivity;
 
 @synthesize distancePanLbl,distanceSlideLbl,distanceTiltLbl,trList,trView,brView,brList,tlList,tlView,blList,blView,trList2,tlList2,brList2,blList2,mode3PLbl,uiList,flipButton,image3P,mode3PLbl2,switch2P,joystickViefw,panSliderBG,panSlider,panSliderLbl,tiltSliderBG,tiltSlider,tiltSliderLbl,batteryIcon,ar1,ar2,ar3,setStartView,setStopView,setMid1Btn,setMidView,controlBackground,sendMotorsTimer,goTo1Btn,goToMidBtn,goToStopBtn,setStart1Btn,setStop1Btn;
 
@@ -128,8 +126,32 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
 	return self.appExecutive.device.settings.lockAxis;
 }
 
-- (CGFloat) sensitivity {
-    return self.appExecutive.device.settings.sensitivity;
+- (float) getRateScalingForMotor:(int)motor
+{
+    float attenuateAmount = 50.0;
+    int maxStepRate = [NMXDevice maximumAllowableStepRate];
+    
+    if (motor == 1)
+    {
+        float slideSensitivity = self.appExecutive.device.settings.slideSensitivity;
+        float slideMoveScale = (slideSensitivity * attenuateAmount) * ((float)maxSlideStepRate/maxStepRate);
+        
+        return slideMoveScale;
+    }
+    else if (motor == 2)
+    {
+        float panSensitivity = self.appExecutive.device.settings.panSensitivity;
+        float panMoveScale = (panSensitivity * attenuateAmount) * ((float)maxPanStepRate/maxStepRate);
+        
+        return panMoveScale;
+    }
+    else
+    {
+        float tiltSensitivity = self.appExecutive.device.settings.tiltSensitivity;
+        float tiltMoveScale = (tiltSensitivity * attenuateAmount) * ((float)maxTiltStepRate/maxStepRate);
+
+        return tiltMoveScale;
+    }
 }
 
 @synthesize dominantAxisSwitch;
@@ -948,6 +970,10 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     
     int queryStatusKeyFrame = [device queryKeyFrameProgramRunState];
     int queryStatus = [device mainQueryRunStatus];
+
+    maxSlideStepRate = 5000;
+    maxPanStepRate = 5000;
+    maxTiltStepRate = 5000;
     
     if (NMXRunStatusRunning & queryStatus || NMXRunStatusRunning & queryStatusKeyFrame)
     {
@@ -962,6 +988,23 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
+        if (device.fwVersion < 72)
+        {
+            maxSlideStepRate = 5000;
+            maxPanStepRate = 5000;
+            maxTiltStepRate = 5000;
+        }
+        else
+        {
+            maxSlideStepRate = [self.appExecutive.device motorQueryMaxStepRate: 1];
+            maxPanStepRate = [self.appExecutive.device motorQueryMaxStepRate: 2];
+            maxTiltStepRate = [self.appExecutive.device motorQueryMaxStepRate: 3];
+            
+            maxSlideStepRate = MAX(maxSlideStepRate, 500);
+            maxPanStepRate = MAX(maxPanStepRate, 500);
+            maxTiltStepRate = MAX(maxTiltStepRate, 500);
+        }
+
         for (NMXDevice *device in self.appExecutive.deviceList)
         {
             inverted1 = [device motorQueryInvertDirection: 1];
@@ -2216,15 +2259,14 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
             }
         }
 
-        float moveScale = (self.sensitivity * 50.0);
-        
         if (self.appExecutive.joystick.x == 0)
         {
             [self.appExecutive.device motorSet: self.appExecutive.device.panMotor ContinuousSpeed: 0];
         }
         else
         {
-            [self.appExecutive.device motorSet: self.appExecutive.device.panMotor ContinuousSpeed: self.appExecutive.joystick.x * moveScale];
+            float panMoveScale = [self getRateScalingForMotor: 2];
+            [self.appExecutive.device motorSet: self.appExecutive.device.panMotor ContinuousSpeed: self.appExecutive.joystick.x * panMoveScale];
         }
         
         if (self.appExecutive.joystick.y == 0)
@@ -2233,7 +2275,8 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
         }
         else
         {
-            [self.appExecutive.device motorSet: self.appExecutive.device.tiltMotor ContinuousSpeed: self.appExecutive.joystick.y * moveScale];
+            float tiltMoveScale = [self getRateScalingForMotor: 3];
+            [self.appExecutive.device motorSet: self.appExecutive.device.tiltMotor ContinuousSpeed: self.appExecutive.joystick.y * tiltMoveScale];
         }
         
         //DDLogDebug(@"moveJoystick");
@@ -2325,15 +2368,15 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
-        float moveScale = (self.sensitivity * 50.0);
+        float slideMoveScale = [self getRateScalingForMotor: 1];
 
         if (self._dollySlider.value > 1)
         {
-            [self.appExecutive.device motorSet: self.appExecutive.device.sledMotor ContinuousSpeed: (self._dollySlider.value -1) * moveScale];
+            [self.appExecutive.device motorSet: self.appExecutive.device.sledMotor ContinuousSpeed: (self._dollySlider.value -1) * slideMoveScale];
         }
         else if (self._dollySlider.value < 1)
         {
-            [self.appExecutive.device motorSet: self.appExecutive.device.sledMotor ContinuousSpeed: -(1 - self._dollySlider.value) * moveScale];
+            [self.appExecutive.device motorSet: self.appExecutive.device.sledMotor ContinuousSpeed: -(1 - self._dollySlider.value) * slideMoveScale];
         }
     }
     
@@ -2351,15 +2394,15 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
-        float moveScale = (self.sensitivity * 50.0);
+        float panMoveScale = [self getRateScalingForMotor: 2];
         
         if (self.panSlider.value > 1)
         {
-            [self.appExecutive.device motorSet: self.appExecutive.device.panMotor ContinuousSpeed: (self.panSlider.value -1) * moveScale];
+            [self.appExecutive.device motorSet: self.appExecutive.device.panMotor ContinuousSpeed: (self.panSlider.value -1) * panMoveScale];
         }
         else if (self.panSlider.value < 1)
         {
-            [self.appExecutive.device motorSet: self.appExecutive.device.panMotor ContinuousSpeed: -(1 - self.panSlider.value) * moveScale];
+            [self.appExecutive.device motorSet: self.appExecutive.device.panMotor ContinuousSpeed: -(1 - self.panSlider.value) * panMoveScale];
         }
         
         //NSLog(@"pan motor pos: %i",(int)[self.appExecutive.device motorQueryCurrentPosition:2]);
@@ -2379,15 +2422,15 @@ NSString static	*EmbedJoystickViewController				= @"EmbedJoystickViewController"
     }
     else
     {
-        float moveScale = (self.sensitivity * 50.0);
+        float tiltMoveScale = [self getRateScalingForMotor: 3];
         
         if (self.tiltSlider.value > 1)
         {
-            [self.appExecutive.device motorSet: self.appExecutive.device.tiltMotor ContinuousSpeed: (self.tiltSlider.value -1) * moveScale];
+            [self.appExecutive.device motorSet: self.appExecutive.device.tiltMotor ContinuousSpeed: (self.tiltSlider.value -1) * tiltMoveScale];
         }
         else if (self.tiltSlider.value < 1)
         {
-            [self.appExecutive.device motorSet: self.appExecutive.device.tiltMotor ContinuousSpeed: -(1 - self.tiltSlider.value) * moveScale];
+            [self.appExecutive.device motorSet: self.appExecutive.device.tiltMotor ContinuousSpeed: -(1 - self.tiltSlider.value) * tiltMoveScale];
         }
     }
     

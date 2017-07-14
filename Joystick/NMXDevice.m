@@ -276,6 +276,11 @@ typedef enum: unsigned char {
     return 3;
 }
 
++ (int) maximumAllowableStepRate
+{
+    return 5000;
+}
+
 - (NSString *) name {
 
     return self.myPeripheral.name;
@@ -345,8 +350,43 @@ didDiscoverCharacteristicsForService: (CBService *) service
     [self mainSetAppMode: true];
     [self mainSetJoystickMode: false];
     
-    _fwVersion = [self mainQueryFirmwareVersion];
-    if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
+
+    // At times the controller doesn't immediately give us the fw version if it's
+    // still initializing.  Try 3 times.
+    int retryCount = 3;
+    for (int i = 0; i < retryCount; i++)
+    {
+        _fwVersion = [self mainQueryFirmwareVersion];
+        if (_fwVersion > 0) break;
+        usleep(100000); //wait 100ms
+    }
+    
+
+    // Query the firmware version 3 more times to confirm consistency.
+    //If we ever get a non-match or 0 then something is wrong, prompt to restart controller
+    
+    if (_fwVersion > 0)
+    {
+        BOOL fwOK = NO;
+        
+        usleep(200000); //wait 200ms
+        UInt16 fwVer = [self mainQueryFirmwareVersion];
+        if (fwVer == _fwVersion)
+        {
+            usleep(200000); //wait 200ms
+            fwVer = [self mainQueryFirmwareVersion];
+            if (fwVer == _fwVersion && fwVer > 0)
+            {
+                fwOK = YES;
+                if (_fwVersion < kCurrentSupportedFirmwareVersion ) _fwVersionUpdateAvailable = YES;
+            }
+        }
+        
+        if (NO == fwOK)
+        {
+            _fwVersion = 0;
+        }
+    }
 }
 
 - (void) peripheral: (CBPeripheral *) peripheral
@@ -1043,21 +1083,7 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
         fwVerison = [[self extractReturnedNumber] UInt16Value];
     }
 
-    if (fwVerison == 0 && tryCount > 0)
-    {
-        tryCount--;
-        NSLog(@"mainQueryFirmwareVersion failed, retrying");
-        return [self mainQueryFirmwareVersion];
-    }
-    else
-    {
-        if (tryCount <= 0)
-        {
-            NSLog(@"FAILED TO GET THE FWVERSION!   Assume the latest");
-            return kCurrentSupportedFirmwareVersion;
-        }
-        NSLog(@"mainQueryFirmwareVersion = %i", fwVerison);
-    }
+    NSLog(@"mainQueryFirmwareVersion = %i", fwVerison);
     
     return fwVerison;
 }
@@ -1788,6 +1814,21 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
 
 - (UInt16) motorQueryMaxStepRate:(int)motorNumber
 {
+    int retryCount = 3;
+    UInt16 maxRate = 0;
+    for (int i = 0; i < retryCount; i++)
+    {
+        maxRate = [self tryQueryMaxStepRate: motorNumber];
+        if (maxRate > 0) break;
+        
+        usleep(10000); //wait 10ms
+    }
+
+    return maxRate;
+}
+
+- (UInt16) tryQueryMaxStepRate:(int)motorNumber
+{
     if (_fwVersion < 72)
     {
         return 4000;
@@ -1804,6 +1845,15 @@ didUpdateValueForCharacteristic: (CBCharacteristic *) characteristic
     {
         maxSpeed = [[self extractReturnedNumber] UInt16Value];
     }
+    
+    int retryCount = 3;
+    for (int i = 0; i < retryCount; i++)
+    {
+        _fwVersion = [self mainQueryFirmwareVersion];
+        if (_fwVersion > 0) break;
+        usleep(100000); //wait 100ms
+    }
+
     
     return maxSpeed;
 }

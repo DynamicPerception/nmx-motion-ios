@@ -25,6 +25,8 @@
 @property (nonatomic, strong)	IBOutlet	UIView *		controlBackground;
 @property (nonatomic, strong)	IBOutlet	UIPickerView *	picker;
 @property (nonatomic, strong)	IBOutlet	JoyButton *		okButton;
+@property (strong, nonatomic) IBOutlet UILabel *winTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *winInstructionsLabel;
 
 @end
 
@@ -112,10 +114,17 @@ NSArray static	*frameCountStrings = nil;
     if (isMotorSegue)
     {
         frameCount = currentFrameValue;
+        
+        self.winTitleLabel.text = @"Keyframe";
+        self.winInstructionsLabel.text = @"Set the Keyframe Position";
     }
     else
     {
         frameCount	= [self.appExecutive.frameCountNumber integerValue];
+        
+        self.winTitleLabel.text = @"Frame Count";
+        self.winInstructionsLabel.text = @"Set Total Number of Frames";
+
     }
     
 	NSInteger	ones		= frameCount % 10;

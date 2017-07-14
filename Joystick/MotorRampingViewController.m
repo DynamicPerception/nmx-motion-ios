@@ -84,6 +84,11 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
 
 #pragma mark - Object Management
 
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+}
+
 - (void) viewDidLoad {
     
     self.picker.delegate = self;
@@ -459,11 +464,14 @@ NSString static	*SegueToDisconnectedDeviceViewController	= @"DeviceDisconnectedS
     }
 }
 
+
+
 - (void) viewWillDisappear:(BOOL)animated {
     
     [super viewWillDisappear: animated];
     
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kDeviceDisconnectedNotification object:nil];
+
 }
 
 - (void) deviceDisconnect: (NSNotification *) notification

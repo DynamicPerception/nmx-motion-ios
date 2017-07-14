@@ -27,7 +27,11 @@
     bool inverted1;
     bool inverted2;
     bool inverted3;
-    
+
+    int maxSlideStepRate;
+    int maxPanStepRate;
+    int maxTiltStepRate;
+                                                      
     float slideGear;
     float panGear;
     float tiltGear;
